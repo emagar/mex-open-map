@@ -1,0 +1,1 @@
+[![PDF Status](https://www.sharelatex.com/github/repos/MIT-Informatics/mex-open-map/builds/latest/badge.svg)](https://www.sharelatex.com/github/repos/MIT-Informatics/mex-open-map/builds/latest/output.pdf)
