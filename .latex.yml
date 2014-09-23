@@ -1,0 +1,6 @@
+compiler: pdflatex
+root_file: redMex02.tex
+
+# see https://www.sharelatex.com/github/
+#     for more details
+
