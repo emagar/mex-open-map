@@ -1,7 +1,5 @@
 (TeX-add-style-hook "redMex02"
  (lambda ()
-    (TeX-add-symbols
-     "mc")
     (LaTeX-add-bibliographies
      "../bib/magar")
     (LaTeX-add-labels
@@ -11,9 +9,6 @@
      "F:malapp"
      "T:simIndex"
      "T:volatMarginsd0"
-     "T:2006"
-     "T:2009"
-     "T:2012"
      "F:seatsVotes"
      "E:cubeLaw"
      "F:lambdaRhoEx"
@@ -31,12 +26,13 @@
      "pdftex"
      "url"
      "hyperref"
+     "setspace"
      ""
      "geometry"
      "bottom=1in"
      "top=1in"
-     "left=1in"
-     "right=1in"
+     "left=1.25in"
+     "right=1.25in"
      "letterpaper"
      "latex2e"
      "art12"
