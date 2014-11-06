@@ -1,0 +1,31 @@
+
+Actual seats-votes results
+
+          Districts of size
+        Three   Four     Five
+rho    1.2734   1.4066   1.1790
+      (0.0208) (0.0157) (0.0095)
+jspS   0.1768   0.3160   0.1266 
+      (0.0236) (0.0153) (0.0093)
+othS  -0.4347  -0.2502  -0.2131 
+      (0.0118) (0.0068) (0.0036)
+
+Mean log-likelihoods:
+    -114.702 -148.184 -193.718
+
+
+
+Results based on d'Hondt seats
+
+          Districts of size
+        Three   Four     Five
+rho    1.4932   1.6966   1.5206 
+      (0.0259) (0.0176) (0.0138)
+jspD  -0.0389   0.2117   0.1151 
+      (0.0282) (0.0165) (0.0127)
+othD  -0.5680  -0.4798  -0.5113 
+      (0.0123) (0.0058) (0.0035)
+
+Mean log-likelihoods
+    -102.896 -135.321 -177.684
+

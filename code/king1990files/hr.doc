@@ -1,0 +1,23 @@
+From SREED@UA1VM.BITNET Tue Jun  2 10:20:23 1992
+Received: from UA1VM by talcott.harvard.edu with BITNET; Tue, 2 Jun 92 10:20:04 EDT
+From: SREED@UA1VM.BITNET
+Received: from UA1VM (SREED) by UA1VM.UA.EDU (Mailer R2.08) with BSMTP id 0422;
+ Tue, 02 Jun 92 09:19:23 CDT
+Date:         Tue, 02 Jun 92 09:15:55 CDT
+Subject:      Japan Data
+To: Gary <gmk@wjh12>
+Status: OR
+
+  I sent the house of representatives data today.  It should be arranged
+properly and labelled in a relatively self-explanatory way.  LDPVOTE is
+the vote for the LDP (Liberals before 1958); LDPS is the number of seats
+won by the LDP; LDPD is the number of seats the LDP would have won if
+d'hondt was used to allocate seats.  There are three files, hr3 for three-
+member districts, hr4 for four-member, and hr5 for five-member.
+
+  I will have the upper house data soon and the district level data by
+the weekend I think.
+
+  Steve
+
+

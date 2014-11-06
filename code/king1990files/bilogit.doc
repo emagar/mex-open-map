@@ -1,0 +1,114 @@
+Multiparty Bilogit Estimation Program
+-------------------------------------
+Program, Documentation, and Model by Gary King
+Dept. of Government, Harvard University, M37 Littauer Center, Cambridge, MA
+02138.  617-495-2027.  BITnet: gmk@harvunxw, Internet: gmk@wjh12.harvard.edu.
+
+The model estimated by this program appears in Gary King, "Electoral
+Responsiveness and Partisan Bias in Multiparty Democracies," mimeo, Harvard
+University.  The two-party version of this model can be found in Gary King and
+Robert Browning, "Democratic Representation and Partisan Bias in Congressional
+Elections," AMERICAN POLITICAL SCIENCE REVIEW, 81, 4 (December, 1987): 1251-
+1273.  The program will automatically estimate the two-party version of the
+model if data from only two parties are included.
+
+DATA.
+Data on votes and seats must be available in a Gauss data file, with variable
+names.  See the description of the program ATOG.EXE (Ascii To Gauss) in the
+Gauss manual.  Note that BILOGIT.PRG expects the NUMBERS of votes and seats,
+rather than percentages or proportions.  Rows should be elections; columns
+(variables) should be the number of seats and votes for each party.
+
+SETUP.
+You must install Gauss version 2, and the Gauss program MAXLIK.SET (module 7).
+If module 7 this is not automatically loaded upon startup, execute:
+
+>> run maxlik.set
+
+The program file is BILOGIT.PRG.  To obtain estimates, edit this file, make the
+appropriate changes (described below), and execute it (by pressing F2 from the
+editor or by typing >> run BILOGIT.prg).
+
+OPTIONS.
+All nine options are set at the start of BILOGIT.PRG and are described here.
+1.  Name the Gauss dataset with the following command:  dataset="brit";
+2.  You may choose which estimator to run by setting the variable est.
+    est=0;  constrains partisan bias (lambdas) to zero and estimates
+            responsiveness (rho).
+    est=1;  estimates rho and a lambda for each party.  The lambda for the
+            first party named below is set to zero for identification; the
+            choice of which party to set to zero is arbitrary and will not
+            affect substantive conclusions.
+    est=2;  Alters option est=1 so that rho is allowed to vary linearly with
+            Taagepera's Index.  Thus, the program gives estimates of the
+            lambdas plus g0 and g1, where rho=g0+g1*(taagepera's index).
+    est=3;  Alters option est=1 so that rho is allowed to vary linearly with
+            the last two digits of the year.  Thus, the program gives estimates
+            of the lambdas plus g0 and g1, where rho=g0+g1*(year).
+3.  You may include all non-major parties in a single "other" category by
+    setting incoth=1;  Setting incoth=0; excludes these other parties.
+4.  The index variable names are included in the votes variable.  For example,
+    votes=iconsv| ilabv; will include two parties in the analysis, consv and
+    labv.
+5.  Votes for parties to be included in the other category (if incoth=1) are
+    named in otherv.  For example:  otherv=iothv| ilibv; will create a party
+    called otherv by summing the votes for parties othv and libv.
+6.  The index variable names are included in the seats variable.  For example,
+    seats=iconss| ilabs; will include two parties in the analysis, conss and
+    labs.
+7.  Seats for parties to be included in the other category (if incoth=1) are
+    named in others.  For example:  others=ioths| ilibs; will create a party
+    called others by summing the votes for parties oths and libs.  Set
+    others=0; and incoth=0; if you do not plan to use this option.
+8.  The index variable name for the number of districts is assigned to the
+    variable ndist.  For example, ndist=itseats;.
+9.  The index variable name for the year in four digits is named in vyear.  For
+    example:  vyear=iyear; if the variable is called year.
+
+OUTPUT.
+An example Gauss dataset, in files BRIT.DHT and BRIT.DAT, is included on the
+program disk.  The ASCII version of these data are in BRIT.ASC.
+If you copy this to the same directory as BILOGIT.PRG, you can
+check to see if everything is working by running the program as is.
+The output, which appears on the screen and in a file with the same name as
+your dataset, but with the extension ".OUT", should look like the following:
+
+ *** Multinomial Bilogit ***
+                 ____________________________________
+                    Data set          :  BRIT
+                 ------------------------------------
+
+ Time at End:     14:56                    Date:  9/06/1988
+Observations:        12      Degrees of freedom:          9
+
+         ***   -Log Likelihood               : 5705.469619   ***
+
+Var             Coef           Std. Error     t-Stat         P-Value
+---------------------------------------------------------------------
+RHO             1.018349       0.080672      12.623352       0.000000
+LABV           -0.054422       0.015636      -3.480563       0.006932
+LIBV           -2.119791       0.154432     -13.726335       0.000000
+
+Computation Time:   6.04 seconds   Iterations:  18
+Dependent variables (seats): CONSS LABS  LIBS
+Mean Votes:  0.450  0.422  0.128
+Mean Seats:  325.667  286.750  11.417
+effective parties:   2.518
+Lambda set to zero on votes variable: CONSV
+Total Seats (avg,min,max):  623.833  609.000  630.000
+Taagerpera's index (avg,min,max):  2.711  2.656  2.785
+
+This example excludes the "other" party, but includes the Conservative, Labour,
+and Liberal Parties.  A single estimate for rho (the electoral responsiveness
+parameter) appears (1.018349) and its standard error (0.080672), along with the
+lambdas (partisan bias parameters) and their standard errors for the second and
+third parties included in this run.
+
+In addition to these basic results, other information appears at the end.  The
+dependent variables are listed, along with their corresponding proportions of
+votes and numbers of seats.  The average "effective number of parties" is
+reported.  The antipenultimate line of output gives the name of the reference
+party for which lambda is set to zero.  The average, minimum, and maximum
+numbers of total legislative seats and the value of Taagepera's index appear in
+the final two lines.
+

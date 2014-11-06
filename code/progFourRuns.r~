@@ -1,0 +1,9 @@
+## requiere haber corrido ~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/code/analizaEscenarios2013.r hasta la definición de los cuatro modelos
+
+## calvo-micozzi with effective number of parties
+
+l.r.data <- list("S", "v", "I", "J", "D", "dummy")
+l.r.inits <- function(){ list (lambda=rnorm(J), rho=rexp(1)) }
+l.r.parameters <- c("lambda", "rho", "c")
+
+

@@ -1,0 +1,570 @@
+%  http://latex-beamer.sourceforge.net/
+
+%\documentclass[landscape]{foils}
+
+%\documentclass{beamer}
+%\documentclass[handout]{beamer}     % TO PRINT PRESENTATION HANDOUT
+\documentclass[xcolor=dvipsnames]{beamer}  % ALLOWS CHANGE IN COLOR
+
+\usepackage{color}
+
+\usepackage{pifont} %para tener la ballot cross \ding{55}
+
+\usepackage{beamerthemesplit}
+\usepackage{url}
+\usepackage{ae} % or {zefonts}
+\usepackage[T1]{fontenc}
+\usepackage[ansinew]{inputenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+
+\usepackage{graphicx}
+%\graphicspath{"c:/data"}
+\usepackage{color}
+%\usepackage[colorlinks]{hyperref}
+\usepackage{tikz} % Easier syntax to draw pgf files (invokes pgf automatically)
+\usetikzlibrary{arrows,shapes.geometric}
+%\usepackage{pgfmath} % new version of Tikz loads package automatically
+
+\usepackage{tabulary} %calcula automáticamente ancho de columnas con texto muy largo
+%% usar LRJC para cálculo automático, lrjc para ancho de columna normal
+\setlength\tymin{10pt}       %% estos permiten cambiar conducta, ver p. 254 LaTeX companion
+\setlength\tymax{\maxdimen}
+
+%\usecolortheme{crane}     %Color yellow
+%\usetheme{Warsaw}
+\usecolortheme[named=Gray]{structure}
+
+\useoutertheme[footline=empty]{}  % PUTS COLORED LINE AT FOOT WITH TITLE, AUTHOR, PAGE, etc
+%\usetheme{Berkeley}
+\usetheme[height=7mm]{Rochester}
+\setbeamertemplate{items}[ball]   % ITEMS IN 3D BALLS (alt CIRCLES)
+\setbeamertemplate{navigation symbols}{}  % DROPS NAVIGATION ICONS
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
+\usepackage{multirow} %allows multiple rows in tables
+
+%\setbeamertemplate{footline} {
+%    \begin{beamercolorbox}{section in head/foot}
+%    \insertsectionnavigationhorizontal{\paperwidth}{}{plus1filll
+%    \insertframenumber}
+%    \end{beamercolorbox}
+%}
+
+%\setbeamertemplate{navigation symbols}{\insertslidenavigationsymbol, \insertdocnavigationsymbol} 
+\setbeamertemplate{footline} {
+    \begin{beamercolorbox}{section in head/foot}
+    \insertsectionnavigationhorizontal{\paperwidth}{}{plus1filll
+%    \insertslidenavigationsymbol \insertdocnavigationsymbol \insertframenumber}
+    \insertframenumber}
+    \end{beamercolorbox}
+}
+
+\setbeamercovered{transparent}
+\setbeamertemplate{caption}{\insertcaption}
+
+%\tikzstyle{nodo} = [circle, draw=black, fill=white, text=black]
+%\tikzstyle{end} = [circle, minimum width=3pt,fill, inner sep=0pt]
+
+\title[Gub.~coattails]{Gubernatorial coattails \\in Mexican Congressional elections}
+%\subtitle{}
+\author[Magar]{Eric Magar}
+\institute[ITAM]{ITAM--Ciencia Política}
+\date[30nov12]{30 de noviembre, 2012}
+
+\AtBeginSection[] % Do nothing for \section*
+{
+  \begin{frame}<beamer>
+  \frametitle{Contenido}
+  \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame[plain]{\titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Motivación}
+
+ \begin{columns}[c]
+
+ \column{.45\textwidth}
+
+\emph{Arrastre presidencial} = ganador de la contienda presidencial ``jala'' a sus copartidarios hacia la victoria en la pista congresional
+
+ \column{.55\textwidth}
+
+ \includegraphics[width=6cm]{bush2002.pdf}
+
+ \end{columns}
+
+\bigskip
+
+\pause
+
+Mucha evidencia de ello: 
+
+\begin{enumerate}
+
+\item partido presidencial gana sistemáticamente menos votos en elección intermedia en EE.UU.\ (Jacobson 1997)
+
+\item y en Brasil, Chile, El Salvador (Jones 1995)
+
+\item pérdida es menor en intemedias más tempranas que más tardías en 10 países (Shugart 1995)
+
+\item \% congresional $\approx$ \% presidencial en México (Segovia 1980)
+
+\end{enumerate}
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{El  patrón ``diente de sierra''}
+
+ \begin{columns}[c]
+
+ \column{.5\textwidth}
+
+\includegraphics[width=6cm]{../graphs/trienPres.pdf}
+
+ \column{.5\textwidth}
+
+\includegraphics[width=6cm]{../graphs/trienGob.pdf}
+
+\end{columns}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{El  patrón ``diente de sierra''}
+
+\begin{center}
+ \begin{tabular}{cc}
+
+\includegraphics[width=4.25cm]{../graphs/trienpan.pdf} & \includegraphics[width=4.25cm]{../graphs/trienpri.pdf} \\
+\includegraphics[width=4.25cm]{../graphs/trienprd.pdf}
+
+\end{tabular}
+\end{center}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame {                      % SLIDE
+
+    \frametitle{Pregunta}
+
+\begin{block}{}
+ ¿Pueden candidatos a ejecutivo \alert{subnacionales} transferir éxito electoral a sus compañeros candidatos a diputado federal en elecciones concurrentes?
+\end{block}
+
+\bigskip
+
+ Efecto de arrastre entre departamentos \alert{no yuxtapuestos}---ni jerárquica ni transactualmente
+
+\bigskip
+
+Hay evidencia en Argentina (Jones 1997) y Brasil (Samuels 2000). \\ ¿También en México?
+
+\bigskip
+\pause
+
+\begin{center}
+  \begin{block}{Respuesta: \textbf{Sí}}
+    El poder de arrastre de un buen (o mal) candidato a gobernador es \emph{igual o mayor} que el de un candidato a presidente
+  \end{block}
+\end{center}
+
+}
+
+
+\frame{\frametitle{Contenido}\tableofcontents}
+
+\section{Coattail effects}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame {                      % SLIDE
+
+    \frametitle{El modelo electoral subyacente}
+
+El desenlace de toda elección es producto de fuerzas largo- y corto-placistas (Converse 1966)
+
+\bigskip
+
+\parbox[c]{3.5cm}{de \textbf{largo plazo}:\\identidad partidista}                 ~~~~$\rightarrow$~~~~ \parbox[c]{3.5cm}{``voto normal'' \\ de un distrito}  \\[2ex]
+\parbox[c]{3.5cm}{de \textbf{corto plazo}:\\calidad del candidato, \\economía...} ~~~~$\rightarrow$~~~~ \parbox[c]{3.5cm}{éstas desvían \\ de la normalidad}\\
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame {                      % SLIDE
+
+    \frametitle{Arrastre presidencial = fuerza de corto plazo}
+
+Un candidato excepcional entusiasma a muchos a sufragar también por sus copartidarios en la pista legislativa
+
+\bigskip
+
+Luego todo vuelve a la normalidad. \\ El ``pulso presidencial de las elecciones'' (Campbell 1991)
+
+\begin{center}
+\parbox[c]{6cm}{
+ \begin{tikzpicture}[scale=1,rotate=0]
+  \draw[black,<->] (-.5,-1.5) -- node [above, sloped, black] {\footnotesize{voto diputados}}(-.5,1.5);
+  \fill[green] (0,0) circle (1.5pt) node [below=2pt,black] {I};
+  \fill[white] (1,0) circle (1.5pt) node [below=2pt,black] {P};
+  \fill[green] (1,1) circle (1.5pt);
+  \fill[green] (2,0) circle (1.5pt) node [below=2pt,black] {I};
+  \fill[white] (3,0) circle (1.5pt) node [below=2pt,black] {P};
+  \fill[green] (3,-1) circle (1.5pt);
+  \fill[green] (4,0) circle (1.5pt) node [below=2pt,black] {I};
+  \draw[red,->] (-.2,0) -- (4.5,0) node [right, black] {$t$};
+ \end{tikzpicture}
+}
+$\leftarrow$ \footnotesize{voto normal}
+\end{center}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Efecto de arrastre presidencial  en EE.UU.}
+
+Ferejohn y Calvert (1984): 
+
+\bigskip
+
+1869--1892:~~.91 (boletas fusionadas) \\
+1932--1948:~~.56 \\
+1952--1980:~~.31 \\
+
+\begin{enumerate}
+  \item No encontré una estimación para México
+  \item ¿Es significativo también para gobernadores?
+\end{enumerate}
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Arrastre gubernatorial}
+
+    \begin{itemize}
+      \item Fuerza de corto plazo mediada por la organización partidista $\rightarrow \Delta^+$ participación
+      \item Pero requiere energía y recursos que agentes sólo usarán si esperan retornos
+      \item ¿Un buen candidato a gobernador activa la maquinaria estatal: ¿hay efecto de derrame en elección de dip.\ fed.?
+    \end{itemize}
+
+\bigskip
+
+\begin{block}{Evidencia}
+Boyd (1986), Cox\&Munger (1989), Rosenstone\&Hansen (1993) ven efecto en \alert{participación} en EE.UU.\\
+Ames (1994) ``reverse coattails'' en Brasil\\
+Jones (1997) y Samuels (2000) medición directa con distinta métrica---núm.\ efectivo de partidos---en Argentina y Brasil 
+\end{block}
+ 
+
+
+}
+
+\section{Un modelo para México, medición}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame {                      % SLIDE
+
+    \frametitle{México: laboratorio para estudiar arrastre}
+
+\begin{center}
+\textbf{Problema}: ¿cómo separas el efecto de arrastre \\ gubernatorial del presidencial?
+\end{center}
+
+\begin{center}
+\resizebox{.9\columnwidth}{!}{
+ \begin{small}
+ \begin{tabular}{ll|cc|c}
+    &   & \multicolumn{3}{l}{Congressional race concur-} \\
+  \multicolumn{1}{c}{\textbf{A.~1979--2009}}  &   & \multicolumn{3}{l}{rent with presidential} \\
+    &       &    no      &     yes    &    total   \\ \hline
+ Congressional race concur- & no    & 153 (80\%) & 150 (94\%) & 303 (86\%) \\
+ rent with gubernatorial    & yes   &  39 (20\%) &  10  (6\%) &  49 (14\%) \\ \hline
+                            & total & 192 (100\%)& 160 (100\%)& 352 (100\%)\\
+                            \\
+  \multicolumn{1}{c}{\textbf{B.~1997--2009}}  &   &  \\
+    &       &          &         &       \\ \hline
+ Congressional race concur- & no    &  77 (80\%) &  57 (89\%) & 134 (84\%) \\
+ rent with gubernatorial    & yes   &  19 (20\%) &   7 (11\%) &  26 (16\%) \\ \hline
+                            & total &  96 (100\%)&  64 (100\%)& 160 (100\%)\\
+ \end{tabular}
+ \end{small}
+}
+\end{center}
+
+Four-regime pooling tiene ventajas, permite separar \alert{dos efectos} de arrastre
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{El caso de México}
+
+    \begin{itemize}
+      \item Analizo elecciones para diputados federales 1979--2009
+      \item Límitación: unidad de análisis = estados
+      \item Causalidad: no reelección ayuda, Gober $\rightarrow$ DipFed
+      \item Desagrego coaliciones usando voto de sus miembros en la última elección que contendieron separados
+      \item PCM, PSUM, PMS = PRD
+    \end{itemize}
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{La variable dependiente}
+
+\begin{center}
+ \begin{tabular}{cc}
+  \includegraphics[width=4.25cm]{../graphs/dvpan.pdf} & \includegraphics[width=4.25cm]{../graphs/dvpri.pdf} \\
+  \includegraphics[width=4.25cm]{../graphs/dvprd.pdf}
+ \end{tabular}
+\end{center}
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Modelo de regresión}
+
+\footnotesize{
+\begin{center}
+%\resizebox{.85\columnwidth}{!}{
+  \begin{eqnarray*}
+    Dvote &=& \beta_0 + \beta_1 RecentDvote\\
+          & & +\beta_2 GovOnlyConcurs + \beta_3 PresOnlyConcurs + \beta_4 Gov\&PresConcur\\
+          & & +\beta_5 Gvote|GovOnlyConcurs + \beta_6 Gvote|Gov\&PresConcur\\
+          & & +\beta_7 Pvote|GovOnlyConcurs + \beta_8 Pvote|Gov\&PresConcur\\
+          & & + \texttt{controles}
+  \end{eqnarray*}
+
+\end{center}
+\bigskip
+Expectativas:
+\begin{itemize}
+  \item $\beta_1>0$ (voto normal)
+  \item $\beta_2,\beta_3,\beta_4$ separan efecto de candidato mediocre de no-concurrencia \\ ``\textbf{umbral} de arrastre'' (cf. Chubb 1988)
+  \item $\alert{\beta_5},\beta_6,\beta_7,\beta_8>0$ efecto marginal del voto ejecutivo \\ (\textbf{efecto neto} de arrastre)
+                    \end{itemize}
+}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Resultados: \color{blue}{PAN}}
+
+\begin{center}
+\resizebox{.95\columnwidth}{!}{
+\begin{tabular}{l r r r r r r r r}
+ & \multicolumn{2}{c}{\footnotesize{1997--2009}}& \multicolumn{6}{c}{~\hrulefill~\footnotesize{1979--2009}~\hrulefill~}  \\
+ & \multicolumn{2}{c}{(1) shares} & \multicolumn{2}{c}{(2) shares} & \multicolumn{2}{c}{(3) shares}  & \multicolumn{2}{c}{(4) residuals}  \\
+Variable   & $\hat{\beta}$ & $p$ & $\hat{\beta}$ & $p$ & $\hat{\beta}$ & $p$ & $\hat{\beta}$ & $p$ \\\hline
+Constant                                     &  $.135$  & .000 &  $.084$  & .000 & $.074$ & .000 &$-.022$ & .004 \\
+$RecentDvote$                                &  $.586$  & .000 &  $.671$  & .000 & $.787$ & .000 &        &      \\
+$GovOnlyConcurs$                             & $-.151$  & .005 & $-.057$  & .002 &        &      & $.017$ & .021 \\
+$PresOnlyConcurs$                            & $-.097$  & .054 & $-.058$  & .011 &$-.047$ & .051 & $.042$ & .000 \\
+$Gov\&PresConcur$                            & $-.106$  & .102 & $-.063$  & .033 &        &      & $.038$ & .012 \\
+\textbf{\emph{Gvote|GovOnlyConcurs}}         &  $.584$  & .000 &  $.405$  & .000 &        &      & $.760$ & .000 \\
+$Gvote|Gov\&PresConcur$                      &  $.444$  & .043 &  $.500$  & .002 &        &      & $.163$ & .325 \\
+\textbf{\emph{Pvote|PresOnlyConcurs}}        &  $.446$  & .002 &  $.421$  & .000 & $.341$ & .000 & $.875$ & .000 \\
+$Pvote|Gov\&PresConcur$                      &  $.018$  & .956 & $-.096$  & .638 &        &      & $.930$ & .000 \\
+$IncumbentGovernor$                          &  $.045$  & .021 &  $.020$  & .155 & $.008$ & .583 & $.017$ & .123 \\
+$IncumbentPresident$                         & $-.047$  & .004 & $-.025$  & .120 &$-.027$ & .128 & $.001$ & .926 \\
+$Economy$                                    & $-.145$  & .465 &  $.204$  & .141 & $.206$ & .176 & $.110$ & .233 \\
+$PartyCoalesced$                             &  $.016$  & .416 & $-.001$  & .990 & $.007$ & .802 &$-.014$ & .382 \\ %\hline
+N     & \multicolumn{2}{c}{160} & \multicolumn{2}{c}{352} & \multicolumn{2}{c}{352} & \multicolumn{2}{c}{352} \\
+$R^2$ & \multicolumn{2}{c}{.82} & \multicolumn{2}{c}{.84} & \multicolumn{2}{c}{.81} & \multicolumn{2}{c}{.58}  \\ %\hline
+\hline
+\end{tabular}
+}
+\end{center}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Resultados: \color{red}{PRI}}
+
+\begin{center}
+\resizebox{.95\columnwidth}{!}{
+\begin{tabular}{l r r r r r r r r}
+ & \multicolumn{2}{c}{\footnotesize{1997--2009}}& \multicolumn{6}{c}{~\hrulefill~\footnotesize{1979--2009}~\hrulefill~}  \\
+ & \multicolumn{2}{c}{(1) shares} & \multicolumn{2}{c}{(2) shares} & \multicolumn{2}{c}{(3) shares}  & \multicolumn{2}{c}{(4) residuals}  \\
+Variable   & $\hat{\beta}$ & $p$ & $\hat{\beta}$ & $p$ & $\hat{\beta}$ & $p$ & $\hat{\beta}$ & $p$ \\\hline
+Constant                                     &  $.187$  & .000 &  $.092$  & .050 & $.062$ & .213 & $.017$ & .507 \\
+$RecentDvote$                                &  $.418$  & .000 &  $.746$  & .000 & $.808$ & .000 &        &      \\
+$GovOnlyConcurs$                             & $-.288$  & .001 & $-.190$  & .000 &        &      &$-.019$ & .092 \\
+$PresOnlyConcurs$                            & $-.249$  & .000 & $-.224$  & .000 &$-.199$ & .000 &$-.059$ & .005 \\
+$Gov\&PresConcur$                            & $-.235$  & .052 & $-.232$  & .001 &        &      &$-.045$ & .081 \\
+\textbf{\emph{Gvote|GovOnlyConcurs}}         &  $.620$  & .002 &  $.291$  & .000 &        &      & $.737$ & .000 \\
+$Gvote|Gov\&PresConcur$                      &  $.231$  & .478 &  $.378$  & .270 &        &      & $.332$ & .185 \\
+\textbf{\emph{Pvote|PresOnlyConcurs}}        &  $.640$  & .000 &  $.315$  & .000 & $.270$ & .005 & $.839$ & .000 \\
+$Pvote|Gov\&PresConcur$                      &  $.362$  & .329 & $-.050$  & .876 &        &      & $.661$ & .013 \\
+$IncumbentGovernor$                          &  $.086$  & .000 &  $.027$  & .168 & $.016$ & .449 & $.031$ & .062 \\
+$IncumbentPresident$                         & $-.063$  & .006 & $-.033$  & .350 &$-.038$ & .298 &$-.014$ & .596 \\
+$Economy$                                    & $-.438$  & .005 &  $.402$  & .090 & $.438$ & .087 & $.048$ & .815 \\
+$PartyCoalesced$                             & $-.018$  & .132 &  $.006$  & .801 & $.005$ & .834 &$-.003$ & .901 \\ %\hline
+N     & \multicolumn{2}{c}{160} & \multicolumn{2}{c}{352} & \multicolumn{2}{c}{352}  & \multicolumn{2}{c}{352}  \\
+$R^2$ & \multicolumn{2}{c}{.76} & \multicolumn{2}{c}{.88} & \multicolumn{2}{c}{.87}  & \multicolumn{2}{c}{.56}  \\ %\hline
+\hline
+\end{tabular}
+}
+\end{center}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Resultados: \color{yellow}{PRD}}
+
+\begin{center}
+\resizebox{.95\columnwidth}{!}{
+\begin{tabular}{l r r r r r r r r}
+ & \multicolumn{2}{c}{\footnotesize{1997--2009}}& \multicolumn{6}{c}{~\hrulefill~\footnotesize{1979--2009}~\hrulefill~}  \\
+ & \multicolumn{2}{c}{(1) shares} & \multicolumn{2}{c}{(2) shares} & \multicolumn{2}{c}{(3) shares}  & \multicolumn{2}{c}{(4) residuals}  \\
+Variable   & $\hat{\beta}$ & $p$ & $\hat{\beta}$ & $p$ & $\hat{\beta}$ & $p$ & $\hat{\beta}$ & $p$ \\\hline
+Constant                                     &  $.098$  & .005 &  $.058$  & .005 & $.050$ & .022 &$-.010$ & .564 \\
+$RecentDvote$                                &  $.475$  & .019 &  $.608$  & .000 & $.665$ & .000 &        &      \\
+$GovOnlyConcurs$                             & $-.125$  & .000 & $-.070$  & .000 &        &      & $.005$ & .670 \\
+$PresOnlyConcurs$                            & $-.111$  & .039 & $-.045$  & .123 &$-.034$ & .304 & $.014$ & .555 \\
+$Gov\&PresConcur$                            & $-.104$  & .043 & $-.031$  & .424 &        &      & $.010$ & .718 \\
+\textbf{\emph{Gvote|GovOnlyConcurs}}         &  $.878$  & .000 &  $.785$  & .000 &        &      & $.927$ & .000 \\
+$Gvote|Gov\&PresConcur$                      & $-.051$  & .901 &  $.233$  & .474 &        &      & $.400$ & .371 \\
+\textbf{\emph{Pvote|PresOnlyConcurs}}        &  $.488$  & .006 &  $.577$  & .001 & $.530$ & .000 & $.815$ & .001 \\
+$Pvote|Gov\&PresConcur$                      &  $.408$  & .298 &  $.242$  & .443 &        &      & $.472$ & .227 \\
+$IncumbentGovernor$                          &  $.102$  & .009 &  $.084$  & .009 & $.077$ & .021 & $.024$ & .352 \\
+$Economy$                                    & $-.202$  & .608 & $-.059$  & .829 &$-.039$ & .904 &$-.040$ & .867 \\ %\hline
+$PartyCoalesced$                             &          &      & $-.058$  & .092 &$-.061$ & .147 &$-.001$ & .995 \\
+N     & \multicolumn{2}{c}{160} & \multicolumn{2}{c}{352} & \multicolumn{2}{c}{352}  & \multicolumn{2}{c}{352}   \\
+$R^2$ & \multicolumn{2}{c}{.67} & \multicolumn{2}{c}{.73} & \multicolumn{2}{c}{.67}  & \multicolumn{2}{c}{.40}  \\
+\hline
+\end{tabular}
+}
+\end{center}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Especificación alternativa}
+\begin{center}
+  \includegraphics[width=\textwidth]{../graphs/op1.pdf}
+\end{center}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Especificación alternativa}
+\begin{center}
+  \includegraphics[width=\textwidth]{../graphs/op2.pdf}
+\end{center}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Especificación alternativa}
+\begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[width=.45\textwidth]{../graphs/opPan.pdf}&
+  \includegraphics[width=.45\textwidth]{../graphs/opPri.pdf}\\
+  \includegraphics[width=.45\textwidth]{../graphs/opPrd.pdf}& \\
+  \end{tabular}
+\end{center}
+}
+
+\section{Qué dicen los resultados}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Simulaciones MCMC}
+
+\begin{center}
+  \includegraphics[width=.75\textwidth]{../graphs/simpansh97.pdf}
+\end{center}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Simulaciones MCMC}
+
+\begin{center}
+  \includegraphics[width=.75\textwidth]{../graphs/simprish97.pdf}
+\end{center}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Simulaciones MCMC}
+
+\begin{center}
+  \includegraphics[width=.75\textwidth]{../graphs/simprdsh97.pdf}
+\end{center}
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Implicaciones}
+
+    \begin{enumerate}
+    \item CSES: fuerzas locales importan tanto o más que las nacionales. ¿Ignorarlas = sesgo?
+    \item Chibber\&Kollman (2004): partidos locales/nacionales florecen cuando epicentro económico y político gravita a periferia/centro. \alert{No} se colapsa a cero
+    \item Teoría de la ambición: gobernadores y sus votantes impactan política nacional desde al menos 1979
+    \end{enumerate}
+
+\bigskip
+
+Extensiones: \\ participación, calidad de candidatos, calendarios electorales. \\Incluir control de swings nacionales
+
+}
+
+\section{Conclusiones}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame {                      % SLIDE
+
+    \frametitle{Conclusiones}
+
+    \begin{itemize}
+     \item Hay efectos de arrastre gubernatoriales significativos
+     \item Entre la mitad (desde 1979) y dos tercios (desde 1997) del éxito o fracaso de la campaña ejecutiva subnacional se tranfiere a diputados federales
+     \item Diferencias interpartidistas: PRI menos sensible, PRD más. PRI más parecido a otros desde 1997 
+     \item Umbrales: PAN ha capitalizado efecto de arrastre, a PRI y sobreotodo PRD los ha perjudicado 
+    \end{itemize}
+
+\bigskip
+\pause
+
+    \begin{center}
+      \textbf{¡Gracias!}
+    \end{center}
+}
+
+\end{document}
+
