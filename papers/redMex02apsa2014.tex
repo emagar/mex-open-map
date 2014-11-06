@@ -82,13 +82,19 @@ In this work we answer these questions and assess Mexico's redistricting process
 
 \section{Automated Redistricting and Partisan Interaction}
 
-Mexico adopted a mixed-member electoral system for the lower house of Congress in 1979.\footnote{We name maps by years, sticking to the convention of not using the year when a map was actually drawn and accepted, but the first election that it was (or would have been) in use. Thus, there is a ``1979 map'' actually drawn in 1978, a ``1997 map'' drawn in 1996, a ``2006 map'' drawn in 2005, and a ``2015 map'' drawn in 2013, but never used.} In the first election, three hundred single-member districts were drawn to elect three-fourths of the chamber by plurality rule (three-fifths since 1985). Districts were not redrawn until 1997, coinciding with the first free and fair federal election \citep{lujambio.vives.2008,trelles.mtz.tesisItam.2007}. A second redistricting occurred in 2006. A third was meant to be adopted in 2015 but aborted. 
+Mexico adopted a mixed-member electoral system for the lower house of Congress in 1978. In the first election, three hundred single-member districts were drawn to elect three-fourths of the chamber by plurality rule. Districts were not redrawn until 1996, coinciding with the first free and fair national election in 1997 \citep{lujambio.vives.2008,trelles.mtz.tesisItam.2007}. A second redistricting occurred in 2005, and a third (failed to be adopted) in 2013. In the following lines we refer to district maps by the first year they were in use, not by the actual year they were drawn.\footnote{Despite maps were actually drawn in 1978, 1996, 2005, and 2013, we will refer to them as 1979, 1997, 2006 and 2015, respectively. The last case (2015) is hypothetical.}
+
+% comment [Mike] I'm sure the "first free and fair election" is common knowledge within Mexico, but can we provide a cite? 
+% comment [Eric] DONE
 
 In 1997, for the first time, IFE implemented a redistricting process whereby computer-generated plans informed the national political parties represented at the EMB \citep{trelles.mtz.tesisItam.2007}.Since then, the process involves three stages: 1) the apportionment of the 300 single member districts into the 32 states; 2) the development and implementation of an automated optimization algorithm; and 3) the analysis of the automated generated maps by a technical committee and an in-door discussion where political parties are able to suggest modifications to the plans in two different stages. 
 
-The first stage starts with the apportionment of congressional seats to the 32 states based solely on population.\footnote{The Federal District where Mexico City resides in not a state proper, but treated thus for the purpose of apportionment and redistricting.} As in the U.S., no district crosses state boundaries and all districts must be contiguous. In the next section we discuss this method and describe its effect on representation. In sharp contrast to the U.S.\ \citep{szpiro.numbersRule.2010}, little, if any debate about alternative apportionment methods has been undertaken. 
+The first stage starts with the apportionment of congressional seats to the 32 states based solely on population.\footnote{One "state" is the Federal District for Mexico City, which is similar to Washington, D.C.} As in the U.S., no district crosses state boundaries and all districts must be contiguous. In the next section we discuss this method and describe its effect on representation. In sharp contrast to the U.S.\ \citep{szpiro.numbersRule.2010}, little, if any debate about alternative apportionment methods has been undertaken. 
 
 In the second stage, an optimization model to construct congressional districts from the base-geography --- states' \emph{electoral \emph{secciones}} --- is devised. Mexico is comprised of more than 66,000 \emph{secciones}, which are analogous to U.S.\ census tracts. Median \emph{secci\'on} population in the 2010 census was 1,280 persons, with a maximum at 79,232. Similar to the U.S.\ Voting Rights Act's guarantees for minority representation, \emph{municipios} --- the smallest elected offices, similar to counties in the U.S.\ --- with sizable indigenous populations cannot be partitioned. 
+
+% comment [Mike] I think it would be better to use the Spanish word for sections (italicized) since the English word "section" can be ambiguous. Same goes for municipality.
+% [Eric] I agree and have changed them throughout the MS.
 
 The optimization model has been refined in each redistricting round. In the 2015 redistricting process, the algorithm aggregated \emph{secciones} into congressional districts starting from a randomly selected seed in each state and then weighted and rewarded differently the following variables trying to \emph{minimize} a cost function composed of the following components: 1) population balance (allowing up to 15\% deviations across districts), 2) the preservation of municipal boundaries, 3) the minimization of travelling times within the district, and 4) district compactness.\footnote{Population was assigned 40\% of the overall cost function score, municipal boundaries 30\%, traveling times 20\%, and  compactness 10\%.} After thousands of iterations, a map minimizing the cost function of the algorithm is proposed and it is commonly known as the first scenario. In the latest redistricting process, the first scenario was presented on July 17, 2013 for discussion.
 
@@ -118,34 +124,22 @@ Parties actively challenged proposed districts, making 75 counter-proposals each
 \begin{table}
 \begin{center}
   \begin{tabular}{lrrr|rrr|r}
-    Party & national & state  & total 1st & national & state  & total 2nd & Total \\ \hline
-    PAN	  & 17/22    & 2/20   & 19/42     & 17/24    & 4/16   & 21/40     & 40/82 \\
-    PRI	  & 0/0      & 2/28   & 2/28      & 8/30     & 6/26   & 14/56     & 16/84 \\
-    PRD	  & 3/27     & 2/21   & 5/48      & 5/29     & 5/18   & 10/47     & 15/95 \\
-    PT	  & 1/12     & 1/20   & 2/22      & 3/15     & 1/16   & 4/31      & 6/53 \\
-    PVEM  & 0/0      & 1/20   & 1/20      & 7/28     & 3/17   & 10/45     & 11/65 \\
-    MC    & 1/17     & 0/21   & 1/38      & 6/32     & 2/16   & 8/48      & 9/86 \\
-    PNA   & 0/1      & 1/18   & 1/19      & 4/11     & 3/17   & 7/28      & 8/47 \\
-    IFE   & 0/0      & 1/9    & 1/9       & 0/0      & 5/13   & 5/13      & 6/22 \\ \hline
-    Total & 22/79    & 10/157 & 32/236    & 50/169   & 29/139 & 43/308    & 111/534 \\
+    Party & national & state  & total 1st & national   & state  & total 2nd & Total \\ \hline
+    PAN	  & 17/22    & 2/20   & 19/42     & 17/24      & 4/16   & 21/40  & 40/82 \\
+    PRI	  & 0/0      & 2/28   & 2/28      & 8/30   & 6/26   & 14/56  & 16/84 \\
+    PRD	  & 3/27     & 2/21   & 5/48      & 5/29   & 5/18   & 10/47  & 15/95 \\
+    PT	  & 1/12     & 1/20   & 2/22      & 3/15   & 1/16   & 4/31   & 6/53 \\
+    PVEM  & 0/0      & 1/20   & 1/20      & 7/28   & 3/17   & 10/45  & 11/65 \\
+    MC    & 1/17     & 0/21   & 1/38      & 6/32   & 2/16   & 8/48   & 9/86 \\
+    PNA   & 0/1      & 1/18   & 1/19      & 4/11   & 3/17   & 7/28   & 8/47 \\
+    IFE   & 0/0      & 1/9    & 1/9       & 0/0    & 5/13   & 5/13   & 6/22 \\ \hline
+    Total & 22/79    & 10/157 & 32/236    & 50/169 & 29/139 & 43/308 & 111/534 \\
   \end{tabular}
   \caption{Counter-proposals to the first and second scenarios at the National and Local Surveillance Committees. Denominator reports the number of counter-proposals made, numerator how many were adopted. Prepared by authors with information from the Federal Electoral Institute.}\label{T:counterprops}
 \end{center}
 \end{table}
 
 % comment [Mike] changed PT total 1st from 2/32 to 2/22 and grand total from 32/236 to 32/226; likewise total PRD 12t and 2nd changed from 6/63 to 6/53 and grand grand total from 111/544 to 111/534
-
-% comment [eric] these are nums from original table that Mike's comment above refers to. They seemed right, need to compare to table in Alejandro's first draft. 
-    % Party & national & state  & total 1st & national& state  & total 2nd & Total \\ \hline
-    % PAN   & 17/22    & 2/20   & 19/42     & 17/24   & 4/16   & 21/40     & 40/82 \\
-    % PRI   & 0/0      & 2/28   & 2/28      & 8/30    & 6/26   & 14/56     & 16/84 \\
-    % PRD   & 3/27     & 2/21   & 5/48      & 5/29    & 5/18   & 10/47     & 15/95 \\
-    % PT    & 1/12     & 1/20   & 2/32      & 3/15    & 1/16   & 4/31      & 6/63 \\
-    % PVEM  & 0/0      & 1/20   & 1/20      & 7/28    & 3/17   & 10/45     & 11/65 \\
-    % MC    & 1/17     & 0/21   & 1/38      & 6/32    & 2/16   & 8/48      & 9/86 \\
-    % PNA   & 0/1      & 1/18   & 1/19      & 4/11    & 3/17   & 7/28      & 8/47 \\
-    % IFE   & 0/0      & 1/9    & 1/9       & 0/0     & 5/13   & 5/13      & 6/22 \\ \hline
-    % Total & 22/79    & 10/157 & 32/236    & 50/169  & 29/139 & 43/308    & 111/544 \\
 
 % comment [Alejandro]: changed the word proposal for scenario in Table 1 description (first line). Same thing in the paragraph bellow... SCENARIO = departing point; and PROPOSAL (or COUNTER PROPOSAL)  = a modification proposed by a party of IFE. 
 
@@ -695,8 +689,8 @@ The measure regresses a party's three-year vote change in the section $\Delta_s$
 
 
 \bibliographystyle{apsr}
-%\bibliography{../../../../../mydocs/magar}
-\bibliography{../bib/magar}
+\bibliography{../../../../../mydocs/magar}
+%\bibliography{bib/magar}
 
 
 
