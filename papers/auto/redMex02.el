@@ -22,8 +22,6 @@
     (TeX-add-symbols
      "mc")
     (TeX-run-style-hooks
-     "pdflscape"
-     "rotating"
      "amsmath"
      "arydshln"
      "natbib"
