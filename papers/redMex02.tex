@@ -92,48 +92,44 @@ More refined optimization algorithms have been used in each redistricting round.
 
 It is at this stage where parties interact strategically with mapmakers, and other parties. Parties propose amendments to the computer-generated plans, but these amendments must improve the overall cost score to be considered for adoption. Table \ref{T:counterprops} summarizes the two rounds of amendments that took place in preparation for the 2015 map. The number of proposals increased significantly over previous redistricting, because IFE expanded participation to the its state offices, giving the parties two channels to deliver simultaneous counter-proposals. There were a total of 534 counterproposals made for the 2015 map (more than twice of the counterproposals made for the 1997 and 2006 maps). 236 counterproposals were made to the first scenario (157 from the LSC and 79 form the NSC) and 308 were made to the second scenario (139 by the LSC and 169 by NSC).
 
-% Comment [Alejandro]: We might want to include table 1 and/or 3 in the word document shared previously by me on the G drive entitled "APSA2014Paper"...
-
-
 Parties actively challenged proposed districts, making 75 counter-proposals each on average. Although we expected that all 7 parties would behave as rational self-interest maximizers and strategically make competitive counter-proposals to the first scenario, the right-of-center PAN was, by far, the most successful. Nearly half of their 82 proposals were accepted, compared to about one-fifth for the other major parties (PRI and PRD). Amendments originated in both national (7 parties at the National Surveillance Commission) and state level (same 7 parties represented at 32 Local Surveillance Commissions).\footnote{The full set of parties represented in each committee were PAN, PRI, PRD, PT, PVEM, MC and PNA.} Activity at the amendment stage was enhanced by the adoption of an internal web-based map-sharing tool, which standardized counter-proposals and enabled parties to observe each others' amendments --- improving information for strategic behavior. The final proposal for Council General approval was presented on October 15, 2013. In the midst of a major electoral reform that took place in December that year, the Council General, driven by the pressure of the three major parties (PAN, PRI and PRD), chose not to decide before the end of the year. The 2015 midterm election, it was soon after learned, would be held with significantly outdated districts. 
 
 % Comment [Alejandro]: The idea of "rational self-interest maximizers and strategically make competitive counterproposals to the first scenario" comes from the previous draft APSA2014Paper (available in G drive) and it is a possible path we want to explore to complement this paper or for publications in the near future...
 % comment [Mike] what is the "strategic dimension"? How can we quantify it?
 % comment [Eric] I have changed to better information for strategic behavior. Developing the game seems beyond this paper, but may shed interesting results.
-
 % Comment [Alejandro]: A way to quantify and contrast the "strategic dimension": If we put computers (or students, as we did with the PMP demo of the State of Mexico with Eric's class) to play the game and minimize the cost function (departing from the first scenario) and maximize their utilities (as if they were parties), we could model and find the equilibrium under strictly rational principles / behavior. This would be our anchor to compare what happened in real circumstances to what could have happened if agents had been "more strategic". If we did that exercise, I am pretty sure that, given historical electoral results and the PRI's favorable position in most states across the country, the PRI would be the party that is more likely to make the most "efficient" counterproposals (not the PAN) in the first and second rounds of counterproposals. An alternative way to quantify and compare efficient solutions, from the party perspective, would be to try to minimize the cost function, while maximizing the vote share for each party by including a fifth variable/criteria (party vote share) to the four criteria that are already being used by IFE. What would have happened if the PRI and PRD had been as efficient as PAN in making counterproposals? Again, I suspect that given the PRIs electoral advantage across states, they would be, by far, better positioned to make the most effective counterproposals because they would give the simulated annealing algorithm a wider margin to offer more efficient (lower cost function) solutions... 
 
 \begin{table}
 \begin{center}
   \begin{tabular}{lrrr|rrr|r}
-    Party & national & state  & total 1st & national & state  & total 2nd & Total \\ \hline
-    PAN	  & 17/22    & 2/20   & 19/42     & 17/24    & 4/16   & 21/40     & 40/82 \\
-    PRI	  & 0/0      & 2/28   & 2/28      & 8/30     & 6/26   & 14/56     & 16/84 \\
-    PRD	  & 3/27     & 2/21   & 5/48      & 5/29     & 5/18   & 10/47     & 15/95 \\
-    PT	  & 1/12     & 1/20   & 2/22      & 3/15     & 1/16   & 4/31      & 6/53 \\
-    PVEM  & 0/0      & 1/20   & 1/20      & 7/28     & 3/17   & 10/45     & 11/65 \\
-    MC    & 1/17     & 0/21   & 1/38      & 6/32     & 2/16   & 8/48      & 9/86 \\
-    PNA   & 0/1      & 1/18   & 1/19      & 4/11     & 3/17   & 7/28      & 8/47 \\
-    IFE   & 0/0      & 1/9    & 1/9       & 0/0      & 5/13   & 5/13      & 6/22 \\ \hline
-    Total & 22/79    & 10/157 & 32/236    & 50/169   & 29/139 & 43/308    & 111/534 \\
+    Party & national & state  & total 1st & national& state  & total 2nd & Total \\ \hline
+    PAN   & 17/22    & 2/20   & 19/42     & 17/24   & 4/16   & 21/40     & 40/82 \\
+    PRI   & 0/0      & 2/28   & 2/28      & 8/30    & 6/26   & 14/56     & 16/84 \\
+    PRD   & 3/27     & 2/21   & 5/48      & 5/29    & 5/18   & 10/47     & 15/95 \\
+    PT    & 1/12     & 1/20   & 2/32      & 3/15    & 1/16   & 4/31      & 6/63 \\
+    PVEM  & 0/0      & 1/20   & 1/20      & 7/28    & 3/17   & 10/45     & 11/65 \\
+    MC    & 1/17     & 0/21   & 1/38      & 6/32    & 2/16   & 8/48      & 9/86 \\
+    PNA   & 0/1      & 1/18   & 1/19      & 4/11    & 3/17   & 7/28      & 8/47 \\
+    IFE   & 0/0      & 1/9    & 1/9       & 0/0     & 5/13   & 5/13      & 6/22 \\ \hline
+    Total & 22/79    & 10/157 & 32/236    & 50/169  & 29/139 & 43/308    & 111/544 \\
   \end{tabular}
   \caption{Counter-proposals to the first and second scenarios at the National and Local Surveillance Committees. Denominator reports the number of counter-proposals made, numerator how many were adopted. Prepared by authors with information from the Federal Electoral Institute.}\label{T:counterprops}
 \end{center}
 \end{table}
 
 % comment [Mike] changed PT total 1st from 2/32 to 2/22 and grand total from 32/236 to 32/226; likewise total PRD 12t and 2nd changed from 6/63 to 6/53 and grand grand total from 111/544 to 111/534
+% comment [eric] nums below are what Mike's comment talks about. Those in the table above come straight from table in Alejandro's first draft. Was there a mistake in that table? Should Mike's amendments be recovered? 
+    % Party & national & state  & total 1st & national & state  & total 2nd & Total \\ \hline
+    % PAN   & 17/22    & 2/20   & 19/42     & 17/24    & 4/16   & 21/40     & 40/82 \\
+    % PRI   & 0/0      & 2/28   & 2/28      & 8/30     & 6/26   & 14/56     & 16/84 \\
+    % PRD   & 3/27     & 2/21   & 5/48      & 5/29     & 5/18   & 10/47     & 15/95 \\
+    % PT    & 1/12     & 1/20   & 2/22      & 3/15     & 1/16   & 4/31      & 6/53 \\
+    % PVEM  & 0/0      & 1/20   & 1/20      & 7/28     & 3/17   & 10/45     & 11/65 \\
+    % MC    & 1/17     & 0/21   & 1/38      & 6/32     & 2/16   & 8/48      & 9/86 \\
+    % PNA   & 0/1      & 1/18   & 1/19      & 4/11     & 3/17   & 7/28      & 8/47 \\
+    % IFE   & 0/0      & 1/9    & 1/9       & 0/0      & 5/13   & 5/13      & 6/22 \\ \hline
+    % Total & 22/79    & 10/157 & 32/236    & 50/169   & 29/139 & 43/308    & 111/534 \\
 
-% comment [eric] these are nums from original table that Mike's comment above refers to. They seemed right, need to compare to table in Alejandro's first draft. 
-    % Party & national & state  & total 1st & national& state  & total 2nd & Total \\ \hline
-    % PAN   & 17/22    & 2/20   & 19/42     & 17/24   & 4/16   & 21/40     & 40/82 \\
-    % PRI   & 0/0      & 2/28   & 2/28      & 8/30    & 6/26   & 14/56     & 16/84 \\
-    % PRD   & 3/27     & 2/21   & 5/48      & 5/29    & 5/18   & 10/47     & 15/95 \\
-    % PT    & 1/12     & 1/20   & 2/32      & 3/15    & 1/16   & 4/31      & 6/63 \\
-    % PVEM  & 0/0      & 1/20   & 1/20      & 7/28    & 3/17   & 10/45     & 11/65 \\
-    % MC    & 1/17     & 0/21   & 1/38      & 6/32    & 2/16   & 8/48      & 9/86 \\
-    % PNA   & 0/1      & 1/18   & 1/19      & 4/11    & 3/17   & 7/28      & 8/47 \\
-    % IFE   & 0/0      & 1/9    & 1/9       & 0/0     & 5/13   & 5/13      & 6/22 \\ \hline
-    % Total & 22/79    & 10/157 & 32/236    & 50/169  & 29/139 & 43/308    & 111/544 \\
 
 % comment [Alejandro]: changed the word proposal for scenario in Table 1 description (first line). Same thing in the paragraph bellow... SCENARIO = departing point; and PROPOSAL (or COUNTER PROPOSAL)  = a modification proposed by a party of IFE. 
 
