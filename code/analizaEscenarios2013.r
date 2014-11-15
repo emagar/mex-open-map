@@ -1270,8 +1270,8 @@ lambda.rho.4 <- function() {
     ### for parties absent, leading to estimate lambdas for those absent parties---absurd, though maybe inconsequential
     ### in Bayesian estimation. To verify, should make code more flexible to handle a variable number of parties...
     ### NOTE 2-5-14: dummy[i,1:7] already took care of the problem above. 
-    for (i in 1:I){ # loop over state-years
-        for (j in 1:J){ # loop over parties (dummy will select those voted)
+    for (i in 1:I){     # loop over state-years
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
             S[i,j] ~ dbin(pi[i,j], D[i])  # D is the number of SMD seats in observation i's state ... WHY DON'T I USE S[i,1:J] ~ dmulti(pi[i,1:J], D[i])
         }
         numerator[i,1] <- dummy[i,1] * exp( lambda[1] + rho * log(v[i,1]) )
@@ -1280,7 +1280,7 @@ lambda.rho.4 <- function() {
 #            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] + rho * log(v[i,j]) )
             numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] ) * v[i,j]^rho
         }
-        for (j in 1:J){ # loop over parties (dummy will select those who ran that year)
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
             d1[i,j] <- dummy[i,1] * exp( lambda[1] ) * v[i,1]^rho 
             d2[i,j] <- dummy[i,2]                    * v[i,2]^rho 
             d3[i,j] <- dummy[i,3] * exp( lambda[2] ) * v[i,3]^rho 
@@ -1293,7 +1293,7 @@ lambda.rho.4 <- function() {
         }
     }
     ### priors
-    for (p in 1:6){ # there are 7 party labels in the 3-election data
+    for (p in 1:6){ # there are 7 party labels in the 3-election data, PRI is reference
         lambda[p] ~ dnorm( 0, tau.lambda )
     }
     tau.lambda <- pow(.25, -2)

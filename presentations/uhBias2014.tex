@@ -20,7 +20,7 @@
 \usepackage{graphicx}
 \graphicspath{"../graphs/"}
 \usepackage{color}
-%\usepackage[colorlinks]{hyperref}
+%\usepackage[colorlinks]{hyperref} % beamer loads this by default, needed only to change default behavior? 
 \usepackage{tikz} % Easier syntax to draw pgf files (invokes pgf automatically)
 \usetikzlibrary{arrows,shapes.geometric}
 
@@ -59,6 +59,7 @@
 
 \setbeamercovered{transparent}
 \setbeamertemplate{caption}{\insertcaption}
+\setbeamertemplate{footline}[frame number] % adds slide number, overrides split footer with authors/title that the theme uses
 
 \tikzstyle{nodo} = [circle, draw=black, fill=white, text=black]
 \tikzstyle{end} = [circle, minimum width=3pt,fill, inner sep=0pt]
@@ -70,7 +71,8 @@
                               \inst{2} MIT \and
                               \inst{3} UF, Gainesville \and
                               \inst{4} University of Pittsburgh}
-\date[14nov14]{November 14, 2014}
+%\address{}
+\date[14nov14]{Analyzing Latin American Politics Conference\\ University of Houston \\ 11/14/14}
 
 \begin{document}
 
@@ -79,17 +81,18 @@
 \frame[plain]{\titlepage}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\frame {                      % SLIDE
+\begin{frame}                      % SLIDE
 
     \frametitle{How does malapportionment distort representation?}
 
+
+Sparsely populated areas get same representation as the densely populated
 %\emph{\textbf{Q:}} What can we learn from the Mexico City legislative assembly?
 %How does malapportionment distort representation? \\
 %(Erikson 1972, Tufte 1973)
 
 
-%\bigskip
+\bigskip
 
 Studies of U.S.\ and U.K.\  
 
@@ -99,7 +102,7 @@ Studies of U.S.\ and U.K.\
 
 \item Reapportionment Revolution removed bias in \\ different, predictable degrees (Cox\&Katz 2002)
 
-\item no pro-Dem bias from malapp.\ after mid-1960s \\ (Grofman et al.~1997)
+\item no party bias from malapp.\ after mid-1960s \\ (Grofman et al.~1997)
 
 \end{itemize}
 
@@ -118,11 +121,10 @@ Studies of U.S.\ and U.K.\
 
 \end{block}
 
-}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\frame {                      % SLIDE
+\begin{frame}                      % SLIDE
 
     \frametitle{Mexican congressional districts}
 
@@ -143,24 +145,25 @@ Redistricting process (FPTP):
 
 Redistricting by experts, but behind closed doors
 
-\begin{multline}
+\begin{multline*}
 \texttt{Score} = .4 \times \texttt{PopBalance} + .3 \times \texttt{MunicBoundaries} \\
 + .2 \times \texttt{TravelTime} + .1 \times \texttt{Compactness}
-\end{multline}
+\end{multline*}
 
-\bigskip
 
 Topic will be salient when single-term limits dropped in 2015
 
-
-}
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-
-\frame {                      % SLIDE
+\begin{frame}\label{fr:MxMapProj}                      % SLIDE
 
     \frametitle{The bigger project}
 
-\emph{Drawing Electoral Boundaries in Mexico} = offspring of \\ Public Mapping Project in U.S.\ (Altman\&McDonald)
+\emph{Draw Mexico} project = offspring of \emph{Public Mapping Project in U.S.}
+
+\bigskip
+
+Remove opaqueness from redistricting process 
 
 \bigskip
 
@@ -170,7 +173,7 @@ Topic will be salient when single-term limits dropped in 2015
 
 \item enables widespread DIY redistricting thru cloud computing
 
-\item anyone w/internet can draw/inspect maps: crowdsourcing
+\item  internet lets anyone draw/inspect maps: crowdsourcing
 
 \item redistricting contests in 6 states $\rightarrow$ hundreds of legal plans
 
@@ -178,33 +181,30 @@ Topic will be salient when single-term limits dropped in 2015
 
 \bigskip
 
-Remove opaqueness from redistricting process 
-
-\bigskip
-
 Application to \alert{Mexico} \href{http://23.21.151.172/}{\beamergotobutton{Link: MexDemo}} \pause (Donations?) 
 
-
-}
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\frame {                      % SLIDE
+\begin{frame}                      % SLIDE
     \frametitle{Apportionment}
 
 
 Hamilton method used:
 
 \begin{itemize}
-\item The quota (or price of a seat) is $Q = \frac{\text{Nation's population}}{300}$
+\item The quota (or price of a seat) is $Q = \frac{\text{nation's population}}{300}$
 
-\item First allocation is $\frac{\text{State's population}}{Q}$, rounded down. 
+\item First allocation is $\frac{\text{state's population}}{Q}$, rounded down
 
-\item Every state gets 2 seats minimum.
+\item Every state gets 2 seats min. + indigenous voting rights
 
 \item Unallocated seats, if any, awarded to states with largest fractional remainders
 \end{itemize}
 
 \bigskip
+
+\pause
 
 Most recent decennial census must be used 
 
@@ -214,17 +214,18 @@ Most recent decennial census must be used
 \item and IFE considers $\pm15\%$ imbalance normal (!)
 \end{itemize}
 
-}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
-\frame {                      % SLIDE
+\begin{frame}                      % SLIDE
     \frametitle{Malapportionment between states}
 
 \begin{center}
    \includegraphics[width=6cm]{../graphs/statesUnderOverRep.pdf}
 \end{center}
 
-}
+\end{frame}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \frame {                      % SLIDE
@@ -315,7 +316,7 @@ Generalization (King\&Browning 1987):
 
 \bigskip
 
-Multiparty (King 1990):
+Multiparty (King 1990, Calvo\&Micozzi 2005):
 \begin{equation*}
  E(s_j) = \frac{e^{\lambda_j} * v_j^\rho}{\sum_{m=1}^{J} e^{\lambda_m} * v_m^\rho}
 \end{equation*}
@@ -345,9 +346,46 @@ Multiparty (King 1990):
 \begin{itemize}
 \item State-level aggregates (average = 9.4 districts, but $\Delta^+N$) 
 \item 2006--2012 districts constant
-\item MCMC
+\item MCMC \footnotesize{($3 \times 10k$ iter., every $100^{th}$ for post.\ sample)}
 \end{itemize}
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+\begin{frame}[fragile=singleslide]\frametitle{Bugs code}
+\begin{tiny}
+\begin{verbatim}
+    for (i in 1:I){     # loop over state-years
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
+            S[i,j] ~ dbin(pi[i,j], D[i])  # D is number SMD seats in obs. i's state
+        }
+        numerator[i,1] <- dummy[i,1] * exp( lambda[1] + rho * log(v[i,1]) )
+        numerator[i,2] <- dummy[i,2] * exp(             rho * log(v[i,2]) )
+        for (j in 3:J){
+            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] ) * v[i,j]^rho
+        }
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
+            d1[i,j] <- dummy[i,1] * exp( lambda[1] ) * v[i,1]^rho 
+            d2[i,j] <- dummy[i,2]                    * v[i,2]^rho 
+            d3[i,j] <- dummy[i,3] * exp( lambda[2] ) * v[i,3]^rho 
+            d4[i,j] <- dummy[i,4] * exp( lambda[3] ) * v[i,4]^rho 
+            d5[i,j] <- dummy[i,5] * exp( lambda[4] ) * v[i,5]^rho 
+            d6[i,j] <- dummy[i,6] * exp( lambda[5] ) * v[i,6]^rho 
+            d7[i,j] <- dummy[i,7] * exp( lambda[6] ) * v[i,7]^rho 
+            denominator[i,j] <- d1[i,j]+d2[i,j]+d3[i,j]+d4[i,j]+d5[i,j]+d6[i,j]+d7[i,j]
+            pi[i,j] <- numerator[i,j] / denominator[i,j]
+        }
+    }
+    ### priors
+    for (p in 1:6){ # there are 7 party labels in the 3-election data, PRI is reference
+        lambda[p] ~ dnorm( 0, tau.lambda )
+    }
+    tau.lambda <- pow(.25, -2)
+    rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
+\end{verbatim}
+\end{tiny}
+
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
 \frame {                      % SLIDE
@@ -369,8 +407,8 @@ PRD & $^1/_4$ \\
 
 \bigskip
 
-\begin{block}{Johnston hypothesis:} 
-Might malapportionment $\rightarrow$ bias in favor of PRI? \\ Against PAN?
+\begin{block}{Johnston-like hypothesis:} 
+Might malapportionment $\rightarrow$ bias in favor of PRI? \\ Against PAN? PRD?
 \end{block}
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -413,6 +451,8 @@ Preliminary analysis reveals that:
 
 \item Study residuals from estimation: relation to \\ malapp.? turnout diff.? geography of support?
 
+\item Larger project     \hyperlink{fr:MxMapProj}{\beamergotobutton{Link}}
+
 
 \end{enumerate}
 
@@ -426,17 +466,6 @@ Preliminary analysis reveals that:
 \end{document}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \frame {                      % SLIDE
-    \frametitle{Bi-dimensionality}
-
-\begin{figure}
-\begin{center}
-   \includegraphics[width=6cm]{../graphs/eigenvalues.pdf} \\
- \caption{\footnotesize{Eigenvalues of the double-centered agreement score matrix for 4th legislature drop fairly smoothly from the third value onwards, an indication that the data are most likely two-dimensional. Abstentions and absences coded as nays for this computation.}}
-\end{center}
-\end{figure}
-
+    \frametitle{Tit}
 }
-
-\end{document}

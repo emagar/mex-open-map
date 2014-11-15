@@ -1,4 +1,4 @@
-%\documentclass[letter]{article}
+\message{ !name(redMexBias.tex)}%\documentclass[letter]{article}
 \documentclass[letter,12pt]{article}
 \usepackage[letterpaper,right=1.25in,left=1.25in,top=1in,bottom=1in]{geometry}
 \usepackage{setspace}
@@ -19,11 +19,14 @@
 
 \begin{document}
 
+\message{ !name(redMexBias.tex) !offset(-3) }
+
+
 \title{Malapportionment and representation: \\ party bias and responsiveness in Mexico\thanks{Paper prepared for the Analyzing Latin American Politics conference, University of Houston, Nov.~14, 2014. We thank the Federal Electoral Institute (IFE) and the Federal Voter Registry (RFE). Special thanks to IFE's Cartography Department for sharing their experience with automated redistricting since 1996 and most of the data we analyze. We also acknowledge the support from the Asociaci\'on Mexicana de Cultura A.C.\ and CONACYT for this work.}}
-\author{Eric Magar \\ {\footnotesize \url{emagar@itam.mx}} \and
-        Micah Altman \\ {\footnotesize \url{escience@mit.edu}} \and
-        Michael P.~McDonald \\ {\footnotesize \url{michael.mcdonald@ufl.edu}} \and  %\\ University of Florida, Gainesville\\
-        Alejandro Trelles \\ {\footnotesize \url{lat44@pitt.edu}}
+\author{Micah Altman {\small \url{escience@mit.edu}} \\
+        Eric Magar {\small \url{emagar@itam.mx}} \\
+        Michael McDonald {\small \url{michael.mcdonald@ufl.edu}} \\  %\\ University of Florida, Gainesville\\
+        Alejandro Trelles {\small \url{lat44@pitt.edu}}
       }
 \date{\today}
 \maketitle
@@ -33,19 +36,22 @@
 \noindent Automated redistricting in consultation with parties since 1997 rid redistricting in Mexico of the most flagrant distorsions on representation. But more subtle ones remain. Rules and practice introduice some degree of malapportionment, small in comparative perspective \citep{samuels.snyder.2001}, but nonetheless substantial. We inspect district maps, votes, and seats in Mexico in search for two forms of political distorsion that may arise from malapportionment: party bias and responsiveness (otherwise known as plurality bias). State-level data reveal no evidence of systematic party bias. What bias there is is of another kind, a big bonus for larger parties (or vote responsiveness) typical of plurality rule in single-member districts. Since most states distribute few seats each, the large party bonus of states' federal districts doubles the estimate with national data. Since the PRI is the largest party in most states, it receives a substantial seat bonus.
 \end{abstract}
 
-% Search James Parker Smith and the Royal Commission on Systems of Election 1909 for cube law's origins
+% Comment [Eric]: Possible argument for the presentation.
+% Expert committees can remove partisan bias from redistricting.
+% Mexico's process allows parties to respond. Offers leverage to infer party preferences and degree of influence. 
+% Analysis of party bias and responsiveness informs this, directly. 
 
 \onehalfspacing
 
-\noindent Mexico has done population censuses every decade since 1920, and every five years since 1990. The relatively short inter-censal periods offer relatively precise estimates of how many live in boroughs in every corner of a country with rapidly changing demographics. This official and public data is priceless for planners of all stripes, marketers, and researchers, to name a few. 
+Mexico has done population censuses every decade since 1920, and every five years since 1990. The relatively short inter-censal periods offer relatively precise population estimates of boroughs in every corner of the country, despite rapid demographic shifts. This official and public data is priceless for planners of all stripes, marketers, and researchers, to name a few. 
 
-But not everyone has taken advantage of the data. Redistricters in the last decades are among them, routinely shunning fresh population data availability. Part of their reluctance finds explanation in a Constitution mandating the use of decennial censuses, not lustrum population counts, to do their job; with no attempt to estimate population change since the census is published; and, unlike the U.S., no obligation to redistrict as soon as a new census is available. But much of the blame falls on legislators, parties, and electoral regulators who have, to larger or smaller extent, but systematically lagged behind the constitutional obligation to ensure equal representation when updated information has become available. 
+But not everyone has valued the data. Redistricters in the last decades are among them, routinely shunning population data availability. Part of their reluctance finds explanation in a Constitution mandating the use of decennial censuses, not lustrum population counts, to do their job; with no attempt to estimate population change since the census is published; and, unlike the U.S., no obligation to redistrict as soon as a new census is available. But much of the blame falls on legislators, parties, and electoral regulators in charge of redistricting, who have, to larger or smaller extent, but systematically lagged behind the constitutional obligation to ensure equal representation when a census becomes available. 
 
-To get an idea of this, consider that information used to draw a new map for the 1979 congressional was nearly a full decade old upon the map's inauguration. Rural flight was probably at its peak then. That same map had missed nearly 25 years of demographic change when it was last used to translate votes into seats, in 1994. But the problem has carried over to the democratic era. The first map map after transition was drawn with seven year old dataHad the lustrum count been used instead of the general census, the lag would have dropped to two years. And for reasons discussed below, when the 2015 midterm congressional election takes place, a decade-and-a-half gap will separate the map and actual district populations. 
+To get an idea of this, consider that information used to draw a new map for the 1979 congressional was nearly a full decade old upon the map's inauguration. The rural exodus was at its peak then. That same map had missed nearly 25 years of demographic change when it was last used to translate votes into seats, in 1994. Likewise, the map that replaced it was drawn with six year old information. Had the lustrum count been used instead of the general census, that lag could have been a single year. And when the 2015 midterm congressional election takes place, a decade-and-a-half gap will separate the map and the actual district populations. 
 
-Malapportionment---when sparsely populated areas get the same representation as the more densely populated ones---arises as a consequence. This raises normative questions on the value of a vote in representative democracy \citep{cox.1987,balinskiYoung2001FairRep,dahl.1972}. But positive quastions are no less important, as malapportionment may bias representative government in important ways. If some party or parties tend to be stronger in the smaller districts, they will enjoy undue influence in policy. With the PRI still playing the role of prize fighter in Mexico's countryside \citep{amesMex.1970,magar.1994}, the question of party bias arsing from malapportionment merits closer scrutiny. 
+Malapportionment arises as a consequence. Rural districts lose population to urban districts. (An intuition that needs development in the paper: the PRI remains much stronger than other parties in the countryside \citep{amesMex.1970,magar.1994}, so this malapportionment may play in its favor. True? Has PRD also entered the fray?)
 
-This paper starts with a description of the redistricting process in use since 1997. Automated redistricting in consultation with parties rid Mexican districts of the most flagrant distorsions on representation, but problems remian. Next, the paper inspects one such problem: legislative malapportionment. The problem is shown to be substantive and systematic: by our estimates, in 2015 the most populated district will be four times larger than the least populated. The developments that have led to this situation are discussed. We next turn to some of its consequences for representation, with analysis of two distorsions of scholarly interest: party bias and responsiveness (or large party bias). Surprisingly, our estimates reveal no systematic party bias, but responsiveness is huge. [In future incarnations, the paper will also relate the party bias and responsiveness estimates to measures of malapporionment, in search of an association at the state level. A discussion of how inter-election volatility may trump the effects of malapportionment will also be in order.]
+This paper inspects legislative malapportionment in Mexico, the developments that have led to it, and some of its consequences for representation. After describing the redistricting process as it has been implemented since 1997, the paper describes two forms of malapportionment and how prevalent they are in Mexico. Attention then turns to a model estimating two common distorsions of electoral systems: party bias, and responsiveness (or large party bias). 
 
 \section{Redistricting since 1997}
 
@@ -107,7 +113,9 @@ Since the first term of the subtraction is a real number and the second an integ
 
 Persitent malapportionment is explained, in small part, by the allocation of two seats to small states. Relative over-representation of tiny Southern Baja and Colima was substantial, but only until recently. Population growth has made both worth their congressional seats. Yet relative over-representation remains substantial in migrant-worker-exporter Zacatecas up to 2003, and in the Federal District of late. Both states have lost population fast relative to the rest, and the system's design makes rapid demographic shifts slip away from grip. 
 
-When redistricting plans are drawn, malapportionment does not exist \emph{de jure}. It exists \emph{de facto}. Mexico's constitution provides that every redistricting process must rely on the most recent population census available, with no attempt to estimate population change since (and, unlike the U.S., no obligation to redistrict as soon as a new census is available). Nor does it contemplate the use of lustrum counts instead. As a results, the redistricting process has built-in features explaining the persistence of malaportionment---what \citet{johnston.2002} calls ``creeping malapportionment'', whereby changes in constituency size over time create smaller seats. Compared to the 2000 census populations used for the 2006 map, the projection of 2000--2005 state population shifts are off by 9.7 percent on average, with a standard deviation of 6.9 percent. %The 2000--2005 population shifts projected to the year 2006, for instance, resulted in mean state populations deviating 9.7 percent compared to the census, with a standard deviation of 6.9 percent. 
+%``Natural malapportionment'' is how \citet{snyder.samuelsMalapp2004} call demographic drift, maigh come handy in next paragraph.
+
+When redistricting plans are drawn, malapportionment does not exist \emph{de jure}. It exists \emph{de facto}. Mexico's constitution provides that every redistricting process must rely on the most recent population census available, with no attempt to estimate population change since (and, unlike the U.S., no obligation to redistrict as soon as a new census is available). Nor does it contemplate the use of lustrum counts instead. As a results, the redistricting process has built-in features explaining the persistence of malaportionment. Compared to the 2000 census populations used for the 2006 map, the projection of 2000--2005 state population shifts are off by 9.7 percent on average, with a standard deviation of 6.9 percent. %The 2000--2005 population shifts projected to the year 2006, for instance, resulted in mean state populations deviating 9.7 percent compared to the census, with a standard deviation of 6.9 percent. 
 
 
 With this in mind, it is puzzling that the redistributive nature of apportionment has not pushed for the adoption of alternative methods. The seventeen states that were under-represented in 2006 jointly controlled a majority (162) of single-member districts; fourteen of them have always been below the red line indicating fair representation. Does malapportionment have political consequences?
@@ -131,6 +139,10 @@ Redistricting automation should make districts within states tend towards zero m
 
 %Verify exactly how many district off the +/-15 band.
 
+The requirement to keep municipalities with large indigenous population within the same district may also explain exceptions. Median absolute district malapportionent of the 2006 map upon inauguration was 6.5\%, the third quartile surpassing the ten point tolerance margin (then used) at 12.4\% \citep[also,][]{trelles.mtz.tesisItam.2007}. For next year's midterm election, the same descrepancies will be 9.9 and 17.9\%, respectively. The abandoned 2015 map proposal did a much better job upon inauguration, with median absolute district malapportionment of 4.2\% and third quartile at 8.1\%. 
+
+%Variance between states' census populations and population estimates at the time of redistricting, discussed above, cannot be smaller when dealing with sub-state units used to prepare districts, pushing about 80 new districts out of the broad $\pm 15$\% band. 
+
 \begin{table}
 \begin{center}
   \begin{tabular}{lrrrrr}
@@ -140,19 +152,15 @@ Map in year      & Min. & 1st quartile & median & 3rd quartile & max. \\ \hline
 2006 map in 2015 & .02 & 4.4 & 9.9 & 18.0 & 147.2 \\
 2015 map in 2015 & .01 & 1.9 & 4.2 & 8.1 & 50.6 \\
   \end{tabular}
-\caption{Changing malapportionment. For these statistics, each district's estimated population in 2006 and 2015 (from \emph{sección} 2005--2010 changes) is compared to its parent state's estimated mean district population.}\label{T:malap06inTime}
+\caption{}
 \end{center}
 \end{table}
-
-The requirement to keep municipalities with large indigenous population within the same district may also explain exceptions. As seen in Table \ref{T:malap06inTime}, median absolute district malapportionent of the 2006 map upon inauguration was 6.5\%, the third quartile surpassing the ten point tolerance margin (then used) at 12.4\% \citep[also,][]{trelles.mtz.tesisItam.2007}. For next year's midterm election, the same descrepancies will be 9.9 and 17.9\%, respectively. The abandoned 2015 map proposal did a much better job upon inauguration, with median absolute district malapportionment of 4.2\% and third quartile at 8.1\%. 
-
-%Variance between states' census populations and population estimates at the time of redistricting, discussed above, cannot be smaller when dealing with sub-state units used to prepare districts, pushing about 80 new districts out of the broad $\pm 15$\% band. 
 
 Whether districts below and above fair representation behave differently merits closer inspection. Whether due to technical difficulties or discretion, malapportionment may be the source of meaningful distortions in democratic representation. To which we now turn to. 
 
 \section{Party Bias and Responsiveness}
 
-This section estimates district responsivity and party bias---two effects of scholarly interest. M\'arquez (\href{http://bit.ly/1jgsQXE}{\url{http://bit.ly/1jgsQXE}}) has approached this theme using national national-level electoral data aggregates over two decades, uncovering a degree of responsivity characteristic of Westminster systems and party bias against the PAN under the status quo. We proceed with state-by-state breakdowns over much a shorter span (2006, 2009, and 2012). Doing so, much higher responsivity (owing to fewer districts, 9 by state on average) is uncovered, but no apparent party bias in neither the 2006 map nor 2015 proposals. 
+This section estimates district responsivity and party bias---two effects of scholarly interest, discussed below. M\'arquez (\href{http://bit.ly/1jgsQXE}{\url{http://bit.ly/1jgsQXE}}) has also approached this with national aggregates, uncovering a degree of responsivity characteristic of Westminster systems and party bias against the PAN under the status quo. By proceeding with state aggregates, much higher responsivity (owing to fewer districts, 9 by state on average) is uncovered, but no apparent party bias in neither the 2006 map nor 2015 proposals. 
 
 \subsection{Systematic Bias}
 
@@ -163,7 +171,7 @@ This section estimates district responsivity and party bias---two effects of sch
 \end{center}
 \end{figure}
 
-Consider now the relation between party votes and seats at the state level portrayed in Figure \ref{F:seatsVotes}. Each point reports the vote share that a party won in a state's federal deputy elections (x-axis) and the share of the state's congressional seats it received (y-axis). Colors distinguish the parties: PAN is blue, PRI is red, PRD is gold, Green is green, among others. For instance, the green dot floating to the left of the cloud is the Green party in Chiapas 2012, where it won 3 of 12 districts. The chart shows that 9 percent of the state's vote awarded the party 25 percent of the seats, an outstanding achievement for any party. The cloud manifests a steep upwards slope characteristic of first-past-the.post systems \citep{taagepera.CubeLaw.1973}.\footnote{Adding the excluded PR seats would level the slope considerably. Doing this would be easy with national aggregates. It is not evident how to carry it with state aggregates, since PR seats are awarded in five second-tier districts joining together several states each.} Points below the diagonal indicate under-representation, those above over-representation. There are notable differences among major parties: the PRI achieved over-representation in three-fifths of election-states between 2006 and 2012, the PAN in two-fifths, and the PRD in one-fourth only. 
+Consider now the relation between party votes and seats portrayed in Figure \ref{F:seatsVotes}. As before, the plot considers plurality seats only and state aggregates. Each point reports the vote share that a party won in a state's federal deputy elections (x-axis) and the share of the state's congressional seats it received (y-axis). Colors distinguish the parties: PAN is blue, PRI is red, PRD is gold, Green is green, among others. For instance, the green dot floating to the left of the cloud is the Green party in Chiapas 2012, where it won 3 of 12 districts. The chart shows that 9 percent of the state's vote awarded the party 25 percent of the seats, an outstanding achievement for any party. The cloud manifests a steep upwards slope characteristic of first-past-the.post systems \citep{taagepera.CubeLaw.1973}.\footnote{Adding the excluded PR seats would level the slope considerably. Doing this would be easy with national aggregates. It is not evident how to carry it with state aggregates, since PR seats are awarded in five second-tier districts joining together several states each.} Points below the diagonal indicate under-representation, those above over-representation. There are notable differences among major parties: the PRI achieved over-representation in three-fifths of election-states between 2006 and 2012, the PAN in two-fifths, and the PRD in one-fourth only. 
 
 With such setting, the possibility that districts are granting undue advantage to the PRI merits closer inspection. A priori, reasons to suspect IFE of cooking districts to favor one party or another are lacking. Major parties, after all, permanently influence the election regulator, ambition counteracting ambition \citep{estevez.magar.rosas.2008}. But that those who draw the district lines can distort a fundamental link of the democratic process is well established in the literature \citep{altman.mcdonald2011bard,cox.katz.2002,engstrom2006redisttrictApsr,rossiter.etal.1997,king.1990elRespBiasMultiparty,balinskiYoung2001FairRep,otero.2003}. Has the insidious gerrymandering reared its ugly head in Mexico? This section estimates majority and party effects in the proposed districts and the status quo. Majority effects are huge, partisan effects negligible. 
 
@@ -200,7 +208,7 @@ A multiparty and estimable version of equation 1 \citep{king.1990elRespBiasMulti
 
 \noindent with data and parameters indexed to identify the parties. \citep[Another, with application to Argentine federalism, is][.]{calvo.micozzi.govReform.2005} Setting $\lambda_2 = 0$, as done below, forces the remainder $\lambda_{j \neq 2}$ to express party bias with relation to the PRI's ($j=2$ for this party in the dataset). This is convenient to test the presumption of PRI-favoring bias:. if present, $\hat{\lambda}_{j \neq 2}<0$ would result.
 
-A common estimation strategy relies on a time-series of national aggregates (this is what M\'arquez did for eight elections 1991--2012, uncovering substantive anti-PAN bias and high responsiveness). The estimation strategy here is with state-level data. One disadvantage of the approach is that states have few districts (9.4 on average), and this will amplify the system's responsiveness \citep{taagepera.CubeLaw.1973}. The advantages are many. The approach multiplies observations. This is evident in Figure \ref{F:seatsVotes}, with many points despite reporting three elections only. It holds the actual district structure constant---redistricting in 1997 and 2006 invalidates district comparability before and after. And it takes advantage in the variation of state party systems (this draft fails to take full advantage of this variance, but this could be exploited further). 
+A common estimation strategy relies on a time-series of national aggregates (this is what M\'arquez did for eight elections 1991--2012, uncovering substantive anti-PAN bias and high responsiveness). The estimation strategy here, as before, is with state-level data. One disadvantage of the approach is that states have few districts (9.4 on average), and this will amplify the system's responsiveness \citep{taagepera.CubeLaw.1973}. The advantages are many. The approach multiplies observations. This is evident in Figure \ref{F:seatsVotes}, with many points despite reporting three elections only. It holds the actual district structure constant---redistricting in 1997 and 2006 invalidates district comparability before and after. And it takes advantage in the variation of state party systems (this draft fails to take full advantage of this variance, but this could be exploited further). 
 
 \begin{figure}
 \begin{center}
@@ -217,9 +225,9 @@ A common estimation strategy relies on a time-series of national aggregates (thi
 \end{figure}
 
 
-The  method of estimation is MCMC \citep{jackman.2000}.\footnote{Three chains were iterated 10 thousand times, taking every fiftieth observation of the last 5 thousand to sample the posterior distribution. Convergence was gauged visually with traceplots of the separate chains for each of the model's parameters. Estimation performed with JAGS \citep{jags.cite}, implemented from R \citep{r.cite} using package R2jags \citep{r.r2jags}. Data and code to replicate the analysis can be found at HTTP...} As expected, district responsiveness is extremely high, between 5 and 6 depending on the year selected (the steepest line in illustrative Figure \ref{F:lambdaRhoEx} has $\lambda=6$). Figure \ref{F:posterior_s0s1s3}.a reports point estimates (the black circles are the median of the posterior sample of the responsiveness parameter) for each year separately, all years pooled together, and comparing actual districts to the first and third redistricting proposals. Estimate precision is assessed with the cloud of grey points (technically, it is the full sample of posterior $\rho$s). The redistricting proposal makes little change to district responsiveness, it just makes it slightly more volatile from one election to next. Owing to few districts per state, the estimated responsiveness at the state level ($\hat{\rho} \approx 5.5$) is twice M\'arquez's nationwide ($\hat{\rho} = 2.6$). All three parties experience situations of large party bonus and small party penalty that, to a good extent, cancel each other in the national statistic.
+The  method of estimation is MCMC \citep{jackman.2000}.\footnote{Three chains were iterated 10 thousand times, taking every fiftieth observation of the last 5 thousand to sample the posterior distribution. Convergence was gauged visually with traceplots of the separate chains for each of the model's parameters. Estimation performed with JAGS \citep{jags.cite}, implemented from R \citep{r.cite} using package R2jags \citep{r.r2jags}. Data and code to replicate the analysis can be found at HTTP.} As expected, district responsiveness is extremely high, between 5 and 6 depending on the year selected (the steepest line in illustrative Figure \ref{F:lambdaRhoEx} has $\lambda=6$). Figure \ref{F:posterior_s0s1s3}.a reports point estimates (the black circles are the median of the posterior sample of the responsiveness parameter) for each year separately, all years pooled together, and comparing actual districts to the first and third redistricting proposals. Estimate precision is assessed with the cloud of grey points (technically, it is the full sample of posterior $\rho$s). The redistricting proposal makes little change to district responsiveness, it just makes it slightly more volatile from one election to next. Owing to few districts per state, the estimated responsiveness at the state level ($\hat{\rho} \approx 5.5$) is twice M\'arquez's nationwide ($\hat{\rho} = 2.6$). All three parties experience situations of large party bonus and small party penalty that, to a good extent, cancel each other in the national statistic.
 
-Regarding party bias, signals that are not weak all tend to be accompanied by a good deal of noise, with few exceptions. At the national level, and over a longer haul, M\'arquez discovers bias in favor of the PRI, but mostly in favor of the PRD, and against the PAN, that seems not the product of chance alone. Analysis at the state level reveals no such biases. As said, Figures \ref{F:posterior_s0s1s3}.b--d express bias relative to the PRI. Although PAN experienced weak signal in its favor in the whole 2006--12 period, a fair density of the blue cloud is, in fact, negative. PRD vs.\ PRI bias is clearly centered at zero in the full period. The left did experience significant bias in isolated years: against in 2006, in favor in 2009. Perhaps many voters who strategically abandoned the hopeless PRI presidential candidate in 2006 to vote for L\'opez Obrador did so in districts where PRI's congressional candidates still won. No other year for no other party reveals any bias unaccompanied by much noise.
+Regarding party bias, signals that are not weak all tend to be accompanied by a good deal of noise, with few exceptions. At the national level, and over a longer haul, M\'arquez discovers bias in favor of the PRI, but mostly in favor of the PRD, and against the PAN, that seems not the product of chance alone. Analysis at the state-level reveals no such biases. As said, Figures \ref{F:posterior_s0s1s3}.b--d express bias relative to the PRI. Although PAN experienced weak signal in its favor in the whole 2006--12 period, a fair density of the blue cloud is, in fact, negative. PRD vs.\ PRI bias is clearly centered at zero in the full period. The left did experience significant bias in isolated years: against in 2006, in favor in 2009. Perhaps voters who strategically abandoned the hopeless PRI presidential candidate in 2006 to vote for L\'opez Obrador did not also endorse the PRD's congressional candidates. No other year for no other party reveals any bias unaccompanied by much noise.
 
 % \section{Malapportionment and margin}
 
@@ -251,7 +259,7 @@ Regarding party bias, signals that are not weak all tend to be accompanied by a 
 
 * * To be written * * May help explain why malapportionment has no larger consequences. 
 
-One factor that may explain the absence of party bias is electoral volatility. By being larger than malapportionment, it may be ecplipsing its potential to create bias...
+One factor that may explain the absence of party bias is electoral volatility. It may be larger than bias, ecpliping it.
 
 Noting that victory margins began widening in the mid-1960s, \citet{mayhew1974vanishingMg} saw gerrymandering as one possible explanation, incumbents influencing the preservation of safe districts. While the argument opened the heated incumbency advantage debate, the intuition may guide our inquiry. District volatility should capture a key element for analysis of map similarities. District $d$ volatility is $v_d = 1/2 \sqrt{ \sum_{p=1}^P \sum_{t=2}^3 (v_{d,p,t}- v_{d,p,t-1})^2 }$ with $p$ indexing the competing parties and $t=1,2,3$ for the 2006,  2009, and 2012 congressional elections respectively.\footnote{The measure of volatility proposed is inspired in measures of disproportionality, replacing the seats--votes difference with vote first differences. It is a squared version of a Loosemore-Hanby index \citep{loosemore.hanbyDisproportionality1971,gallagherDisproportionality1991}.} 
 
@@ -279,42 +287,6 @@ mean PRD margin     &  $-.51$ & $-.31$  & $-.21$  & $-.04$ & .39 \\
 
 Mexico's federal districts exhibit no party bias when analyzed at the state level. Big system responsiveness, typical of first-past-the-post system in units with few federal districts, is associated with the districts. So PRI's tendency to be over-represented more than PAN and PRD, and the PRI's winning of a couple extra seats with the redistricting proposal is not the product of partisan bias. If the PRI wins more this is due to its status as the largest party in more states that the other two major parties combined. 
 
-\section*{Appendix: code used}
-
-\begin{footnotesize}
-\begin{verbatim}
-bugsModel <- function() {
-    for (i in 1:I){     # loop over state-years
-        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
-            S[i,j] ~ dbin(pi[i,j], D[i])  # D is number SMD seats in obs. i's state
-        }
-        numerator[i,1] <- dummy[i,1] * exp( lambda[1] + rho * log(v[i,1]) )
-        numerator[i,2] <- dummy[i,2] * exp(             rho * log(v[i,2]) )
-        for (j in 3:J){
-            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] ) * v[i,j]^rho
-        }
-        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
-            d1[i,j] <- dummy[i,1] * exp( lambda[1] ) * v[i,1]^rho 
-            d2[i,j] <- dummy[i,2]                    * v[i,2]^rho 
-            d3[i,j] <- dummy[i,3] * exp( lambda[2] ) * v[i,3]^rho 
-            d4[i,j] <- dummy[i,4] * exp( lambda[3] ) * v[i,4]^rho 
-            d5[i,j] <- dummy[i,5] * exp( lambda[4] ) * v[i,5]^rho 
-            d6[i,j] <- dummy[i,6] * exp( lambda[5] ) * v[i,6]^rho 
-            d7[i,j] <- dummy[i,7] * exp( lambda[6] ) * v[i,7]^rho 
-            denominator[i,j] <- d1[i,j]+d2[i,j]+d3[i,j]+d4[i,j]+d5[i,j]+d6[i,j]+d7[i,j]
-            pi[i,j] <- numerator[i,j] / denominator[i,j]
-        }
-    }
-    ### priors
-    for (p in 1:6){ # there are 7 party labels in the 3-election data, PRI is reference
-        lambda[p] ~ dnorm( 0, tau.lambda )
-    }
-    tau.lambda <- pow(.25, -2)
-    rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
-}
-\end{verbatim}
-\end{footnotesize}
-
 \bibliographystyle{apsr}
 %\bibliography{../bib/redMex}
 \bibliography{../bib/magar}
@@ -323,3 +295,5 @@ bugsModel <- function() {
 %bibexport -o extracted.bib myarticle.aux
 
 \end{document}
+
+\message{ !name(redMexBias.tex) !offset(-299) }

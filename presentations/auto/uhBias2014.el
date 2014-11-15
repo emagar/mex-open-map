@@ -1,5 +1,7 @@
 (TeX-add-style-hook "uhBias2014"
  (lambda ()
+    (LaTeX-add-labels
+     "fr:MxMapProj")
     (TeX-run-style-hooks
      "multirow"
      "tabulary"
