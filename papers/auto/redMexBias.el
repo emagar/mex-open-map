@@ -11,7 +11,8 @@
      "E:cubeLaw"
      "F:lambdaRhoEx"
      "F:posterior_s0s1s3"
-     "T:volatMarginsd0")
+     "T:volatMarginsd0"
+     "F:malmgnat")
     (TeX-add-symbols
      "mc")
     (TeX-run-style-hooks
