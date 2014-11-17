@@ -64,4 +64,25 @@ Nov. 13
 *** Match between voters/legislators in each country (slight leftward drift of elite in all cases)
 ** Iñaki Sagarzazu, Chavism and Argentine polarization
 *** wordfish by slapin for content analysis -- scaling from words
-*** 
+*Panel 5
+**** Leslie comments
+** Alemán book:
+*** 1 govt coal before/after coup in Chile
+*** 2 Coauthorship
+*** 3 Leg conflict and reallignment
+*** 4 party unity
+*** 5 leg power of president OJO
+*** 6 one more chapter
+*** TODO one-dim legislature post coup: Zucco+Lauderdale's control for pro-anti government?
+*** TODO The list label/leaders not mentioned, only party. That should be addressed
+*** TODO Whipped/unwhipped?
+** Amanda Driscoll, diversity in legislatures (descriptive) has drawbacks
+*** Responsiveness in Brazil
+*** Feeds on Dan Butler's work: black MCs more responsive to putatively black constituents (even out of district!)
+*** Sent emails to 10k personalized candidates (names convey clear class/race prompt) to see if they respond
+*** TODO Use candidates college education to measure differences? Verifiable?
+*** TODO Were there mistakenly sent emails? What happened to response? What counts as a response?
+** Taeko Hiroi + Renno, Leg coalitions and obstructionism in Brazilian Congress
+*** Dilma won largest congressional base on record, even for constitutional amendment
+*** Yet got remarkably little done! gridlock, delays, defeat
+*** Paper has fabulous detail on legislative procedure to accelerate or obstruct --- 50% votes since 2010!
