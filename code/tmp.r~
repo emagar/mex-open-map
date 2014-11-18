@@ -1,0 +1,35 @@
+party.analyzed <- 2; party.lambda <- 2; 
+seat.hat <- function(party.analyzed=NA, party.lambda=party.analyzed){ # analizes vote increments for party.vote using party.lambda's bias
+    mean.v <- apply(v, 2, mean) / sum(apply(v, 2, mean)); # compute parties' mean vote across elections and normalize to sum 1
+    ## share.mean <- data.frame(matrix(0, nrow=7, ncol=7)); # when analizing party i, produces share of vote without i won by rest of parties
+    ## for (i in 1:7){ 
+    ##     for (j in setdiff(1:7,i)){
+    ##         share.mean[i,j] <- mean.v[j] / (1-mean.v[i])
+    ##     }
+    ## }
+    share.mean <- data.frame(p1=mean.v, p2=mean.v, p3=mean.v, p4=mean.v, p5=mean.v, p6=mean.v, p7=mean.v); # when analizing party i, produces share of vote without i won by rest of parties
+    diag(share.mean) <- 0; # replace diagonal with zero
+    share.mean <- share.mean / apply(share.mean, 2, sum); # column p reports share of (total vote - vote(p)) belongong to parties other than p
+    equis <- matrix(NA, nrow=101, ncol=7); # 0-1 vote increments for party, rest split among other parties according to relative mean vote
+    equis[,party.analyzed] <- seq(from = 0, to = 1, by = .01);
+    for (j in setdiff(1:7,party.analyzed)){
+        equis[,j] <- (1-equis[,party.analyzed])*share.mean[party.analyzed,j]
+    }
+    ## d1 <- exp( lambda.hat[1] + rho.hat * log( equis[,1] ) );
+    ## d2 <- exp( lambda.hat[2] + rho.hat * log( equis[,2] ) );
+    ## d3 <- exp( lambda.hat[3] + rho.hat * log( equis[,3] ) );
+    ## d4 <- exp( lambda.hat[4] + rho.hat * log( equis[,4] ) );
+    ## d5 <- exp( lambda.hat[5] + rho.hat * log( equis[,5] ) );
+    ## d6 <- exp( lambda.hat[6] + rho.hat * log( equis[,6] ) );
+    ## d7 <- exp( lambda.hat[7] + rho.hat * log( equis[,7] ) );
+    ## return(exp( lambda.hat[party.lambda] + rho.hat * log(equis[,party.vote]) ) / (d1+d2+d3+d4+d5+d6+d7)) # voto party crece linealmente, demás según peso relativo
+#PROBAR ESTO
+    d1 <- exp( lambda.hat[1] ) * equis[,1]^rho.hat;
+    d2 <- exp( lambda.hat[2] ) * equis[,2]^rho.hat;
+    d3 <- exp( lambda.hat[3] ) * equis[,3]^rho.hat;
+    d4 <- exp( lambda.hat[4] ) * equis[,4]^rho.hat;
+    d5 <- exp( lambda.hat[5] ) * equis[,5]^rho.hat;
+    d6 <- exp( lambda.hat[6] ) * equis[,6]^rho.hat;
+    d7 <- exp( lambda.hat[7] ) * equis[,7]^rho.hat;
+    return(exp( lambda.hat[party.lambda] ) *  equis[,party.vote]^rho.hat  / (d1+d2+d3+d4+d5+d6+d7)) # voto party crece linealmente, demás según peso relativo
+}

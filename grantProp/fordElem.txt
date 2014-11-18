@@ -1,0 +1,32 @@
+Briefly describe your organization (100 words maximum)
+Private university offering undergraduate and graduate degrees in the social sciences, law, business, applied mathematics, statistics, actuarial sciences, computer science, and more. It has an active research agenda. Its graduates occupy many high-level positions in public administration and business corporations, and are routinely accepted in top-twenty graduate programs in the United States.
+
+List those who will be engaged in the project along with their qualifications (100 words maximum)
+-Dr. Eric Magar, principal coinvestigator, is Associate Professor of Political Science at ITAM. He specializes in the study of legislative institutions and elections.
+-Dr. Michael P. McDonald, coinvestigator, is Associate Professor of Government and Politics at George Mason University. He has extensive experience in creating and evaluating redistricting plans.  
+-Dr. Micah Altman, coinvestigator, is Director of Research, MIT Libraries. He is known for his work on computational models of electoral redistricting and research methods. 
+-Alejandro Trelles, worked at IFE during the 2004 federal redistricting and is currently enrolled in a doctoral program at the University of Pittsburgh.
+
+PROJECT INFORMATION 
+Describe the purpose of the project (100 words maximum)
+The process of selecting electoral boundaries offers opportunities for political manipulation, especially when not subject to public view. Next summer, Mexico will redraw its federal electoral boundaries behind closed doors. We propose to increase the transparency of and participation in the process of redistricting by making all data and analysis tools available to the public and the press, and engaging a wider audience in commenting on the process and in proposing electoral maps. By building on award-winning, cloud-deployable software developed for participative redistricting in the United States, ITAM will enable greater accountability at low marginal cost.
+
+Outline the problems and issues the project will address (100 words maximum)
+The problem is exacerbated when we move from the federal to the state level. Criteria used for subnational redistricting are virtually unknown. Yet once deployed at the federal level, the software requires minimal adjustments to evaluate any state in particular. Whenever a state government acts to redistrict (or, as is common, doesn't for decades), advocacy groups or anyone with an internet connection will have tools draw plans and measure the impact of the proposals. This effort will be hosted by ITAM, Mexico’s leading academic institution, providing a key position from which to engage advocacy groups and the media. 
+
+
+Estimated overall budget for the project
+US$160,000
+
+Period of time for which funds are being requested
+2013--2014
+
+Benefiting location(s)
+Mexico at the federal and state levels
+
+Ford Foundation contact (Optional)
+(Empty)
+
+Comments (Optional)
+We hope that the Ford Foundation finds this project worthy of funding. The result will be increased transparency, public awareness, participation, and ultimately a strengthening of a key part of the Mexican democratic process.
+

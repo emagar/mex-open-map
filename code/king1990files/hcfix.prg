@@ -1,0 +1,21 @@
+dataloop hc1 hc1a;
+    vector sdlv=0;
+    vector sdls=0;
+    vector sdld=0;
+endata;
+dataloop hc2 hc2a;
+    vector sdlv=0;
+    vector sdls=0;
+    vector sdld=0;
+endata;
+dataloop hc3 hc3a;
+    vector sdlv=0;
+    vector sdls=0;
+    vector sdld=0;
+endata;
+dataloop hc4 hc4a;
+    vector sdlv=0;
+    vector sdls=0;
+    vector sdld=0;
+endata;
+

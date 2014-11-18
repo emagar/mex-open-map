@@ -1,0 +1,26 @@
+use graph;
+proc logit(x);      retp( ln(x./(1-x)) );endp;
+proc logiti(x);     retp( 1./(1+exp(-x)) );endp;
+proc bilogit(x,l,r);retp( logiti(l+r*logit(x))  );endp;
+graphset;
+call fonts("simplex simgrma");
+_pmsgstr="\201Fig.1: Examples of Electoral Responsiveness\000\202r\201=\2028"\
+         "\000\202r\201=3\000\202r\201=1\000\202r\201=0.7";
+let _pmsgctl[5,6]= 2.1 6.3 .15 0 1 15
+                   .42 .8  .1 0 0 15
+                   .57 .85  .1 0 0 15
+                   .72  .8  .1 0 0 15
+                   .91  .8  .1 0 0 15;
+call xlabel("v");        xtics(0,1,0.25,0);
+call ylabel("s");        ytics(0,1,0.25,0);
+@let _psym[1,5]=1 0.05 6 0 11;@
+px=seqas(0,1,400);
+py=bilogit(px,0,3)~bilogit(px,0,1)~bilogit(px,0,.7);
+_pline={7 6 0 0.01 0.5 0.01 1 15,
+        7 3 0.5 0.01 0.5 1  1 15,
+        7 6 0.5 1  1   1    1 15};
+_pltype={6,6,6};
+_plotsiz={5,5};
+xy(px,py);
+
+

@@ -1,0 +1,482 @@
+### THIS CODE IS INVOKED FROM red.r ###
+### IT ESTIMATES 32 REGRESSIONS WITH EFFECTS OF STATE CHANGE IN DIPUTADOS IN EVERY STATE'S SECCIONES ###
+### PREPARED 21JUL2014ERIC MAGAR
+#
+library(R2jags)
+#
+### switching regime model (each district one regime, seccion is unit)
+cat("
+model {
+  for (n in 1:N){                ## loop over observations
+      depvar[n] ~ dnorm(depvar.hat[n] , tau);
+      depvar.hat[n] <- inprod(beta[],X[n,]);  ## FLEXIBLE SPECIFICATION FOR VARYING
+                                              ## NUMBER OF REGRESSORS, PREPARE X IN R
+                }
+  ############################
+  ## NON-INFORMATIVE PRIORS ##
+  ############################
+  for (k in 1:K){
+    beta[k] ~ dnorm(0, .0001);
+    }
+  tau <- pow(sigma, -2);
+  sigma ~ dunif(0,100);
+}
+", file="linearModel.txt")
+#
+
+##################
+## d0 districts ##
+##################
+tmpv <- merge( x = v, y = eq[,c("edon","seccion","dis2012")], by = c("edon","seccion") )
+colnames(tmpv)[grep(pattern = "dis.*", colnames(tmpv))] <- "disn"
+tmpv <- tmpv[order(tmpv$edon, tmpv$disn),]
+head(tmpv)
+#
+# prepare data
+alldis <- paste("d", tmpv$edon/100 + tmpv$disn/10000 + .000099, sep = ""); alldis <- alldis[duplicated(alldis)==FALSE]
+alldis <- gsub(pattern = "99", replacement = "", x = gsub(pattern = "0\\.", replacement = "", x = alldis) )
+regs.pan <- regs.pri <- regs.prd <- list() # empty lists to receive posterior samples
+elas.pan <- elas.pri <- elas.prd <- vector() # empty vector to receive point estimates
+#
+# PAN d0
+i <- 1 # debug
+for (i in 1:32){  # loop over states
+    tmp <- tmpv[tmpv$edon==i,]
+    n.dis <- max(tmp$disn)
+    N <- nrow(tmp)
+    #
+    # district dummies for switching regime model
+    dis.dummies <- data.frame(matrix(0, nrow = N, ncol = n.dis))
+    # d <- 2 # debug
+    for (d in 1:n.dis){ # loop over  districts
+        select <- which(tmp$disn==d)
+        dis.dummies[select,d] <- 1;
+    }
+    depvar <- tmp$pan;                                   ## PAN 
+    X <- cbind ( dis.dummies, dis.dummies * tmp$panst ); ## PAN 
+    colnames (X) <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    K <- ncol(X);
+    constant <- rep(1, times = N) # constant
+    #
+    elas.data <- list ( "depvar","X","N","K" )
+    elas.inits <- function (){
+        list (
+        beta=rnorm(K),
+        sigma=runif(1)
+        )
+        }
+    elas.parameters <- c("beta", "sigma")
+    #
+    ## #test ride
+    ## thisreg <- jags (elas.data, elas.inits, elas.parameters,
+    ##                 "linearModel.txt", n.chains=3,
+    ##                 n.iter=50, n.thin=2)
+    # estimate
+    thisreg <- jags (elas.data, elas.inits, elas.parameters,
+                    "linearModel.txt", n.chains=3,
+                    n.iter=1500, n.thin=15)
+    regs.pan[[i]] <- thisreg$BUGSoutput$sims.matrix; names(regs.pan)[i] <- paste(edos[i]) ## SAVES POSTERIOR CHAINS FOR STATE REGRESSION
+    colnames(regs.pan[[i]])[grep(pattern = "beta.*", colnames(regs.pan[[i]]))] <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    elas.pan <- c ( elas.pan, thisreg$BUGSoutput$median$beta[(n.dis+1):(2*n.dis)] ) ## PAN 
+    print(paste(edos[i], "done"))
+}
+#
+names(elas.pan) <- alldis
+#
+# PRI d0
+for (i in 1:32){  # loop over states
+    tmp <- tmpv[tmpv$edon==i,]
+    n.dis <- max(tmp$disn)
+    N <- nrow(tmp)
+    #
+    # district dummies for switching regime model
+    dis.dummies <- data.frame(matrix(0, nrow = N, ncol = n.dis))
+    # d <- 2 # debug
+    for (d in 1:n.dis){ # loop over  districts
+        select <- which(tmp$disn==d)
+        dis.dummies[select,d] <- 1;
+    }
+    depvar <- tmp$pri;                                   ## PRI
+    X <- cbind ( dis.dummies, dis.dummies * tmp$prist ); ## PRI 
+    colnames (X) <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    K <- ncol(X);
+    constant <- rep(1, times = N) # constant
+    #
+    elas.data <- list ( "depvar","X","N","K" )
+    elas.inits <- function (){
+        list (
+        beta=rnorm(K),
+        sigma=runif(1)
+        )
+        }
+    elas.parameters <- c("beta", "sigma")
+    #
+    ## #test ride
+    ## thisreg <- jags (elas.data, elas.inits, elas.parameters,
+    ##                 "linearModel.txt", n.chains=3,
+    ##                 n.iter=50, n.thin=2)
+    # estimate
+    thisreg <- jags (elas.data, elas.inits, elas.parameters,
+                    "linearModel.txt", n.chains=3,
+                    n.iter=1500, n.thin=15)
+    regs.pri[[i]] <- thisreg$BUGSoutput$sims.matrix; names(regs.pri)[i] <- paste(edos[i]) ## SAVES POSTERIOR CHAINS FOR STATE REGRESSION
+    elas.pri <- c ( elas.pri, thisreg$BUGSoutput$median$beta[(n.dis+1):(2*n.dis)] ) ## PRI 
+    print(paste(edos[i], "done"))
+}
+#
+## names(regs) <- paste("state", 1:32, sep = "")
+names(elas.pri) <- alldis
+#
+# PRD d0
+for (i in 1:32){  # loop over states
+    tmp <- tmpv[tmpv$edon==i,]
+    n.dis <- max(tmp$disn)
+    N <- nrow(tmp)
+    #
+    # district dummies for switching regime model
+    dis.dummies <- data.frame(matrix(0, nrow = N, ncol = n.dis))
+    # d <- 2 # debug
+    for (d in 1:n.dis){ # loop over  districts
+        select <- which(tmp$disn==d)
+        dis.dummies[select,d] <- 1;
+    }
+    depvar <- tmp$prd;                                   ## PRD
+    X <- cbind ( dis.dummies, dis.dummies * tmp$prdst ); ## PRD 
+    colnames (X) <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    K <- ncol(X);
+    constant <- rep(1, times = N) # constant
+    #
+    elas.data <- list ( "depvar","X","N","K" )
+    elas.inits <- function (){
+        list (
+        beta=rnorm(K),
+        sigma=runif(1)
+        )
+        }
+    elas.parameters <- c("beta", "sigma")
+    #
+    ## #test ride
+    ## thisreg <- jags (elas.data, elas.inits, elas.parameters,
+    ##                 "linearModel.txt", n.chains=3,
+    ##                 n.iter=50, n.thin=2)
+    # estimate
+    thisreg <- jags (elas.data, elas.inits, elas.parameters,
+                    "linearModel.txt", n.chains=3,
+                    n.iter=1500, n.thin=15)
+    regs.prd[[i]] <- thisreg$BUGSoutput$sims.matrix; names(regs.prd)[i] <- paste(edos[i]) ## SAVES POSTERIOR CHAINS FOR STATE REGRESSION
+    elas.prd <- c ( elas.prd, thisreg$BUGSoutput$median$beta[(n.dis+1):(2*n.dis)] ) ## PRD
+    print(paste(edos[i], "done"))
+}
+#
+## names(regs) <- paste("state", 1:32, sep = "")
+names(elas.prd) <- alldis
+#
+elas.d0 <- data.frame(district = alldis, pan = elas.pan, pri = elas.pri, prd = elas.prd)
+regs.d0 <- list(pan=regs.pan, pri=regs.pri, prd=regs.prd);
+
+
+##################
+## d1 districts ##
+##################
+tmpv <- merge( x = v, y = eq[,c("edon","seccion","dis2013.1")], by = c("edon","seccion") )
+colnames(tmpv)[grep(pattern = "dis.*", colnames(tmpv))] <- "disn"
+tmpv <- tmpv[order(tmpv$edon, tmpv$disn),]
+head(tmpv)
+#
+# prepare data
+alldis <- paste("d", tmpv$edon/100 + tmpv$disn/10000 + .000099, sep = ""); alldis <- alldis[duplicated(alldis)==FALSE]
+alldis <- gsub(pattern = "99", replacement = "", x = gsub(pattern = "0\\.", replacement = "", x = alldis) )
+regs <- list() # empty list to receive regressions
+elas.pan <- elas.pri <- elas.prd <- vector()
+#
+# PAN d1
+for (i in 1:32){  # loop over states
+    tmp <- tmpv[tmpv$edon==i,]
+    n.dis <- max(tmp$disn)
+    N <- nrow(tmp)
+    #
+    # district dummies for switching regime model
+    dis.dummies <- data.frame(matrix(0, nrow = N, ncol = n.dis))
+    # d <- 2 # debug
+    for (d in 1:n.dis){ # loop over  districts
+        select <- which(tmp$disn==d)
+        dis.dummies[select,d] <- 1;
+    }
+    depvar <- tmp$pan;                                   ## PAN 
+    X <- cbind ( dis.dummies, dis.dummies * tmp$panst ); ## PAN 
+    colnames (X) <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    K <- ncol(X);
+    constant <- rep(1, times = N) # constant
+    #
+    elas.data <- list ( "depvar","X","N","K" )
+    elas.inits <- function (){
+        list (
+        beta=rnorm(K),
+        sigma=runif(1)
+        )
+        }
+    elas.parameters <- c("beta", "sigma")
+    #
+    ## #test ride
+    ## thisreg <- jags (elas.data, elas.inits, elas.parameters,
+    ##                 "linearModel.txt", n.chains=3,
+    ##                 n.iter=50, n.thin=2)
+    # estimate
+    thisreg <- jags (elas.data, elas.inits, elas.parameters,
+                    "linearModel.txt", n.chains=3,
+                    n.iter=1500, n.thin=15)
+    regs.pan[[i]] <- thisreg$BUGSoutput$sims.matrix; names(regs.pan)[i] <- paste(edos[i]) ## SAVES POSTERIOR CHAINS FOR STATE REGRESSION
+    elas.pan <- c ( elas.pan, thisreg$BUGSoutput$median$beta[(n.dis+1):(2*n.dis)] ) ## PAN 
+    print(paste(edos[i], "done"))
+}
+#
+## names(regs) <- paste("state", 1:32, sep = "")
+names(elas.pan) <- alldis
+#
+# PRI d1
+for (i in 1:32){  # loop over states
+    tmp <- tmpv[tmpv$edon==i,]
+    n.dis <- max(tmp$disn)
+    N <- nrow(tmp)
+    #
+    # district dummies for switching regime model
+    dis.dummies <- data.frame(matrix(0, nrow = N, ncol = n.dis))
+    # d <- 2 # debug
+    for (d in 1:n.dis){ # loop over  districts
+        select <- which(tmp$disn==d)
+        dis.dummies[select,d] <- 1;
+    }
+    depvar <- tmp$pri;                                   ## PAN 
+    X <- cbind ( dis.dummies, dis.dummies * tmp$prist ); ## PAN 
+    colnames (X) <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    K <- ncol(X);
+    constant <- rep(1, times = N) # constant
+    #
+    elas.data <- list ( "depvar","X","N","K" )
+    elas.inits <- function (){
+        list (
+        beta=rnorm(K),
+        sigma=runif(1)
+        )
+        }
+    elas.parameters <- c("beta", "sigma")
+    #
+    ## #test ride
+    ## thisreg <- jags (elas.data, elas.inits, elas.parameters,
+    ##                 "linearModel.txt", n.chains=3,
+    ##                 n.iter=50, n.thin=2)
+    # estimate
+    thisreg <- jags (elas.data, elas.inits, elas.parameters,
+                    "linearModel.txt", n.chains=3,
+                    n.iter=1500, n.thin=15)
+    regs.pri[[i]] <- thisreg$BUGSoutput$sims.matrix; names(regs.pri)[i] <- paste(edos[i]) ## SAVES POSTERIOR CHAINS FOR STATE REGRESSION
+    elas.pri <- c ( elas.pri, thisreg$BUGSoutput$median$beta[(n.dis+1):(2*n.dis)] ) ## PRI
+    print(paste(edos[i], "done"))
+}
+#
+## names(regs) <- paste("state", 1:32, sep = "")
+names(elas.pri) <- alldis
+#
+# PRD d1
+for (i in 1:32){  # loop over states
+    tmp <- tmpv[tmpv$edon==i,]
+    n.dis <- max(tmp$disn)
+    N <- nrow(tmp)
+    #
+    # district dummies for switching regime model
+    dis.dummies <- data.frame(matrix(0, nrow = N, ncol = n.dis))
+    # d <- 2 # debug
+    for (d in 1:n.dis){ # loop over  districts
+        select <- which(tmp$disn==d)
+        dis.dummies[select,d] <- 1;
+    }
+    depvar <- tmp$prd;                                   ## PAN 
+    X <- cbind ( dis.dummies, dis.dummies * tmp$prdst ); ## PAN 
+    colnames (X) <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    K <- ncol(X);
+    constant <- rep(1, times = N) # constant
+    #
+    elas.data <- list ( "depvar","X","N","K" )
+    elas.inits <- function (){
+        list (
+        beta=rnorm(K),
+        sigma=runif(1)
+        )
+        }
+    elas.parameters <- c("beta", "sigma")
+    #
+    ## #test ride
+    ## thisreg <- jags (elas.data, elas.inits, elas.parameters,
+    ##                 "linearModel.txt", n.chains=3,
+    ##                 n.iter=50, n.thin=2)
+    # estimate
+    thisreg <- jags (elas.data, elas.inits, elas.parameters,
+                    "linearModel.txt", n.chains=3,
+                    n.iter=1500, n.thin=15)
+    regs.prd[[i]] <- thisreg$BUGSoutput$sims.matrix; names(regs.prd)[i] <- paste(edos[i]) ## SAVES POSTERIOR CHAINS FOR STATE REGRESSION
+    elas.prd <- c ( elas.prd, thisreg$BUGSoutput$median$beta[(n.dis+1):(2*n.dis)] ) ## PRD
+    print(paste(edos[i], "done"))
+}
+#
+## names(regs) <- paste("state", 1:32, sep = "")
+names(elas.prd) <- alldis
+#
+elas.d1 <- data.frame(district = alldis, pan = elas.pan, pri = elas.pri, prd = elas.prd)
+regs.d1 <- list(pan=regs.pan, pri=regs.pri, prd=regs.prd);
+
+##################
+## d3 districts ##
+##################
+tmpv <- merge( x = v, y = eq[,c("edon","seccion","dis2013.1")], by = c("edon","seccion") )
+colnames(tmpv)[grep(pattern = "dis.*", colnames(tmpv))] <- "disn"
+tmpv <- tmpv[order(tmpv$edon, tmpv$disn),]
+head(tmpv)
+#
+# prepare data
+alldis <- paste("d", tmpv$edon/100 + tmpv$disn/10000 + .000099, sep = ""); alldis <- alldis[duplicated(alldis)==FALSE]
+alldis <- gsub(pattern = "99", replacement = "", x = gsub(pattern = "0\\.", replacement = "", x = alldis) )
+regs <- list() # empty list to receive regressions
+elas.pan <- elas.pri <- elas.prd <- vector()
+#
+# PAN d3
+for (i in 1:32){  # loop over states
+    tmp <- tmpv[tmpv$edon==i,]
+    n.dis <- max(tmp$disn)
+    N <- nrow(tmp)
+    #
+    # district dummies for switching regime model
+    dis.dummies <- data.frame(matrix(0, nrow = N, ncol = n.dis))
+    # d <- 2 # debug
+    for (d in 1:n.dis){ # loop over  districts
+        select <- which(tmp$disn==d)
+        dis.dummies[select,d] <- 1;
+    }
+    depvar <- tmp$pan;                                   ## PAN 
+    X <- cbind ( dis.dummies, dis.dummies * tmp$panst ); ## PAN 
+    colnames (X) <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    K <- ncol(X);
+    constant <- rep(1, times = N) # constant
+    #
+    elas.data <- list ( "depvar","X","N","K" )
+    elas.inits <- function (){
+        list (
+        beta=rnorm(K),
+        sigma=runif(1)
+        )
+        }
+    elas.parameters <- c("beta", "sigma")
+    #
+    ## #test ride
+    ## thisreg <- jags (elas.data, elas.inits, elas.parameters,
+    ##                 "linearModel.txt", n.chains=3,
+    ##                 n.iter=50, n.thin=2)
+    # estimate
+    thisreg <- jags (elas.data, elas.inits, elas.parameters,
+                    "linearModel.txt", n.chains=3,
+                    n.iter=1500, n.thin=15)
+    regs.pan[[i]] <- thisreg$BUGSoutput$sims.matrix; names(regs.pan)[i] <- paste(edos[i]) ## SAVES POSTERIOR CHAINS FOR STATE REGRESSION
+    elas.pan <- c ( elas.pan, thisreg$BUGSoutput$median$beta[(n.dis+1):(2*n.dis)] ) ## PAN 
+    print(paste(edos[i], "done"))
+}
+#
+## names(regs) <- paste("state", 1:32, sep = "")
+names(elas.pan) <- alldis
+#
+# PRI d3
+for (i in 1:32){  # loop over states
+    tmp <- tmpv[tmpv$edon==i,]
+    n.dis <- max(tmp$disn)
+    N <- nrow(tmp)
+    #
+    # district dummies for switching regime model
+    dis.dummies <- data.frame(matrix(0, nrow = N, ncol = n.dis))
+    # d <- 2 # debug
+    for (d in 1:n.dis){ # loop over  districts
+        select <- which(tmp$disn==d)
+        dis.dummies[select,d] <- 1;
+    }
+    depvar <- tmp$pri;                                   ## PAN 
+    X <- cbind ( dis.dummies, dis.dummies * tmp$prist ); ## PAN 
+    colnames (X) <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    K <- ncol(X);
+    constant <- rep(1, times = N) # constant
+    #
+    elas.data <- list ( "depvar","X","N","K" )
+    elas.inits <- function (){
+        list (
+        beta=rnorm(K),
+        sigma=runif(1)
+        )
+        }
+    elas.parameters <- c("beta", "sigma")
+    #
+    ## #test ride
+    ## thisreg <- jags (elas.data, elas.inits, elas.parameters,
+    ##                 "linearModel.txt", n.chains=3,
+    ##                 n.iter=50, n.thin=2)
+    # estimate
+    thisreg <- jags (elas.data, elas.inits, elas.parameters,
+                    "linearModel.txt", n.chains=3,
+                    n.iter=1500, n.thin=15)
+    regs.pri[[i]] <- thisreg$BUGSoutput$sims.matrix; names(regs.pri)[i] <- paste(edos[i]) ## SAVES POSTERIOR CHAINS FOR STATE REGRESSION
+    elas.pri <- c ( elas.pri, thisreg$BUGSoutput$median$beta[(n.dis+1):(2*n.dis)] ) ## PRI
+    print(paste(edos[i], "done"))
+}
+#
+## names(regs) <- paste("state", 1:32, sep = "")
+names(elas.pri) <- alldis
+#
+# PRD d3
+for (i in 1:32){  # loop over states
+    tmp <- tmpv[tmpv$edon==i,]
+    n.dis <- max(tmp$disn)
+    N <- nrow(tmp)
+    #
+    # district dummies for switching regime model
+    dis.dummies <- data.frame(matrix(0, nrow = N, ncol = n.dis))
+    # d <- 2 # debug
+    for (d in 1:n.dis){ # loop over  districts
+        select <- which(tmp$disn==d)
+        dis.dummies[select,d] <- 1;
+    }
+    depvar <- tmp$prd;                                   ## PAN 
+    X <- cbind ( dis.dummies, dis.dummies * tmp$prdst ); ## PAN 
+    colnames (X) <- c( paste("d", 1:n.dis, sep = ""), paste("stch", 1:n.dis, sep = "") );
+    K <- ncol(X);
+    constant <- rep(1, times = N) # constant
+    #
+    elas.data <- list ( "depvar","X","N","K" )
+    elas.inits <- function (){
+        list (
+        beta=rnorm(K),
+        sigma=runif(1)
+        )
+        }
+    elas.parameters <- c("beta", "sigma")
+    #
+    ## #test ride
+    ## thisreg <- jags (elas.data, elas.inits, elas.parameters,
+    ##                 "linearModel.txt", n.chains=3,
+    ##                 n.iter=50, n.thin=2)
+    # estimate
+    thisreg <- jags (elas.data, elas.inits, elas.parameters,
+                    "linearModel.txt", n.chains=3,
+                    n.iter=1500, n.thin=15)
+    regs.prd[[i]] <- thisreg$BUGSoutput$sims.matrix; names(regs.prd)[i] <- paste(edos[i]) ## SAVES POSTERIOR CHAINS FOR STATE REGRESSION
+    elas.prd <- c ( elas.prd, thisreg$BUGSoutput$median$beta[(n.dis+1):(2*n.dis)] ) ## PRD
+    print(paste(edos[i], "done"))
+}
+#
+## names(regs) <- paste("state", 1:32, sep = "")
+names(elas.prd) <- alldis
+#
+elas.d3 <- data.frame(district = alldis, pan = elas.pan, pri = elas.pri, prd = elas.prd)
+regs.d3 <- list(pan=regs.pan, pri=regs.pri, prd=regs.prd);
+
+elasticity <- list(elas.d0 = elas.d0, elas.d1 = elas.d1, elas.d3 = elas.d3, regs.d0 = regs.d0, regs.d1 = regs.d1, regs.d3 = regs.d3) 
+
+save(elasticity, file = "disElasticity.RData")
+
+######################
+#### END elasPrep ####
+######################
