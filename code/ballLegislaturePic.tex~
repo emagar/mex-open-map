@@ -1,0 +1,470 @@
+\documentclass[letter]{article}
+
+%\usepackage[letterpaper,right=1.25in,left=1.25in,top=1.25in,bottom=1.25in]{geometry}
+\usepackage[longnamesfirst, sort]{natbib}\bibpunct[]{(}{)}{;}{a}{}{,}
+\usepackage{ae} % or {zefonts}
+\usepackage[T1]{fontenc}
+\usepackage[ansinew]{inputenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage[colorlinks]{hyperref}
+\usepackage{url}
+
+\usepackage{tikz} % Easier syntax to draw pgf files (invokes pgf automatically)
+\usetikzlibrary{arrows,shapes.geometric}
+\usepackage{pgfmath}
+
+\begin{document}
+
+\title{The powerful unidimensional agenda setter model}
+\author{Eric Magar \\ Instituto Tecnológico Autónomo de México \\ \url{emagar@itam.mx}}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+\noindent The paper introduces the concept of structure-induced
+preferences and policy \citep[cf.][]{shepsle.1979} to show that
+one-dimensional models of political decision making are not as
+restrictive as often claimed. While institutions in general reduce
+the dimensionality of the policy space, agenda-setting monopoly
+collapses it into a single dimension of conflict.
+\end{abstract}
+
+
+Ideology constrains choice and so gives structure to politics. The
+universal notions of left and right provide a most intuitive
+approach to politics and policy, next perhaps only to notions of
+good \emph{vs} evil and us \emph{vs} them. They provide voters with
+reasonable connections between a big and seemingly disconnected
+number of issues and their self-interest
+\citep{popkin.1991,downs.1957}. The constrain also operates at the
+elite level, left and right informing on the positions that
+politicians and their parties are likely to take in day-to-day
+business \citep{poole.rosenthal.1997}.
+
+Collapsing policy into a single left--right continuum, however, does
+not accurately capture politicians everywhere all the time. Cox's
+activation. In ethnically split societies, for example... Politics
+is often multi-dimensional.
+
+Yet the one-dimensional representation remains popular. Downs,
+Poole+Rosenthal. List work with one-dimensional assumption.
+
+This paper provides a defense of unidimensionality. Parties reduce a
+myriad of possible policy combinations to a much
+lower-dimensionality space. Institutions do the same.
+``Structure-induced preferences and policy space''.
+
+\section{The dimensions of policy}
+
+Reduction: 2 sources.
+
+Ideology (Converse 1964), Aldrich and Fernández. Parties nurture
+ideology.
+
+Institutions. Cox 1997 on slimming effect of electoral systems.
+Shepsle 1979, Talbert+Potoski.
+
+But contradictions remain. Use CSES macro (elite) surveys
+
+\begin{verbatim}
+A5004_A...F, B5018_A...I, B5019, B5020, B5020_A...I, B5021
+\end{verbatim}
+
+to establish how often policy has >1 dimensions.
+
+\section{Veto politics in one and two dimensions}
+
+Discuss standard one-dimensional setter model here.
+
+Then see that easily extends to two-dims. Discuss Advantages of
+two-dims from Tsebelis (more accuracy and two-dim can be generalized
+to n-dim whereas 1-dim cannot).
+
+But: not a simple majority legislature, as in social choice. There
+are institutions. In particular, a president (or a second chamber)
+can block legislation. In this context, institutions depress
+dimensionality to one.
+
+M = majority party/coalition in the assembly. M makes a
+take-it-or-leave-it proposal to the executive (E). E can accept the
+proposal, ending the game with policy xM, or veto. In this case the
+pivotal legislator m (the one-third minority) chooses to join the
+executive (sustaining the veto with x0) or the majority (overriding
+the veto with xM).
+
+Payoffs are Euclidian and policy two-dimensional. The result is
+well-known: M will calibrate xM in roder to leave E or m indifferent
+with the status quo, making concessions to the most compromising
+one.
+
+\begin{figure}
+\begin{center}
+  \begin{tikzpicture}[scale=1,rotate=11.25]
+   \clip (-5,-1) rectangle (4,2);
+  % \draw[step=.5cm,gray,very thin] (-5,-3) grid (4,2.5);
+   \def\x0{0,0}
+   \def\aE{115} % ángulo desde el origen (x0)
+   \def\lE{1cm} % largo desde el origen
+   \def\aM{200}
+   \def\lM{2.5cm}
+   \def\am{-30}
+   \def\lm{1.5cm}
+   \def\R{1.61cm} % radio del círc M tangente con otro winset
+   \def\A{42.43}   % angulo de salida del punto de tangencia
+   \def\M{\aM:\lM}
+   \def\E{\aE:\lE}
+   \def\m{\am:\lm}
+   \def\tM{\lM-1.21cm}
+   \def\tE{\lE-1.9mm}
+   \def\tm{\lm-1.03cm}
+  % \draw[black!30] (\M) circle (\tM);
+  % \draw[black!30] (\E) circle (\tE);
+  % \draw[black!30] (\m) circle (\tm);
+  % circ M tangente con winset de E
+  % computes new radius: R = sqrt((\lE*cos(\aE)-\lM*cos(\aM))^2+(\lE*sin(\aE)-\lM*sin(\aM))^2) - \lE
+  %add structure-induced dimension line
+   \draw (\M)++(\M)++(\M)++(\M)++(\A:\R)++(\A:\R)++(\A:\R)++(\A:\R) -- (\x0); %lado izq
+   \draw ({\aM-180}:\lM)++({\aM-180}:\lM)++({\aM-180}:\lM)++({\A-180}:\R)++({\A-180}:\R)++({\A-180}:\R) node[right] {$X$}--(\x0); %lado der
+  % \fill[black!50] (\M) circle (1.5pt) node [below=2pt,black] {$M$};
+  % \fill[black!50] (\E) circle (1.5pt) node [above=2pt,black] {$E$};
+  % \fill[black!50] (\m) circle (1.5pt) node [below=2pt,black] {$m$};
+   \def\y{11}
+   \fill[black!50] (\M)+({90-\y}:\tM) circle (1.5pt) node [below=2pt,black] {$M$};
+   \fill[black!50] (\E)+({270-\y}:\tE) circle (1.5pt) node [below=2pt,black] {$E$};
+   \fill[black!50] (\m)+({90-\y}:\tm) circle (1.5pt) node [below=2pt,black] {$m$};
+  %tipis
+   \draw (\x0) -- ++({150-\y}:23.17mm) -- +({210-\y}:23.17mm);
+   \draw (\x0)++({150-\y}:6.77mm) -- +({210-\y}:6.77mm);
+   \draw (\x0) -- ++({30-\y}:16.44mm) -- +({-30-\y}:16.44mm);
+  % \draw (\M) -- (\m) -- (\E) -- (\M); %Pareto set
+  % adds punto tangente con winset de E
+  % angle: A = antisin{ \lE*sin(aM-aE) / (R + \lE) } + FALTA compensacion para no arrancar en 0° (ej. si \aM=200: +20°)
+   \fill[black!50] (\M) ++(\A:\R) circle (1.5pt) node [below=2pt,black] {$x^*$};
+   \fill[black!50] (\x0) circle (1.5pt) node [below=2pt,black] {$x_0$};
+   \fill[black!50] (\x0)++({150-\y}:23.17mm)++({210-\y}:23.12mm) circle (1.5pt);
+   \fill[black!50] (\x0) -- ++({30-\y}:16.44mm)++({-30-\y}:16.5mm) circle (1.5pt);
+  \end{tikzpicture}
+\caption{One-dimension setter}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+  \begin{tikzpicture}[scale=1,rotate=0]
+   \def\x0{0,0}
+   \def\aE{135} % ángulo desde el origen (x0)
+   \def\lE{2.2cm} % largo desde el origen
+   \def\aM{260}
+   \def\lM{1.8cm}
+   \def\am{10}
+   \def\lm{2cm}
+   \def\R{1.11cm} % radio del círc M tangente con otro winset
+   \def\A{42.9}   % angulo de salida del punto de tangencia
+   \def\M{\aM:\lM}
+   \def\E{\aE:\lE}
+   \def\m{\am:\lm}
+   \draw (\M) circle (\lM);
+   \draw (\E) circle (\lE);
+   \draw (\m) circle (\lm);
+  % circ M tangente con winset de E
+  % computes new radius: R = sqrt((\lE*cos(\aE)-\lM*cos(\aM))^2+(\lE*sin(\aE)-\lM*sin(\aM))^2) - \lE
+   \draw[dashed] (\M) circle (\R);
+    \begin{scope}
+     \clip (\M) circle (\lM);
+     \fill[black!20] (\E) circle (\lE);
+     \fill[black!20] (\m) circle (\lm);
+    \end{scope}
+    \begin{scope}
+     \clip (\m) circle (\lm);
+     \fill[black!20] (\E) circle (\lE);
+    \end{scope}
+  %%add structure-induced dimension line
+  % \draw[black!40] (\M)++(\M)++(\M)++(\A:\R)++(\A:\R)++(\A:\R) -- (\x0); %lado izq
+  % \draw[black!40] ({\aM-180}:\lM)++({\aM-180}:\lM)++({\aM-180}:\lM)++({\A-180}:\R)++({\A-180}:\R)++({\A-180}:\R)--(\x0); %lado der
+   \fill[black!50] (\M) circle (2pt) node [below=2pt,black] {$M$};
+   \fill[black!50] (\E) circle (2pt) node [below=2pt,black] {$E$};
+   \fill[black!50] (\m) circle (2pt) node [below=2pt,black] {$m$};
+   \fill[black!50] (\x0) circle (2pt) node [below=2pt,black] {$x_0$};
+  % \draw (\M) -- (\m) -- (\E) -- (\M); %Pareto set
+  % adds punto tangente con winset de E
+  % angle: A = antisin{ \lE*sin(aM-aE) / (R + \lE) } + FALTA compensacion para no arrancar en 0° (ej. si \aM=200: +20°)
+   \fill[black!50] (\M) ++(\A:\R) circle (2pt) node [below=2pt,black] {$x^*$};
+  \end{tikzpicture}
+\caption{Two-dimension setter}
+\end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+ Part A Two-dimensional setter \\
+ ~ \\
+  \begin{tikzpicture}[scale=1,rotate=0]
+   \clip (-5,-3.5) rectangle (4,2);
+  % \draw[step=.5cm,gray,very thin] (-5,-4) grid (4,2.5);
+   \def\x0{0,0}
+   \def\aE{115} % ángulo desde el origen (x0)
+   \def\lE{1cm} % largo desde el origen
+   \def\aM{200}
+   \def\lM{2.5cm}
+   \def\am{-30}
+   \def\lm{1.5cm}
+   \def\R{1.61cm} % radio del círc M tangente con otro winset
+   \def\A{42.43}   % angulo de salida del punto de tangencia
+   \def\M{\aM:\lM}
+   \def\E{\aE:\lE}
+   \def\m{\am:\lm}
+   \draw (\M) circle (\lM);
+   \draw (\E) circle (\lE);
+   \draw (\m) circle (\lm);
+  % circ M tangente con winset de E
+  % computes new radius: R = sqrt((\lE*cos(\aE)-\lM*cos(\aM))^2+(\lE*sin(\aE)-\lM*sin(\aM))^2) - \lE
+   \draw[dashed] (\M) circle (\R);
+    \begin{scope}
+     \clip (\M) circle (\lM);
+     \fill[black!20] (\E) circle (\lE);
+     \fill[black!20] (\m) circle (\lm);
+    \end{scope}
+    \begin{scope}
+     \clip (\m) circle (\lm);
+     \fill[black!20] (\E) circle (\lE);
+    \end{scope}
+  %add structure-induced dimension line
+  % \draw[black!40] (\M)++(\M)++(\M)++(\A:\R)++(\A:\R)++(\A:\R) -- (\x0); %lado izq
+  % \draw[black!40] ({\aM-180}:\lM)++({\aM-180}:\lM)++({\A-180}:\R)++({\A-180}:\R)--(\x0); %lado der
+   \fill[black!50] (\M) circle (1.5pt) node [below=2pt,black] {$M$};
+   \fill[black!50] (\E) circle (1.5pt) node [above=2pt,black] {$E$};
+   \fill[black!50] (\m) circle (1.5pt) node [below=2pt,black] {$m$};
+   \fill[black!50] (\x0) circle (1.5pt) node [below=2pt,black] {$x_0$};
+  % \draw (\M) -- (\m) -- (\E) -- (\M); %Pareto set
+  % adds punto tangente con winset de E
+  % angle: A = antisin{ \lE*sin(aM-aE) / (R + \lE) } + FALTA compensacion para no arrancar en 0° (ej. si \aM=200: +20°)
+   \fill[black!50] (\M) ++(\A:\R) circle (1.5pt) node [below=2pt,black] {$x^*$};
+  \end{tikzpicture} \\
+ ~ \\
+  %
+ Part B Orthogonal projections \\
+ ~ \\
+  \begin{tikzpicture}[scale=1,rotate=0]
+   \clip (-5,-2.5) rectangle (4,2);
+  % \draw[step=.5cm,gray,very thin] (-5,-3) grid (4,2.5);
+   \def\x0{0,0}
+   \def\aE{115} % ángulo desde el origen (x0)
+   \def\lE{1cm} % largo desde el origen
+   \def\aM{200}
+   \def\lM{2.5cm}
+   \def\am{-30}
+   \def\lm{1.5cm}
+   \def\R{1.61cm} % radio del círc M tangente con otro winset
+   \def\A{42.43}   % angulo de salida del punto de tangencia
+   \def\M{\aM:\lM}
+   \def\E{\aE:\lE}
+   \def\m{\am:\lm}
+   \def\tM{\lM-1.21cm}
+   \def\tE{\lE-1.9mm}
+   \def\tm{\lm-1.03cm}
+   \draw[black!30] (\M) circle (\tM);
+   \draw[black!30] (\E) circle (\tE);
+   \draw[black!30] (\m) circle (\tm);
+  % circ M tangente con winset de E
+  % computes new radius: R = sqrt((\lE*cos(\aE)-\lM*cos(\aM))^2+(\lE*sin(\aE)-\lM*sin(\aM))^2) - \lE
+  %add structure-induced dimension line
+   \draw (\M)++(\M)++(\M)++(\M)++(\A:\R)++(\A:\R)++(\A:\R)++(\A:\R) -- (\x0); %lado izq
+   \draw ({\aM-180}:\lM)++({\aM-180}:\lM)++({\aM-180}:\lM)++({\A-180}:\R)++({\A-180}:\R)++({\A-180}:\R) node[right] {$X$}--(\x0); %lado der
+   \def\y{11} %compensación pendiente
+   \draw[dotted] (\M)-- +({90-\y}:\tM);
+   \draw[dotted] (\E)-- +({270-\y}:\tE);
+   \draw[dotted] (\m)-- +({90-\y}:\tm);
+   \fill[black!50] (\M) circle (1.5pt) node [below=2pt,black] {$M$};
+   \fill[black!50] (\E) circle (1.5pt) node [above=2pt,black] {$E$};
+   \fill[black!50] (\m) circle (1.5pt) node [below=2pt,black] {$m$};
+   \fill[black!50] (\x0) circle (1.5pt) node [below=2pt,black] {$x_0$};
+   \fill[black!50] (\M)+({90-\y}:\tM) circle (1.5pt);
+   \fill[black!50] (\E)+({270-\y}:\tE) circle (1.5pt);
+   \fill[black!50] (\m)+({90-\y}:\tm) circle (1.5pt);
+  % \draw (\M) -- (\m) -- (\E) -- (\M); %Pareto set
+  % adds punto tangente con winset de E
+  % angle: A = antisin{ \lE*sin(aM-aE) / (R + \lE) } + FALTA compensacion para no arrancar en 0° (ej. si \aM=200: +20°)
+   \fill[black!50] (\M) ++(\A:\R) circle (1.5pt) node [below=2pt,black] {$x^*$};
+  \end{tikzpicture} \\
+ ~ \\
+  %
+ Part C Structure-induced unidmensionality \\
+ ~ \\
+  \begin{tikzpicture}[scale=1,rotate=0]
+   \clip (-5,-1) rectangle (4,2);
+  % \draw[step=.5cm,gray,very thin] (-5,-3) grid (4,2.5);
+   \def\x0{0,0}
+   \def\aE{115} % ángulo desde el origen (x0)
+   \def\lE{1cm} % largo desde el origen
+   \def\aM{200}
+   \def\lM{2.5cm}
+   \def\am{-30}
+   \def\lm{1.5cm}
+   \def\R{1.61cm} % radio del círc M tangente con otro winset
+   \def\A{42.43}   % angulo de salida del punto de tangencia
+   \def\M{\aM:\lM}
+   \def\E{\aE:\lE}
+   \def\m{\am:\lm}
+   \def\tM{\lM-1.21cm}
+   \def\tE{\lE-1.9mm}
+   \def\tm{\lm-1.03cm}
+  % \draw[black!30] (\M) circle (\tM);
+  % \draw[black!30] (\E) circle (\tE);
+  % \draw[black!30] (\m) circle (\tm);
+  % circ M tangente con winset de E
+  % computes new radius: R = sqrt((\lE*cos(\aE)-\lM*cos(\aM))^2+(\lE*sin(\aE)-\lM*sin(\aM))^2) - \lE
+  %add structure-induced dimension line
+   \draw (\M)++(\M)++(\M)++(\M)++(\A:\R)++(\A:\R)++(\A:\R)++(\A:\R) -- (\x0); %lado izq
+   \draw ({\aM-180}:\lM)++({\aM-180}:\lM)++({\aM-180}:\lM)++({\A-180}:\R)++({\A-180}:\R)++({\A-180}:\R) node[right] {$X$}--(\x0); %lado der
+  % \fill[black!50] (\M) circle (1.5pt) node [below=2pt,black] {$M$};
+  % \fill[black!50] (\E) circle (1.5pt) node [above=2pt,black] {$E$};
+  % \fill[black!50] (\m) circle (1.5pt) node [below=2pt,black] {$m$};
+   \def\y{11}
+   \fill[black!50] (\M)+({90-\y}:\tM) circle (1.5pt) node [below=2pt,black] {$M$};
+   \fill[black!50] (\E)+({270-\y}:\tE) circle (1.5pt) node [below=2pt,black] {$E$};
+   \fill[black!50] (\m)+({90-\y}:\tm) circle (1.5pt) node [below=2pt,black] {$m$};
+  %tipis
+   \draw (\x0) -- ++({150-\y}:23.17mm) -- +({210-\y}:23.17mm);
+   \draw (\x0)++({150-\y}:6.77mm) -- +({210-\y}:6.77mm);
+   \draw (\x0) -- ++({30-\y}:16.44mm) -- +({-30-\y}:16.44mm);
+  % \draw (\M) -- (\m) -- (\E) -- (\M); %Pareto set
+  % adds punto tangente con winset de E
+  % angle: A = antisin{ \lE*sin(aM-aE) / (R + \lE) } + FALTA compensacion para no arrancar en 0° (ej. si \aM=200: +20°)
+   \fill[black!50] (\M) ++(\A:\R) circle (1.5pt) node [below=2pt,black] {$x^*$};
+   \fill[black!50] (\x0) circle (1.5pt) node [below=2pt,black] {$x_0$};
+   \fill[black!50] (\x0)++({150-\y}:23.17mm)++({210-\y}:23.12mm) circle (1.5pt);
+   \fill[black!50] (\x0) -- ++({30-\y}:16.44mm)++({-30-\y}:16.5mm) circle (1.5pt);
+  \end{tikzpicture}
+\caption{How institutions reduce dimensionality}
+\end{center}
+\end{figure}
+
+
+\bibliographystyle{apsr}
+\bibliography{harvard}
+
+\end{document}
+
+\begin{tikzpicture}[scale=1,rotate=0]
+ \def\x0{0,0}
+ \def\aE{0} % ángulo desde el origen (x0)
+ \def\lE{2cm} % largo desde el origen
+ \def\aM{180}
+ \def\lM{1.8cm}
+ \def\am{0}
+ \def\lm{0.5cm}
+% \def\R{1.8cm} % radio del círc M tangente con otro winset
+% \def\A{20}   % angulo de salida del punto de tangencia
+ \def\M{\aM:\lM}
+ \def\E{\aE:\lE}
+ \def\m{\am:\lm}
+ \draw (\M) circle (\lM);
+ \draw (\E) circle (\lE);
+ \draw (\m) circle (\lm);
+% circ M tangente con winset de E
+% computes new radius: R = sqrt((\lE*cos(\aE)-\lM*cos(\aM))^2+(\lE*sin(\aE)-\lM*sin(\aM))^2) - \lE
+% \draw[dashed] (\M) circle (\R);
+%  \begin{scope}
+%   \clip (\M) circle (\lM);
+%   \fill[black!20] (\E) circle (\lE);
+%   \fill[black!20] (\m) circle (\lm);
+%  \end{scope}
+%  \begin{scope}
+%   \clip (\m) circle (\lm);
+%   \fill[black!20] (\E) circle (\lE);
+%  \end{scope}
+%add structure-induced dimension line
+ \draw[black!40] (\M)++(\M)++(\M) -- (\x0); %lado izq
+ \draw[black!40] ({\aM-180}:\lM)++({\aM-180}:\lM)++({\aM-180}:\lM)--(\x0); %lado der
+ \fill[black!50] (\M) circle (2pt) node [below=2pt,black] {$M$};
+ \fill[black!50] (\E) circle (2pt) node [below=2pt,black] {$E$};
+ \fill[black!50] (\m) circle (2pt) node [below=2pt,black] {$m$};
+ \fill[black!50] (\x0) circle (2pt) node [below=2pt,black] {$x_0$};
+% \draw (\M) -- (\m) -- (\E) -- (\M); %Pareto set
+% adds punto tangente con winset de E
+% angle: A = antisin{ \lE*sin(aM-aE) / (R + \lE) } + FALTA compensacion para no arrancar en 0° (ej. si \aM=200: +20°)
+% \fill[black!50] (\M) ++(\A:\R) circle (2pt) node [below=2pt,black] {$x^*$};
+\end{tikzpicture}
+
+
+
+\begin{tikzpicture}
+ \pgfsetfillopacity{0.5}
+ \fill[red] (90:1cm) circle (11mm);
+ \fill[green] (210:1cm) circle (11mm);
+ \fill[blue] (-30:1cm) circle (11mm);
+\end{tikzpicture}
+
+
+\begin{tikzpicture}[scale=1,rotate=-12]
+ \def\x0{0,0}
+ \def\M{180:2}
+ \def\E{180:0.6}
+ \def\m{0:1.25}
+ \draw (-5,0) -- (3,0) node [right=2pt,black] {$X$};
+% \draw[black!30] (\M)+(-90:1.25) circle (1.25);
+% \draw[black!30] (\E)+(90:.75) circle (.75);
+% \draw[black!30] (\m)+(-90:0.75) circle (0.75);
+  \begin{scope}
+   \clip (-5,0) rectangle (3,2);
+    \draw (\M)+(-90:1.25) circle (2.36);
+    \draw (\m)+(-90:0.75) circle (1.46);
+  \end{scope}
+  \begin{scope}
+   \clip (-5,0) rectangle (3,-2);
+    \draw (\E)+(90:.75) circle (0.96);
+  \end{scope}
+ \fill[black!50] (\M) circle (1.5pt) node [below=2pt,black] {$M$};
+ \fill[black!50] (\E) circle (1.5pt) node [above=2pt,black] {$E$};
+ \fill[black!50] (\m) circle (1.5pt) node [below=2pt,black] {$m$};
+ \fill[black!50] (\x0) circle (1.5pt) node [below=2pt,black] {$x_0$};
+ \fill[black!30] (\M)++(-90:1.2) circle (1.5pt);
+ \fill[black!30] (\E)+(90:.75) circle (1.5pt);
+ \fill[black!30] (\m)+(-90:.75) circle (1.5pt);
+ \fill[black!50] (180:1.2) circle (1.5pt) node [below=2pt,black] {$x^*$};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}[scale=1,rotate=0]
+ \def\x0{0,0}
+ \def\aE{115} % ángulo desde el origen (x0)
+ \def\lE{1cm} % largo desde el origen
+ \def\aM{200}
+ \def\lM{2.5cm}
+ \def\am{-30}
+ \def\lm{1.5cm}
+ \def\R{1.61cm} % radio del círc M tangente con otro winset
+ \def\A{42.43}   % angulo de salida del punto de tangencia
+ \def\M{\aM:\lM}
+ \def\E{\aE:\lE}
+ \def\m{\am:\lm}
+ \draw (\M) circle (\lM);
+ \draw (\E) circle (\lE);
+ \draw (\m) circle (\lm);
+% circ M tangente con winset de E
+% computes new radius: R = sqrt((\lE*cos(\aE)-\lM*cos(\aM))^2+(\lE*sin(\aE)-\lM*sin(\aM))^2) - \lE
+ \draw[dashed] (\M) circle (\R);
+  \begin{scope}
+   \clip (\M) circle (\lM);
+   \fill[black!20] (\E) circle (\lE);
+   \fill[black!20] (\m) circle (\lm);
+  \end{scope}
+  \begin{scope}
+   \clip (\m) circle (\lm);
+   \fill[black!20] (\E) circle (\lE);
+  \end{scope}
+%add structure-induced dimension line
+ \draw[black!40] (\M)++(\M)++(\M)++(\A:\R)++(\A:\R)++(\A:\R) -- (\x0); %lado izq
+ \draw[black!40] ({\aM-180}:\lM)++({\aM-180}:\lM)++({\A-180}:\R)++({\A-180}:\R)--(\x0); %lado der
+ \fill[black!50] (\M) circle (1.5pt) node [below=2pt,black] {$M$};
+ \fill[black!50] (\E) circle (1.5pt) node [below=2pt,black] {$E$};
+ \fill[black!50] (\m) circle (1.5pt) node [below=2pt,black] {$m$};
+ \fill[black!50] (\x0) circle (1.5pt) node [below=2pt,black] {$x_0$};
+% \draw (\M) -- (\m) -- (\E) -- (\M); %Pareto set
+% adds punto tangente con winset de E
+% angle: A = antisin{ \lE*sin(aM-aE) / (R + \lE) } + FALTA compensacion para no arrancar en 0° (ej. si \aM=200: +20°)
+ \fill[black!50] (\M) ++(\A:\R) circle (1.5pt) node [below=2pt,black] {$x^*$};
+\end{tikzpicture}
