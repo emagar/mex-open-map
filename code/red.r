@@ -3,16 +3,16 @@
 
 rm(list=ls())
 
-wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/data/")
+wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/")
 dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/elecReturns/") # data directory
-gd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/graphs/")
+gd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/graphs/")
 setwd(wd)
 
 #########################################################################################
 # IMPORTS AND PREPARES OBJECT MAPPING SECTIONS TO 1979, 1997, 2006, AND 2015 DISTRICTS ##
 #########################################################################################
 #
-cd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/code/")
+cd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/code/")
 source(file = paste(cd, "eqPrep.r", sep = ""), echo = TRUE)
 rm(cd)
 #
@@ -52,7 +52,7 @@ elecs060912.seccion <- list(e06=e06, e09=e09, e12=e12); rm(e06, e09, e12)
 ##############################################################################################################
 ## READ 060912 ELEC DATA AGGREGATED IN 2012, 2013.1, AND 2013.3 DISTRICTS PREPARED WITH analizaEscenarios.r ##
 ##############################################################################################################
-dd2 <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/data/") # prepared data directory
+dd2 <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # prepared data directory
 load(file = paste(dd2, "elec060912.RData"))
 rm(dd2)
 #
@@ -65,8 +65,6 @@ for(i in 1:length(elec060912)){
 }
 rm(elec060912)
 dim(df2012d0)
-
-
 
 ## poblacion del conteo 2005
 c05 <- c("~/Dropbox/data/elecs/MXelsCalendGovt/censos/secciones/conteo2005")
@@ -787,9 +785,11 @@ tmp$ptot2000 <- round(x = tmp.a * 2000 + tmp.b, digits = 0);
 tmp$ptot2003 <- round(x = tmp.a * 2003 + tmp.b);
 tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b);
 tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b);
+tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b);
 tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b);
 tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b);
 tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b);
+tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b);
 #tmp$ptot1995 <- round(x = tmp.a * 1995 + tmp.b); # uncomment to compare extra-  and intra-polations, should be dropped
 tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.edos <- tmp
@@ -825,9 +825,11 @@ tmp$ptot2003 <- round(x = tmp.a * 2003 + tmp.b, digits = 0);
 tmp.b <- (tmp$ptot10 * 2005 - tmp$ptot05 * 2010) / (2005 - 2010); tmp.a <- (tmp$ptot05 - tmp.b) / 2005; # interpolation parameters
 tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
 tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
+tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
 tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
 tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
 tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
+tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
 #
 ## # COMPARE conteo1995 and censo2000 with 05-10 extrapolations by state (needs a commented line above)
 ## edos <- c("ags", "bc", "bcs", "cam", "coa", "col", "cps", "cua", "df", "dgo", "gua", "gue", "hgo", "jal", "mex", "mic", "mor", "nay", "nl", "oax", "pue", "que", "qui", "san", "sin", "son", "tab", "tam", "tla", "ver", "yuc", "zac")
@@ -910,6 +912,7 @@ tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
 tmp$ptot05 <- tmp$ptot10 <- tmp$ptot00 <- tmp$ptot95 <- NULL
 #
 pob.edos <- tmp # this replaces the 2005--2010 state extrapolations prepared above with 1995--2000--2005--2010 interpolations (used only for state aggregates, not section pop (no section-level data for 1995 and 2000)
+pob.nal <- apply(X = pob.edos, MARGIN = 2, sum); pob.nal <- pob.nal[-1]
 head(pob.edos)
 #
 # turn them into target size
@@ -985,9 +988,11 @@ tmp$ptot2000 <- round(x = tmp.a * 2000 + tmp.b, digits = 0);
 tmp$ptot2003 <- round(x = tmp.a * 2003 + tmp.b, digits = 0);
 tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
 tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
+tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
 tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
 tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
 tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
+tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
 tmp$ptot05 <- tmp$ptot10 <- NULL;
 tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.distMap2006 <- tmp
@@ -1010,9 +1015,11 @@ tmp$ptot2000 <- round(x = tmp.a * 2000 + tmp.b, digits = 0);
 tmp$ptot2003 <- round(x = tmp.a * 2003 + tmp.b, digits = 0);
 tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
 tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
+tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
 tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
 tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
 tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
+tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
 tmp$ptot05 <- tmp$ptot10 <- NULL;
 tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.distMap2015p1 <- tmp
@@ -1034,9 +1041,11 @@ tmp$ptot2000 <- round(x = tmp.a * 2000 + tmp.b, digits = 0);
 tmp$ptot2003 <- round(x = tmp.a * 2003 + tmp.b, digits = 0);
 tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
 tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
+tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
 tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
 tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
 tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
+tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
 tmp$ptot05 <- tmp$ptot10 <- NULL;
 tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.distMap2015p3 <- tmp
@@ -1049,15 +1058,12 @@ rm(tmp.a, tmp.b, tmp, i, fl, pob, pob05, pob10, edo, y, tempobj, c05, c10)
 ls()
 #
 
-
-
 #################################################
 # prepare district populations to target ratios
 #################################################
 save.image(file = "tmp.RData") # debug
 rm(list = ls())                # debug
-wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/data/")
-#wd <- c("d:/01/Dropbox/data/elecs/MXelsCalendGovt/redistrict/data/")
+wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/")
 setwd(wd)
 load(file = "tmp.RData")       # debug
 
@@ -1065,32 +1071,32 @@ tmp <- tmp2 <- pob.distMap2006
 head(tmp)
 i <- 2 # debug
 for (i in 1:300){
-    tmp[i, 3:11] <-   tmp[i, 3:11] / target.edos.func("s")[tmp$edon[i], 2:10];
-    tmp2[i, 3:11] <- tmp2[i, 3:11] / target.nal;
+    tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("s")[tmp$edon[i], 2:12];
+    tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
 }
-colnames(tmp)[3:11] <- paste("rels",  c(seq(from = 1994, to = 2012, by = 3), 2013, 2015), sep = "")
-colnames(tmp2)[3:11] <- paste("reln", c(seq(from = 1994, to = 2012, by = 3), 2013, 2015), sep = "")
-pob.distMap2006 <- cbind(pob.distMap2006, tmp[,3:11], tmp2[,3:11])
+colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+pob.distMap2006 <- cbind(pob.distMap2006, tmp[,3:13], tmp2[,3:13])
 head(pob.distMap2006)
 #
 tmp <- tmp2 <- pob.distMap2015p1
 for (i in 1:300){
-    tmp[i, 3:11] <-   tmp[i, 3:11] / target.edos.func("r")[tmp$edon[i], 2:10];
-    tmp2[i, 3:11] <- tmp2[i, 3:11] / target.nal;
+    tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("r")[tmp$edon[i], 2:12];
+    tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
 }
-colnames(tmp)[3:11] <- paste("rels",  c(seq(from = 1994, to = 2012, by = 3), 2013, 2015), sep = "")
-colnames(tmp2)[3:11] <- paste("reln", c(seq(from = 1994, to = 2012, by = 3), 2013, 2015), sep = "")
-pob.distMap2015p1 <- cbind(pob.distMap2015p1, tmp[,3:11], tmp2[,3:11])
+colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+pob.distMap2015p1 <- cbind(pob.distMap2015p1, tmp[,3:13], tmp2[,3:13])
 head(pob.distMap2015p1)
 #
 tmp <- tmp2 <- pob.distMap2015p3
 for (i in 1:300){
-    tmp[i, 3:11] <-   tmp[i, 3:11] / target.edos.func("r")[tmp$edon[i], 2:10];
-    tmp2[i, 3:11] <- tmp2[i, 3:11] / target.nal;
+    tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("r")[tmp$edon[i], 2:12];
+    tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
 }
-colnames(tmp)[3:11] <- paste("rels",  c(seq(from = 1994, to = 2012, by = 3), 2013, 2015), sep = "")
-colnames(tmp2)[3:11] <- paste("reln", c(seq(from = 1994, to = 2012, by = 3), 2013, 2015), sep = "")
-pob.distMap2015p3 <- cbind(pob.distMap2015p3, tmp[,3:11], tmp2[,3:11])
+colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+pob.distMap2015p3 <- cbind(pob.distMap2015p3, tmp[,3:13], tmp2[,3:13])
 head(pob.distMap2015p3)
 #
 rm(tmp, tmp2)
@@ -1126,7 +1132,88 @@ df2012s1 <- merge(x = df2012s1, y = tmp, by = c("edon", "disn"))
 tmp <- pob.distMap2015p3[, c("edon","disn","ptot2012","rels2012","reln2012")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
 df2012d3 <- merge(x = df2012d3, y = tmp, by = c("edon", "disn"))
 df2012s3 <- merge(x = df2012s3, y = tmp, by = c("edon", "disn"))
+
+## COMPUTE RELATIVE REPRESENTATION INDEX FOR DISTRICTS VIS-A-VIS STATE/NAT AVERAGES (ANSOLABEHERE ET AL 2002)
+tmp <- df2006d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2006d0 <- tmp
+tmp <- df2006d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2006d1 <- tmp
+tmp <- df2006d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2006d3 <- tmp
 #
+tmp <- df2009d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2009d0 <- tmp
+tmp <- df2009d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2009d1 <- tmp
+tmp <- df2009d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2009d3 <- tmp
+#
+tmp <- df2012d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d0 <- tmp
+tmp <- df2012d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d1 <- tmp
+tmp <- df2012d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d3 <- tmp
+#
+# prepare (until now, non-existant) df2015 with rri
+tmp <- pob.distMap2006
+tmp <- tmp[,c("edon","disn","ptot2015","rels2015","reln2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
+tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+df2015d0 <- tmp
+#
+tmp <- pob.distMap2015p3
+tmp <- tmp[,c("edon","disn","ptot2015","rels2015","reln2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
+tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+df2015d3 <- tmp
+#
+# prepare (until now, non-existant) df2018 with rri
+tmp <- pob.distMap2006
+tmp <- tmp[,c("edon","disn","ptot2018","rels2018","reln2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
+tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+df2018d0 <- tmp
+#
+tmp <- pob.distMap2015p3
+tmp <- tmp[,c("edon","disn","ptot2018","rels2018","reln2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
+tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+df2018d3 <- tmp
+#
+# prepare (until now, non-existant) df2000 with rri
+tmp <- pob.distMap2006
+tmp <- tmp[,c("edon","disn","ptot2000","rels2000","reln2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
+tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+df2000d0 <- tmp
+#
+tmp <- pob.distMap2015p3
+tmp <- tmp[,c("edon","disn","ptot2000","rels2000","reln2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
+tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+df2000d3 <- tmp
+#
+# prepare fake df2010 with rri (for use when graphing rris only, no elec results, but with structure that code below recognizes)
+tmp <- pob.distMap2006
+tmp <- tmp[,c("edon","disn","ptot2010","rels2010","reln2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
+tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+df2010d0 <- tmp
+#
+tmp <- pob.distMap2015p3
+tmp <- tmp[,c("edon","disn","ptot2010","rels2010","reln2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
+tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+df2010d3 <- tmp
+head(df2010d3)
+#
+# this block shows that inverting mu rels achieves rris
+## # select year and map
+## tmp.dis <- pob.distMap2006 # df2012d0 has target pop instead
+## tmp.st  <- pob.edos
+## tmp.nat <- apply(tmp.st, 2, sum)
+## tmp.ndis  <- df2012s0
+## #
+## tmp <- tmp.dis[,c("edon","disn")] # object tha will receive index
+## tmp$rris <- tmp$rrin <- NA
+## for (i in 1:300){
+##     #i <- 1 # debug
+##     tmp$rris[i] <- (1 / tmp.dis$ptot2012[i]) / (tmp.ndis$ndis[which(tmp.ndis$edon==tmp$edon[i])] / tmp.st$ptot2012[which(tmp.st$edon==tmp$edon[i])])
+##     tmp$rrin[i] <- (1 / tmp.dis$ptot2012[i]) / (                                             300 / tmp.nat[which(names(tmp.nat)=="ptot2012")]      )
+## }
+## # my reln and rels are 1/rrin and 1/rris
+## head(1/tmp)
+## head(tmp.dis)
+## #
+## head(df2012d0[order(df2012d0$edon, df2012d0$disn),])
+#
+
+summary(df2015d0$ptot)
+tail(df2015d0[order(df2015d0$ptot),])
 
 ################################################################################
 ## ADDS MARGIN (positive if winner, negative  difference to winner otherwise) ##
@@ -1484,7 +1571,101 @@ abline(a=0, b=1, lty=2)
 ## dev.off()
 ## setwd(wd)
 
+# ---------------------------------------------------------------------
+# SUMMARIZE NAT VOTE-SEAT SHARES, PLOT RRIS (ANSOLABEHERE ET AL 2002)
+# ---------------------------------------------------------------------
+# merges pri+green all years nationwide
+# seats MR + PR
+seats.mix.0612 <- data.frame(pty=c("pan","pri-green","left","pt-c","panal","pasc"),
+                             dip06=c(206,123,157,0,10,4)/500,
+                             dip09=c(143,258,71,19,9,0)/500,
+                             dip12=c(114,241,135,0,10,0)/500)
+# seats MR only
+s1 <- df2006d0[,c("panw","priw","prdw","panalw","asdcw")]     #/ df2006d0$efec
+s2 <- df2009d0[,c("panw","priw","prdw","pvemw","panalw","ptcw")] #/ df2009d0$efec
+s3 <- df2012d0[,c("panw","priw","prdw","pvemw","panalw")]      #/ df2012d0$efec
+# homogenize columns
+s1 <- cbind(s1, pvemw = rep(0,300), ptcw = rep(0,300)); s1 <- s1[,c("panw","priw","prdw","pvemw","ptcw","panalw","asdcw")]
+s2 <- cbind(s2, asdcw = rep(0,300)); s2 <- s2[,c("panw","priw","prdw","pvemw","ptcw","panalw","asdcw")]
+s3 <- cbind(s3, asdcw = rep(0,300), ptcw = rep(0,300)); s3 <- s3[,c("panw","priw","prdw","pvemw","ptcw","panalw","asdcw")]
+# sum pri and green regardless of partial coal
+s2$priw <- s2$priw+s2$pvemw; s2$pvemw <- NULL
+s3$priw <- s3$priw+s3$pvemw; s3$pvemw <- NULL
+s1$pvemw <- s2$pvemw <- s3$pvemw <- NULL
+seats.mr.0612 <- data.frame(pty=c("pan","pri-green","left","pt-c","panal","pasc"),
+                           dip06=apply(s1, 2, sum)/300,
+                           dip09=apply(s2, 2, sum)/300,
+                           dip12=apply(s3, 2, sum)/300)
+# national votes
+v1 <- df2006d0[,c("pan","pric","prdc","panal","asdc")]     #/ df2006d0$efec
+v2 <- df2009d0[,c("pan","pri","prd","pvem","panal","ptc")] #/ df2009d0$efec
+v3 <- df2012d0[,c("pan","pri","prdc","pvem","panal")]      #/ df2012d0$efec
+# homogenize columns
+v1 <- cbind(v1, pvem = rep(0,300), pt = rep(0,300)); v1 <- v1[,c("pan","pric","prdc","pvem","pt","panal","asdc")]
+v2 <- cbind(v2, asdc = rep(0,300)); v2 <- v2[,c("pan","pri","prd","pvem","ptc","panal","asdc")]
+v3 <- cbind(v3, asdc = rep(0,300), pt = rep(0,300)); v3 <- v3[,c("pan","pri","prdc","pvem","pt","panal","asdc")]
+# sum pri and green regardless of partial coal
+v2$pri <- v2$pri+v2$pvem; v2$pvem <- NULL
+v3$pri <- v3$pri+v3$pvem; v3$pvem <- NULL
+v1$pvem <- v2$pvem <- v3$pvem <- NULL
+nat.vot.0612 <- data.frame(pty=c("pan","pri-green","left","pt-c","panal","pasc"),
+                           dip06=apply(v1, 2, sum),
+                           dip09=apply(v2, 2, sum),
+                           dip12=apply(v3, 2, sum))
+nat.vot.0612$dip06 <- nat.vot.0612$dip06 / apply(nat.vot.0612[2:4], 2, sum)[1]
+nat.vot.0612$dip09 <- nat.vot.0612$dip09 / apply(nat.vot.0612[2:4], 2, sum)[2]
+nat.vot.0612$dip12 <- nat.vot.0612$dip12 / apply(nat.vot.0612[2:4], 2, sum)[3]
+rm(v1,v2,v3,s1,s2,s3)
+#
+# plot votes-seats SMD and mix comparison 2006--2012
+#pdf(file = paste(gd, "votes-seatsSMDandMix0612.pdf", sep=""))
+plot(nat.vot.0612$dip12, seats.mr.0612$dip12, xlim = c(0,.62), ylim = c(0,.62),
+     xlab = "vote shares", ylab = "seat shares", type="n")
+abline(a=0, b=1, lty = 2)
+arrows(nat.vot.0612$dip06[nat.vot.0612$dip06>0], seats.mr.0612$dip06[nat.vot.0612$dip06>0],
+       nat.vot.0612$dip06[nat.vot.0612$dip06>0], seats.mix.0612$dip06[nat.vot.0612$dip06>0],
+       length = .1, col = "gray50")
+points(nat.vot.0612$dip06[nat.vot.0612$dip06>0], seats.mr.0612$dip06[nat.vot.0612$dip06>0], pch=19, col = "gray50")
+points(nat.vot.0612$dip06[nat.vot.0612$dip06>0], seats.mix.0612$dip06[nat.vot.0612$dip06>0], pch=19)
+arrows(nat.vot.0612$dip09[nat.vot.0612$dip09>0], seats.mr.0612$dip09[nat.vot.0612$dip09>0],
+       nat.vot.0612$dip09[nat.vot.0612$dip09>0], seats.mix.0612$dip09[nat.vot.0612$dip09>0],
+       length = .1, col = "gray50")
+points(nat.vot.0612$dip09[nat.vot.0612$dip09>0], seats.mr.0612$dip09[nat.vot.0612$dip09>0], pch=19, col = "gray50")
+points(nat.vot.0612$dip09[nat.vot.0612$dip09>0], seats.mix.0612$dip09[nat.vot.0612$dip09>0], pch=19)
+arrows(nat.vot.0612$dip12[nat.vot.0612$dip12>0], seats.mr.0612$dip12[nat.vot.0612$dip12>0],
+       nat.vot.0612$dip12[nat.vot.0612$dip12>0], seats.mix.0612$dip12[nat.vot.0612$dip12>0],
+       length = .1, col = "gray50")
+points(nat.vot.0612$dip12[nat.vot.0612$dip12>0], seats.mr.0612$dip12[nat.vot.0612$dip12>0], pch=19, col = "gray50")
+points(nat.vot.0612$dip12[nat.vot.0612$dip12>0], seats.mix.0612$dip12[nat.vot.0612$dip12>0], pch=19)
+legend("bottomright", legend = c("SMD only","SMD + PR mix"), pch = c(19,19), col = c("gray50", "black"))
+#dev.off()
+#
+# plot rris 2006-2015 with d0 and d3
+m <- min(c(df2006d0$rris, df2009d0$rris, df2012d0$rris, df2015d0$rris, df2018d0$rris, df2006d3$rris, df2009d3$rris, df2012d3$rris, df2015d3$rris, df2018d3$rris)); M <- max(c(df2006d0$rris, df2009d0$rris, df2012d0$rris, df2015d0$rris, df2018d0$rris, df2006d3$rris, df2009d3$rris, df2012d3$rris, df2015d3$rris, df2018d3$rris)) # min and max for two graphs
+# with d0
+tmp <- c(df2006d0$rris, df2009d0$rris, df2012d0$rris, df2015d0$rris, df2018d0$rris)
+rris <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300), rep(2018,300)), rri=tmp)
+tmp <- boxplot(rri ~ yr, data = rris) # produce boxplot data
+#pdf(file = paste(gd, "rris0618d0.pdf", sep=""))
+bxp(tmp, pars = list(ylim=c(m,M)), , xlab = "year", ylab = "district relative representation index (RRI)", main = "2006 map (drawn with 2000 census)") # plot with this command that allows changing range
+#dev.off()
+# with d3
+tmp <- c(df2006d3$rris, df2009d3$rris, df2012d3$rris, df2015d3$rris, df2018d3$rris)
+rris <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300), rep(2018,300)), rri=tmp)
+tmp <- boxplot(rri ~ yr, data = rris) # produce boxplot data
+#pdf(file = paste(gd, "rris0618d3.pdf", sep=""))
+bxp(tmp, pars = list(ylim=c(m,M)), , xlab = "year", ylab = "district relative representation index (RRI)", main = "2015 map (drawn with 2010 census)") # plot with this command that
+#dev.off()
+#
+# summarize rris
+round(quantile(df2006d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2009d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2012d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2015d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
 
+df2012d0[3,]
+pob.edos[1,]
+app.edos[1,]
 
 # GRAPH MALAPPORTIONMENT
 yr <- 2006; ds <- "2006 map"; dss <- "d0" # for labels and names

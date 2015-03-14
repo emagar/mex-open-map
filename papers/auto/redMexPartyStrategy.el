@@ -1,19 +1,11 @@
-(TeX-add-style-hook "redMexBias"
+(TeX-add-style-hook "redMexPartyStrategy"
  (lambda ()
     (LaTeX-add-bibliographies
      "../bib/magar")
     (LaTeX-add-labels
+     "T:counterprops"
+     "F:propsAndCost"
      "T:simIndex"
-     "F:underOverRep"
-     "F:malapp"
-     "T:malap06inTime"
-     "F:seatsVotes"
-     "E:cubeLaw"
-     "F:lambdaRhoEx"
-     "F:posterior_s0s1s3"
-     "F:linzerLogVot"
-     "F:linzerMarginals"
-     "F:linzerSims"
      "T:volatMarginsd0"
      "F:malmgnat")
     (TeX-add-symbols
