@@ -1212,8 +1212,14 @@ head(df2010d3)
 ## head(df2012d0[order(df2012d0$edon, df2012d0$disn),])
 #
 
+ls()
 summary(df2015d0$ptot)
 tail(df2015d0[order(df2015d0$ptot),])
+
+# export district votes with population stats for use elsewhere
+votPobDis0018 <- lapply(ls(pattern = "df[0-9]{4}d[013]"), get); names(votPobDis0018) <- ls(pattern = "df[0-9]{4}d[013]") # create list with data frames
+#summary(votPobDis0018)
+save(votPobDis0018, file = paste(wd, "votPobDis0018.RData", sep = ""))
 
 ################################################################################
 ## ADDS MARGIN (positive if winner, negative  difference to winner otherwise) ##

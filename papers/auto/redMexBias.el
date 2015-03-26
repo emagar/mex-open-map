@@ -3,6 +3,7 @@
     (LaTeX-add-bibliographies
      "../bib/magar")
     (LaTeX-add-labels
+     "T:3bias"
      "T:simIndex"
      "F:underOverRep"
      "F:malapp"
@@ -14,20 +15,28 @@
      "F:linzerLogVot"
      "F:linzerMarginals"
      "F:linzerSims"
-     "T:volatMarginsd0"
-     "F:malmgnat")
+     "T:volatMarginsd0")
     (TeX-add-symbols
      "mc")
     (TeX-run-style-hooks
-     "amsmath"
      "arydshln"
+     "dcolumn"
+     "courier"
+     "helvet"
+     "scaled=.90"
+     "mathptmx"
      "natbib"
      "sort"
      "longnamesfirst"
+     "hyperref"
+     "hidelinks"
      "graphicx"
      "pdftex"
      "url"
-     "hyperref"
+     "amssymb"
+     "amsmath"
+     "fontenc"
+     "T1"
      "setspace"
      ""
      "geometry"

@@ -7,6 +7,7 @@ gd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/g
 setwd(wd)
 
 # data preprared in analizaEscenarios.r is read here
+# NEED TO EXPORT df OBJECTS PREPARED WITH red.r AND IMPORT THEM HERE (THEY INCLUDE PTOT)
 load(file = paste(dd, "elec060912.RData"))
 summary(elec060912)
 #
@@ -97,7 +98,7 @@ lines(density(prep$panal, na.rm = TRUE, adjust = 0.6), lwd = 2)
 # packaged plot
 show.marginals(fit, numdraws=50000)
 
-## # tweak/understand swinratio function
+## # tweak/understand swingratio function
 ## elas.sims <- function (fit, sims = 1000, rule = plurality, graph = TRUE) 
 ## {
 ##     starttime <- Sys.time()
@@ -535,12 +536,14 @@ show.marginals(fit, numdraws=50000)
 ##     dat[is.na(dat)] <- 0
 ##     np <- ncol(dat)
 ##     votemat <- NULL
+##     meanvotemat <- NULL # eric: mean district party shares
 ##     seatmat <- NULL
 ##     for (s in 1:sims) {
 ##         vsim <- sim.election(fit, dat)
 ##         vsim[is.na(vsim)] <- 0
 ##         partyvotes <- vsim[, 1] * vsim[, -1]
-##         votemat <- rbind(votemat, colSums(partyvotes)/sum(partyvotes))
+##         votemat <- rbind(votemat, colSums(partyvotes)/sum(partyvotes)) #  eric: this = R 
+##         meanvotemat <- rbind(meanvotemat, colSums(partyvotes)/sims)    #  eric: mean district party shares = P
 ##         seatmat <- rbind(seatmat, rule(vsim[, -1]))
 ##     }
 ##     ret <- list()
