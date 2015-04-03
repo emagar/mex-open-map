@@ -3,19 +3,15 @@
     (LaTeX-add-bibliographies
      "../bib/magar")
     (LaTeX-add-labels
-     "T:3bias"
-     "T:simIndex"
      "F:underOverRep"
      "F:malapp"
-     "T:malap06inTime"
      "F:seatsVotes"
+     "E:kingBi"
      "E:cubeLaw"
      "F:lambdaRhoEx"
-     "F:posterior_s0s1s3"
-     "F:linzerLogVot"
-     "F:linzerMarginals"
-     "F:linzerSims"
-     "T:volatMarginsd0")
+     "T:3bias"
+     "E:kingMulti"
+     "F:posterior_s0s3")
     (TeX-add-symbols
      "mc")
     (TeX-run-style-hooks

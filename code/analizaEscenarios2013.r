@@ -1,6 +1,7 @@
 ############################################################################
 ############################################################################
 ## OJO: biasStats tiene molde para estimar bias y responsiveness nacional ##
+## nota mar2015: abajo hay también rutina para hacer estimación nacional  ##
 ############################################################################
 ############################################################################
 
@@ -884,30 +885,6 @@ df2009s0$N <- df2009s1$N <- df2009s3$N <- 1/hh ## laakso y taagepera
 hh <- df2012s0$pansh^2 + df2012s0$prish^2 + df2012s0$pricsh^2 + df2012s0$prdcsh^2 + df2012s0$pvemsh^2 + df2012s0$panalsh^2
 df2012s0$N <- df2012s1$N <- df2012s3$N <- 1/hh ## laakso y taagepera
 #
-########################################################################################
-## Export prepared 2006-2009-2012 electoral data for use in other scripts (eg. red.r) ##
-########################################################################################
-elec060912 <-
-    list(df2006d0=df2006d0,
-         df2006d1=df2006d1,
-         df2006d3=df2006d3,
-         df2006s0=df2006s0,
-         df2006s1=df2006s1,
-         df2006s3=df2006s3,
-         df2009d0=df2009d0,
-         df2009d1=df2009d1,
-         df2009d3=df2009d3,
-         df2009s0=df2009s0,
-         df2009s1=df2009s1,
-         df2009s3=df2009s3,
-         df2012d0=df2012d0,
-         df2012d1=df2012d1,
-         df2012d3=df2012d3,
-         df2012s0=df2012s0,
-         df2012s1=df2012s1,
-         df2012s3=df2012s3)
-save(elec060912, file = paste(dd, "elec060912.RData"))
-rm(elec060912)
 
 ###############################
 ###############################
@@ -1321,6 +1298,31 @@ tmpTo$ptot <- tmpFrom$ptot
 df2012s3 <- tmpTo
 #
 rm(tmp, tmpFrom, tmpTo, select)
+
+########################################################################################
+## Export prepared 2006-2009-2012 electoral data for use in other scripts (eg. red.r) ##
+########################################################################################
+elec060912 <-
+    list(df2006d0=df2006d0,
+         df2006d1=df2006d1,
+         df2006d3=df2006d3,
+         df2006s0=df2006s0,
+         df2006s1=df2006s1,
+         df2006s3=df2006s3,
+         df2009d0=df2009d0,
+         df2009d1=df2009d1,
+         df2009d3=df2009d3,
+         df2009s0=df2009s0,
+         df2009s1=df2009s1,
+         df2009s3=df2009s3,
+         df2012d0=df2012d0,
+         df2012d1=df2012d1,
+         df2012d3=df2012d3,
+         df2012s0=df2012s0,
+         df2012s1=df2012s1,
+         df2012s3=df2012s3)
+save(elec060912, file = paste(dd, "elec060912.RData"))
+rm(elec060912)
 
 ### Packages for JAGS
 library(R2jags)
@@ -1749,7 +1751,7 @@ save(
      file=paste(dd, "biasResp2006-2012oldNewDistrictsRPM.RData", sep =""))
 
 ## run all above except jags estimations to proceed with saved data
-load(file="biasResp2006-2012oldNewDistricts.RData")
+#load(file="biasResp2006-2012oldNewDistricts.RData")
 load(file=paste(dd, "biasResp2006-2012oldNewDistrictsRPM.RData", sep =""))
 
 # summarize central tendency of party bias à la Grofman
@@ -1917,13 +1919,13 @@ library(Cairo)
 type <-  "pdf" 
 file <- paste("bias200612s0R.", type, sep="")
 setwd(save.dir)
-Cairo(file=file,
-      type = type,
-      width = 6,
-      height = 6,
-      units = "in",
-      dpi = 72,
-      bg = "transparent")
+## Cairo(file=file,
+##       type = type,
+##       width = 6,
+##       height = 6,
+##       units = "in",
+##       dpi = 72,
+##       bg = "transparent")
 #
 #jitter <- runif(n = 300, min=-.1, max=.1)
 jitter <- rnorm(n = 300, sd = .03)
@@ -1989,8 +1991,8 @@ text(x = rep(.9,4), y = -(1:4)-.3, labels = rep("all (nat.)", 5), cex = .65)
 #text(x = rep(.9,4), y = -(1:4)-.3, labels = rep("todos", 5), cex = .65)
 #
 text(x = rep(-.9,5), y = -c(1:4,4.9), labels = c("PAN", "PRD", "PVEM", "PANAL", "PT-C"))
-dev.off()
-setwd(wd)
+## dev.off()
+## setwd(wd)
 
 ### plot rho for s0 and s3
 tmp <- biasResp0612oldNewDistrictsRPM # compact name
@@ -2141,18 +2143,47 @@ s.hat.pasdc <- seat.hat(party.vote = 7)#, lambdas = tmp.l)
 #
 equis <- seq(0,1,.01)
 
+
 ## Plot party-by-state-votes-to-seats 2006--2012 with regression line
 #save.dir <- "~/Dropbox/mydocs/op-edsEtc/blog/graphs/" # donde guardar
+#
+## tmp is the object to graph (adds pri+pric and prd+prdc) <---SEARCH FOR THIS IN THE CODE ABOVE TO PREPARE TMP FOR STATE GRAPH
+#
+## # nat aggregates for plot
+## tmpv <- apply(df2006d0[,c("pan","pric","prdc","panal","asdc")], 2, sum)
+## tmpv <- tmpv/sum(tmpv)
+## tmps <- apply(df2006d0[,c("panw","pricw","prdcw","panalw","asdcw")], 2, sum) / 300
+## tmp <- data.frame(votes=tmpv, seats=tmps)
+## tmpv <- df2009d0[,c("pan","pri","pric","prd","pvem","panal","ptc")]
+## tmpv$pri <- tmpv$pri + tmpv$pric; tmpv$pric <- NULL
+## tmpv <- apply(tmpv, 2, sum)
+## tmpv <- tmpv/sum(tmpv)
+## tmps <- df2009d0[,c("panw","priw","pricw","prdw","pvemw","panalw","ptcw")]
+## tmps$priw <- tmps$priw + tmps$pricw; tmps$pricw <- NULL
+## tmps <- apply(tmps, 2, sum) / 300
+## tmp <- rbind(tmp, data.frame(votes=tmpv, seats=tmps))
+## tmpv <- df2012d0[,c("pan","pri","pric","prdc","pvem","panal")]
+## tmpv$pri <- tmpv$pri + tmpv$pric; tmpv$pric <- NULL
+## tmpv <- apply(tmpv, 2, sum)
+## tmpv <- tmpv/sum(tmpv)
+## tmps <- df2012d0[,c("panw","priw","pricw","prdcw","pvemw","panalw")]
+## tmps$priw <- tmps$priw + tmps$pricw; tmps$pricw <- NULL
+## tmps <- apply(tmps, 2, sum) / 300
+## tmp <- rbind(tmp, data.frame(votes=tmpv, seats=tmps))
+## rm(tmpv, tmps)
+#
 save.dir <- paste(wd, "graphs", sep = "")
 setwd(save.dir)
 #setwd(paste(wd, "graphs", sep=""))
 library(Cairo)
-title <- "Federal deputies by state 2006-2012"
+title <- "State aggregates"
+#title <- "Federal deputies by state 2006-2012"
 #title <- "DipFed por estado 2006-2012, distritos en vigor" #propuestos"
 #title <- "Diputados Federales de mayoría 2006-2012"
 type <- "pdf"
 #file <- paste("biasResp2006s3.", type, sep="")
-file <- paste("resXedo20062012.", type, sep="")
+#file <- paste("resXedo20062012.", type, sep="")
+file <- paste("resXedo20062012sh.", type, sep="")
 ## Cairo(file=file,
 ##       type = type,
 ##       width = 6,
@@ -2163,26 +2194,27 @@ file <- paste("resXedo20062012.", type, sep="")
 #
 plot(c(0,1),c(0,1), type="n",
      main=title,
-     xlab = "% votes won in state", ylab = "% plurality seats won in state", axes = FALSE)
+     xlab = "vote share", ylab = "seat share", axes = FALSE)
+#     xlab = "% votes won in state", ylab = "% plurality seats won in state", axes = FALSE)
 #     xlab = "% votos en el estado", ylab = "% escaños en el estado", axes = FALSE)
-axis(1, at=seq(0,1,.2), lab=seq(0,100,20))
-axis(2, at=seq(0,1,.2), lab=seq(0,100,20))
+axis(1, at=seq(0,1,.2), lab=seq(0,1,.2))
+axis(2, at=seq(0,1,.2), lab=seq(0,1,.2))
 abline(a=0, b=1, lty=2)
 #reg <- lm(tmp$seats ~ tmp$votes)
 #reg <- lm(tmp$seats ~ poly(tmp$votes, 2, raw=TRUE))
-points(tmp$votes, tmp$seats/tmp$ndis, pch=19, cex=.5, col=color)
-lines(equis, s.hat.pan, col = color[tmp$pty==1][1])
-lines(equis, s.hat.pri, col = color[tmp$pty==2][1])
-lines(equis, s.hat.prd, col = color[tmp$pty==3][1])
+points(tmp$votes, tmp$seats/tmp$ndis, pch=19, cex=.5)#, col=color)
+## lines(equis, s.hat.pan, col = color[tmp$pty==1][1])
+## lines(equis, s.hat.pri, col = color[tmp$pty==2][1])
+## lines(equis, s.hat.prd, col = color[tmp$pty==3][1])
 #abline(reg)
-text(.85,.3,  paste("Responsividad=", round(rho.hat, digits=2)))
-text(.85,.25, "Sesgo relativo al PRI:")
+#text(.85,.3,  paste("Responsividad=", round(rho.hat, digits=2)))
+#text(.85,.25, "Sesgo relativo al PRI:")
 ## text(.85,.2,  paste("PAN=", round( exp(lambda.hat[1]) / (exp(lambda.hat[1]) + 1) - .5 , digits=2)))
 ## text(.85,.15, paste("PRI=", round( exp(lambda.hat[2]) / (exp(lambda.hat[2]) + 1) - .5 , digits=2)))
 ## text(.85,.1,  paste("PRD=", round( exp(lambda.hat[3]) / (exp(lambda.hat[3]) + 1) - .5 , digits=2)))
-text(.85,.2,  paste("PAN=", round( lambda.hat[1]-lambda.hat[2], digits=2)))
+#text(.85,.2,  paste("PAN=", round( lambda.hat[1]-lambda.hat[2], digits=2)))
 ## text(.85,.15, paste("PRI=", round( lambda.hat[2]-lambda.hat[2], digits=2)))
-text(.85,.15,  paste("PRD=", round( lambda.hat[3]-lambda.hat[2], digits=2)))
+#text(.85,.15,  paste("PRD=", round( lambda.hat[3]-lambda.hat[2], digits=2)))
 #text(.85,.1,  paste("PANAL=", round( lambda.hat[6]-lambda.hat[2], digits=2)))
 #
 ## dev.off()

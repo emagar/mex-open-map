@@ -767,6 +767,7 @@ tmp$dis2009   <- ave(x = tmp$dis2009,   as.factor(tmp$edon),   FUN = function(x)
 tmp$dis2012   <- ave(x = tmp$dis2012,   as.factor(tmp$edon),   FUN = function(x) max(x), na.rm=TRUE)
 tmp$dis2013   <- ave(x = tmp$dis2013,   as.factor(tmp$edon),   FUN = function(x) max(x), na.rm=TRUE)
 tmp$dis2015   <- tmp$dis2012
+tmp$dis2018   <- tmp$dis2012 # OJO: THIS WILL CHANGE IF REDISTRICTING TAKES PLACE AFTER 2015 ELECTION (AS IT SHOULD)
 tmp <- tmp[duplicated(tmp$edon)==FALSE,] # drops redundant rows after aggregating states
 app.edos <- tmp
 head(app.edos)
@@ -963,12 +964,14 @@ for (j in 2:ncol(pob.edos)){
 rm(j)
 # state over/under-representation
 tmp6a <- app.edos[,-1]; tmp6s <- stateQ[,-1]
+tmp6s$q2010 <- NULL # drop this that is no longer analyzed
 state.overep <- round( tmp6a - tmp6s, digits = 2); colnames(state.overep) <- gsub(x = colnames(state.overep), pattern = "dis", replacement = "dif")
 state.overep.rel <- round( state.overep / tmp6a, digits = 2)
 state.overep <- cbind(edon = app.edos$edon, state.overep)
 state.overep.rel <- cbind(edon= app.edos$edon, state.overep.rel)
 rm(tmp6a, tmp6s)
 head(state.overep)
+
 #
 # aggregates district populations
 #
@@ -1211,10 +1214,27 @@ head(df2010d3)
 ## #
 ## head(df2012d0[order(df2012d0$edon, df2012d0$disn),])
 #
+# this is reported in the text
+print (paste("Quota Q =", sum(df2012d0$ptot)/300)) # <-- Quota Q
+print ("Aguascalientes districts in 2012:")
+df2012d0[which(df2012d0$edon==1),] #<-- Ags districts
+# code to plot these is below
 
-ls()
-summary(df2015d0$ptot)
-tail(df2015d0[order(df2015d0$ptot),])
+# ADD CABECERAS FOR D0
+cab.d0 <- data.frame(
+edon = c(1,1,1,2,2,2,2,2,2,2,2,3,3,4,4,5,5,5,5,5,5,5,6,6,7,7,7,7,7,7,7,7,7,7,7,7,8,8,8,8,8,8,8,8,8,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,10,10,10,10,11,11,11,11,11,11,11,11,11,11,11,11,11,11,12,12,12,12,12,12,12,12,12,13,13,13,13,13,13,13,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,15,16,16,16,16,16,16,16,16,16,16,16,16,17,17,17,17,17,18,18,18,19,19,19,19,19,19,19,19,19,19,19,19,20,20,20,20,20,20,20,20,20,20,20,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,21,22,22,22,22,23,23,23,24,24,24,24,24,24,24,25,25,25,25,25,25,25,25,26,26,26,26,26,26,26,27,27,27,27,27,27,28,28,28,28,28,28,28,28,29,29,29,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,30,31,31,31,31,31,32,32,32,32)
+,
+disn = c(1,2,3,1,2,3,4,5,6,7,8,1,2,1,2,1,2,3,4,5,6,7,1,2,1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,1,2,3,4,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,1,2,3,1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1,2,3,4,1,2,3,1,2,3,4,5,6,7,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,1,2,3,4,5,6,1,2,3,4,5,6,7,8,1,2,3,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,1,2,3,4,5,1,2,3,4)
+,
+cab = c("Jesús María","Aguascalientes","Aguascalientes","Mexicali","Mexicali","Ensenada","Tijuana","Tijuana","Tijuana","Mexicali","Tijuana","Mulegé","La Paz","Campeche","Carmen","Piedras Negras","San Pedro","Monclova","Saltillo","Torreón","Torreón","Saltillo","Colima","Manzanillo","Palenque","Bochil","Ocosingo","Ocozocoautla de Espinosa","San Cristóbal de las Casas","Tuxtla Gutiérrez","Tonalá","Comitán de Domínguez","Tuxtla Gutiérrez","Villaflores","Huixtla","Tapachula","Juárez","Juárez","Juárez","Juárez","Delicias","Chihuahua","Cuauhtémoc","Chihuahua","Hidalgo del Parral","Gustavo A. Madero","Gustavo A. Madero","Azcapotzalco","Iztapalapa","Tlalpan","Gustavo A. Madero","Gustavo A. Madero","Cuauhtémoc","Venustiano Carranza","Miguel Hidalgo","Venustiano Carranza","Cuauhtémoc","Iztacalco","Tlalpan","Benito Juárez","Alvaro Obregón","Alvaro Obregón","Iztapalapa","Iztapalapa","Iztapalapa","Xochimilco","Iztapalapa","Coyoacán","Coyoacán","Iztapalapa","La Magdalena Contreras","Tláhuac","Durango","Gómez Palacio","Guadalupe Victoria","Durango","San Luis de la Paz","Allende","León","Guanajuato","León","León","San Francisco del Rincón","Salamanca","Irapuato","Uriangato","Pénjamo","Celaya","Valle de Santiago","Acámbaro","Pungarabato","Iguala de la Independencia","José Azueta","Acapulco de Juárez","Tlapa de Comonfort","Chilapa de Alvarez","Chilpancingo de los Bravo","Ayutla de los Libres","Acapulco de Juárez","Huejutla de Reyes","Ixmiquilpan","Actopan","Tulancingo de Bravo","Tula de Allende","Pachuca de Soto","Tepeapulco","Tequila","Lagos de Moreno","Tepatitlán de Morelos","Zapopan","Puerto Vallarta","Zapopan","Tonalá","Guadalajara","Guadalajara","Zapopan","Guadalajara","Tlajomulco de Zúñiga","Guadalajara","Guadalajara","La Barca","Tlaquepaque","Jocotepec","Autlán de Navarro","Zapotlán El Grande","Jilotepec","Teoloyucán","Atlacomulco","Nicolás Romero","Teotihuacán","Coacalco de Berriozábal","Cuautitlán Izcalli","Tultitlán","Ixtlahuaca","Ecatepec de Morelos","Ecatepec de Morelos","Ixtapaluca","Ecatepec de Morelos","Atizapán de Zaragoza","Tlalnepantla de Baz","Ecatepec de Morelos","Ecatepec de Morelos","Huixquilucan","Tlalnepantla de Baz","Nezahualcóyotl","Naucalpan de Juárez","Naucalpan de Juárez","Valle de Bravo","Naucalpan de Juárez","Chimalhuacán","Toluca","Metepec","Zumpango","Nezahualcóyotl","Nezahualcóyotl","Nezahualcóyotl","Valle de Chalco Solidaridad","Chalco","Toluca","Tenancingo","Tejupilco","Cuautitlán","Texcoco","La Paz","Zinacantepec","Lázaro Cárdenas","Puruándiro","Zitácuaro","Jiquilpan","Zamora","Hidalgo","Zacapu","Morelia","Uruapan","Morelia","Pátzcuaro","Apatzingán","Cuernavaca","Jiutepec","Cuautla","Jojutla","Yautepec","Santiago Ixcuintla","Tepic","Compostela","Santa Catarina","Apodaca","General Escobedo","San Nicolás de los Garza","Monterrey","Monterrey","Monterrey","Guadalupe","Linares","Monterrey","Guadalupe","Cadereyta Jiménez","San Juan Bautista Tuxtepec","Teotitlán de Flores Magón","Heroica Ciudad de Huajuapan de León","Tlacolula de Matamoros","Santo Domingo Tehuantepec","Heroica Ciudad de Tlaxiaco","Juchitán de Zaragoza","Oaxaca de Juárez","Santa Lucía del Camino","Miahuatlán de Porfirio Díaz","Santiago Pinotepa Nacional","Huauchinango","Zacatlán","Teziutlán","Zacapoaxtla","San Martín Texmelucan","Puebla","Tepeaca","Chalchicomula de Sesma","Puebla","San Pedro Cholula","Puebla","Puebla","Atlixco","Izúcar de Matamoros","Tehuacán","Ajalpan","Cadereyta de Montes","San Juan del Río","Querétaro","Querétaro","Solidaridad","Othón P. Blanco","Benito Juárez","Matehuala","Soledad de Graciano Sánchez","Rioverde","Ciudad Valles","San Luis Potosí","San Luis Potosí","Tamazunchale","El Fuerte","Ahome","Salvador Alvarado","Guasave","Culiacán","Mazatlán","Culiacán","Mazatlán","San Luis Río Colorado","Nogales","Hermosillo","Guaymas","Hermosillo","Cajeme","Navojoa","Macuspana","Cárdenas","Comalcalco","Centro","Paraíso","Centro","Nuevo Laredo","Reynosa","Río Bravo","Matamoros","Victoria","El Mante","Ciudad Madero","Tampico","Apizaco","Tlaxcala","Zacatelco","Pánuco","Tantoyuca","Tuxpan","Veracruz","Poza Rica de Hidalgo","Papantla","Martínez de la Torre","Xalapa","Coatepec","Xalapa","Coatzacoalcos","Veracruz","Huatusco","Minatitlán","Orizaba","Córdoba","Cosamaloapan","Zongolica","San Andrés Tuxtla","Acayucan","Cosoleacaque","Valladolid","Progreso","Mérida","Mérida","Ticul","Fresnillo","Jerez","Zacatecas","Guadalupe")
+, stringsAsFactors = FALSE)
+
+df2006d0 <- merge(df2006d0, cab.d0, by = c("edon", "disn"))
+df2009d0 <- merge(df2009d0, cab.d0, by = c("edon", "disn"))
+df2012d0 <- merge(df2012d0, cab.d0, by = c("edon", "disn"))
+df2015d0 <- merge(df2015d0, cab.d0, by = c("edon", "disn"))
+df2018d0 <- merge(df2018d0, cab.d0, by = c("edon", "disn"))
+rm(cab.d0)
 
 # export district votes with population stats for use elsewhere
 votPobDis0018 <- lapply(ls(pattern = "df[0-9]{4}d[013]"), get); names(votPobDis0018) <- ls(pattern = "df[0-9]{4}d[013]") # create list with data frames
@@ -1645,29 +1665,115 @@ points(nat.vot.0612$dip12[nat.vot.0612$dip12>0], seats.mr.0612$dip12[nat.vot.061
 points(nat.vot.0612$dip12[nat.vot.0612$dip12>0], seats.mix.0612$dip12[nat.vot.0612$dip12>0], pch=19)
 legend("bottomright", legend = c("SMD only","SMD + PR mix"), pch = c(19,19), col = c("gray50", "black"))
 #dev.off()
-#
-# plot rris 2006-2015 with d0 and d3
-m <- min(c(df2006d0$rris, df2009d0$rris, df2012d0$rris, df2015d0$rris, df2018d0$rris, df2006d3$rris, df2009d3$rris, df2012d3$rris, df2015d3$rris, df2018d3$rris)); M <- max(c(df2006d0$rris, df2009d0$rris, df2012d0$rris, df2015d0$rris, df2018d0$rris, df2006d3$rris, df2009d3$rris, df2012d3$rris, df2015d3$rris, df2018d3$rris)) # min and max for two graphs
+
+# plot rrin 2006-2015 with d0 and d3
+m <- min(c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2018d0$rrin, df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)); M <- max(c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2018d0$rrin, df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)); # min and max for two graphs
 # with d0
-tmp <- c(df2006d0$rris, df2009d0$rris, df2012d0$rris, df2015d0$rris, df2018d0$rris)
-rris <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300), rep(2018,300)), rri=tmp)
-tmp <- boxplot(rri ~ yr, data = rris) # produce boxplot data
-#pdf(file = paste(gd, "rris0618d0.pdf", sep=""))
-bxp(tmp, pars = list(ylim=c(m,M)), , xlab = "year", ylab = "district relative representation index (RRI)", main = "2006 map (drawn with 2000 census)") # plot with this command that allows changing range
-#dev.off()
+tmp <- c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2018d0$rrin)
+rrin <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300), rep(2018,300)), rri=tmp)
+## # as boxplots
+## tmp <- boxplot(rri ~ yr, data = rris) # produce boxplot data
+## #pdf(file = paste(gd, "rris0618d0.pdf", sep=""))
+## bxp(tmp, pars = list(ylim=c(m,M)), , xlab = "year", ylab = "district relative representation index (RRI)", main = "2006 map (drawn with 2000 census)") # plot with this command that allows changing range
+## #dev.off()
+## # with d3
+## tmp <- c(df2006d3$rris, df2009d3$rris, df2012d3$rris, df2015d3$rris, df2018d3$rris)
+## rris <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300), rep(2018,300)), rri=tmp)
+## tmp <- boxplot(rri ~ yr, data = rris) # produce boxplot data
+## #pdf(file = paste(gd, "rris0618d3.pdf", sep=""))
+## bxp(tmp, pars = list(ylim=c(m,M)), , xlab = "year", ylab = "district relative representation index (RRI)", main = "2015 map (drawn with 2010 census)") # plot with this command that
+## #dev.off()
+#
+### hand drawn
+jitter <- rnorm(n = 300, sd = .05)
+shift = .5 # useful if rris were also included in same plot
+## pdf(file = paste(gd, "rrin0615d0.pdf", sep=""),
+##       width = 7,
+##       height = 3.5)
+plot(x = c(m-.25,m,M), y = c(1,1,5), type = "n", ylab = "", xlab = "district relative representation index (RRI)", main = "2006 map (drawn with 2000 census)", axes = FALSE)
+axis(1, at = seq(.3,2.1,.1), labels = FALSE, lwd.ticks = .5)
+axis(1, at = seq(.5,2,.5))
+abline(v = c(0.5,1.5,2), col = "gray70")
+abline(v = 1, lty = 2)
+abline(v = c(.85,1.15), col = "gray70", lty = 2)
+text(x = rep(m-.2, 4), y = seq(1.5,4.5,1), labels = paste("in", seq(2015, 2006, -3)))
+#text(x = rep(M+.35, 4),  y = (1:4)+shift, labels = rep("nation", 4), cex = .8)
+#text(x = rep(M+.75, 8),  y = c(1.3,1.7, 2.3,2.7, 3.3,3.7, 4.3,4.7), labels = rep(c("state","nation"), 4), cex = .65)
+for (i in seq(4,1,-1)){
+    obj <- rrin$rri[rrin$yr==seq(2015,2006,-3)[i]] # subset one year
+    points(x = obj, y = rep(i+shift, 300)+jitter, cex=.5, col = "gray70")
+    select <- which(obj < quantile(obj, probs = .05) | obj > quantile(obj, probs = .95))
+    points(x = obj[select], y = rep(i+shift, 300)[select]+jitter[select], cex=.5, col = "gray30")
+    lines(x = c(quantile(obj, probs = .05), quantile(obj, probs = .95)), y = c(i+shift,i+shift), lwd = 2)
+    lines(x = c(quantile(obj, probs = .25), quantile(obj, probs = .75)), y = c(i+shift,i+shift), lwd = 6)
+    points(quantile(obj, probs = .5), i+shift, pch = 19, col="white")
+    points(quantile(obj, probs = .5), i+shift, pch = 19, cex = .5)
+}
+## dev.off()
+#
 # with d3
-tmp <- c(df2006d3$rris, df2009d3$rris, df2012d3$rris, df2015d3$rris, df2018d3$rris)
-rris <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300), rep(2018,300)), rri=tmp)
-tmp <- boxplot(rri ~ yr, data = rris) # produce boxplot data
-#pdf(file = paste(gd, "rris0618d3.pdf", sep=""))
-bxp(tmp, pars = list(ylim=c(m,M)), , xlab = "year", ylab = "district relative representation index (RRI)", main = "2015 map (drawn with 2010 census)") # plot with this command that
-#dev.off()
+tmp <- c(df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin, df2018d3$rrin)
+rrin <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300), rep(2018,300)), rri=tmp)
+#
+### hand drawn
+jitter <- rnorm(n = 300, sd = .05)
+shift = .5 # useful if rris were also included in same plot
+## pdf(file = paste(gd, "rrin0615d3.pdf", sep=""),
+##       width = 7,
+##       height = 3.5)
+plot(x = c(m-.25,m,M), y = c(1,1,5), type = "n", ylab = "", xlab = "district relative representation index (RRI)", main = "2015 map (drawn with 2010 census)", axes = FALSE)
+axis(1, at = seq(.3,2.1,.1), labels = FALSE, lwd.ticks = .5)
+axis(1, at = seq(.5,2,.5))
+abline(v = c(0.5,1.5,2), col = "gray70")
+abline(v = 1, lty = 2)
+abline(v = c(.85,1.15), col = "gray70", lty = 2)
+text(x = rep(m-.2, 4), y = seq(1.5,4.5,1), labels = paste("in", seq(2015, 2006, -3)))
+#text(x = rep(M+.35, 4),  y = (1:4)+shift, labels = rep("nation", 4), cex = .8)
+#text(x = rep(M+.75, 8),  y = c(1.3,1.7, 2.3,2.7, 3.3,3.7, 4.3,4.7), labels = rep(c("state","nation"), 4), cex = .65)
+for (i in seq(4,1,-1)){
+    obj <- rrin$rri[rrin$yr==seq(2015,2006,-3)[i]] # subset one year
+    points(x = obj, y = rep(i+shift, 300)+jitter, cex=.5, col = "gray70")
+    select <- which(obj < quantile(obj, probs = .05) | obj > quantile(obj, probs = .95))
+    points(x = obj[select], y = rep(i+shift, 300)[select]+jitter[select], cex=.5, col = "gray30")
+    lines(x = c(quantile(obj, probs = .05), quantile(obj, probs = .95)), y = c(i+shift,i+shift), lwd = 2)
+    lines(x = c(quantile(obj, probs = .25), quantile(obj, probs = .75)), y = c(i+shift,i+shift), lwd = 6)
+    points(quantile(obj, probs = .5), i+shift, pch = 19, col="white")
+    points(quantile(obj, probs = .5), i+shift, pch = 19, cex = .5)
+}
+## dev.off()
+#
+# what percentile does rris<.85 and rris>1.15 correspond to? reported in text
+length(df2006d0$rris[df2006d0$rris<.85])*100/300
+length(df2009d0$rris[df2009d0$rris<.85])*100/300
+length(df2012d0$rris[df2012d0$rris<.85])*100/300
+length(df2015d0$rris[df2015d0$rris<.85])*100/300
+#
+length(df2006d0$rris[df2006d0$rris>1.15])*100/300
+length(df2009d0$rris[df2009d0$rris>1.15])*100/300
+length(df2012d0$rris[df2012d0$rris>1.15])*100/300
+length(df2015d0$rris[df2015d0$rris>1.15])*100/300
+#
+# which are the districts at the edges in 2015d0, reported in text
+obj <- df2015d0$rrin
+select <- which(obj < quantile(obj, probs = .05))
+tmp <- df2015d0[select, c("edon","disn","cab","rrin","rris")]
+tmp[order(tmp$rrin),]
+select <- which(obj > quantile(obj, probs = .95))
+tmp <- df2015d0[select, c("edon","disn","cab","rrin","rris")]
+tmp[order(-tmp$rrin),]
 #
 # summarize rris
+round(quantile(df2006d0$rrin, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2009d0$rrin, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2012d0$rrin, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2015d0$rrin, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+#
 round(quantile(df2006d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
 round(quantile(df2009d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
 round(quantile(df2012d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
 round(quantile(df2015d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+
+
 
 df2012d0[3,]
 pob.edos[1,]
@@ -1775,16 +1881,23 @@ rm(marg2graph, mal2graph, tmp, tmp2, tmp3)
 # plot state deputy over/under-representation in time
 #
 library(RColorBrewer) # prepare 32 colors for plot
+edos <- c("ags", "bcn", "bcs", "cam", "coa", "col", "cps", "cua", "df", "dgo", "gua", "gue", "hgo", "jal", "mex", "mic", "mor", "nay", "nl", "oax", "pue", "que", "qui", "san", "sin", "son", "tab", "tam", "tla", "ver", "yuc", "zac")
 tmp <- brewer.pal(8, "Set2")
 tmp2 <- colorRampPalette(tmp) # returns a function
 col.plot <- tmp2(32)
 #
+tmpWith2018 <- state.overep # duplicate object
+state.overep$dif2018 <- NULL # drop
+head(state.overep)
 yrs <- as.numeric( gsub(x = colnames(state.overep), pattern = "dif", replacement = "") )
-#select <- which(yrs>1993); y.plot <- state.overep[,select]; x.plot <- yrs[select];
-select <- which(yrs>1993); y.plot <- state.overep[state.overep$dif2006<0,select]; x.plot <- yrs[select];
-data.frame(cbind(app.edos$dis2012[state.overep$dif2006<0], pob.edos$ptot2009[state.overep$dif2006<0], edos[state.overep$dif2006<0]))
-sum(app.edos$dis2012[state.overep$dif2006<0])
-y.plot; edos[state.overep$dif2006<0]
+select <- which(yrs>1993); y.plot <- state.overep[,select]; x.plot <- yrs[select];
+#y.plot <- (y.plot / abs(y.plot)) * log( (abs(y.plot) + 1) ) # un-star to use log scale
+#
+## # IN CASE ONLY NEGATIVE OR POSITIVE DESIRED
+## select <- which(yrs>1993); y.plot <- state.overep[state.overep$dif2006<0,select]; x.plot <- yrs[select];
+## data.frame(cbind(app.edos$dis2012[state.overep$dif2006<0], pob.edos$ptot2009[state.overep$dif2006<0], edos[state.overep$dif2006<0]))
+## sum(app.edos$dis2012[state.overep$dif2006<0])
+## y.plot; edos[state.overep$dif2006<0]
 #
 ## library(Cairo)
 ## setwd(gd)
@@ -1795,18 +1908,20 @@ y.plot; edos[state.overep$dif2006<0]
 ##       width=7,
 ##       height=10,
 ##       dpi = 96)
-plot(c(1996, max(x.plot)+1), c(min(y.plot[,2])-.5, max(y.plot[,9])), type = "n", axes = FALSE,
+plot(c(1996, max(x.plot)+1), c(min(y.plot[,-1])-.5, max(y.plot[,-1])), type = "n", axes = FALSE,
      xlab = "", ylab = "State under-/over-representation (deputies)", main = "States' representation in Congress")
 axis(1, seq(1997, 2015, 3))
 axis(1, at = c(x.plot, 1996, 2005, 2013), labels = FALSE)
-axis(2, -6:5)
-abline(h=-6:5, col = "grey"); abline(h=0, col = "red")
 abline(v=c(1996,2005,2013), col = "grey", lty = 2)
+axis(2, at=-5:5, labels = c(-5:0, paste("+", 1:5, sep = "")))
+abline(h=-6:5, col = "grey"); abline(h=0, col = "red")
+#axis(2, at= c(-(log(5:1)+1), 0, log(1:5)+1), labels = c(-5:0, paste("+", 1:5, sep = "")))
+#abline(h=c(-(log(5:1)+1), 0, log(1:5)+1), col = "grey"); abline(h=0, col = "red")
 for (i in 1:32){
     lines(x.plot, y.plot[i,], col = col.plot[i]);
     points(x.plot[-which(x.plot==2013)], y.plot[i,-which(x.plot==2013)], pch = 19, cex = .5, col = col.plot[i]);
 }
-text(1996, -6.25, "R", cex = .75); text(2005, -6.25, "R", cex = .75); text(2013, -6.25, "F", cex = .75)
+text(1996, -5.2, "R", cex = .75); text(2005, -5.2, "R", cex = .75); text(2013, -5.2, "F", cex = .75)
 select <- which(y.plot[,which(x.plot==2003)]==min(y.plot[,which(x.plot==2003)])); text(x = 2003, y = y.plot[select, which(x.plot==2003)], labels = edos[select], cex = .75, pos = 4, col = col.plot[select])
 select <- which(y.plot[,which(x.plot==2003)]==max(y.plot[,which(x.plot==2003)])); text(x = 2003, y = y.plot[select, which(x.plot==2003)], labels = edos[select], cex = .75, pos = 3, col = col.plot[select])
 select <- 30; text(x = 2003, y = y.plot[select, which(x.plot==2003)], labels = edos[select], cex = .75, pos = 3, col = col.plot[select])
@@ -1831,17 +1946,18 @@ select <- which(yrs>1993); y.plot <- state.overep.rel[,select]*100; x.plot <- yr
 ##       height=10,
 ##       dpi = 96)
 plot(c(1996, max(x.plot)+1), c(min(y.plot[-1,]), 40), type = "n", axes = FALSE,
-     xlab = "", ylab = "State % under-/over-representation (deputies)", main = "Relative to their size")
+     xlab = "", ylab = "State under-/over-representation (% deputies)", main = "Relative to their size")
 axis(1, seq(1997, 2015, 3))
 axis(1, at = c(x.plot, 1996, 2005, 2013), labels = FALSE)
-axis(2, seq(-60,60,20))
+axis(2, at = seq(-60,60,20), labels = FALSE)
+axis(2, at = seq(-40,40,20), labels = c(seq(-40,0,20), paste("+", c(20,40), sep = "")))
 abline(h=seq(-60,60,10), col = "grey"); abline(h=0, col = "red")
 abline(v=c(1996,2005,2013), col = "grey", lty = 2)
 for (i in 1:32){
     lines(x.plot, y.plot[i,], col = col.plot[i]);
     points(x.plot[-which(x.plot==2013)], y.plot[i,-which(x.plot==2013)], pch = 19, cex = .5, col = col.plot[i]);
 }
-text(1996, -58, "R", cex = .75); text(2005, -58, "R", cex = .75); text(2013, -58, "F", cex = .75)
+text(1996, -55, "R", cex = .75); text(2005, -55, "R", cex = .75); text(2013, -55, "F", cex = .75)
 select <- c(9,17,20,21,25); text(x = 2015, y = y.plot[select, which(x.plot==2015)]+c(0,-.5,0,.5,0), labels = edos[select], cex = .75, pos = 4, col = col.plot[select])
 select <- c(7,11,14,28); text(x = 2015, y = y.plot[select, which(x.plot==2015)]+c(-.7,.9,0,0), labels = edos[select], cex = .75, pos = 4, col = col.plot[select])
 select <- c(3,6); text(x = 1997, y = y.plot[select, which(x.plot==1997)], labels = edos[select], cex = .75, pos = 3, col = col.plot[select])

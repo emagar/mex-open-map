@@ -1,0 +1,95 @@
+# tweak swingratio function
+my.swingratio <- function (fit, sims = 1000, rule = plurality, graph = TRUE) 
+{
+    starttime <- Sys.time()
+    dat <- reconstruct(fit)
+    dat[is.na(dat)] <- 0
+    np <- ncol(dat)
+    votemat <- NULL
+    seatmat <- NULL
+    for (s in 1:sims) {
+        vsim <- sim.election(fit, dat)
+        vsim[is.na(vsim)] <- 0
+        partyvotes <- vsim[, 1] * vsim[, -1]
+        votemat <- rbind(votemat, colSums(partyvotes)/sum(partyvotes))
+        seatmat <- rbind(seatmat, rule(vsim[, -1]))
+    }
+    ret <- list()
+    truevotes <- dat[, 1] * dat[, -1]
+    ret$truevote <- colSums(truevotes)/sum(truevotes)
+    ret$trueseat <- rule(dat[, -1])
+    names(ret$trueseat) <- names(ret$truevote)
+    swing <- NULL
+    swing.lm <- NULL
+    seatlist <- list()
+    for (j in 1:(np - 1)) {
+        smean.hi <- mean(seatmat[(votemat[, j] < (ret$truevote[j] + 
+            0.012)) & (votemat[, j] > (ret$truevote[j] + 0.008)), 
+            j])
+        smean.lo <- mean(seatmat[(votemat[, j] > (ret$truevote[j] - 
+            0.012)) & (votemat[, j] < (ret$truevote[j] - 0.008)), 
+            j])
+        swing <- c(swing, round((smean.hi - smean.lo)/0.02, 2))
+        swing.lm <- c(swing.lm, round(coefficients(lm(seatmat[, 
+            j] ~ votemat[, j]))[2], 2))
+        vrange <- seq(min(floor(votemat[, j] * 100)), max(floor(votemat[, 
+            j] * 100)), 1)/100
+        seatlist[[j]] <- cbind(vrange, matrix(NA, nrow = length(vrange), 
+            ncol = 3))
+        colnames(seatlist[[j]]) <- c("vote", "mean", "lower", 
+            "upper")
+        for (i in 1:length(vrange)) {
+            sel <- seatmat[(votemat[, j] >= (vrange[i] - 0.002)) & 
+                (votemat[, j] < (vrange[i] + 0.002)), j]
+            if (length(sel) < 10) {
+                seatlist[[j]][i, 2:4] <- NA
+            }
+            else {
+                seatlist[[j]][i, 2] <- mean(sel)
+                seatlist[[j]][i, 3:4] <- quantile(sel, probs = c(0.025, 
+                  0.975))
+            }
+        }
+    }
+    if (graph) {
+        par(mar = c(4.4, 4.1, 0.5, 0.5), mfrow = c(1, 1))
+        plot(ret$truevote[!is.na(swing)], ret$trueseat[!is.na(swing)], 
+            pch = 19, cex = 1.2, xlim = c(0, 0.7), ylim = c(0, 
+                0.7), xlab = "Party vote share", ylab = "Party seat share", 
+            cex.lab = 1.5, xaxt = "n", yaxt = "n")
+        axis(1, seq(0, 1, 0.1), seq(0, 1, 0.1), cex.axis = 1.5)
+        axis(2, seq(0, 1, 0.1), seq(0, 1, 0.1), cex.axis = 1.5)
+        for (j in 1:(np - 1)) {
+            if (!is.na(swing[j])) {
+                lines(seatlist[[j]][, 1], seatlist[[j]][, 2], 
+                  lwd = 2.5)
+                lines(seatlist[[j]][, 1], seatlist[[j]][, 3], 
+                  lwd = 2, lty = 3)
+                lines(seatlist[[j]][, 1], seatlist[[j]][, 4], 
+                  lwd = 2, lty = 3)
+                text(ret$truevote[j] + 0.01, ret$trueseat[j], 
+                  paste(colnames(dat)[j + 1], ": ", swing[j], 
+                    sep = ""), cex = 1.2, pos = 4)
+            }
+        }
+    }
+    vdiff <- as.data.frame(t(t(votemat) - colMeans(votemat)))
+    sdiff <- as.data.frame(t(t(seatmat) - colMeans(seatmat)))
+    swing.median <- round(apply(sdiff/vdiff, 2, median), 2)
+    names(seatlist) <- colnames(votemat) <- colnames(seatmat) <- names(ret$truevote)
+    names(swing) <- names(swing.lm) <- names(swing.median) <- names(ret$truevote)
+    swingtab <- cbind(round(100 * ret$truevote, 1), round(100 * 
+        ret$trueseat, 1), swing)
+    rownames(swingtab) <- colnames(dat[, -1])
+    colnames(swingtab) <- c("Votes", "Seats", "Swing ratio")
+    print(swingtab)
+    ret$votemat <- votemat
+    ret$seatmat <- seatmat
+    ret$swing <- swing
+    ret$swing.lm <- swing.lm
+    ret$swing.median <- swing.median
+    ret$vs <- seatlist
+    ret$time <- Sys.time() - starttime
+    return(ret)
+}
+environment(my.) <- asNamespace('seatsvotes')

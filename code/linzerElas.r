@@ -10,6 +10,8 @@ setwd(wd)
 # NEED TO EXPORT df OBJECTS PREPARED WITH red.r AND IMPORT THEM HERE (THEY INCLUDE PTOT)
 load(file = paste(dd, "elec060912.RData"))
 summary(elec060912)
+colnames(elec060912$df2006d0)
+
 #
 ## ## use to extract all objects from list elec060912 if so wished
 ## for(i in 1:length(elec060912)){
@@ -26,34 +28,226 @@ summary(elec060912)
 # select 2012 votes in 2006 map
 # -----------------------------------------
 dat <- elec060912$df2012d0
+tmp.ptot <- dat$ptot # useful later
 rownames(dat) <- NULL
 head(dat)
 # select votes only, move pri to 1st col to make reference pty, and green to last because often has no votes (and sim.votes pushes it there anyway)
 dat <- dat[,c("pri","pan","pric","prdc","panal","pvem")]
 # consider pri and pri-pvem the same (else pri "absent" from 1/3 district has lower elasticity)
 dat$pri <- dat$pri + dat$pric; dat$pric <- NULL
-# who won the seats?
+# who won the seats? useful to drop non-winners
 table(apply(dat, 1, function(x) which.max(x)))
 ## # drop panal, didn't win seats
 ## dat <- dat[,-5]
 ## # re-compute effective vote (in case parties dropped)
 tmp.efec <- apply(dat, 1, sum)
+## compute abstentions
+tmp.abst <- tmp.ptot - tmp.efec # useful later
+#
+## ## ROUTE 1: keep efec and votes only (as Linzer does)
+## # vote shares
+## dat <- dat/tmp.efec
+## # add efec vote in 1st column (or, in included, ptot in 1st col and efec in 2nd) 
+## dat <- cbind(tmp.efec, dat); colnames(dat)[which(colnames(dat)=="tmp.efec")] <- "efec"
+## rm(tmp.ptot, tmp.efec, tmp.abst)
+#
+## ROUTE 2: add ptot in col1, abst in last col, and express vote shares relative to ptot --- allows imulation of ptot for Grofman et al.
 # vote shares
-dat <- dat/tmp.efec
-# add total vote in 1st column
-dat <- cbind(tmp.efec, dat); colnames(dat)[1] <- "efec"; rm(tmp.efec)
-# rename left coalition and green
+dat <- dat/tmp.ptot
+# add ptot in 1st column
+dat <- cbind(tmp.ptot, dat); colnames(dat)[which(colnames(dat)=="tmp.ptot")] <- "ptot"
+# add abst in last column
+dat <- cbind(dat, tmp.abst/tmp.ptot); colnames(dat)[grep("tmp.abst", colnames(dat))] <- "abs"
+rm(tmp.ptot, tmp.efec, tmp.abst)
+#
+# clean: rename left coalition and green
 colnames(dat)[which(colnames(dat)=="prdc")] <- "left"
 colnames(dat)[which(colnames(dat)=="pvem")] <- "green"
 head(dat)
 
 # find patterns of party contestation, change data to lists
 library(seatsvotes)
+#seatsvotes:::reconstruct # how to see hidden function reconstruct() in package
+
+# tweak function findpatterns to include ptot column
+my.findpatterns <- function (dat){
+    dat <- as.data.frame(dat)
+    #gtz <- as.data.frame(dat[, 2:ncol(dat)] > 0)
+    gtz <- as.data.frame(dat[, 3:ncol(dat)] > 0)
+    o <- do.call(order, gtz[names(gtz)])
+    gtz <- gtz[o, ]
+    dat <- dat[o, ]
+    splitdat <- list()
+    pat <- 1
+    prev <- gtz[1, ]
+    splitdat[[pat]] <- dat[1, ]
+    for (i in 2:nrow(dat)) {
+        if (!all(gtz[i, ] == prev)) {
+            pat <- pat + 1
+            splitdat[[pat]] <- dat[i, ]
+        }
+        else {
+            splitdat[[pat]] <- rbind(splitdat[[pat]], dat[i,])
+        }
+        prev <- gtz[i, ]
+    }
+    cat(pat, "patterns of contestation: \n")
+    nm <- NULL
+    for (i in 1:length(splitdat)) {
+        #splitdat[[i]] <- splitdat[[i]][, c(TRUE, colSums(splitdat[[i]][, -1]) > 0)]
+        splitdat[[i]] <- splitdat[[i]][, c(TRUE, colSums(splitdat[[i]][, -1:-2]) > 0)]
+        #nm <- c(nm, paste(names(splitdat[[i]])[-1], collapse = "-"))
+        nm <- c(nm, paste(names(splitdat[[i]])[-1:-2], collapse = "-"))
+        cat("[", i, "] ", nm[i], ": ", nrow(splitdat[[i]]), "\n", sep = "")
+    }
+    names(splitdat) <- nm
+    invisible(splitdat)
+}
+environment(my.findpatterns) <- asNamespace('seatsvotes')
+#
 dat.pat <- findpatterns(dat)
+head(dat.pat[[1]]) # debug
+
 # estimate mixture models for each pattern of contestation (start w components=1, inspect fit visually)
+# tweak mvnmix function
+my.mvnmix <- function (dat, components = 2, maxiter = 1000, tol = 1e-05, inits = NULL, scatter = FALSE, plot.ell = TRUE, nrep = 1) {
+    ret <- list()
+    R <- components
+    nd <- nrow(dat)
+    #np <- ncol(dat) - 1
+    np <- ncol(dat) - 2
+    if (np > 1) {
+        #y <- dat[, 1]/10000
+        y <- dat[, 2]/10000
+        y.ptot <- dat[, 1]/10000; y <- cbind(y.ptot, y)
+        #dat[, -1] <- dat[, -1]/rowSums(dat[, -1])
+        dat[, -1:-2] <- dat[, -1:-2]/rowSums(dat[, -1:-2]) # turn into vote shares in case they were not
+        #for (i in 3:(np + 1)) {
+        for (i in 4:(np + 2)) {
+            #y <- cbind(y, log(dat[, i]/dat[, 2]))
+            y <- cbind(y, log(dat[, i]/dat[, 3]))
+        }
+    }
+    else { # didn't tweak uncontested districts (none in Mx)
+        dat[, 1] <- y <- rep(NA, nd)
+        dat[, 2] <- rep(1, nd)
+        trap <- T
+        ret$cols <- names(dat)
+        ret$N <- nd
+        nrep <- 0
+    }
+    bestllik <- -Inf
+    repl <- 1
+    while (repl <= nrep) {
+        #mu.init <- matrix(y[sample(c(1:nd), R), ], ncol = np)
+        mu.init <- matrix(y[sample(c(1:nd), R), ], ncol = (np+1))
+        sig.init <- array(0, dim = c(np, np, R))
+        for (r in 1:R) {
+            #sig.init[, , r] <- (c(runif(1, 0.5, 1.5) * sd(y[, 1]), runif(np - 1, 0.2, 1)) * diag(np))^2
+            sig.init[, , r] <- (c(runif(1, 0.5, 1.5) * sd(y[, 2]), runif(np - 1, 0.2, 1)) * diag(np))^2
+        }
+        P.init <- matrix(runif(R, min = 0.25, max = 0.75), nrow = R, 
+            ncol = 1)
+        P.init <- P.init/sum(P.init)
+        if (!is.null(inits)) {
+            mu.init <- inits$mu
+            sig.init <- inits$sig
+            P.init <- inits$P
+        }
+        mu.old <- mu.init
+        sig.old <- sig.init
+        P.old <- P.init
+        mu.new <- matrix(NA, nrow = R, ncol = ncol(y))
+        sig.new <- array(NA, dim = c(np, np, R))
+        P.new <- matrix(NA, nrow = R, ncol = 1)
+        llik <- -Inf
+        iter <- 1
+        dll <- Inf
+        while ((iter <= maxiter) & (dll > tol)) {
+            iter <- iter + 1
+            denom <- 0
+            trap <- F
+            for (r in 1:R) {
+                trap.try <- try(dmvnorm(y, mean = mu.old[r, ], 
+                  sigma = sig.old[, , r]), silent = T)
+                if (inherits(trap.try, "try-error")) {
+                  trap <- T
+                }
+            }
+            if (trap) {
+                llik <- c(llik, llik[iter - 1])
+            }
+            else {
+                for (r in 1:R) {
+                  denom <- denom + (dmvnorm(y, mean = mu.old[r,], sigma = sig.old[, , r]) * P.old[r])
+                }
+                for (r in 1:R) {
+                  rgivy <- (dmvnorm(y, mean = mu.old[r, ], sigma = sig.old[, , r]) * P.old[r])/denom
+                  mu.new[r, ] <- (colSums(rgivy * y))/sum(rgivy)
+                  d <- y - matrix(mu.new[r, ], nrow = nd, ncol = ncol(mu.new), 
+                    byrow = T)
+                  sig.new[, , r] <- (t(d) %*% (rgivy * d))/sum(rgivy)
+                  P.new[r] <- sum(rgivy)/nd
+                }
+                mu.old <- mu.new
+                sig.old <- sig.new
+                P.old <- P.new
+                llik <- c(llik, sum(log(denom)))
+            }
+            dll <- llik[iter] - llik[iter - 1]
+        }
+        if (!trap) {
+            if (llik[iter] > bestllik) {
+                bestllik <- llik[iter]
+                ret$cols <- names(dat)
+                ret$N <- nd
+                ret$inits <- list()
+                ret$inits$mu <- mu.init
+                ret$inits$sig <- sig.init
+                ret$inits$P <- P.init
+                ret$mu <- mu.new
+                ret$sig <- sig.new
+                ret$P <- c(P.new)
+                ret$ml <- llik[iter]
+                ret$npar <- (R - 1) + (R * np) + (R * np * (np + 1)/2) # no veo qué hace esto
+                ret$aic <- (-2 * ret$ml) + (2 * ret$npar)
+                ret$bic <- (-2 * ret$ml) + (log(nd) * ret$npar)
+            }
+            if (nrep > 1) {
+                cat("Model ", repl, ": llik = ", llik[iter], 
+                  " ... best llik = ", ret$ml, "\n", sep = "")
+                flush.console()
+            }
+            repl <- repl + 1
+        }
+    }
+    ret$y <- y
+    ret$dat <- dat
+    if (np > 1) {
+        cat("\n For", R, "component distributions:")
+        cat("\n   Number of districts:", ret$N)
+        cat("\n   Maximum log-likelihood:", ret$ml)
+        cat("\n   BIC:", ret$bic, "\n \n")
+        if (scatter) {
+            #splom.lr(y, names(dat)[-1], ret$mu, ret$sig, ret$P, plot.ell)
+            splom.lr(y, names(dat)[-1:-2], ret$mu, ret$sig, ret$P, plot.ell)
+        }
+    }
+    else { # did't tweak uncontested districts
+        cat(paste("\n Uncontested ", ret$cols[2], ": ", ret$N, 
+            " districts \n \n", sep = ""))
+    }
+    return(ret)
+}
+environment(my.mvnmix) <- asNamespace('seatsvotes')
+
+#
 fit <- list()
-fit[[1]] <- mvnmix( dat = dat.pat[[1]], components = 1, nrep = 10, scatter = TRUE) 
+fit[[1]] <- mvnmix( dat = dat.pat[[1]], components = 2, nrep = 10, scatter = TRUE) 
 fit[[2]] <- mvnmix( dat = dat.pat[[2]], components = 2, nrep = 10, scatter = TRUE)
+#
+summary(fit[[1]])
+head(dat[[1]]$y)
 
 # tweak function show.marginals formerly plotting marginals to get plot input
 my.marginals.prep <- function (fit, numdraws = 10000){
@@ -98,46 +292,75 @@ lines(density(prep$panal, na.rm = TRUE, adjust = 0.6), lwd = 2)
 # packaged plot
 show.marginals(fit, numdraws=50000)
 
-## # tweak/understand swingratio function
-## elas.sims <- function (fit, sims = 1000, rule = plurality, graph = TRUE) 
+## # tweak swingratio function
+## my.swingratio <- function (fit, sims = 1000, rule = plurality, graph = TRUE) 
 ## {
 ##     starttime <- Sys.time()
-##     dat <- reconstruct(fit)
+##     dat <- reconstruct(fit)  # needs no tweaking: internal function turns fit into matrix
 ##     dat[is.na(dat)] <- 0
 ##     np <- ncol(dat)
 ##     votemat <- NULL
 ##     seatmat <- NULL
+##     w.barmat <- v.barmat <- vmat <- NULL # will receive three aggregates of national vote
 ##     for (s in 1:sims) {
+##         #s <- 1 # debug
 ##         vsim <- sim.election(fit, dat)
+##         #vsim <- my.sim.election(fit, dat) # may be unnecessary
 ##         vsim[is.na(vsim)] <- 0
-##         partyvotes <- vsim[, 1] * vsim[, -1]
-##         votemat <- rbind(votemat, colSums(partyvotes)/sum(partyvotes))
-##         seatmat <- rbind(seatmat, rule(vsim[, -1]))
+##         #partyvotes <- vsim[, 1] * vsim[, -1]
+##         #votemat <- rbind(votemat, colSums(partyvotes)/sum(partyvotes))
+##         #seatmat <- rbind(seatmat, rule(vsim[, -1]))
+##         vsim2 <- vsim; colnames(vsim2) <- colnames(dat)           # duplicate for manipulation
+##         vsim2[,1] <- vsim2[,1]*10000                              # remove thousands
+##         vsim2[,-1] <- vsim2[,1] * vsim2[,-1]                      # raw votes
+##         efec <- vsim2[,1] - vsim2[, grep("abs", colnames(vsim2))] # effective vote
+##         vsim2 <- vsim2[, -grep("abs", colnames(vsim2))]           # drop abstention
+##         rawvotes <- vsim2[, -1]
+##         vsim2[,-1] <- vsim2[, -1] / efec                          # votes shares relative to effective vote
+##         hr <- vsim2[, 1] / sum(vsim2[, 1])                        # district:national population ratio
+##         vr <- efec / sum(efec)                                    # district:national raw vote ratio
+##         v <- colSums(vsim2[,-1] * vr)                             # national vote shares (or colSums(rawvotes)/sum(rawvotes))
+##         v.bar <- colSums(vsim2[,-1] *1/300)                       # mean district vote shares
+##         w.bar <- colSums(vsim2[,-1] * hr)                         # population-weighted mean district shares
+##         vmat <- rbind(vmat, v)                                    # append nat vot shares
+##         v.barmat <- rbind(v.barmat, v.mat)                        # append mean vot shares
+##         w.barmat <- rbind(w.barmat, w.bar)                        # append pop-w mean vot shares
+##         votemat <- rbind(votemat, v)                              # redundant
+##         seatmat <- rbind(seatmat, rule(vsim2[, -1]))              # seat shares won
 ##     }
 ##     ret <- list()
 ##     truevotes <- dat[, 1] * dat[, -1]
-##     ret$truevote <- colSums(truevotes)/sum(truevotes)
-##     ret$trueseat <- rule(dat[, -1])
+##     truevotes2 <- truevotes                                       # duplicate for manipulation
+##     truevotes2 <- truevotes2[, -grep("abs", colnames(truevotes2)] # drop abstention                                      
+##     #ret$truevote <- colSums(truevotes)/sum(truevotes)
+##     ret$truevote <- colSums(truevotes2)/sum(truevotes2)           # true vote shares won
+##     dat2 <- dat[, -1]                                             # duplicate for manipulation
+##     dat2 <- dat2[, -grep("abs", colnames(dat2))
+##     #ret$trueseat <- rule(dat[, -1])
+##     ret$trueseat <- rule(dat2[, -1])                              # true seat shares won
 ##     names(ret$trueseat) <- names(ret$truevote)
 ##     swing <- NULL
 ##     swing.lm <- NULL
 ##     seatlist <- list()
-##     for (j in 1:(np - 1)) {
-##         # hi and lo select sims +1% and -1% with some jitter
-##         smean.hi <- mean(seatmat[(votemat[, j] < (ret$truevote[j] + 0.012))
-##                                & (votemat[, j] > (ret$truevote[j] + 0.008)), j])
-##         smean.lo <- mean(seatmat[(votemat[, j] > (ret$truevote[j] - 0.012))
-##                                & (votemat[, j] < (ret$truevote[j] - 0.008)), j])
+##     #for (j in 1:(np - 1)) {
+##     for (j in 1:(np - 2)) { # needs change once I dropped abstention
+##         smean.hi <- mean(seatmat[(votemat[, j] < (ret$truevote[j] + 
+##             0.012)) & (votemat[, j] > (ret$truevote[j] + 0.008)), 
+##             j])
+##         smean.lo <- mean(seatmat[(votemat[, j] > (ret$truevote[j] - 
+##             0.012)) & (votemat[, j] < (ret$truevote[j] - 0.008)), 
+##             j])
 ##         swing <- c(swing, round((smean.hi - smean.lo)/0.02, 2))
-##         swing.lm <- c(swing.lm, round(coefficients(lm(seatmat[, j] ~ votemat[, j]))[2], 2))
-##         vrange <- seq(min(floor(votemat[, j] * 100)), max(floor(votemat[, j] * 100)), 1)/100
+##         swing.lm <- c(swing.lm, round(coefficients(lm(seatmat[, 
+##             j] ~ votemat[, j]))[2], 2))
+##         vrange <- seq(min(floor(votemat[, j] * 100)), max(floor(votemat[, 
+##             j] * 100)), 1)/100
 ##         seatlist[[j]] <- cbind(vrange, matrix(NA, nrow = length(vrange), 
 ##             ncol = 3))
 ##         colnames(seatlist[[j]]) <- c("vote", "mean", "lower", "upper")
 ##         for (i in 1:length(vrange)) {
-##             sel <- seatmat[(votemat[, j] >= (vrange[i] - 0.002))
-##                          & (votemat[, j] <  (vrange[i] + 0.002)), j]
-##             # this is why parties with few seats are dropped... percentage points with fewer than 10 simulated obs dropped
+##             sel <- seatmat[(votemat[, j] >= (vrange[i] - 0.002)) & 
+##                 (votemat[, j] < (vrange[i] + 0.002)), j]
 ##             if (length(sel) < 10) {
 ##                 seatlist[[j]][i, 2:4] <- NA
 ##             }
@@ -175,12 +398,16 @@ show.marginals(fit, numdraws=50000)
 ##     swing.median <- round(apply(sdiff/vdiff, 2, median), 2)
 ##     names(seatlist) <- colnames(votemat) <- colnames(seatmat) <- names(ret$truevote)
 ##     names(swing) <- names(swing.lm) <- names(swing.median) <- names(ret$truevote)
-##     swingtab <- cbind(round(100 * ret$truevote, 1), round(100 * ret$trueseat, 1), swing)
+##     swingtab <- cbind(round(100 * ret$truevote, 1), round(100 * 
+##         ret$trueseat, 1), swing)
 ##     rownames(swingtab) <- colnames(dat[, -1])
 ##     colnames(swingtab) <- c("Votes", "Seats", "Swing ratio")
 ##     print(swingtab)
 ##     ret$votemat <- votemat
 ##     ret$seatmat <- seatmat
+##     ret$vmat <- vmat          # add national vote shares
+##     ret$v.barmat <- v.barmat  # add mean district vote shares
+##     ret$w.barmat <- w.barmat  # add pop-weighted mean district vote shares
 ##     ret$swing <- swing
 ##     ret$swing.lm <- swing.lm
 ##     ret$swing.median <- swing.median
@@ -188,10 +415,11 @@ show.marginals(fit, numdraws=50000)
 ##     ret$time <- Sys.time() - starttime
 ##     return(ret)
 ## }
-## <environment: namespace:seatsvotes>
-#
+## environment(my.swingratio) <- asNamespace('seatsvotes')
+
 # Simulate swing ratios and plot results
-elas <- swingratio(fit, sims=5000, graph = TRUE)
+elas <- my.swingratio(fit, sims=5000, graph = TRUE)
+
 # rename object
 names(elas)[which(names(elas)=="swing")] <- "swing.mean"
 # add components to compute swing ratios (seats-votes elaticity)
