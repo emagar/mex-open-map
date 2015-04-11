@@ -49,22 +49,24 @@ head(e06); dim(e06); ls()
 #
 elecs060912.seccion <- list(e06=e06, e09=e09, e12=e12); rm(e06, e09, e12)
 
-##############################################################################################################
-## READ 060912 ELEC DATA AGGREGATED IN 2012, 2013.1, AND 2013.3 DISTRICTS PREPARED WITH analizaEscenarios.r ##
-##############################################################################################################
+############################################################################################################
+## READ 0312 ELEC DATA AGGREGATED IN 2012, 2013.1, AND 2013.3 DISTRICTS PREPARED WITH analizaEscenarios.r ##
+############################################################################################################
+ls()
 dd2 <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # prepared data directory
-load(file = paste(dd2, "elec060912.RData"))
+load(file = paste(dd2, "elec0312.RData"))
+#elec0312 <- elec03060912; rm(elec03060912)
 rm(dd2)
 #
 ## use to extract all objects from list elec060912 just imported
-for(i in 1:length(elec060912)){
+for(i in 1:length(elec0312)){
   ##first extract the object value
-  tempobj=elec060912[[i]]
+  tempobj=elec0312[[i]]
   ##now create a new variable with the original name of the list item
-  eval(parse(text=paste(names(elec060912)[[i]],"= tempobj")))
+  eval(parse(text=paste(names(elec0312)[[i]],"= tempobj")))
 }
-rm(elec060912)
-dim(df2012d0)
+rm(elec0312)
+dim(df2003d97) # has 298 districts only
 
 ## poblacion del conteo 2005
 c05 <- c("~/Dropbox/data/elecs/MXelsCalendGovt/censos/secciones/conteo2005")
@@ -1053,8 +1055,31 @@ tmp$ptot05 <- tmp$ptot10 <- NULL;
 tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.distMap2015p3 <- tmp
 #
-head(pob.distMap2015p3)
-dim(pob)
+y <- 2003 # sum seccion populations into districts actually used in 2003 election
+tmp <- eq[,c("edon","dis2003","ptot05","ptot10")]; colnames(tmp)[2] <- "disn"
+tmp$ptot05 <- ave(tmp$ptot05, as.factor(tmp$edon+tmp$disn/100), FUN=sum, na.rm=TRUE)
+tmp$ptot10 <- ave(tmp$ptot10, as.factor(tmp$edon+tmp$disn/100), FUN=sum, na.rm=TRUE)
+tmp <- tmp[duplicated(tmp$edon+tmp$disn/100)==FALSE,] # drops redundabt rows after aggregating districts from secciones
+print(paste("Total 2005 population unassigned to a district in", y, "election =", sum(tmp$ptot05[which(tmp$disn==0)])))
+print(paste("Total 2010 population unassigned to a district in", y, "election =", sum(tmp$ptot10[which(tmp$disn==0)])))
+tmp <- tmp[-which(tmp$disn==0),] # removes secciones not assigned to some district
+tmp <- tmp[order(tmp$edon, tmp$disn),]
+tmp.b <- (tmp$ptot10 * 2005 - tmp$ptot05 * 2010) / (2005 - 2010); tmp.a <- (tmp$ptot05 - tmp.b) / 2005
+tmp$ptot1994 <- round(x = tmp.a * 1994 + tmp.b, digits = 0);
+tmp$ptot1997 <- round(x = tmp.a * 1997 + tmp.b, digits = 0);
+tmp$ptot2000 <- round(x = tmp.a * 2000 + tmp.b, digits = 0);
+tmp$ptot2003 <- round(x = tmp.a * 2003 + tmp.b, digits = 0);
+tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
+tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
+tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
+tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
+tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
+tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
+tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
+tmp$ptot05 <- tmp$ptot10 <- NULL;
+tmp$ptot05 <- tmp$ptot10 <- NULL;
+pob.distMap1997 <- tmp
+head(tmp)
 #
 # clean
 rm(tmp.a, tmp.b, tmp, i, fl, pob, pob05, pob10, edo, y, tempobj, c05, c10)
@@ -1070,42 +1095,82 @@ wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/d
 setwd(wd)
 load(file = "tmp.RData")       # debug
 
-tmp <- tmp2 <- pob.distMap2006
+tmp <- tmp2 <- tmp3 <- tmp4 <- pob.distMap2006
 head(tmp)
-i <- 2 # debug
+#i <- 2 # debug
 for (i in 1:300){
-    tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("s")[tmp$edon[i], 2:12];
-    tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
+#    tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("s")[tmp$edon[i], 2:12];
+#    tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
+    tmp3[i, 3:13] <-   target.edos.func("s")[tmp$edon[i], 2:12] / tmp[i, 3:13];
+    tmp4[i, 3:13] <-  target.nal / tmp2[i, 3:13];
 }
-colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
-colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
-pob.distMap2006 <- cbind(pob.distMap2006, tmp[,3:13], tmp2[,3:13])
-head(pob.distMap2006)
+#colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+#colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp3)[3:13] <- paste("rris",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp4)[3:13] <- paste("rrin", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+#pob.distMap2006 <- cbind(pob.distMap2006, tmp[,3:13], tmp2[,3:13])
+pob.distMap2006 <- cbind(pob.distMap2006, tmp3[,3:13], tmp4[,3:13])
+colnames(pob.distMap2006)
 #
 tmp <- tmp2 <- pob.distMap2015p1
 for (i in 1:300){
-    tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("r")[tmp$edon[i], 2:12];
-    tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
+#    tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("r")[tmp$edon[i], 2:12];
+#    tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
+    tmp3[i, 3:13] <-   target.edos.func("r")[tmp$edon[i], 2:12] / tmp[i, 3:13];
+    tmp4[i, 3:13] <-  target.nal / tmp2[i, 3:13];
 }
-colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
-colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
-pob.distMap2015p1 <- cbind(pob.distMap2015p1, tmp[,3:13], tmp2[,3:13])
+#colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+#colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp3)[3:13] <- paste("rris",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp4)[3:13] <- paste("rrin", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+#pob.distMap2015p1 <- cbind(pob.distMap2015p1, tmp[,3:13], tmp2[,3:13])
+pob.distMap2015p1 <- cbind(pob.distMap2015p1, tmp3[,3:13], tmp4[,3:13])
 head(pob.distMap2015p1)
 #
 tmp <- tmp2 <- pob.distMap2015p3
 for (i in 1:300){
-    tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("r")[tmp$edon[i], 2:12];
-    tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
+    #tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("r")[tmp$edon[i], 2:12];
+    #tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
+    tmp3[i, 3:13] <-   target.edos.func("r")[tmp$edon[i], 2:12] / tmp[i, 3:13];
+    tmp4[i, 3:13] <-  target.nal / tmp2[i, 3:13];
 }
-colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
-colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
-pob.distMap2015p3 <- cbind(pob.distMap2015p3, tmp[,3:13], tmp2[,3:13])
+#colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+#colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp3)[3:13] <- paste("rris",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp4)[3:13] <- paste("rrin", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+#pob.distMap2015p3 <- cbind(pob.distMap2015p3, tmp[,3:13], tmp2[,3:13])
+pob.distMap2015p3 <- cbind(pob.distMap2015p3, tmp3[,3:13], tmp4[,3:13])
 head(pob.distMap2015p3)
 #
+tmp <- tmp2 <- pob.distMap1997
+for (i in 1:300){
+    #tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("l")[tmp$edon[i], 2:12];
+    #tmp2[i, 3:13] <- tmp2[i, 3:13] / target.nal;
+    tmp3[i, 3:13] <-   target.edos.func("l")[tmp$edon[i], 2:12] / tmp[i, 3:13];
+    tmp4[i, 3:13] <-  target.nal / tmp2[i, 3:13];
+}
+#colnames(tmp)[3:13] <- paste("rels",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+#colnames(tmp2)[3:13] <- paste("reln", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp3)[3:13] <- paste("rris",  c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+colnames(tmp4)[3:13] <- paste("rrin", c(seq(from = 1994, to = 2009, by = 3), 2010, 2012, 2013, 2015, 2018), sep = "")
+#pob.distMap1997 <- cbind(pob.distMap1997, tmp[,3:13], tmp2[,3:13])
+pob.distMap1997 <- cbind(pob.distMap1997, tmp3[,3:13], tmp4[,3:13])
+colnames(pob.distMap1997)
+
+# export district population stats for use elsewhere
+votPobDis0018 <- list(pob.distMap1997=pob.distMap1997,
+                      pob.distMap2006=pob.distMap2006,
+                      pob.distMap2015p1=pob.distMap2015p1,
+                      pob.distMap2015p3=pob.distMap2015p3)
+save(votPobDis0018, file = paste(wd, "votPobDis0018.RData", sep = ""))
+
 rm(tmp, tmp2)
 
 #
 # paste district populations to election objects
+tmp <- pob.distMap1997[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+#df2006d97 <- merge(x = df2006d97, y = tmp, by = c("edon", "disn"))
+#df2006s97 <- merge(x = df2006s97, y = tmp, by = c("edon", "disn"))
 tmp <- pob.distMap2006[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
 df2006d0 <- merge(x = df2006d0, y = tmp, by = c("edon", "disn"))
 df2006s0 <- merge(x = df2006s0, y = tmp, by = c("edon", "disn"))
@@ -1149,7 +1214,7 @@ tmp <- df2012d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d0 <- tmp
 tmp <- df2012d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d1 <- tmp
 tmp <- df2012d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d3 <- tmp
 #
-# prepare (until now, non-existant) df2015 with rri
+# prepare (until now, non-existant) df2015 with rri -- check, rri addition may be redundant
 tmp <- pob.distMap2006
 tmp <- tmp[,c("edon","disn","ptot2015","rels2015","reln2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
 tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
@@ -1229,6 +1294,7 @@ disn = c(1,2,3,1,2,3,4,5,6,7,8,1,2,1,2,1,2,3,4,5,6,7,1,2,1,2,3,4,5,6,7,8,9,10,11
 cab = c("Jesús María","Aguascalientes","Aguascalientes","Mexicali","Mexicali","Ensenada","Tijuana","Tijuana","Tijuana","Mexicali","Tijuana","Mulegé","La Paz","Campeche","Carmen","Piedras Negras","San Pedro","Monclova","Saltillo","Torreón","Torreón","Saltillo","Colima","Manzanillo","Palenque","Bochil","Ocosingo","Ocozocoautla de Espinosa","San Cristóbal de las Casas","Tuxtla Gutiérrez","Tonalá","Comitán de Domínguez","Tuxtla Gutiérrez","Villaflores","Huixtla","Tapachula","Juárez","Juárez","Juárez","Juárez","Delicias","Chihuahua","Cuauhtémoc","Chihuahua","Hidalgo del Parral","Gustavo A. Madero","Gustavo A. Madero","Azcapotzalco","Iztapalapa","Tlalpan","Gustavo A. Madero","Gustavo A. Madero","Cuauhtémoc","Venustiano Carranza","Miguel Hidalgo","Venustiano Carranza","Cuauhtémoc","Iztacalco","Tlalpan","Benito Juárez","Alvaro Obregón","Alvaro Obregón","Iztapalapa","Iztapalapa","Iztapalapa","Xochimilco","Iztapalapa","Coyoacán","Coyoacán","Iztapalapa","La Magdalena Contreras","Tláhuac","Durango","Gómez Palacio","Guadalupe Victoria","Durango","San Luis de la Paz","Allende","León","Guanajuato","León","León","San Francisco del Rincón","Salamanca","Irapuato","Uriangato","Pénjamo","Celaya","Valle de Santiago","Acámbaro","Pungarabato","Iguala de la Independencia","José Azueta","Acapulco de Juárez","Tlapa de Comonfort","Chilapa de Alvarez","Chilpancingo de los Bravo","Ayutla de los Libres","Acapulco de Juárez","Huejutla de Reyes","Ixmiquilpan","Actopan","Tulancingo de Bravo","Tula de Allende","Pachuca de Soto","Tepeapulco","Tequila","Lagos de Moreno","Tepatitlán de Morelos","Zapopan","Puerto Vallarta","Zapopan","Tonalá","Guadalajara","Guadalajara","Zapopan","Guadalajara","Tlajomulco de Zúñiga","Guadalajara","Guadalajara","La Barca","Tlaquepaque","Jocotepec","Autlán de Navarro","Zapotlán El Grande","Jilotepec","Teoloyucán","Atlacomulco","Nicolás Romero","Teotihuacán","Coacalco de Berriozábal","Cuautitlán Izcalli","Tultitlán","Ixtlahuaca","Ecatepec de Morelos","Ecatepec de Morelos","Ixtapaluca","Ecatepec de Morelos","Atizapán de Zaragoza","Tlalnepantla de Baz","Ecatepec de Morelos","Ecatepec de Morelos","Huixquilucan","Tlalnepantla de Baz","Nezahualcóyotl","Naucalpan de Juárez","Naucalpan de Juárez","Valle de Bravo","Naucalpan de Juárez","Chimalhuacán","Toluca","Metepec","Zumpango","Nezahualcóyotl","Nezahualcóyotl","Nezahualcóyotl","Valle de Chalco Solidaridad","Chalco","Toluca","Tenancingo","Tejupilco","Cuautitlán","Texcoco","La Paz","Zinacantepec","Lázaro Cárdenas","Puruándiro","Zitácuaro","Jiquilpan","Zamora","Hidalgo","Zacapu","Morelia","Uruapan","Morelia","Pátzcuaro","Apatzingán","Cuernavaca","Jiutepec","Cuautla","Jojutla","Yautepec","Santiago Ixcuintla","Tepic","Compostela","Santa Catarina","Apodaca","General Escobedo","San Nicolás de los Garza","Monterrey","Monterrey","Monterrey","Guadalupe","Linares","Monterrey","Guadalupe","Cadereyta Jiménez","San Juan Bautista Tuxtepec","Teotitlán de Flores Magón","Heroica Ciudad de Huajuapan de León","Tlacolula de Matamoros","Santo Domingo Tehuantepec","Heroica Ciudad de Tlaxiaco","Juchitán de Zaragoza","Oaxaca de Juárez","Santa Lucía del Camino","Miahuatlán de Porfirio Díaz","Santiago Pinotepa Nacional","Huauchinango","Zacatlán","Teziutlán","Zacapoaxtla","San Martín Texmelucan","Puebla","Tepeaca","Chalchicomula de Sesma","Puebla","San Pedro Cholula","Puebla","Puebla","Atlixco","Izúcar de Matamoros","Tehuacán","Ajalpan","Cadereyta de Montes","San Juan del Río","Querétaro","Querétaro","Solidaridad","Othón P. Blanco","Benito Juárez","Matehuala","Soledad de Graciano Sánchez","Rioverde","Ciudad Valles","San Luis Potosí","San Luis Potosí","Tamazunchale","El Fuerte","Ahome","Salvador Alvarado","Guasave","Culiacán","Mazatlán","Culiacán","Mazatlán","San Luis Río Colorado","Nogales","Hermosillo","Guaymas","Hermosillo","Cajeme","Navojoa","Macuspana","Cárdenas","Comalcalco","Centro","Paraíso","Centro","Nuevo Laredo","Reynosa","Río Bravo","Matamoros","Victoria","El Mante","Ciudad Madero","Tampico","Apizaco","Tlaxcala","Zacatelco","Pánuco","Tantoyuca","Tuxpan","Veracruz","Poza Rica de Hidalgo","Papantla","Martínez de la Torre","Xalapa","Coatepec","Xalapa","Coatzacoalcos","Veracruz","Huatusco","Minatitlán","Orizaba","Córdoba","Cosamaloapan","Zongolica","San Andrés Tuxtla","Acayucan","Cosoleacaque","Valladolid","Progreso","Mérida","Mérida","Ticul","Fresnillo","Jerez","Zacatecas","Guadalupe")
 , stringsAsFactors = FALSE)
 
+df2003d0 <- merge(df2003d0, cab.d0, by = c("edon", "disn"))
 df2006d0 <- merge(df2006d0, cab.d0, by = c("edon", "disn"))
 df2009d0 <- merge(df2009d0, cab.d0, by = c("edon", "disn"))
 df2012d0 <- merge(df2012d0, cab.d0, by = c("edon", "disn"))
@@ -1236,10 +1302,10 @@ df2015d0 <- merge(df2015d0, cab.d0, by = c("edon", "disn"))
 df2018d0 <- merge(df2018d0, cab.d0, by = c("edon", "disn"))
 rm(cab.d0)
 
-# export district votes with population stats for use elsewhere
-votPobDis0018 <- lapply(ls(pattern = "df[0-9]{4}d[013]"), get); names(votPobDis0018) <- ls(pattern = "df[0-9]{4}d[013]") # create list with data frames
-#summary(votPobDis0018)
-save(votPobDis0018, file = paste(wd, "votPobDis0018.RData", sep = ""))
+## # export district votes with population stats for use elsewhere
+## votPobDis0018 <- lapply(ls(pattern = "df[0-9]{4}d[013]"), get); names(votPobDis0018) <- ls(pattern = "df[0-9]{4}d[013]") # create list with data frames
+## #summary(votPobDis0018)
+## save(votPobDis0018, file = paste(wd, "votPobDis0018.RData", sep = ""))
 
 ################################################################################
 ## ADDS MARGIN (positive if winner, negative  difference to winner otherwise) ##

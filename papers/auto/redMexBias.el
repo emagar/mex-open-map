@@ -11,7 +11,9 @@
      "F:lambdaRhoEx"
      "T:3bias"
      "E:kingMulti"
-     "F:posterior_s0s3")
+     "F:posterior_s0s3"
+     "T:GKBbreakdown"
+     "T:swRatios")
     (TeX-add-symbols
      "mc")
     (TeX-run-style-hooks
