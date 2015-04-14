@@ -3,13 +3,13 @@
     (LaTeX-add-bibliographies
      "../bib/magar")
     (LaTeX-add-labels
-     "F:underOverRep"
-     "F:malapp"
      "F:seatsVotes"
      "E:kingBi"
      "E:cubeLaw"
      "F:lambdaRhoEx"
      "T:3bias"
+     "F:underOverRep"
+     "F:malapp"
      "E:kingMulti"
      "F:posterior_s0s3"
      "T:GKBbreakdown"

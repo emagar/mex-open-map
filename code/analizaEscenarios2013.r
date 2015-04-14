@@ -207,7 +207,7 @@ df2012d3$pvem[df2012d3$shSecCoalPri>=.5] <- 0
 rm(shrPri)
 df2012d1[df2012d1$edon==24,]
 #
-## winner  OJO: PREPARE CODE FOR MARGIN AS WELL
+## winner
 tmp <- rep(0, times=300)
 df2012d0$panw <- df2012d0$priw <- df2012d0$pricw <- df2012d0$prdcw <- df2012d0$pvemw <- df2012d0$panalw <- tmp
 tmp <- apply( df2012d0[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, max)
@@ -217,6 +217,9 @@ df2012d0$pricw[df2012d0$pric==tmp] <- 1
 df2012d0$prdcw[df2012d0$prdc==tmp] <- 1
 df2012d0$pvemw[df2012d0$pvem==tmp] <- 1
 df2012d0$panalw[df2012d0$panal==tmp] <- 1
+## winner's margin
+tmp <- apply( df2012d0[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, max) - apply( df2012d0[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
+df2012d0$winmg <- tmp/df2012d0$efec
 #
 tmp <- rep(0, times=300)
 df2012d1$panw <- df2012d1$priw <- df2012d1$pricw <- df2012d1$prdcw <- df2012d1$pvemw <- df2012d1$panalw <- tmp
@@ -227,6 +230,9 @@ df2012d1$pricw[df2012d1$pric==tmp] <- 1
 df2012d1$prdcw[df2012d1$prdc==tmp] <- 1
 df2012d1$pvemw[df2012d1$pvem==tmp] <- 1
 df2012d1$panalw[df2012d1$panal==tmp] <- 1
+## winner's margin
+tmp <- apply( df2012d1[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, max) - apply( df2012d1[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
+df2012d1$winmg <- tmp/df2012d1$efec
 #
 table(df2012d3$disn) # there are disn==0... i'll drop them but they need fixing
 df2012d3 <- df2012d3[-which(df2012d3$disn==0),]
@@ -239,6 +245,9 @@ df2012d3$pricw[df2012d3$pric==tmp] <- 1
 df2012d3$prdcw[df2012d3$prdc==tmp] <- 1
 df2012d3$pvemw[df2012d3$pvem==tmp] <- 1
 df2012d3$panalw[df2012d3$panal==tmp] <- 1
+## winner's margin
+tmp <- apply( df2012d3[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, max) - apply( df2012d3[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
+df2012d3$winmg <- tmp/df2012d3$efec
 #
 # debug
 df2012d0[df2012d0$edon==6,]
@@ -525,6 +534,9 @@ df2009d0$prdw[df2009d0$prd==tmp] <- 1
 df2009d0$pvemw[df2009d0$pvem==tmp] <- 1
 df2009d0$panalw[df2009d0$panal==tmp] <- 1
 df2009d0$ptcw[df2009d0$ptc==tmp] <- 1
+## winner's margin
+tmp <- apply( df2009d0[,c("pan", "pri", "pric", "prd", "pvem", "panal", "ptc")], MARGIN = 1, max) - apply( df2009d0[,c("pan", "pri", "pric", "prd", "pvem", "panal", "ptc")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
+df2009d0$winmg <- tmp/df2009d0$efec
 #
 tmp <- rep(0, times=300)
 df2009d1$panw <- df2009d1$priw <- df2009d1$pricw <- df2009d1$prdw <- df2009d1$pvemw <- df2009d1$panalw <- df2009d1$ptcw <- tmp
@@ -536,6 +548,9 @@ df2009d1$prdw[df2009d1$prd==tmp] <- 1
 df2009d1$pvemw[df2009d1$pvem==tmp] <- 1
 df2009d1$panalw[df2009d1$panal==tmp] <- 1
 df2009d1$ptcw[df2009d1$ptc==tmp] <- 1
+## winner's margin
+tmp <- apply( df2009d1[,c("pan", "pri", "pric", "prd", "pvem", "panal", "ptc")], MARGIN = 1, max) - apply( df2009d1[,c("pan", "pri", "pric", "prd", "pvem", "panal", "ptc")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
+df2009d1$winmg <- tmp/df2009d1$efec
 #
 tmp <- rep(0, times=300)
 df2009d3$panw <- df2009d3$priw <- df2009d3$pricw <- df2009d3$prdw <- df2009d3$pvemw <- df2009d3$panalw <- df2009d3$ptcw <- tmp
@@ -548,6 +563,9 @@ df2009d3$pvemw[df2009d3$pvem==tmp] <- 1
 df2009d3$panalw[df2009d3$panal==tmp] <- 1
 df2009d3$ptcw[df2009d3$ptc==tmp] <- 1
 df2009d0[df2009d0$edon==20,]
+## winner's margin
+tmp <- apply( df2009d3[,c("pan", "pri", "pric", "prd", "pvem", "panal", "ptc")], MARGIN = 1, max) - apply( df2009d3[,c("pan", "pri", "pric", "prd", "pvem", "panal", "ptc")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
+df2009d3$winmg <- tmp/df2009d3$efec
 #
 # state aggregates statistics
 df2009s0 <- df2009d0
@@ -762,6 +780,9 @@ df2006d0$pricw[df2006d0$pric==tmp] <- 1
 df2006d0$prdcw[df2006d0$prdc==tmp] <- 1
 df2006d0$panalw[df2006d0$panal==tmp] <- 1
 df2006d0$asdcw[df2006d0$asdc==tmp] <- 1
+## winner's margin
+tmp <- apply( df2006d0[,c("pan", "pric", "prdc", "panal", "asdc")], MARGIN = 1, max) - apply( df2006d0[,c("pan", "pric", "prdc", "panal", "asdc")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
+df2006d0$winmg <- tmp/df2006d0$efec
 #
 tmp <- rep(0, times=300)
 df2006d1$panw <- df2006d1$pricw <- df2006d1$prdcw <- df2006d1$asdcw <- df2006d1$panalw <- tmp
@@ -771,6 +792,9 @@ df2006d1$pricw[df2006d1$pric==tmp] <- 1
 df2006d1$prdcw[df2006d1$prdc==tmp] <- 1
 df2006d1$panalw[df2006d1$panal==tmp] <- 1
 df2006d1$asdcw[df2006d1$asdc==tmp] <- 1
+## winner's margin
+tmp <- apply( df2006d1[,c("pan", "pric", "prdc", "panal", "asdc")], MARGIN = 1, max) - apply( df2006d1[,c("pan", "pric", "prdc", "panal", "asdc")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
+df2006d1$winmg <- tmp/df2006d1$efec
 #
 tmp <- rep(0, times=300)
 df2006d3$panw <- df2006d3$pricw <- df2006d3$prdcw <- df2006d3$asdcw <- df2006d3$panalw <- tmp
@@ -780,6 +804,9 @@ df2006d3$pricw[df2006d3$pric==tmp] <- 1
 df2006d3$prdcw[df2006d3$prdc==tmp] <- 1
 df2006d3$panalw[df2006d3$panal==tmp] <- 1
 df2006d3$asdcw[df2006d3$asdc==tmp] <- 1
+## winner's margin
+tmp <- apply( df2006d3[,c("pan", "pric", "prdc", "panal", "asdc")], MARGIN = 1, max) - apply( df2006d3[,c("pan", "pric", "prdc", "panal", "asdc")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
+df2006d3$winmg <- tmp/df2006d3$efec
 #
 # state aggregates statistics
 df2006s0 <- df2006d0
@@ -908,7 +935,7 @@ df2012s0$N <- df2012s1$N <- df2012s3$N <- 1/hh ## laakso y taagepera
 ## x
 
 #######################################
-## READ SECCION-LEVEL ELEC DATA 2003 ##  <-- DOESN'T WORK, 18K SECCIONES MISSING, PROB FROM OBJECT EQ
+## READ SECCION-LEVEL ELEC DATA 2003 ##  <-- DOESN'T WORK FROM SECCIONES, 18K SECCIONES MISSING... GRAB DATA FROM CASILLAS
 #######################################
 #tmp <- read.csv( paste(dd, "dfSeccion2003.csv", sep=""), header=TRUE) # seccion-level report misses lots of secciones apparently!
 tmp <- read.csv( "~/Dropbox/data/elecs/MXelsCalendGovt/elecReturns/DatosBrutos/resultCasillas/casillaRes91-on/dip2003.csv", header=TRUE)
@@ -1498,6 +1525,63 @@ elec0312 <-
          df2012s3=df2012s3)
 save(elec0312, file = paste(dd, "elec0312.RData"))
 rm(elec0312)
+
+## REGRESS VOTE SHARE ON RAW TOTAL VOTE
+tmp <- rep(NA,4)
+tmp1 <- data.frame(pancf=tmp, panp=tmp, pricf=tmp, prip=tmp, prdcf=tmp, prdp=tmp); rownames(tmp1) <- seq(2003, 2012, 3)
+# 2003
+tmp <- df2003d0
+#head(tmp)
+tmp2 <- tmp$efec/10000
+tmp1[1,1:2] <- summary(lm(tmp$pan/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+tmp1[1,3:4] <- summary(lm((tmp$pri+tmp$pric)/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+tmp1[1,5:6] <- summary(lm(tmp$prd/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+#
+# 2006
+tmp <- df2006d0
+#head(tmp)
+tmp2 <- tmp$efec/10000
+tmp1[2,1:2] <- summary(lm(tmp$pan/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+tmp1[2,3:4] <- summary(lm(tmp$pric/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+tmp1[2,5:6] <- summary(lm(tmp$prdc/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+#
+# 2009
+tmp <- df2009d0
+#head(tmp)
+tmp2 <- tmp$efec/10000
+tmp1[3,1:2] <- summary(lm(tmp$pan/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+tmp1[3,3:4] <- summary(lm((tmp$pri+tmp$pric)/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+tmp1[3,5:6] <- summary(lm(tmp$prd/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+#
+# 2012
+tmp <- df2012d0
+#head(tmp)
+tmp2 <- tmp$efec/10000
+tmp1[4,1:2] <- summary(lm(tmp$pan/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+tmp1[4,3:4] <- summary(lm((tmp$pri+tmp$pric)/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+tmp1[4,5:6] <- summary(lm(tmp$prdc/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
+#
+#tmp1 <- tmp1/10000
+round(tmp1,3)
+
+## mean winning margin
+tmp <- rep(NA,3)
+tmp1 <- data.frame(panmg=tmp, primg=tmp, prdmg=tmp); rownames(tmp1) <- seq(2006,2012,3)
+tmp <- df2006d0
+tmp1[1,1] <- mean(tmp$winmg[tmp$panw==1])
+tmp1[1,2] <- mean(tmp$winmg[tmp$pricw==1])
+tmp1[1,3] <- mean(tmp$winmg[tmp$prdcw==1])
+tmp <- df2009d0
+tmp1[2,1] <- mean(tmp$winmg[tmp$panw==1])
+tmp1[2,2] <- mean(tmp$winmg[tmp$pricw==1 | tmp$priw==1])
+tmp1[2,3] <- mean(tmp$winmg[tmp$prdw==1])
+tmp <- df2012d0
+tmp1[3,1] <- mean(tmp$winmg[tmp$panw==1])
+tmp1[3,2] <- mean(tmp$winmg[tmp$pricw==1 | tmp$priw==1])
+tmp1[3,3] <- mean(tmp$winmg[tmp$prdcw==1])
+round(tmp1,2)
+
+
 
 ### Packages for JAGS
 library(R2jags)
