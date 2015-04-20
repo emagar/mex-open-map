@@ -1327,6 +1327,7 @@ tmp <- tmp[tmp$votes>0,]
 # READ DISTRICT-LEVEL DATA PREPARED WITH red.r THAT CONTAINS POPULATION STATISTICS; MERGE POP STATS TO VOTE OBJECTS
 load(paste(dd, "votPobDis0018.RData", sep = ""))
 summary(votPobDis0018)
+colnames(votPobDis0018$pob.distMap1997)
 colnames(votPobDis0018$pob.distMap2006)
 # simplify objects with relevant year only
 tmp <- votPobDis0018$pob.distMap1997

@@ -58,7 +58,7 @@ load(file = paste(dd2, "elec0312.RData"))
 #elec0312 <- elec03060912; rm(elec03060912)
 rm(dd2)
 #
-## use to extract all objects from list elec060912 just imported
+## use to extract all objects from list elec0312 just imported
 for(i in 1:length(elec0312)){
   ##first extract the object value
   tempobj=elec0312[[i]]
