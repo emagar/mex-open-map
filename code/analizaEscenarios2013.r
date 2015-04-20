@@ -11,8 +11,8 @@
 
 rm(list=ls())
 #
-wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
-dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
+wd <- c("/home/eric/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
+dd <- c("/home/eric/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
 setwd(wd)
 #
 #
@@ -1581,6 +1581,37 @@ tmp1[3,2] <- mean(tmp$winmg[tmp$pricw==1 | tmp$priw==1])
 tmp1[3,3] <- mean(tmp$winmg[tmp$prdcw==1])
 round(tmp1,2)
 
+## plot natl true and Linzer-simulated votes and seats
+load(paste(dd, "swingRatios9712.RData", sep = ""))
+pdf(file = paste(wd, "graphs/vs2003.pdf", sep = ""))
+dat <- swRats$df2003d0
+plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2003)
+abline(a=0, b=1, lty=2)
+text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray", pos=2)
+text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat), pos=2)
+dev.off()
+pdf(file = paste(wd, "graphs/vs2006.pdf", sep = ""))
+dat <- swRats$df2006d0
+plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2006)
+abline(a=0, b=1, lty=2)
+text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray", pos=2)
+text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat), pos=2)
+dev.off()
+pdf(file = paste(wd, "graphs/vs2009.pdf", sep = ""))
+dat <- swRats$df2009d0
+plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2009)
+abline(a=0, b=1, lty=2)
+text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray", pos=2)
+text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat), pos=2)
+dev.off()
+pdf(file = paste(wd, "graphs/vs2012.pdf", sep = ""))
+dat <- swRats$df2012d0
+plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2012)
+abline(a=0, b=1, lty=2)
+text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray", pos=2)
+text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat), pos=2)
+dev.off()
+
 
 
 ### Packages for JAGS
@@ -2741,19 +2772,6 @@ setwd(wd)
 
 dim(tmp)
 
-PARA DETECTAR EL PROBLEMA DE CURVAS QUE NO LLEGAN A S=1 CON VALORES ALTOS DE V
-1. Estimar King sin partido de referencia para ver si también tiene el problema
-2. Verificar que la omisión del partido de referencia en el modelo 4 esté hecha conforme a la especificación del paper de King
-3. Verificar funciín seat.hat
-
-TO DO:
-    1-comparar lambda y rho de modelo Calvo-Micozzi, King con 7 y King con 6+ref
-    2-método de graficado con sólo el partido ganador y usando las lambdas de los otros
-    3-meter 5 distritos extra para cada una de las circunscripciones pluri
-    4-estimate models for 2006, 2009, 2012 separately and for 2006-2012
-    5-repaeat with s0 and with s3, graph each and make summary
-
-sum(df2012d0$pvemw)
 
 cmn-2006-12-s0 # calvo-micozzi with N
 cm-2006-12-s0 # calvo-micozzi without N

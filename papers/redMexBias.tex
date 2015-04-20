@@ -130,9 +130,13 @@ The paper is organized thus. Section 1 discusses partisan bias, three sources be
 \begin{figure}
 \begin{center}
 \begin{tabular}{cc}
-    (a) & (b) \\
-    \includegraphics[width=.48\columnwidth]{resXedo20062012sh.pdf} &
-    \includegraphics[width=.48\columnwidth]{resNal20062012sh.pdf} 
+    % (a) & (b) \\
+    % \includegraphics[width=.48\columnwidth]{resXedo20062012sh.pdf} &
+    % \includegraphics[width=.48\columnwidth]{resNal20062012sh.pdf} 
+    \includegraphics[width=.48\columnwidth]{vs2003.pdf} &
+    \includegraphics[width=.48\columnwidth]{vs2006.pdf} \\
+    \includegraphics[width=.48\columnwidth]{vs2009.pdf} &
+    \includegraphics[width=.48\columnwidth]{vs2012.pdf} \\
 \end{tabular}
 \caption{Votes and plurality seats in the 2006, 2009, and 2012 federal deputy elections. Panel (a) reports state aggregates and each point is a party-state-year. Panel (b) reports standard national aggregates and each point is a party-year. Source: prepared with data from \url{www.ine.org.mx}.}\label{F:seatsVotes}
 \end{center}
@@ -176,7 +180,7 @@ At the root of party bias in systems with multiple districts are differences in 
 \citet{grofman.etalBiasMalapp.1997} demonstrate that what we shall now call \emph{raw party bias} ($\lambda$) has three clear and distinct sources and offer a procedure to separate empirically the independent contribution of each. Our analysis applies the GKB method to recent Mexican elections.\footnote{Other elements highlighted by \citet{gudgin.taylor.1980decomposeBias} that our analysis of raw party bias ignores are the cube-law's bonus, large third-party votes, and possible interactions between all the elements. The bonus is, in fact, captured by the system's responsiveness parameter and therefore distinct from party bias in our framework (more on this below). \citet{calvo.2009roadToPR} models departures from bipartism explicitly. Interactions remain interesting venues for future research.} The first source of party bias is \emph{distributional} (or vote wasting). It corresponds to partisan support differently spread across districts mentioned above. Vote wasting may be caused intentionally through gerrymandering (e.g., packing your opponent's support in few districts), but it may also arise by the accidents of geography (e.g., when districts do not cross state boundaries and the state is a party stronghold). The second source of party bias is differential \emph{turnout} across districts. Those who abstain from voting are passively lowering the bar to win a district's seat. Parties stronger in the lower turnout districts will achieve victories with fewer votes than adversaries, improving their votes:seats ratio. Turnout differentials arise when correlates of participation, such as socio-economic status, vary systematically across districts, or when parties mobilize more effectively in some areas than others \citep{rosenstone.hansen.1993}. The third source of party bias is \emph{malapportionment}. 
 
 
-% [ERIC] Follows Micah's suggestion to have vote total add to same in each scenario. This makes each scenario's difference stand out, but raw vote numbers are larger and less round... 
+% [ERIC] Follows Micah's suggestion to have vote total add to same in each scenario. This makes each scenario's difference stand out, but raw vote numbers are larger and less round than they were... 
 \begin{table}
 \centering
 % %\newcolumntype{d}[1]{D{.}{.}{#1}} % D column with 1 decimal spaces default, usage d{2} for two spaces
@@ -209,34 +213,26 @@ The last scenario has equal-turnout districts and winning margins uncorrelated w
 
 The discussion of vote-seat curves has so far assumed that votes in Equation \ref{E:kingBi} are the party's share of the aggregate (national or state) vote.\footnote{Noting that party $p$'s raw vote in district $d$ is the product of its district vote share $v_{dp}$ and the district's raw vote, the party's aggregate vote share can be expressed as $v_p = \sum_d (v_{dp} \times \frac{\text{raw vote}_d}{\text{total raw vote}})$. This algebraic transformation eases comparation to the other aggregate vote measures in GKB's formalization of the separation argument: party $p$'s mean district vote share is $\bar{v}_p = \sum_d (v_{dp} \times \frac{1}{\text{total districts}})$; and party $p$'s population-weighted mean district vote share is $\bar{w}_p = \sum_d (v_{dp} \times \frac{\text{population}_d}{\text{total population}})$. The notation GKB use for these expressions is R, P, and M, respectively.} This standard mode of aggregation of district-level vote returns yields a raw party bias estimate. But, as in \citet{tufte1973seatsVotes} and \citet{gelman.king.1994EvalElSysRedis}, fitting the vote--seat curve using party $p$'s mean district vote share $\bar{v}_p$ instead yields distributional-based party bias. This is so because $\bar{v}_p$ aggregates district vote shares but disregards district size and voter turnout. In the same spirit, GKB show that relying on party $p$'s population-weighted mean district vote share $\bar{w}_p$ (an aggregate compounding district vote shares and relative district populations) yields estimates conflating distributive- and malapportionment-based party bias. So subtracting party bias estimated with $\bar{v}_p$ from party bias estimated with $\bar{w}_p$ yields pure malapportionment-based party bias. And, because raw party bias conflates all three sources, subtracting party bias estimated with $\bar{w}_p$ from party bias estimated with $v_p$ yields pure turnout-based party bias. 
 
-% $R_i = \sum_j r_{ij} \times \frac{v_j}{V} =  \frac{\sum_j v_{ij}}{V}$
-% $P_i = \sum_j r_{ij} \times \frac{1}{S} = \frac{\sum_j r_{ij}}{S}$
-% $M_i = \sum_j r_{ij} \times \frac{h_j}{H}$
-
-% $v_p  = \sum_d v_{dp} \times \frac{\text{raw vote}_d}{\text{total raw vote}}$,  % Ri in GKB
-% $\bar{v}_p  = \sum_d v_{dp} \times \frac{1}{\text{total districts}}$ % Pi in GKB
-% $\bar{w}_p  = \sum_d v_{dp} \times \frac{\text{population}_d}{\text{total population}}$, and  % Mi in GKB
+% [Eric] Elements to re-frame the paper covering 3 sources of bias: malapportionment, turnout, and gerrymandering. 
+Preliminary inspection of our data suggests that all three effects have been present in recent congressional elections. Preliminary evidence of turnout effect: Regress a party's district-level vote share on a constant and the district's total raw votes. Reveals that turnout is related to the distribution of party support. Table below show coefficient and its p-value. With more noise since 2009 than before, some evidence that PAN performs better in higher-turnout districts, PRI in lower-turnout, and the left somewhere in between. 
+\begin{tabular}{rrrrrrr}
+      & pancf &  panp &  pricf &  prip &  prdcf &  prdp \\
+ 2003 & 0.027 & 0.000 & -0.014 & 0.000 & -0.011 & 0.007 \\
+ 2006 & 0.004 & 0.063 & -0.013 & 0.000 &  0.007 & 0.002 \\
+ 2009 & 0.003 & 0.153 & -0.003 & 0.174 & -0.001 & 0.748 \\
+ 2012 & 0.004 & 0.125 &  0.001 & 0.787 &  0.000 & 0.918 \\
+\end{tabular}
+Preliminary evidence of distributive/gerrymandering effect: mean district winning margins by party show size of wasted votes. 
+      panmg primg prdmg
+ 2006  0.15  0.07  0.17
+ 2009  0.11  0.18  0.09
+ 2012  0.08  0.12  0.17
 
 Before applying this separation method to recent Mexican congressional elections, we document the prevalence of malapportionment. 
 
-\section{One person, one vote?}
-
 % [Micah] Expand section to also cover turnout and gerrymandering, with appropriate subsections
 
-% [Eric] Elements to re-frame the paper covering 3 sources of bias: malapportionment, turnout, and gerrymandering. 
-% Regressing a party's district-level vote share on a constant and the district's total raw votes reveals some evidence that turnout is related to the distribution of party support. Table show coefficient and its p-value. With more noise since 2009 than before, some evidence that PAN performs better in higher-turnout districts, PRI in lower-turnout, and the left somewhere in between. 
-%      pancf  panp  pricf  prip  prdcf  prdp
-% 2003 0.027 0.000 -0.014 0.000 -0.011 0.007
-% 2006 0.004 0.063 -0.013 0.000  0.007 0.002
-% 2009 0.003 0.153 -0.003 0.174 -0.001 0.748
-% 2012 0.004 0.125  0.001 0.787  0.000 0.918
-% Some idea of the distribution of positive and negative shares by party within state's districts should offer some perspective on vote-wasting and geography.  
-% And mean district winning margins by party offer an idea of wasted votes
-%      panmg primg prdmg
-% 2006  0.15  0.07  0.17
-% 2009  0.11  0.18  0.09
-% 2012  0.08  0.12  0.17
-
+\section{One person, one vote?}
 
 \singlespacing
 \begin{footnotesize}
