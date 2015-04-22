@@ -3,28 +3,38 @@
     (LaTeX-add-bibliographies
      "../bib/magar")
     (LaTeX-add-labels
-     "T:simIndex"
-     "F:underOverRep"
-     "F:malapp"
-     "T:malap06inTime"
      "F:seatsVotes"
+     "E:kingBi"
      "E:cubeLaw"
      "F:lambdaRhoEx"
-     "F:posterior_s0s1s3"
-     "T:volatMarginsd0"
-     "F:malmgnat")
+     "T:3bias"
+     "F:underOverRep"
+     "F:malapp"
+     "E:kingMulti"
+     "F:posterior_s0s3"
+     "T:GKBbreakdown"
+     "T:swRatios")
     (TeX-add-symbols
      "mc")
     (TeX-run-style-hooks
-     "amsmath"
      "arydshln"
+     "dcolumn"
+     "courier"
+     "helvet"
+     "scaled=.90"
+     "mathptmx"
      "natbib"
      "sort"
      "longnamesfirst"
+     "hyperref"
+     "hidelinks"
      "graphicx"
      "pdftex"
      "url"
-     "hyperref"
+     "amssymb"
+     "amsmath"
+     "fontenc"
+     "T1"
      "setspace"
      ""
      "geometry"

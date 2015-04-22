@@ -1,35 +1,30 @@
-party.analyzed <- 2; party.lambda <- 2; 
-seat.hat <- function(party.analyzed=NA, party.lambda=party.analyzed){ # analizes vote increments for party.vote using party.lambda's bias
-    mean.v <- apply(v, 2, mean) / sum(apply(v, 2, mean)); # compute parties' mean vote across elections and normalize to sum 1
-    ## share.mean <- data.frame(matrix(0, nrow=7, ncol=7)); # when analizing party i, produces share of vote without i won by rest of parties
-    ## for (i in 1:7){ 
-    ##     for (j in setdiff(1:7,i)){
-    ##         share.mean[i,j] <- mean.v[j] / (1-mean.v[i])
-    ##     }
-    ## }
-    share.mean <- data.frame(p1=mean.v, p2=mean.v, p3=mean.v, p4=mean.v, p5=mean.v, p6=mean.v, p7=mean.v); # when analizing party i, produces share of vote without i won by rest of parties
-    diag(share.mean) <- 0; # replace diagonal with zero
-    share.mean <- share.mean / apply(share.mean, 2, sum); # column p reports share of (total vote - vote(p)) belongong to parties other than p
-    equis <- matrix(NA, nrow=101, ncol=7); # 0-1 vote increments for party, rest split among other parties according to relative mean vote
-    equis[,party.analyzed] <- seq(from = 0, to = 1, by = .01);
-    for (j in setdiff(1:7,party.analyzed)){
-        equis[,j] <- (1-equis[,party.analyzed])*share.mean[party.analyzed,j]
-    }
-    ## d1 <- exp( lambda.hat[1] + rho.hat * log( equis[,1] ) );
-    ## d2 <- exp( lambda.hat[2] + rho.hat * log( equis[,2] ) );
-    ## d3 <- exp( lambda.hat[3] + rho.hat * log( equis[,3] ) );
-    ## d4 <- exp( lambda.hat[4] + rho.hat * log( equis[,4] ) );
-    ## d5 <- exp( lambda.hat[5] + rho.hat * log( equis[,5] ) );
-    ## d6 <- exp( lambda.hat[6] + rho.hat * log( equis[,6] ) );
-    ## d7 <- exp( lambda.hat[7] + rho.hat * log( equis[,7] ) );
-    ## return(exp( lambda.hat[party.lambda] + rho.hat * log(equis[,party.vote]) ) / (d1+d2+d3+d4+d5+d6+d7)) # voto party crece linealmente, demás según peso relativo
-#PROBAR ESTO
-    d1 <- exp( lambda.hat[1] ) * equis[,1]^rho.hat;
-    d2 <- exp( lambda.hat[2] ) * equis[,2]^rho.hat;
-    d3 <- exp( lambda.hat[3] ) * equis[,3]^rho.hat;
-    d4 <- exp( lambda.hat[4] ) * equis[,4]^rho.hat;
-    d5 <- exp( lambda.hat[5] ) * equis[,5]^rho.hat;
-    d6 <- exp( lambda.hat[6] ) * equis[,6]^rho.hat;
-    d7 <- exp( lambda.hat[7] ) * equis[,7]^rho.hat;
-    return(exp( lambda.hat[party.lambda] ) *  equis[,party.vote]^rho.hat  / (d1+d2+d3+d4+d5+d6+d7)) # voto party crece linealmente, demás según peso relativo
-}
+#################################################################################
+### Data preparations for national-agg King (data matrix with 7 party columns ###
+#################################################################################
+obj1 <- df2012d0
+obj2 <- df2009d0
+obj3 <- df2006d0
+# national aggregates
+S <-          data.frame(pan=obj1$panw, pri=obj1$priw+obj1$pricw, prd=obj1$prdcw, pvem=obj1$pvemw, panal=obj1$panalw, ptc=rep(0,300), asdc=rep(0,300))
+S <- apply(S, 2, sum) / 300
+tmp <-        data.frame(pan=obj2$panw, pri=obj2$priw+obj2$pricw, prd=obj2$prdw,  pvem=obj2$pvemw, panal=obj2$panalw, ptc=obj2$ptcw, asdc=rep(0,300))
+tmp <- apply(tmp, 2, sum) / 300
+S <- rbind(S, tmp)
+tmp <-        data.frame(pan=obj3$panw, pri=obj3$pricw,           prd=obj3$prdcw, pvem=rep(0,300), panal=obj3$panalw, ptc=rep(0,300), asdc=obj3$asdcw)
+tmp <- apply(tmp, 2, sum) / 300
+S <- rbind(S, tmp)
+# re-does data.frame to check that aggregation went well
+S <- data.frame(S=as.vector(S), yr=rep(c(2012,2009,2006),7), pty=c(rep("pan",3),rep("pri",3),rep("prd",3),rep("pvem",3),rep("panal",3),rep("ptc",3),rep("asdc",3)))
+S <- S$S
+#
+# v=R is national vote shares --- Grofman et al 1997 show that its use conflates 3 sources of party bias, so below are options to use other vote shares to separate them
+R <-          data.frame(pan=obj1$pan, pri=obj1$pri+obj1$pric, prd=obj1$prdc, pvem=obj1$pvem, panal=obj1$panal, ptc=rep(0,300),  asdc=rep(0,300), efec=obj1$efec)
+R <- apply(R, 2, sum)
+R <- R[-length(R)] / R[length(R)]
+tmp <-        data.frame(pan=obj2$pan, pri=obj2$pri+obj2$pric, prd=obj2$prd,  pvem=obj2$pvem, panal=obj2$panal, ptc=obj2$ptc, asdc=rep(0,300), efec=obj2$efec)
+tmp <- apply(tmp, 2, sum)
+tmp <- tmp[-length(tmp)] / tmp[length(tmp)]
+R <- rbind(R, tmp)
+
+tmp <-    data.frame(pan=obj3$pan, pri=obj3$pric,            prd=obj3$prdc, pvem=rep(0,32),   panal=obj3$panal, ptc=rep(0,32),  asdc=obj3$asdc, efec=obj3$efec)
+
