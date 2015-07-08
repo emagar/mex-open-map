@@ -96,3 +96,6 @@ sympy-plots-for-*.tex/
 *-Ex.R
 # RStudio files
 .Rproj.user/
+
+## Backups
+*~

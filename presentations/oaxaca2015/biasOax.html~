@@ -1,0 +1,1023 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Party bias in Mexico</title>
+<meta name="author" content="(Eric Magar (with Micah Altman, Mike McDonald, and Alex Trelles))"/>
+
+<link rel="stylesheet" href="file:///home/eric/.emacs.d/reveal/reveal.js/css/reveal.css"/>
+<link rel="stylesheet" href="file:///home/eric/.emacs.d/reveal/reveal.js/css/theme/night.css" id="theme"/>
+<link rel="stylesheet" href="./extra.css"/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'file:///home/eric/.emacs.d/reveal/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<meta name="presentation" content="Org-Reveal Presentation.">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1>Party bias in Mexico</h1>
+<h2>Eric Magar (with Micah Altman, Mike McDonald, and Alex Trelles)</h2>
+<h2><a href="mailto:emagar@itam.edu">emagar@itam.edu</a></h2>
+<h2></h2>
+</section>
+
+<section>
+<section id="slide-sec-1">
+<h2 id="sec-1">Background on Mexico</h2>
+<ul>
+<li>Hegemonic party 1929&#x2013;1997</li>
+
+<li>Three major parties (from left to right): PRD, PRI, and PAN and minors</li>
+
+<li>Chamber of Deputies elected every 3 yrs, concurrent w presidential race every 6 yrs</li>
+
+<li>Mixed system: 300 SMD + 200 PR seats</li>
+
+<li>Single-term limits lifted in 2018</li>
+
+<li>Autonomous regulator (IFE) in charge of elections and redistricting</li>
+
+</ul>
+
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2">
+<h2 id="sec-2">Questions</h2>
+<p>
+Did 1997 reform remove <b><b>party bias</b></b> in representation? 
+</p>
+
+<ul>
+<li>Potential problem wherever districts are drawn to allocate seats (Tufte 1973, Johnston 2002)</li>
+
+</ul>
+
+<p>
+If party bias remains, what <b>factors</b> drive it? (Grofman et al. 1997)
+</p>
+
+<ul>
+<li>Do parties use redistricting in their advantage?</li>
+<li>How does secular demographic change affect parties?</li>
+<li>Turnout differentials?</li>
+
+</ul>
+
+</section>
+<section id="slide-sec-2-1">
+<h3 id="sec-2-1">Answers</h3>
+<ol>
+<li>Persistent bias against the right</li>
+<li>But components of bias often cancel each other</li>
+
+</ol>
+
+
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3">
+<h2 id="sec-3">What is party bias</h2>
+<p>
+It is the excess/defect seat share that a party with half of the votes gets:  
+</p>
+
+<p>
+\(\lambda = (s | v=.5) - .5\)
+</p>
+
+<ul class="fragment roll-in">
+<li>Two-party system assumed</li>
+<li>Constant-sum game</li>
+<li>Vote wasting (Calvo &amp; Rodden 2015)</li>
+
+</ul>
+
+</section>
+<section>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="all" frame="border" width="60%">
+<caption class="t-above"><span class="table-number">Table 1:</span> Party support and size</caption>
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">small</td>
+<td class="left">large</td>
+</tr>
+
+<tr>
+<td class="left">too concentrated</td>
+<td class="left">enjoys</td>
+<td class="left">suffers</td>
+</tr>
+
+<tr>
+<td class="left">too dispersed</td>
+<td class="left">suffers</td>
+<td class="left">enjoys</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+UK 2015: SNP v. LibDems
+</p>
+
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4">
+<h2 id="sec-4">Obstacle 1: measure party bias</h2>
+<p>
+Fitting votes&#x2013;seats curves: \(s = f(v)\)  
+</p>
+
+<p>
+(Rae 1967, Tufte 1973, King&amp;Browning 1987)
+</p>
+
+<span class="fragment roll-in"><p>
+\(\frac{s}{1-s} = \lambda \left( \frac{v}{1-v} \right)^\rho \iff \text{logit}(s) = \ln(\lambda) + \rho \text{logit}(v)\)
+</p></span>
+
+</section>
+<section>
+
+<div class="figure">
+<p><img src="../../graphs/rhoExample.png" alt="rhoExample.png" height="60%," width="60%" />
+</p>
+</div>
+
+
+
+</section>
+</section>
+<section>
+<section id="slide-sec-5">
+<h2 id="sec-5">Steps to export</h2>
+<ol>
+<li><code>M-x load-library RET ox-reveal</code></li>
+
+<li><code>C-c C-e R R</code></li>
+
+</ol>
+
+
+</section>
+<section id="slide-sec-5-1">
+<h3 id="sec-5-1">Resources (one floor down!)</h3>
+<p>
+<a href="http://nwidger.github.io/blog/post/making-a-reveal.js-presentation-with-org-reveal/">http://nwidger.github.io/blog/post/making-a-reveal.js-presentation-with-org-reveal/</a>
+</p>
+
+
+</section>
+</section>
+<section>
+<section id="slide-sec-6">
+<h2 id="sec-6">You insert images thus</h2>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+ATTR_HTML: :height 200%, :width 200%</span>
+<span style="color: #00ffff; text-decoration: underline;"><a href="./images/myimage.png">./images/myimage.png</a></span>
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-7">
+<h2 id="sec-7">Bullets</h2>
+<ul>
+<li>one</li>
+<li>two</li>
+<li>three</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-8">
+<h2 id="sec-8">Configure</h2>
+<div class="outline-text-2" id="text-8">
+</div></section>
+<section id="slide-sec-8-1">
+<h3 id="sec-8-1">The HLevel</h3>
+<p>
+Org-reveal maps each heading and its contents to one Reveal.js
+slide. Since Reveal.js arranges slides into a 2-dimensional matrix,
+Org-reveal use a <b>HLevel</b> value to decide whether to map headings to horizontal
+or vertical slides.
+</p>
+
+<ul>
+<li>Headings of level less than or equal to <b>HLevel</b> are mapped to horizontal
+slides.</li>
+<li>Headings with a deeper level are mapped to vertical slides.</li>
+
+</ul>
+
+<p>
+HLevel's default value is 1, means only level 1 headings are arranged
+horizontally. Deeper headings are mapped to vertical slides below their
+parent level 1 heading.
+</p>
+
+</section>
+<section id="slide-sec-8-1-1">
+<h4 id="sec-8-1-1">HLevel's Affects on Slides Layout</h4>
+<p>
+Assume we have a simple Org file as below:
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #87cefa;">* H1</span>
+<span style="color: #87cefa;">* H2</span>
+<span style="color: #eedd82;">** H2.1</span>
+<span style="color: #00ffff;">*** H2.1.1</span>
+<span style="color: #87cefa;">* H3</span>
+</pre>
+</div>
+
+<p>
+If HLevel is 1, the default value, headings H2.1 and H2.1.1 will
+be mapped to vertical slides below the slides of heading H2.
+</p>
+
+
+<div class="figure">
+<p><img src="./images/hlevel.png" alt="hlevel.png" />
+</p>
+</div>
+
+<p>
+If HLevel is changed to 2, slides of heading H2.1 will be changed
+to the main horizontal queue, and slides of heading H2.1.1 will be
+a vertical slide below it.
+</p>
+
+
+<div class="figure">
+<p><img src="./images/hlevel2.png" alt="hlevel2.png" />
+</p>
+</div>
+
+</section>
+<section id="slide-sec-8-1-2">
+<h4 id="sec-8-1-2">Configure HLevel's Value</h4>
+<ul>
+<li>Change variable <code>org-reveal-hlevel</code>'s value to set HLevel globally.<br  />
+      For example, add the following statement to your <code>.emacs</code> file.</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-lisp">(setq org-reveal-hlevel 2)
+</pre>
+</div>
+
+<ul>
+<li>Setting Org files local HLevel to option <code>REVEAL_HLEVEL</code>.</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+REVEAL_HLEVEL 2</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-8-2">
+<h3 id="sec-8-2">Force Split</h3>
+<p>
+If one heading has too many things to fit into one slide, you can
+split the contents into multiple vertical slides manually, by inserting
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+REVEAL: split</span>
+</pre>
+</div>
+
+</section>
+<section>
+
+<p>
+Now a new slide begins after <code>#+REVEAL</code> keyword.
+</p>
+
+</section>
+<section id="slide-sec-8-3">
+<h3 id="sec-8-3">Select Theme and Transition</h3>
+<p>
+Themes and transition styles are set globally throughout the whole
+file by setting options <code>REVEAL_THEME</code>, <code>REVEAL_TRANS</code>, and <code>REVEAL_SPEED</code>.
+</p>
+
+<p>
+For an example, please check the heading part of this document.
+</p>
+
+<p>
+Available themes can be found in "css/theme/" in the reveal.js directory.
+</p>
+
+<p>
+Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
+</p>
+
+</section>
+<section id="slide-sec-8-4">
+<h3 id="sec-8-4">Set Slide Background</h3>
+<p>
+Slide background can be set to a color, an image or a repeating image
+array by setting heading properties.
+</p>
+
+</section>
+<section id="slide-sec-8-4-1" data-background="#543210">
+<h4 id="sec-8-4-1">Single Colored Background</h4>
+
+<p>
+Set property <code>reveal_background</code> to either an RGB color value, or any
+supported CSS color format.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #00ffff;">*** Single Colored Background</span>
+<span style="color: #00ffff;">   :PROPERTIES:</span>
+   <span style="color: #00ffff;">:reveal_background:</span> #123456
+<span style="color: #00ffff;">   :END:</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-8-4-2" data-background="./images/whale.jpg" data-background-transition="slide">
+<h4 id="sec-8-4-2">Single Image Background</h4>
+
+<p>
+Set property <code>reveal_background</code> to an URL of background image.
+Set property <code>reveal_background_trans</code> to <code>slide</code> to make background image
+sliding rather than fading.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #00ffff;">*** Single Image Background</span>
+<span style="color: #00ffff;">    :PROPERTIES:</span>
+    <span style="color: #00ffff;">:reveal_background:</span> ./images/whale.jpg
+    <span style="color: #00ffff;">:reveal_background_trans:</span> slide
+<span style="color: #00ffff;">    :END:</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-8-4-3" data-background="./images/whale.jpg" data-background-size="200px" data-background-repeat="repeat">
+<h4 id="sec-8-4-3">Repeating Image Background</h4>
+
+<p>
+Resize background image by setting property
+<code>reveal_background_size</code> to a number.
+</p>
+
+<p>
+Set property <code>reveal_background_repeat</code> to <code>repeat</code> to repeat
+image on the background.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #00ffff;">*** Repeating Image Background</span>
+<span style="color: #00ffff;">    :PROPERTIES:</span>
+    <span style="color: #00ffff;">:reveal_background:</span> ./images/whale.jpg
+    <span style="color: #00ffff;">:reveal_background_size:</span> 200px
+    <span style="color: #00ffff;">:reveal_background_repeat:</span> repeat
+<span style="color: #00ffff;">    :END:</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-8-4-4">
+<h4 id="sec-8-4-4">Title Slide Background Image</h4>
+<p>
+To set the title slide's background image, please specify the
+following options:
+</p>
+
+<ul>
+<li><code>REVEAL_TITLE_SLIDE_BACKGROUND</code>: A URL to the background image.</li>
+<li><code>REVEAL_TITLE_SLIDE_BACKGROUND_SIZE</code>: HTML size specification, e.g. <code>200px</code>.</li>
+<li><code>REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT</code>: set to <code>repeat</code> to repeat the image.</li>
+
+</ul>
+
+</section>
+<section id="slide-sec-8-5">
+<h3 id="sec-8-5">Slide Size</h3>
+<p>
+Reveal.js scales slides to best fit the display resolution, but you can
+also specify the desired size by settings the option tags <code>width</code> and <code>height</code>.
+</p>
+
+<p>
+The scaling behavior can also be constrained by setting following
+options:
+</p>
+<dl>
+<dt><code>#+REVEAL_MARGIN:</code></dt><dd>a float number, the factor of empty area
+surrounding slide contents.</dd>
+<dt><code>#+REVEAL_MIN_SCALE:</code></dt><dd>a float number, the minimum scaling down
+ratio.</dd>
+<dt><code>#+REVEAL_MAX_SCALE:</code></dt><dd>a float number, the maximum scaling up
+ratio.</dd>
+
+</dl>
+
+</section>
+<section id="slide-sec-8-6">
+<h3 id="sec-8-6">Slide Numbering</h3>
+<p>
+Activate slide numbers by setting <code>#+REVEAL_SLIDE_NUMBER:</code> to <code>t</code> (true).
+</p>
+
+</section>
+<section id="slide-sec-8-7">
+<h3 id="sec-8-7">Slide Header/Footer</h3>
+<p>
+Specify Slide header/footer by <code>#+REVEAL_SLIDE_HEADER:</code> and
+<code>#+REVEAL_SLIDE_FOOTER:</code>. The option content will be put into
+divisions of class <code>slide-header</code> and <code>slide-footer</code>, so you can
+control their appearance in custom CSS file(see <a href="#sec-8-17">Extra Stylesheets</a>).
+</p>
+
+</section>
+<section id="slide-sec-8-8">
+<h3 id="sec-8-8">Fragmented Contents</h3>
+<p>
+Make contents fragmented (show up one-by-one) by setting option
+<code>ATTR_REVEAL</code> with property ":frag frag-style", as illustrated
+below.
+</p>
+
+<span class="fragment roll-in"><p>
+Paragraphs can be fragmented.
+</p></span>
+
+<ul class="fragment roll-in">
+<li>Lists can</li>
+<li>be fragmented.</li>
+
+</ul>
+
+<span class="fragment roll-in"><p>
+Pictures, tables and many other HTML elements can be fragmented.
+</p></span>
+
+</section>
+<section id="slide-sec-8-8-1">
+<h4 id="sec-8-8-1">Fragment Styles</h4>
+<p>
+Available fragment styles are:
+</p>
+<ul class="fragment">
+<li>grow</li>
+<li>shrink</li>
+<li>roll-in</li>
+<li>fade-out</li>
+<li>highlight-red</li>
+<li>highlight-green</li>
+<li>highlight-blue</li>
+<li>appear</li>
+
+</ul>
+
+<p>
+Setting <code>:frag t</code> will use Reveal.js default fragment style, which 
+can be overridden by local option <code>#+REVEAL_DEFAULT_FRAG_STYLE</code> or
+global variable <code>org-reveal-default-frag-style</code>.
+</p>
+
+</section>
+<section id="slide-sec-8-8-2">
+<h4 id="sec-8-8-2">Fragment Index</h4>
+<p>
+Fragment sequence can be changed by assigning adding <code>:frag_idx</code>
+property to each fragmented element.
+</p>
+
+<span class="fragment"><p>
+And, this paragraph shows at last.
+</p></span>
+
+<span class="fragment"><p>
+This paragraph shows secondly.
+</p></span>
+
+<span class="fragment"><p>
+This paragraph shows at first.
+</p></span>
+
+</section>
+<section id="slide-sec-8-8-3">
+<h4 id="sec-8-8-3">List Fragments</h4>
+<p>
+<code>#+ATTR_REVEAL: :frag frag-style</code> above a list defines fragment
+style for the list as a whole.
+</p>
+<ol class="fragment grow">
+<li>All items grow.</li>
+<li>As a whole.</li>
+
+</ol>
+
+<p>
+To define fragment styles for every list item, please enumerate
+each item's style in a lisp list.
+</p>
+
+<p>
+<code>none</code> in the style list will disable fragment for the
+corresponding list item.
+</p>
+
+<p>
+Custom fragment sequence should also be enumerated for each list
+item.
+</p>
+
+</section>
+<section>
+<p>
+An example:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none) :frag_idx (4 3 2 1 -)</span>
+   * I will grow.
+   * I will shrink.
+   * I rolled in.
+   * I will fade out.
+   * I don't fragment.
+</pre>
+</div>
+
+<ul>
+<li data-fragment-index="4" class="fragment grow">I will grow.</li>
+<li data-fragment-index="3" class="fragment shrink">I will shrink.</li>
+<li data-fragment-index="2" class="fragment roll-in">I rolled in.</li>
+<li data-fragment-index="1" class="fragment fade-out">I will fade out.</li>
+<li>I don't fragment.</li>
+
+</ul>
+</section>
+<section>
+<p>
+When there is <code>:frag_idx</code> specified, insufficient fragment style
+list will be extended by its last element. So a <code>:frag (appear)</code>
+assigns each item of a list the <code>appear</code> fragment style.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+ATTR_REVEAL: :frag (appear)</span>
+   * I appear.
+   * I appear.
+   * I appear.
+</pre>
+</div>
+<ul>
+<li class="fragment appear">I appear.</li>
+<li>I appear.</li>
+<li>I appear.</li>
+
+</ul>
+
+
+</section>
+<section id="slide-sec-8-9" data-state="alert">
+<h3 id="sec-8-9">Data State</h3>
+
+<p>
+Set property <code>reveal_data_state</code> to headings to change this slide's
+display style, as illustrated above.
+</p>
+
+<p>
+Available data states are: alert|blackout|soothe.
+</p>
+
+</section>
+<section id="slide-sec-8-10">
+<h3 id="sec-8-10">Plug-ins</h3>
+<p>
+Reveal.js provides several plug-in functions.
+</p>
+
+<ul>
+<li>reveal-control : Show/hide browsing control pad.</li>
+<li>reveal-progress : Show/hide progress bar.</li>
+<li>reveal-history : Enable/disable slide history track.</li>
+<li>reveal-center : Enable/disable slide centering.</li>
+<li>multiplex : Enable audience to view presentation on secondary devices.</li>
+
+</ul>
+
+</section>
+<section id="slide-sec-8-10-1">
+<h4 id="sec-8-10-1">Configure Plug-ins</h4>
+<p>
+Each plugin can be toggled on/off by adding <code>#+OPTIONS</code> tags or
+by setting custom variables.
+</p>
+
+<ul>
+<li><code>#+OPTIONS</code> tags:<br  />
+      <code>reveal_control</code>, <code>reveal_progress</code>, <code>reveal_history</code>,
+<code>reveal_center</code>, <code>reveal_rolling_links</code>, <code>reveal_keyboard</code>, <code>reveal_overview</code></li>
+<li>Custom variables:<br  />
+      <code>org-reveal-control</code>, <code>org-reveal-progress</code>,
+<code>org-reveal-history</code>, <code>org-reveal-center</code>, <code>org-reveal-rolling-links</code>, <code>org-reveal-keyboard</code>, <code>org-reveal-overview</code></li>
+
+</ul>
+
+<p>
+For an example, please refer to the heading part of this document.
+</p>
+</section>
+<section id="slide-sec-8-11">
+<h3 id="sec-8-11">Source Codes</h3>
+<p>
+Org-reveal use Org-Babel to highlight source codes.
+</p>
+
+<p>
+Codes copied from <a href="http://www.haskell.org/haskellwiki/The_Fibonacci_sequence">Haskell Wiki</a>.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-haskell">fibs = 0 : 1 : next fibs
+       where next (a : t@(b:_)) = (a+b) : next t
+</pre>
+</div>
+
+<p>
+If you saw odd indentation, please set variable <code>org-html-indent</code>
+to <code>nil</code> and export again.
+</p>
+
+<p>
+If code is not highlighted, please make sure <code>htmlize.el</code> is installed.
+</p>
+
+</section>
+<section id="slide-my-heading">
+<h3 id="my-heading"><a id="sec-8-12" name="sec-8-12"></a>MathJax</h3>
+
+
+<p>
+\({n! \over k!(n-k)!} = {n \choose k}\)
+</p>
+
+<p>
+LateX equation are rendered in native HTML5 contents.
+</p>
+
+<p>
+<b>IMPORTANT</b>: Displaying equations requires internet connection to
+<a href="http://mathjax.org/">mathjax.org</a> or local MathJax installation.
+</p>
+
+<p>
+<b>IMPORTANT 2</b>: MathJax is disabled by default to reduce internet
+traffic. Set <code>#+OPTIONS</code> tag <code>reveal_mathjax</code> or variable
+<code>org-reveal-mathjax</code> to true to enable it. For local MathJax
+installation, set option <code>REVEAL_MATHJAX_URL</code> to the URL pointing
+to the local MathJax location.
+</p>
+
+</section>
+<section id="slide-sec-8-13">
+<h3 id="sec-8-13">Preamble and Postamble</h3>
+<p>
+You can define preamble and postamble contents which will not be
+shown as slides, but will be exported into the body part of the
+generated HTML file, at just before and after the slide contents.
+</p>
+
+<p>
+Change preamble and postamble contents globally by setting variable
+<code>org-reveal-preamble</code> and <code>org-reveal-postamble</code>.
+</p>
+
+<p>
+Change preamble and postamble contents locally by setting options
+<code>REVEAL_PREAMBLE</code> and <code>REVEAL_POSTAMBLE</code>, as illustrated at the
+heading part of this document.
+</p>
+
+<p>
+To add custom contents into HTML <code>&lt;head&gt;</code> parts, set contents to
+variable <code>org-reveal-head-preamble</code> or option
+<code>REVEAL_HEAD_PREAMBLE</code>.
+</p>
+
+</section>
+<section id="slide-sec-8-13-1">
+<h4 id="sec-8-13-1">Generating Pre/Postamble by Emacs-Lisp Functions</h4>
+<p>
+If the contents of pre/postamble is the name of an evaluated
+Emacs-Lisp function, which must accept an argument of Org-mode
+info and return a string, the returned string will be taken
+as pre/postamble contents.
+</p>
+
+<p>
+So you can embed the Emacs-Lisp function as an Org-Babel source
+block and mark it to be evaluated when exporting the document.
+</p>
+
+</section>
+<section id="slide-sec-8-14">
+<h3 id="sec-8-14">Raw HTML in Slides</h3>
+<p>
+Besides the Org contents, you can embed raw HTML contents
+into slides by placing a <code>#+REVEAL_HTML</code> keyword.
+</p>
+
+<p>
+The famous cat jump fail:
+</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/OQzJR3BqS7o" frameborder="0" allowfullscreen></iframe>
+
+</section>
+<section id="slide-sec-8-15">
+<h3 id="sec-8-15">Speaker Notes</h3>
+<p>
+Reveal.js supports speaker notes, which are displayed in a separate
+browser window. Pressing 's' on slide's windows will pop up a window
+displaying the current slide, the next slide and the speaker notes on the current
+slide.
+</p>
+
+<p>
+Org-reveal recognize texts between <code>#+BEGIN_NOTES</code> and <code>#+END_NOTES</code>
+as speaker notes. See the example below.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #87cefa;">* Heading 1</span>
+   Some contents.
+<span style="color: #ff7f24;">#+BEGIN_NOTES</span>
+  Enter speaker notes here.
+<span style="color: #ff7f24;">#+END_NOTES</span>
+</pre>
+</div>
+
+</section>
+<section>
+<p>
+Speaker notes requires the <code>notes</code> plug-in. If you changed default
+plug-in setting by specifying <code>#+REVEAL_PLUGINS</code> or by setting
+variable <code>org-reveal-plugins</code>, please make sure <code>notes</code> is in the
+plug-in list to enable speaker notes.
+</p>
+
+</section>
+<section>
+
+<p>
+Due to a bug in Reveal.js, sometimes the speaker notes window
+shows only blank screens. A workaround to this issue is to put
+the presentation HTML file into the Reveal.js root directory and
+reopen it in the browser.
+</p>
+
+</section>
+<section id="slide-sec-8-16">
+<h3 id="sec-8-16">Multiplexing</h3>
+<p>
+Reveal.js supports multiplexing, which allows allows your audience to view
+the slides of the presentation you are controlling on their own phone, tablet
+or laptop. As the master presentation navigates the slides, all client
+presentations will update in real time. See a demo at
+<a href="http://revealjs.jit.su/">http://revealjs.jit.su/</a>.
+</p>
+
+<p>
+You can enable multiplexing for your slide generation by including the
+following options:
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+REVEAL_MULTIPLEX_ID: [Obtained from the socket.io server. ]</span>
+<span style="color: #ff7f24;">#+REVEAL_MULTIPLEX_SECRET: [Obtained from socket.io server. Gives the master control of the presentation.]</span>
+<span style="color: #ff7f24;">#+REVEAL_MULTIPLEX_URL: <a href="http://revealjs.jit.su:80">http://revealjs.jit.su:80</a> [Location of socket.io server]</span>
+<span style="color: #ff7f24;">#+REVEAL_MULTIPLEX_SOCKETIO_URL: <a href="http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js">http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js</a></span>
+<span style="color: #ff7f24;">#+REVEAL_PLUGINS: ([any other plugins you are using] multiplex)</span>
+</pre>
+</div>
+
+<p>
+You must generate unique values for the <code>REVEAL_MULTIPLEX_ID</code> and
+<code>REVEAL_MULTIPLEX_SECRET</code> options, obtaining these from the socket.io server
+you are using.
+</p>
+
+<p>
+If you include these options in your .org file, reveal-org will enable your
+.html file as the master file for multiplexing and will generate a file named
+in the form <code>[filename]_client.html</code> in the same directory as the client
+.html file. Provide your audience with a link to the client file to allow
+them to track your presentation on their own device.
+</p>
+
+</section>
+<section id="slide-sec-8-17">
+<h3 id="sec-8-17">Extra Stylesheets</h3>
+<p>
+Set <code>REVEAL_EXTRA_CSS</code> to a stylesheet file path in order to load extra custom
+styles after loading a theme.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+REVEAL_EXTRA_CSS: url-to-custom-stylesheet.css</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-8-18">
+<h3 id="sec-8-18">Select Built-In Scripts</h3>
+<p>
+Set option <code>REVEAL_PLUGINS</code> or variable <code>org-reveal-plugins</code> to a
+lisp list to select built-in scripts.
+</p>
+
+<p>
+Available built-in scripts are:
+classList/markdown/highlight/zoom/notes/search/remotes.
+</p>
+
+<p>
+Default built-ins are: classList/markdown/highlight/zoom/notes/multiplex.
+</p>
+
+<p>
+The following examples select <i>markdown</i> and <i>highlight</i> only.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+REVEAL_PLUGINS: (markdown highlight)</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-8-19">
+<h3 id="sec-8-19">Extra Dependent Script</h3>
+<p>
+Set <code>REVEAL_EXTRA_JS</code> to the url of extra reveal.js dependent
+script if necessary.
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+REVEAL_EXTRA_JS: url-to-custom-script.js</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-8-20">
+<h3 id="sec-8-20">Extra Slide attribute</h3>
+<p>
+Set property <code>reveal_extra_attr</code> to headings to add any necessary attributes
+to slides.
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-9">
+<h2 id="sec-9">Tips</h2>
+<div class="outline-text-2" id="text-9">
+</div></section>
+<section id="slide-sec-9-1">
+<h3 id="sec-9-1">Disable Heading Numbers</h3>
+<p>
+Add <code>num:nil</code> to <code>#+OPTIONS</code>
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-org"><span style="color: #ff7f24;">#+OPTIONS: num:nil</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-9-2">
+<h3 id="sec-9-2">Internal Links</h3>
+<p>
+Reveal.js supports only jump between slides, but not between
+elements on slides. Thus, we can only link to headlines in an Org
+document.
+</p>
+
+<p>
+You can create links pointing to a headline's text, or its
+custom-id, as the examples below:
+</p>
+
+<ul>
+<li><a href="#sec-9">Tips</a>.</li>
+<li><a href="#my-heading">Heading</a> with a <code>CUSTOM_ID</code> property.</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-10">
+<h2 id="sec-10">Thanks</h2>
+<p>
+Courtesy to:
+</p>
+
+<span class="fragment roll-in"><p>
+The powerful Org-mode,
+</p></span>
+<span class="fragment roll-in"><p>
+the impressive Reveal.js
+</p></span>
+<span class="fragment roll-in"><p>
+and the precise MathJax
+</p></span>
+</section>
+</section>
+</div>
+</div>
+<p> Created by Eric Magar based on yjwen's code. </p>
+
+<script src="file:///home/eric/.emacs.d/reveal/reveal.js/lib/js/head.min.js"></script>
+<script src="file:///home/eric/.emacs.d/reveal/reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: true,
+rollingLinks: true,
+keyboard: true,
+overview: true,
+width: 1200,
+height: 800,
+margin: 0.10,
+minScale: 0.50,
+maxScale: 2.50,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'file:///home/eric/.emacs.d/reveal/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: 'file:///home/eric/.emacs.d/reveal/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'file:///home/eric/.emacs.d/reveal/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'file:///home/eric/.emacs.d/reveal/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+]
+});
+</script>
+</body>
+</html>

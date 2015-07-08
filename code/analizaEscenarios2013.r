@@ -2403,7 +2403,8 @@ setwd(save.dir)
 ##       height = 6,
 ##       units = "in",
 ##       dpi = 72,
-##       bg = "transparent")
+##       bg = "white")
+##       #bg = "transparent")
 #
 plot(c(0,1),c(0,1), type = "n",
 #     xlab = "% votos", ylab = "% escaños", axes = FALSE,

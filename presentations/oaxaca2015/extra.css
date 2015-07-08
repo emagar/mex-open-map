@@ -1,0 +1,29 @@
+.reveal th { /*table headers*/
+    font-weight   : bold;
+    text-align    : center;
+    padding       : 0.1em 0.5em 0.1em 0.5em; /*top right bottom left */
+    border-top    : 1px solid transparent;
+    border-right  : 1px solid transparent;
+    border-bottom : 1px solid transparent;
+    border-left   : 1px solid transparent;
+}
+
+.reveal td { /*table contents*/
+    text-align   : center;
+    padding      : 0.1em 0.5em 0.1em 0.5em; /*top right bottom left */
+    border-top   : 1px solid transparent;
+    border-right : 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    border-left  : 1px solid transparent;
+}
+
+.reveal table { /*table box*/
+    margin         : auto;
+    border-collapse: collapse;
+    border         : 0;
+    border-top     : 1px solid transparent;
+    border-right   : 1px solid transparent;
+    border-bottom  : 1px solid transparent;
+    border-left    : 1px solid transparent;
+    border-spacing : 0;
+}
