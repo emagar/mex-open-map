@@ -1,0 +1,26 @@
+The formalization of the votes-seats curve in section 1 assumed that votes in Equations \ref{E:kingBi} and \ref{E:kingMulti} are the party's share of the national vote $v_p$---the party's vote aggregated across districts divided by the total raw vote nationwide. This standard mode of national aggregation of district-level vote returns measures raw partisan bias. Noting that party $p$'s raw vote in district $d$ is the product of its district vote share $v_{dp}$ and the district's raw vote, the party's vote share nationwide can be expressed as 
+
+\begin{equation}
+v_p  = \sum_d v_{dp} \times \frac{\text{raw vote}_d}{\text{total raw vote}}.  % Ri in GKB
+\end{equation}
+
+\noindent This algebraic transformation eases consideration of two alternative national aggregations of district returns in GKB's separation argument. One is party $p$'s mean district vote share, defined as
+
+\begin{equation}
+\bar{v}_p  = \sum_d v_{dp} \times \frac{1}{\text{total districts}}. % Pi in GKB
+\end{equation}
+
+\noindent The other is party $p$'s population-weighted mean district vote share, defined as
+
+\begin{equation}
+\bar{w}_p  = \sum_d v_{dp} \times \frac{\text{population}_d}{\text{total population}}.  % Mi in GKB
+\end{equation}
+
+Following the insight of \citeauthor{tufte1973seatsVotes}'s \citeyearpar{tufte1973seatsVotes} seminal work \citep[further elaborated in][]{gelman.king.1994EvalElSysRedis}, fitting the votes--seats curve using $\bar{v}_p$ instead of $v_p$ yields gerrymander-based partisan bias. This is so because $\bar{v}_p$ aggregates district vote shares with disregard to district size and voter turnout. In the same spirit, GKB show that relying on $\bar{w}_p$ (an aggregate compounding district vote shares and relative district populations) yields estimates conflating gerrymander- and malapportionment-based partisan bias. So subtracting partisan bias estimated with $\bar{v}_p$ from partisan bias estimated with $\bar{w}_p$ yields pure malapportionment-based partisan bias. And, because raw partisan bias conflates all three sources, subtracting partisan bias estimated with $\bar{w}_p$ from partisan bias estimated with $v_p$ yields pure turnout-based partisan bias.\footnote{The notation GKB use for $v$, $\bar{v}$, and $\bar{w}$ (subscripts dropped) is $R$, $P$, and $M$, respectively.}
+
+% $R_i = \sum_j r_{ij} \times \frac{v_j}{V} =  \frac{\sum_j v_{ij}}{V}$
+% $P_i = \sum_j r_{ij} \times \frac{1}{S} = \frac{\sum_j r_{ij}}{S}$
+% $M_i = \sum_j r_{ij} \times \frac{h_j}{H}$
+
+
+
