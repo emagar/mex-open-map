@@ -10,7 +10,7 @@
      "E:kingMulti"
      "T:3bias"
      "F:singleYrSeatsVotes"
-     "F:underOverRep"
+     "F:disRelPop2006map"
      "F:malapp"
      "F:posterior_s0s3"
      "T:GKBbreakdown"

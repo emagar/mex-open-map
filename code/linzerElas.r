@@ -6,7 +6,7 @@ dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/d
 gd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/graphs/") # graph data directory
 setwd(wd)
 
-# data preprared in analizaEscenarios.r is read here
+# electoral data preprared in analizaEscenarios.r is read here
 # NEED TO EXPORT df OBJECTS PREPARED WITH red.r AND IMPORT THEM HERE (THEY INCLUDE PTOT)
 load(file = paste(dd, "elec0312.RData"))
 summary(elec0312)

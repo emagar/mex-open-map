@@ -1584,34 +1584,38 @@ round(tmp1,2)
 
 ## plot natl true and Linzer-simulated votes and seats
 load(paste(dd, "swingRatios9712.RData", sep = ""))
-pdf(file = paste(wd, "graphs/vs2003.pdf", sep = ""), width = 6, height = 6)
+#pdf(file = paste(wd, "graphs/vs2003.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(wd, "graphs/vs2003.png", sep = ""))
 dat <- swRats$df2003d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2003)
 abline(a=0, b=1, lty=2)
 text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
-dev.off()
-pdf(file = paste(wd, "graphs/vs2006.pdf", sep = ""), width = 6, height = 6)
+#dev.off()
+#pdf(file = paste(wd, "graphs/vs2006.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(wd, "graphs/vs2006.png", sep = ""))
 dat <- swRats$df2006d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2006)
 abline(a=0, b=1, lty=2)
 text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
-dev.off()
-pdf(file = paste(wd, "graphs/vs2009.pdf", sep = ""), width = 6, height = 6)
+#dev.off()
+#pdf(file = paste(wd, "graphs/vs2009.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(wd, "graphs/vs2009.png", sep = ""))
 dat <- swRats$df2009d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2009)
 abline(a=0, b=1, lty=2)
 text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
-dev.off()
-pdf(file = paste(wd, "graphs/vs2012.pdf", sep = ""), width = 6, height = 6)
+#dev.off()
+#pdf(file = paste(wd, "graphs/vs2012.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(wd, "graphs/vs2012.png", sep = ""))
 dat <- swRats$df2012d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2012)
 abline(a=0, b=1, lty=2)
 text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
-dev.off()
+#dev.off()
 
 
 
@@ -2107,7 +2111,7 @@ dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/d
 load(file=paste(dd, "biasRespOnLinzerSimsRPM.RData", sep =""))
 ls()
 
-## ## use to extract all objects from a list
+## ## useful to extract all objects from a list
 ## laLista <- biasRespOnLinzerSimsRPM
 ## summary(laLista)
 ## for(i in 1:length(laLista)){
@@ -2117,7 +2121,7 @@ ls()
 ##   eval(parse(text=paste(names(laLista)[[i]],"= tempobj")))
 ## }
 
-# summarize central tendency of party bias à la Grofman
+# summarize central tendency of party bias à la Grofman et al
 tmp <- biasRespOnLinzerSimsRPM
 #tmp <- biasResp0612oldNewDistrictsRPM
 tmp1 <- data.frame(panpri=rep(NA,4), prdpri=rep(NA,4), minorpri=rep(NA,4)); rownames(tmp1) <- c("raw","dist","turn","malap")
@@ -2465,13 +2469,13 @@ library(Cairo)
 type <-  "pdf" 
 file <- paste("bias200612d0R.", type, sep="")
 setwd(save.dir)
-## Cairo(file=file,
-##       type = type,
-##       width = 6,
-##       height = 6,
-##       units = "in",
-##       dpi = 72,
-##       bg = "transparent")
+Cairo(file=file,
+      type = type,
+      width = 7,
+      height = 7,
+      units = "in",
+      dpi = 72,
+      bg = "transparent")
 #
 par(mar=c(5,2,2,2)+0.1) # drop space for title and left labels
 #jitter <- runif(n = 300, min=-.1, max=.1)
@@ -2540,9 +2544,9 @@ text(x = rep(2.1,4), y = -(1:5)-.1,    labels = rep("2009", 5), cex = .65)
 text(x = rep(2.1,4), y = -(1:4)-.3,    labels = rep("2012", 5), cex = .65)
 #text(x = rep(2.1,4), y = -(1:4)-.3,    labels = rep("todos", 5), cex = .65)
 #
-text(x = rep(-2.1,5), y = -c(1:4,4.9), labels = c("PAN", "PRD", "PVEM", "PANAL", "PT"))
-## dev.off()
-## setwd(wd)
+text(x = rep(-2.1,5), y = -c(1:4,4.9), labels = c("PAN", "PRD", "Green", "PANAL", "PT"))
+dev.off()
+setwd(wd)
 
 ### plot rho for s0 and s3
 tmp <- biasResp0612oldNewDistrictsRPM # compact name
