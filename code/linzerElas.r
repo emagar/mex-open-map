@@ -6,7 +6,7 @@ dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/d
 gd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/graphs/") # graph data directory
 setwd(wd)
 
-# data preprared in analizaEscenarios.r is read here
+# electoral data preprared in analizaEscenarios.r is read here
 # NEED TO EXPORT df OBJECTS PREPARED WITH red.r AND IMPORT THEM HERE (THEY INCLUDE PTOT)
 load(file = paste(dd, "elec0312.RData"))
 summary(elec0312)
@@ -210,7 +210,7 @@ my.marginals.prep <- function (fit, numdraws = 10000){
 environment(my.marginals.prep) <- asNamespace('seatsvotes')
 #
 ## # tweak swingratio() function to work with ptot and abstention (to simulate Grofman et al.'s quantities) 
-my.swingratio.gkb <- function (fit, sims = 1000, rule = plurality) {  # RETURNS SIMS ONLY (NO SWINGS OBJECT NOR GRAPH) BUT INCLUDES GROFMAN ET AL
+my.swingratio.gkb <- function (fit, sims = 1000, rule = plurality) {  # RETURNS SIMS ONLY (NO SWINGS OBJECT NOR GRAPH) BUT INCLUDES POPULATION AND TURNOUT DATA FOR GROFMAN ET AL
     starttime <- Sys.time()
     dat <- reconstruct(fit)  # needs no tweaking: internal function turns fit into matrix
     dat[is.na(dat)] <- 0
@@ -237,7 +237,7 @@ my.swingratio.gkb <- function (fit, sims = 1000, rule = plurality) {  # RETURNS 
                           colnames(vsim2))]) / sum(vsim2[, 1]))   # append abstention
         vsim2 <- vsim2[, -grep("abs", colnames(vsim2))]           # drop abstention
         rawvotes <- vsim2[, -1]                                   # used to compute quantities of interest
-        vsim2[,-1] <- vsim2[, -1] / efec                          # votes shares relative to effective vote
+        vsim2[,-1] <- vsim2[, -1] / efec                          # vote shares relative to effective vote
         hr <- vsim2[, 1] / sum(vsim2[, 1])                        # district:national population ratio
         vr <- efec / sum(efec)                                    # district:national raw vote ratio
         vmat <-     rbind(vmat,     colSums(vsim2[,-1] * vr))     # append natl vote shares
@@ -249,7 +249,7 @@ my.swingratio.gkb <- function (fit, sims = 1000, rule = plurality) {  # RETURNS 
     ret <- list()
     truevotes <- dat[, 1] * dat[, -1]
     truevotes2 <- truevotes                                       # duplicate for manipulation
-    trueptot <- dat[,1]                                           # save ptot to report
+    trueptot <- dat[,1]                                           # save population to report
     trueabs <- truevotes2[,grep("abs", colnames(truevotes2))]     # save abstention rate to report
     truevotes2 <- truevotes2[,-grep("abs", colnames(truevotes2))] # drop abstention from vote object                                    
     #ret$truevote <- colSums(truevotes)/sum(truevotes)

@@ -1584,34 +1584,38 @@ round(tmp1,2)
 
 ## plot natl true and Linzer-simulated votes and seats
 load(paste(dd, "swingRatios9712.RData", sep = ""))
-pdf(file = paste(wd, "graphs/vs2003.pdf", sep = ""))
+#pdf(file = paste(wd, "graphs/vs2003.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(wd, "graphs/vs2003.png", sep = ""))
 dat <- swRats$df2003d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2003)
 abline(a=0, b=1, lty=2)
-text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray", pos=2)
-text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat), pos=2)
-dev.off()
-pdf(file = paste(wd, "graphs/vs2006.pdf", sep = ""))
+text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
+text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
+#dev.off()
+#pdf(file = paste(wd, "graphs/vs2006.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(wd, "graphs/vs2006.png", sep = ""))
 dat <- swRats$df2006d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2006)
 abline(a=0, b=1, lty=2)
-text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray", pos=2)
-text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat), pos=2)
-dev.off()
-pdf(file = paste(wd, "graphs/vs2009.pdf", sep = ""))
+text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
+text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
+#dev.off()
+#pdf(file = paste(wd, "graphs/vs2009.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(wd, "graphs/vs2009.png", sep = ""))
 dat <- swRats$df2009d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2009)
 abline(a=0, b=1, lty=2)
-text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray", pos=2)
-text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat), pos=2)
-dev.off()
-pdf(file = paste(wd, "graphs/vs2012.pdf", sep = ""))
+text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
+text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
+#dev.off()
+#pdf(file = paste(wd, "graphs/vs2012.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(wd, "graphs/vs2012.png", sep = ""))
 dat <- swRats$df2012d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2012)
 abline(a=0, b=1, lty=2)
-text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray", pos=2)
-text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat), pos=2)
-dev.off()
+text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
+text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
+#dev.off()
 
 
 
@@ -2107,7 +2111,7 @@ dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/d
 load(file=paste(dd, "biasRespOnLinzerSimsRPM.RData", sep =""))
 ls()
 
-## ## use to extract all objects from a list
+## ## useful to extract all objects from a list
 ## laLista <- biasRespOnLinzerSimsRPM
 ## summary(laLista)
 ## for(i in 1:length(laLista)){
@@ -2117,7 +2121,7 @@ ls()
 ##   eval(parse(text=paste(names(laLista)[[i]],"= tempobj")))
 ## }
 
-# summarize central tendency of party bias à la Grofman
+# summarize central tendency of party bias à la Grofman et al
 tmp <- biasRespOnLinzerSimsRPM
 #tmp <- biasResp0612oldNewDistrictsRPM
 tmp1 <- data.frame(panpri=rep(NA,4), prdpri=rep(NA,4), minorpri=rep(NA,4)); rownames(tmp1) <- c("raw","dist","turn","malap")
@@ -2386,17 +2390,21 @@ lambda.hat <- c(lambda.hat[1], 0, lambda.hat[2:6])
 
 ## ESTO HACE UNA VERSION VISUAL DE LOS PARAMETROS DEL MODELO
 #save.dir <- "~/Dropbox/mydocs/op-edsEtc/blog/graphs/" # donde guardar
-save.dir <- paste(wd, "graphs", sep = "")
+save.dir <- paste(wd, "graphs/", sep = "")
 logit <- function(X){ log( X / (1-X) ) }
 antilogit <- function(X){ exp(X) / (exp(X)+1) }
 v.tmp <- (1:999)/1000
 #
-library(Cairo)
+library(tikzDevice)
 #title <- expression(paste("La responsividad ", rho, " y sesgo ", lambda, " de los distritos")) 
-title <- expression(paste("District responsiveness ", rho, " (and party bias ", lambda, ">0 in grey)")) 
-type <-  "pdf" 
-file <- paste("rhoExample.", type, sep="")
-setwd(save.dir)
+#title <- expression(paste("District responsiveness ", rho, " (and partisan bias ", lambda, ">0 in grey)"))
+title <- ""
+file <- "rhoExample"
+#tikz(file = paste(save.dir, file, ".tex", sep=""), width = 4, height = 4)
+#pdf (file = paste(save.dir, file, ".pdf", sep=""), width = 6,   height = 6)
+#png (file = paste(save.dir, file, ".png", sep=""), width = 6,   height = 6)
+##library(Cairo)
+## type <-  "pdf" 
 ## Cairo(file=file,
 ##       type = type,
 ##       width = 6,
@@ -2419,24 +2427,30 @@ axis(2, at = seq(0,1,.2), labels = seq(0,1,.2))
 s.tmp <- antilogit( 1.5 + 1 * logit( v.tmp ) )
 lines(v.tmp, s.tmp, lty = 2, col="grey")
 s.tmp <- antilogit ( 1.5 + 3 * logit( v.tmp ) ) 
-lines(v.tmp, s.tmp, col = "grey") 
+#lines(v.tmp, s.tmp, col = "grey") 
+lines(v.tmp, s.tmp, col = "grey", lty = 3) 
 s.tmp <- antilogit ( 1.5 + 6 * logit( v.tmp ) ) # ESTO HACE LO DEBIDO: SESGO DE .25 EN FAVOR
 lines(v.tmp, s.tmp, col = "grey")
 #
 s.tmp <- antilogit( 1 * logit( v.tmp ) )
-lines(v.tmp, s.tmp, col = "darkgreen", lty = 2)
+#lines(v.tmp, s.tmp, col = "darkgreen", lty = 2)
+lines(v.tmp, s.tmp, col = "black", lty = 2)
 text(v.tmp[660], s.tmp[660], labels = expression(paste(rho, "=1")), pos=4)
+#text(v.tmp[660], s.tmp[660], labels = "$\\rho=1$", pos=4)
 s.tmp <- antilogit ( 3 * logit( v.tmp ) ) 
-lines(v.tmp, s.tmp, col = "red") 
+#lines(v.tmp, s.tmp, col = "red") 
+lines(v.tmp, s.tmp, col = "black", lty = 3) 
 text(v.tmp[600], s.tmp[600], labels = expression(paste(rho, "=3")), pos=4)
+#text(v.tmp[600], s.tmp[600], labels = "$\\rho=3$", pos=4)
 s.tmp <- antilogit ( 6 * logit( v.tmp ) ) # ESTO HACE LO DEBIDO: SESGO DE .25 EN FAVOR
-lines(v.tmp, s.tmp, col = "blue")
+#lines(v.tmp, s.tmp, col = "blue")
+lines(v.tmp, s.tmp, col = "black")
 text(v.tmp[420], s.tmp[420], labels = expression(paste(rho, "=6")), pos=4)
+#text(v.tmp[420], s.tmp[420], labels = "$\\rho=6$", pos=4)
 #mtext(text = "Preparado por Eric Magar con resultados oficiales del IFE", side = 1, line = 4, col = "grey", cex = .75)
 #mtext(text = "Prepared by Eric Magar with official IFE returns", side = 1, line = 4, col = "grey", cex = .75)
 #
-## dev.off()
-## setwd(wd)
+#dev.off()
 
 
 #### Plot Posterior lambda Samples For S0 And S3
@@ -2455,13 +2469,13 @@ library(Cairo)
 type <-  "pdf" 
 file <- paste("bias200612d0R.", type, sep="")
 setwd(save.dir)
-## Cairo(file=file,
-##       type = type,
-##       width = 6,
-##       height = 6,
-##       units = "in",
-##       dpi = 72,
-##       bg = "transparent")
+Cairo(file=file,
+      type = type,
+      width = 7,
+      height = 7,
+      units = "in",
+      dpi = 72,
+      bg = "transparent")
 #
 par(mar=c(5,2,2,2)+0.1) # drop space for title and left labels
 #jitter <- runif(n = 300, min=-.1, max=.1)
@@ -2530,9 +2544,9 @@ text(x = rep(2.1,4), y = -(1:5)-.1,    labels = rep("2009", 5), cex = .65)
 text(x = rep(2.1,4), y = -(1:4)-.3,    labels = rep("2012", 5), cex = .65)
 #text(x = rep(2.1,4), y = -(1:4)-.3,    labels = rep("todos", 5), cex = .65)
 #
-text(x = rep(-2.1,5), y = -c(1:4,4.9), labels = c("PAN", "PRD", "PVEM", "PANAL", "PT"))
-## dev.off()
-## setwd(wd)
+text(x = rep(-2.1,5), y = -c(1:4,4.9), labels = c("PAN", "PRD", "Green", "PANAL", "PT"))
+dev.off()
+setwd(wd)
 
 ### plot rho for s0 and s3
 tmp <- biasResp0612oldNewDistrictsRPM # compact name
