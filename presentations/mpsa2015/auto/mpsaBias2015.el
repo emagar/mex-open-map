@@ -20,6 +20,7 @@
      "ae"
      "url"
      "beamerthemesplit"
+     "pifont"
      ""
      "latex2e"
      "beamer10"

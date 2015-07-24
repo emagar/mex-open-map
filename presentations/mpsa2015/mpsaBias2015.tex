@@ -1,11 +1,14 @@
+%  http://latex-beamer.sourceforge.net/
+
+%\documentclass[landscape]{foils}
+
+%\documentclass{beamer}
+%\documentclass[handout]{beamer}     % TO PRINT PRESENTATION HANDOUT
 \documentclass[xcolor=dvipsnames]{beamer}  % ALLOWS CHANGE IN COLOR
+
+\usepackage{pifont} %para tener la ballot cross \ding{55}
+
 \usepackage{beamerthemesplit}
-
-%% commenting the above and uncommenting below prints handout (use 4 on 1 or 8 on 1)
-% \documentclass[handout,xcolor=dvipsnames]{beamer}     % TO PRINT PRESENTATION HANDOUT
-% \usepackage{pgfpages}
-% \pgfpagesuselayout{8 on 1}[letter, border shrink=5mm]
-
 \usepackage{url}
 \usepackage{ae} % or {zefonts}
 \usepackage[T1]{fontenc}
@@ -68,7 +71,7 @@
 
 
 
-\title[Partisan bias]{Measuring malapportionment, gerrymander, and turnout effects in multi-party systems}
+\title[Malapportionment \& bias]{The effects of malapportionment, turnout, \\ and gerrymandering in Mexico's \\ mixed-member system}
 %\subtitle{Party bias and responsiveness in Mexico}
 \author[Magar, Altman, McDonald, Trelles]{E. Magar\inst{1} \and M. Altman\inst{2} \and M.P. McDonald\inst{3} \and A. Trelles\inst{4}}
 \institute[ITAM-MIT-UFG-Pitt]{\inst{1} ITAM \and 
@@ -76,7 +79,7 @@
                               \inst{3} UF \and
                               \inst{4} Pitt}
 %\address{}
-\date[28jul15]{Casa matem\'atica Oaxaca \\ 7/28/15}
+\date[18apr15]{MPSA annual meeting \\ 4/18/15}
 
 \begin{document}
 
@@ -84,16 +87,6 @@
 
 \frame[plain]{\titlepage}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-\frame{                      % SLIDE
-    \frametitle{District populations: linear projection}
-
-\centering
-
-\includegraphics[width=.99\textwidth]{../../graphs/disRelPopProj2006map.pdf}
-
-
-}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \frame {
     \frametitle{Background on Mexico}
@@ -194,8 +187,7 @@ Fitting votes--seats curves: $s = f(v)$  \\ (Rae 1967, Tufte 1973, King\&Brownin
 \column{.6\textwidth}
 
 \begin{center}
-%   \includegraphics[width=6cm]{../../graphs/rhoLambdaExample.pdf} 
-   \includegraphics[width=6cm]{../../graphs/rhoExample.png} 
+   \includegraphics[width=6cm]{../../graphs/rhoLambdaExample.pdf} 
 \end{center}
 
 \end{columns}
