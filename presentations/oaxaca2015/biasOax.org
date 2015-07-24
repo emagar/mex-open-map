@@ -32,7 +32,7 @@
 - Single-term limits lifted in 2018
 
 - Autonomous regulator (IFE) in charge of elections and redistricting
-
+  
 
 * Questions
 
@@ -53,10 +53,10 @@ If party bias remains, what *factors* drive it? (Grofman et al. 1997)
 
 
 
-* What is party bias
+* What is partisan bias
 
 
-It is the excess/defect seat share that a party with half of the votes gets:  
+It is the excess/defect seat share that a party winning half of the votes gets:  
 
 $\lambda = (s | v=.5) - .5$
 
@@ -76,7 +76,7 @@ $\lambda = (s | v=.5) - .5$
 UK 2015: SNP v. LibDems
 
 
-* Obstacle 1: measure party bias
+* Obstacle 1: measure partisan bias
 
 Fitting votes--seats curves: $s = f(v)$  
 
