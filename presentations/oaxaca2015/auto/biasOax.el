@@ -1,4 +1,4 @@
-(TeX-add-style-hook "mpsaBias2015"
+(TeX-add-style-hook "biasOax"
  (lambda ()
     (TeX-add-symbols
      "mc")
