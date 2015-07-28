@@ -1,5 +1,7 @@
 (TeX-add-style-hook "biasOax"
  (lambda ()
+    (LaTeX-add-labels
+     "fr:MxMapProj")
     (TeX-add-symbols
      "mc")
     (TeX-run-style-hooks
