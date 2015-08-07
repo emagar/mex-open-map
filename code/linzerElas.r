@@ -1,5 +1,5 @@
 rm(list = ls())
-options(width = 150)
+options(width = 150) # emacs screen size
 #
 wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
 dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
@@ -8,14 +8,17 @@ setwd(wd)
 
 # electoral data preprared in analizaEscenarios.r is read here
 # NEED TO EXPORT df OBJECTS PREPARED WITH red.r AND IMPORT THEM HERE (THEY INCLUDE PTOT)
-load(file = paste(dd, "elec0312.RData"))
+load(file = paste(dd, "elec0312.RData", sep = ""))
 summary(elec0312)
 colnames(elec0312$df2006d0)
+
+## notations: df20..d0 in dataset are diputados federales returns for year 20.. aggregated into map "d0" (ie, 2006 map); use "d3" for 2015 map and "d97" for 1997 map
+##            efec refers to effective vote (votes cast - voided votes - votes for parties/candidates dropped from analysis)
+##            ptot is total population
 
 #
 ## ## use to extract all objects from list elec060912 if so wished
 ## for(i in 1:length(elec060912)){
-##     #i <- 1 # debug
 ##     ##first extract the object value
 ##     tempobj=elec060912[[i]]
 ##     ##now create a new variable with the original name of the list item
@@ -24,11 +27,11 @@ colnames(elec0312$df2006d0)
 ## rm(elec060912)
 ## dim(df2012d0)
 
-## TWEAK LINZER FUNCTIONS TO ADAPT FOR GKB ESTIMATION
-library(seatsvotes)
+## TWEAK LINZER FUNCTIONS TO ADAPT FOR grofman-etal (GKB) ESTIMATION
+library(seatsvotes) # Linzer's original suite --- get it from dataverse
 #seatsvotes:::reconstruct # how to see hidden function reconstruct() in package
 #
-## # tweak function findpatterns to include efec and ptot columns NOT USED ANYMORE---NEVER WORKED OK
+## # tweak function findpatterns to include efec and ptot columns NOT USED ANYMORE---NEVER WORKED PROPERLY
 ## my.findpatterns <- function (dat){
 ##     dat <- as.data.frame(dat)
 ##     #gtz <- as.data.frame(dat[, 2:ncol(dat)] > 0)
@@ -223,7 +226,7 @@ my.swingratio.gkb <- function (fit, sims = 1000, rule = plurality) {  # RETURNS 
         #s <- 1 # debug
         #message(sprintf("loop %s of %s", s, sims))  # progress
         vsim <- sim.election(fit, dat)
-        #vsim <- my.sim.election(fit, dat) # may be unnecessary
+        #vsim <- my.sim.election(fit, dat) # seems unnecessary
         vsim[is.na(vsim)] <- 0
         #partyvotes <- vsim[, 1] * vsim[, -1]
         #votemat <- rbind(votemat, colSums(partyvotes)/sum(partyvotes))
@@ -261,6 +264,7 @@ my.swingratio.gkb <- function (fit, sims = 1000, rule = plurality) {  # RETURNS 
     #ret$trueseat <- rule(dat[, -1])
     ret$trueseat <- rule(dat2)                                    # true seat shares won
     names(ret$trueseat) <- names(ret$truevote)
+    #### block below commented because analysis uninterested in obtaining swing ratios; if wished, code will need tweaking
     ## swing <- NULL
     ## swing.lm <- NULL
     ## seatlist <- list()
@@ -348,17 +352,17 @@ environment(my.swingratio.gkb) <- asNamespace('seatsvotes')
 # select 2012 votes in 2006 map
 # -----------------------------------------
 dat <- elec0312$df2012d0
-tmp.ptot <- dat$ptot # useful later
+tmp.ptot <- dat$ptot # keep ptot for use later
 rownames(dat) <- NULL
-#############################################################################################################
-# DATA NEEDS [EFEC V1SH V2SH] FOR STD LINZER OR [PTOT V1SH V2SH ... ABS] (SHARES OVER PTOT) FOR GKB VERSION #
+################################################################################################################
+# DATA NEEDS [EFEC V1SH V2SH] FOR STD LINZER OR [PTOT V1SH V2SH ... ABS] (SHARES OVER PTOT) FOR my GKB VERSION #
 head(dat)
-#############################################################################################################
+################################################################################################################
 # select votes only, move pri to 1st col to make reference pty, and green to last because often has no votes (and sim.votes pushes it there anyway)
 dat <- dat[,c("pri","pan","pric","prdc","panal","pvem")]
 # consider pri and pri-pvem the same (else pri "absent" from 1/3 district has lower elasticity)
 dat$pri <- dat$pri + dat$pric; dat$pric <- NULL
-# who won the seats? useful if non-winners wish to be dropped
+# who won the seats? useful if non-winners (or subset of them) wish to be dropped
 table(apply(dat, 1, function(x) which.max(x)))
 ## # drop panal, didn't win seats
 ## dat <- dat[,-5]
@@ -367,8 +371,8 @@ tmp.efec <- apply(dat, 1, sum)
 ## compute abstentions
 tmp.abst <- tmp.ptot - tmp.efec # useful later
 #
-# CHOOSE ONE ROUTE ONLY
-## ## ROUTE 1: keep efec and votes only (as Linzer does)
+# CHOOSE ROUTE 1 OR ROUTE 2
+## ## ROUTE 1: keep efec and votes only (as Linzer does) to use standard functions
 ## # vote shares
 ## dat <- dat/tmp.efec
 ## # add efec vote in 1st column (or, in included, ptot in 1st col and efec in 2nd) 
@@ -393,16 +397,16 @@ head(dat)
 dat.pat <- findpatterns(dat)
 head(dat.pat[[2]]) # debug
 
-# estimate mixture models for each pattern of contestation (start w components=1, inspect fit visually)
+# estimate mixture models for each pattern of contestation (start w components=1, inspect fit visually, increase if needed)
 fit <- list()
 fit[[1]] <- mvnmix( dat = dat.pat[[1]], components = 2, nrep = 10, scatter = TRUE) 
 fit[[2]] <- mvnmix( dat = dat.pat[[2]], components = 2, nrep = 10, scatter = TRUE)
-# ojo: successive fits with same component number change a lot!
+# note: successive fits with same component number change a lot! This is true in Linzer (my tweaked functions have not yet been invoked)... Inheritance problem?
 #
 summary(fit[[1]])
 head(fit[[1]]$y)
 
-# tweak function show.marginals formerly plotting marginals to get plot input NOT USED NOW
+# tweak function show.marginals formerly plotting marginals to get plot input NOT USED FOR NOW
 # use tweaked function to verify fit of model to data: plot vote share histograms and party marginal densities
 # (Linzer has show.marginals() function, but this offers control over output)
 #par(mar = c(4, 3, 0.5, 0.5))
@@ -435,7 +439,7 @@ show.marginals(fit, numdraws=50000)
 
 # Simulate elections, estimate swing ratios and plot results
 #res <- swingratio((fit, sims=5000, graph = TRUE) # original call
-elas <- my.swingratio.gkb(fit, sims=1000) # fit includes ptot and abstention for Grofman -- version above does sim but does not estimate swings nor plot them
+elas <- my.swingratio.gkb(fit, sims=1000) # fit includes ptot and abstention for GKB -- version above does sim but does not estimate swings nor plot them
 
 ## add results to list with swing-ratios sims for different elections
 swRats <- list()
@@ -447,7 +451,7 @@ save(swRats, file = paste(dd, "swingRatios9712.RData", sep = ""))
 load(paste(dd, "swingRatios9712.RData", sep = ""))
 summary(swRats)
 
-## # rename object: will be useful wen and if tweaked function also estimates swing ratios as Linzer does
+## # rename object: will be useful when and if tweaked function also estimates swing ratios as Linzer does
 ## names(elas)[which(names(elas)=="swing")] <- "swing.mean"
 ## # add components to compute swing ratios (seats-votes elaticity)
 ## elas$vdiff <- as.data.frame(t(t(elas$votemat) - colMeans(elas$votemat)))
