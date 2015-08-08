@@ -1,7 +1,7 @@
 (TeX-add-style-hook "redMexBias05"
  (lambda ()
     (LaTeX-add-bibliographies
-     "../bib/magar")
+     "../bib/redMex")
     (LaTeX-add-labels
      "fn:cites"
      "E:kingBi"
