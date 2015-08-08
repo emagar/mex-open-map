@@ -73,6 +73,8 @@ $\lambda = (s | v=.5) - .5$
 | too concentrated | enjoys  | suffers |
 | too dispersed    | suffers | enjoys  |
 
+[[https://github.com/yjwen/org-reveal/issues/61][problems with org table borders here]]
+
 UK 2015: SNP v. LibDems
 
 
