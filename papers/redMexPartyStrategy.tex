@@ -37,11 +37,14 @@
 \title{Transparency, Automated Redistricting, and Partisan Strategic Interaction: \\ 
        The Case of Mexico\thanks{Paper prepared for delivery at the Electoral Integrity Project workshop, San Francisco, CA, Sept.~2, 2015. We thank the Federal Electoral Institute (IFE) and the Federal Voter Registry (RFE). Special thanks to IFE's Cartography Department for sharing their experience with automated redistricting since 1996 and most of the data we analyze. The third author acknowledges the support from the Asociaci\'on Mexicana de Cultura A.C.\ and CONACYT for this work.}}
 
-\author{Alejandro Trelles {\small \url{lat44@pitt.edu}} \\
+\author {Alejandro Trelles\footnote{Corresponding author. We describe contributions to the paper using a standard taxonomy \citet{allen2014credit}. A. Trelles (AT) and M. Altman (MA) were lead authors, having taken primary responsibility for writing.  AT prepared the original draft.  E. Magar (EM) and M. McDonald (MM) contributed to writing through editing and review. All authors shared contributed equally to conceptualization. EM lead methodology, with contributions from MM. AT lead data curation, with contributions from EM.} {\small \url{lat44@pitt.edu}}\\
         Micah Altman {\small \url{escience@mit.edu}} \\
         Eric Magar {\small \url{emagar@itam.mx}} \\  
         Michael McDonald {\small \url{michael.mcdonald@ufl.edu}}
       }
+      
+%Comment[Alejandro]: citations are broken in the pdf. 
+
 \date{\today}
 \maketitle
 
@@ -73,7 +76,7 @@ Even if we believe the independent board is politically neutral, the rules by wh
 
 In 2015, as in 1997 and 2006, the board employed an algorithmic redistricting process based upon criteria agreed amongst board members before plans were drawn. The independent board used the 2005 algorithm (a simulated annealing combinatorial optimization heuristic) with the same four input parameters (population balance, compactness, municipal integrity and traveling time across districts), but with a slightly reweighted overall scoring function to optimize \citep{trelles.mtz.tesisItam.2007,acuerdoife2013}.\footnote{In 1997 the algorithm was known within the board as the ``heuristic model'' (it was an algorithm that aggregated \emph{secciones} from West to East and from North to South in each state balancing population and trying not to split municipal administrative divisions (traveling time, compactness and minority districts were not in the picture yet); in 2006, the board used a simulated annealing algorithm for the first time (a heuristic with a cost function that aggregated \emph{secciones} departing from a randomly chosen seed that evaluated results under a high-low "temperature" dynamic. It was in this round (2006) where four differently weighted criteria  were introduced for the first time; In 2015, the board decided to use again the simulated annealing algorithm and the same four criteria weighted slightly different. Bee hive optimization was considered by the Technical Committee, but was discarded because the cost function was not improved significantly.} As in 2006, the base geography was modified so that the algorithm could not partition: a) municipalities that had the sufficient population to form a district, and b) minority municipalities with at least 40\% of indigenous population.\footnote{Twenty-five minority districts were created in 2015 and twenty-eight in 2006.}
 
-The last redistricting process towards the 2015 election offers an opportunity to assess the robustness of Mexico's redistricting process. For the first time, a central repository of all redistricting plans was housed on a web-based map-sharing tool. The board granted us access to the tool, providing the demographic and cartographic data. We rely on this data for analysis of all redistricting plans formally introduced throughout the process. A large number of plans were produced, more than in any previous redistricting, and the Technical Redistricting Committee enabled strategic interaction between entities by allowing them to observe counter-proposals formulated by other parties through the platform.\footnote{The idea of partisan interaction was introduced in the International Redistricting Seminar celebrated at the board's offices in Mexico City in November 2012. Parties had been allowed to formulate observations in 1996 and 2005, but no interaction platform existed to observe what other parties were proposing. The authors of this paper introduced the idea during the presentation of the Public Mapping Project Mexico (\url{www.publicmapping.org}), an open source web-based platform that allows citizens and parties to analyze redistricting scenarios, observe what other users are proposing, and formulate counterproposals in order to optimize the criteria established by the legal framework and allow the authority in charge of redistricting to automatically rank and evaluate counterproposals.} 
+The last redistricting towards the 2015 election offers an opportunity to assess the robustness of Mexico's redistricting process. For the first time, a central repository of all redistricting plans was housed on a web-based map-sharing tool. The board granted us access to the tool, providing the demographic and cartographic data. We rely on this data for analysis of all redistricting plans formally introduced throughout the process. A large number of plans were produced, more than in any previous redistricting, and the Technical Redistricting Committee enabled strategic interaction between entities by allowing them to observe counter-proposals formulated by other parties through the platform.\footnote{The idea of partisan interaction was introduced in the International Redistricting Seminar celebrated at the board's offices in Mexico City in November 2012. Parties had been allowed to formulate observations in 1996 and 2005, but no interaction platform existed to observe what other parties were proposing. The authors of this paper introduced the idea during the presentation of the Public Mapping Project Mexico (\url{www.publicmapping.org}), an open source web-based platform that allows citizens and parties to analyze redistricting scenarios, observe what other users are proposing, and formulate counterproposals in order to optimize the criteria established by the legal framework and allow the authority in charge of redistricting to automatically rank and evaluate counterproposals.} 
 
 In the end, despite consensus among major party representatives to endorse the final plan (the PAN, the PRI, and the PRD actively participated in the process), unexpected resistance from national party leaderships stalled adoption of the final plan. National leaders were negotiating the latest round of electoral reform at the time the new map had to be approved. The way that redistricting has played out so far in Mexico and the last set of electoral reforms --- especially the removal of single-term limits for Congress starting in 2018 and the centralization of state assembly redistricting by the national independent board --- raise a number of questions: Are the adopted redistricting criteria politically neutral? Were the plans produced algorithmically, in fact, optimal with respect to the selected criteria? How did partisan counterproposals differ from the algorithmic solution? What influence did parties have on the final plan? Can automated and partisan interactive  models generate relatively fair and unbiased plans?
 
@@ -117,6 +120,7 @@ So far, the board has not justified these changes and, given the lack of transpa
 
 A third problem derived from the optimization stage is the wide margins allowed for population deviation. Neither the constitution nor the electoral law specify that a population deviation should be allowed between districts. It was the board that approved a deviation of up to $\pm 15\%$.\footnote{In states where the district average population deviated less than 5\% from the national average, a deviation of up to $\pm 15\%$ was allowed, whereas in states with deviations above 5\%, a margin of only $\pm 10\%$ was permitted \citep{acuerdo.ife.2004,trelles.mtz.tesisItam.2007}}. In 2006, for instance, districts in 23 of the 32 states where allowed to have a deviation of up to $\pm 15\%$ while the rest was allowed only to have a deviation up to $\pm 10\%$ \citep{trelles.mtz.tesisItam.2007}. As with the population growth criterion, there is no legal basis --- or technical justification --- that determines why having districts where populations exactly at the bounds of the $\pm15$ spread --- which basically means that citizens at the bottom end would be worth one-third more in Congress than those at the top end --- is something desirable or reasonable, especially when the main objective of the redistricting process is ostensibly to safeguard the ``one person, one vote'' principle. 
 
+<<<<<<< HEAD
 Unequal-sized districts has been a common practice in Mexico in spite of the automated application of clear quantitative redistricting criteria since 1997. In fact, Mexican parties in general, and the independent board in particular, have been remarkably tolerant of this practice. As a consequence, this form of malapportionment is related, in some degree, to states' imbalanced apportionment in Congress, which perforce creates size differences across states' mean district sizes. But size inequality within states is also prevalent and substantial \citep{magar.etalBiasMultiParty2015}. We recognize that small deviations around a state's mean district population are unavoidable, especially as a map ages. But what constitutes significant deviation depends on the political context. Courts in the U.S.\ have struck down new congressional district maps bearing less than 1\% differences without proper justification \citep{tuckerApportionment.1985}. Redistricting authorities generally view a \emph{de minimus} population deviations of as little as one or zero persons between congressional districts as desirable to inoculate against litigation. In stark contrast, the board has allowed deviations up to 15\% (since 1997) above or below mean state district size \citep{lujambio.vives.2008,trelles.mtz.polygob2012} and, surprisingly, no party has ever challenged this practice in Court. 
 
 \textbf{c) Assessment}. The third stage of the redistricting process begins once the first scenario produced by automation has been formally presented by the Technical Committee --- appointed by the board --- and distributed to political parties. In two rounds, technical experts comment on the maps and political parties observe and suggest modifications.\footnote{This stage took approximately four months. It began in July 2013 and concluded in October 2013.} Amendments are proposed to the first scenario, and those that are adopted by the technical committee are then used as a starting point for another round of partisan observations to produce a second scenario. Parties are invited again to propose a second round of amendments and, once they have been analyzed and discussed by the technical committee, a final plan is presented to the Council General to be formally approved. 
@@ -246,216 +250,7 @@ mean PRD margin     &  $-.51$ & $-.31$  & $-.21$  & $-.04$ & .39 \\
 % % 199 districts in 13 srtates with PRI-PVEM coalition
 % %  of which XX in 7 states with mixed coalition status
 
-% \begin{table}
-% \begin{center}
-%  \begin{tabular}{rrrr|rrr|rrr}
-%       & \multicolumn{3}{c}{PAN} & \multicolumn{3}{c}{PRI coalition} & \multicolumn{3}{c}{PRD coalition} \\
-% state &$S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$  \\ \hline
-% ags &   3 &     &     &      &      &      &      &      &        \\       
-%  bc &   8 &     &     &      &      &      &      &      &        \\       
-% bcs &     &     &     &      &      &      &    2 &      &        \\       
-% cam &     &     &     &    2 &      &      &      &      &        \\       \hdashline
-% coa &   5 & $-1$& $-1$&    2 &  $+1$&  $+1$&      &      &        \\       
-% col &   2 &     &     &      &      &      &      &      &        \\       
-% cps &     &     & $+1$&    7 &  $-1$&      &    5 &  $+2$&        \\       
-% cua &   4 & $+2$&     &    5 &  $-2$&      &      &      &        \\       \hdashline
-%  df &   2 &     &     &      &      &      &   25 &  $-3$&  $-3$  \\       
-% dgo &   1 & $+1$& $+1$&    3 &  $-1$&  $-1$&      &      &        \\       
-% gua &  14 & $+1$& $+1$&      &      &      &      &      &        \\       
-% gue &     &     &     &      &      &      &    9 &      &        \\       \hdashline
-% hgo &   1 &     &     &    4 &      &  $-1$&    2 &      &  $+1$  \\       
-% jal &  18 & $+1$& $+1$&    1 &      &      &      &      &        \\       
-% mex &  11 & $-1$&     &    6 &  $+1$&  $-1$&   23 &  $+1$&  $+2$  \\       
-% mic &   4 &     &     &      &      &      &    8 &      &        \\       \hdashline
-% mor &   2 &     & $-1$&    1 &  $-1$&      &    2 &  $+1$&  $+1$  \\       
-% nay &     &     &     &    2 &      &      &    1 &      &        \\       
-%  nl &   7 & $-1$& $-1$&    5 &  $+1$&  $+1$&      &      &        \\       
-% oax &     &     &     &    2 &      &      &    9 &  $-1$&  $-1$  \\       \hdashline
-% pue &  11 & $-1$& $-1$&    5 &  $-1$&      &      &  $+1$&        \\       
-% que &   4 & $+1$& $+1$&      &      &      &      &      &        \\       
-% qui &     &     &     &    2 &      &      &    1 &  $+1$&  $+1$  \\       
-% san &   7 &     &     &      &      &      &      &      &        \\       \hdashline
-% sin &   2 &     &     &    6 &  $-1$&  $-1$&      &      &        \\       
-% son &   5 &     &     &    2 &      &      &      &      &        \\       
-% tab &     &     &     &      &      &      &    6 &      &        \\       
-% tam &   5 & $+1$& $+1$&    3 &      &      &      &      &        \\       \hdashline
-% tla &   2 &     &     &      &      &      &    1 &      &        \\       
-% ver &  11 & $-3$& $-5$&    6 &  $+2$&  $+4$&    4 &      &        \\       
-% yuc &   4 & $-1$& $-1$&    1 &  $+1$&  $+1$&      &      &        \\       
-% zac &   1 &     &     &      &      &      &    3 &      &        \\ \hline 
-% tot & 134 & $-1$& $-4$&   65 &  $-1$&  $+3$&  101 &  $+2$&  $+1$  \\       
-% abs &     & $15$& $16$&      &  $13$&  $11$&      &  $10$&  $9$  \\       
-% \end{tabular}
-% \caption{Seats won by state and counterfactual differences in 2006. Columns $\Delta_1$ and $\Delta_3$ report change in $S$eats won with proposals 1 and 3 (discussed in text), respectively. Row tot reports column sum, row abs the sum of absolute column values.}\label{T:2006}
-% \end{center}
-% \end{table}
 
-
-% \begin{table}
-% \begin{center}
-% \begin{tabular}{rrrr|rrr|rrr|rrr}
-%       & \multicolumn{3}{c}{PAN} & \multicolumn{3}{c}{PRI$^*$} & \multicolumn{3}{c}{PRD} & \multicolumn{3}{c}{Other} \\
-% state &$S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ \\ \hline
-% ags &   2 &     &     &   1 &     &     &     &     &      &    &    & \\       
-%  bc &   8 &     &     &     &     &     &     &     &      &    &    & \\       
-% bcs &     &     &     &     &     &     &   2 &     &      &    &    & \\       
-% cam &     &     &     &   2 &     &     &     &     &      &    &    & \\       \hdashline
-% coa &     &     &     &   7 &     &     &     &     &      &    &    & \\       
-% col &   1 &     &     &   1 &     &     &     &     &      &    &    & \\       
-% cps &   4 & $+1$& $-1$&   4 &     & $+3$&   4 &     & $-1$ &    &    & \\       
-% cua &   1 & $-1$& $-1$&   8 & $+1$& $+1$&     &     &      &    &    & \\       \hdashline
-%  df &   6 & $-1$& $-1$&   1 &     &     &  17 & $-2$& $-2$ & 3  &    & \\       
-% dgo &     &     &     &   4 &     &     &     &     &      &    &    & \\       
-% gua &  13 & $+1$& $+1$&   1 &     &     &     &     &      &    &    & \\       
-% gue &     &     &     &   8 &     &     &   1 &     &      &    &    & \\       \hdashline
-% hgo &     &     &     &   7 &     &     &     &     &      &    &    & \\       
-% jal &   9 & $+2$& $+3$&  10 & $-1$& $-2$&     &     &      &    &    & \\       
-% %mex &   2 &     &     &   8 & $-3$& $-2$&     &     &      &    &    & \\       
-% mex &   2 &     &     &  38 & $+1$& $+1$&     &     &      &    &    & \\       
-% mic &   4 & $+1$&     &     &     &     &   8 & $-1$&      &    &    & \\      \hdashline 
-% mor &     &     &     &   5 &     &     &     &     &      &    &    & \\       
-% nay &   1 &     &     &   1 &     &     &   1 &     &      &    &    & \\       
-%  nl &   5 & $-1$& $-1$&   7 & $+1$& $+1$&     &     &      &    &    & \\       
-% oax &     &     &     &  11 & $-1$& $-1$&     &     &      &    &    & \\       \hdashline
-% pue &     & $+2$& $+1$&  16 & $-3$& $-2$&     &     &      &    &    & \\       
-% que &   1 & $+1$&     &   3 &     & $+1$&     &     &      &    &    & \\       
-% qui &     &     &     &   3 & $+1$& $+1$&     &     &      &    &    & \\       
-% san &   5 &     &     &   2 &     &     &     &     &      &    &    & \\       \hdashline
-% sin &     & $+1$& $+1$&   8 & $-2$& $-2$&     &     &      &    &    & \\       
-% son &   2 &     &     &   5 &     &     &     &     &      &    &    & \\       
-% tab &     &     &     &   4 &     &     &   2 &     &      &    &    & \\       
-% tam &     &     &     &   8 & $+1$& $+1$&     &     &      &    &    & \\       \hdashline
-% tla &   3 &     &     &     &     &     &     &     &      &    &    & \\       
-% ver &   4 & $-2$& $-2$&  17 & $+1$& $+1$&     &     &      &    &    & \\       
-% yuc &     &     &     &   5 &     &     &     &     &      &    &    & \\       
-% zac &     &     &     &     &     &     &   4 &     &      &    &    & \\ \hline 
-% %tot &  71 & $+4$&     & 137 & $-6$& $-4$&  39 & $-3$& $-3$ & 3  &    & \\       
-% tot &  71 & $+4$&     & 187 & $-1$& $+3$&  39 & $-3$& $-3$ & 3  &    & \\       
-% abs &     & $14$& $12$&      &$13$& $17$&      & $3$&  $3$ &    &    & \\       
-% % \begin{tabular}{rrrr|rrr|rrr|rrr|rrr}
-% %       & \multicolumn{3}{c}{PAN} & \multicolumn{3}{c}{PRI} & \multicolumn{3}{c}{PRI coalition} & \multicolumn{3}{c}{PRD} & \multicolumn{3}{c}{Other} \\
-% % state &$S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ \\ \hline
-% % ags &   2 &     &     &   1 &     &     &      &      &      &     &     &      &    &    & \\       
-% %  bc &   8 &     &     &     &     &     &      &      &      &     &     &      &    &    & \\       
-% % bcs &     &     &     &     &     &     &      &      &      &   2 &     &      &    &    & \\       
-% % cam &     &     &     &   2 &     &     &      &      &      &     &     &      &    &    & \\       \hdashline
-% % coa &     &     &     &   7 &     &     &      &      &      &     &     &      &    &    & \\       
-% % col &   1 &     &     &   1 &     &     &      &      &      &     &     &      &    &    & \\       
-% % cps &   4 & $+1$& $-1$&     &     &     &    4 &      &  $+3$&   4 &     & $-1$ &    &    & \\       
-% % cua &   1 & $-1$& $-1$&   8 & $+1$& $+1$&      &      &      &     &     &      &    &    & \\       \hdashline
-% %  df &   6 & $-1$& $-1$&     &     &     &    1 &      &      &  17 & $-2$& $-2$ & 3  &    & \\       
-% % dgo &     &     &     &   4 &     &     &      &      &      &     &     &      &    &    & \\       
-% % gua &  13 & $+1$& $+1$&     &     &     &    1 &      &      &     &     &      &    &    & \\       
-% % gue &     &     &     &   6 &     &     &    2 &      &      &   1 &     &      &    &    & \\       \hdashline
-% % hgo &     &     &     &   6 &     &     &    1 &      &      &     &     &      &    &    & \\       
-% % jal &   9 & $+2$& $+3$&   7 & $-1$& $-2$&    3 &      &      &     &     &      &    &    & \\       
-% % %mex &   2 &     &     &   8 & $-3$& $-2$&   30 &  $+4$&  $+3$&     &     &      &    &    & \\       
-% % mex &   2 &     &     &     &     &     &$38^*$&  $+1$&  $+1$&     &     &      &    &    & \\       
-% % mic &   4 & $+1$&     &     &     &     &      &      &      &   8 & $-1$&      &    &    & \\      \hdashline 
-% % mor &     &     &     &   5 &     &     &      &      &      &     &     &      &    &    & \\       
-% % nay &   1 &     &     &   1 &     &     &      &      &      &   1 &     &      &    &    & \\       
-% %  nl &   5 & $-1$& $-1$&   7 & $+1$& $+1$&      &      &      &     &     &      &    &    & \\       
-% % oax &     &     &     &  11 & $-1$& $-1$&      &      &      &     &     &      &    &    & \\       \hdashline
-% % pue &     & $+2$& $+1$&  15 & $-3$& $-2$&    1 &      &      &     &     &      &    &    & \\       
-% % que &   1 & $+1$&     &   3 &     & $+1$&      &      &      &     &     &      &    &    & \\       
-% % qui &     &     &     &   1 &     &     &    2 &  $+1$&  $+1$&     &     &      &    &    & \\       
-% % san &   5 &     &     &   2 &     &     &      &      &      &     &     &      &    &    & \\       \hdashline
-% % sin &     & $+1$& $+1$&   8 & $-2$& $-2$&      &      &      &     &     &      &    &    & \\       
-% % son &   2 &     &     &   5 &     &     &      &      &      &     &     &      &    &    & \\       
-% % tab &     &     &     &   4 &     &     &      &      &      &   2 &     &      &    &    & \\       
-% % tam &     &     &     &   8 & $+1$& $+1$&      &      &      &     &     &      &    &    & \\       \hdashline
-% % tla &   3 &     &     &     &     &     &      &      &      &     &     &      &    &    & \\       
-% % ver &   4 & $-2$& $-2$&  17 & $+1$& $+1$&      &      &      &     &     &      &    &    & \\       
-% % yuc &     &     &     &     &     &     &    5 &      &      &     &     &      &    &    & \\       
-% % zac &     &     &     &     &     &     &      &      &      &   4 &     &      &    &    & \\ \hline 
-% % %tot &  71 & $+4$&     & 137 & $-6$& $-4$&   50 &  $+5$&  $+7$&  39 & $-3$& $-3$ & 3  &    & \\       
-% % tot &  71 & $+4$&     & 129 & $-3$& $-2$&$58^*$&  $+2$&  $+5$&  39 & $-3$& $-3$ & 3  &    & \\       
-% \end{tabular}
-% \caption{Seats won by state and counterfactual differences in 2009. See Table \ref{T:2006} for column and row label meanings. $^*$Includes 50 seats that the PRI won in coalition in 63 districts from 10 states.}\label{T:2009}
-% % \caption{Seats won by state and counterfactual differences in 2009. See Table \ref{T:2006} for column label meanings. $^*$Includes 8 seats the PRI won solo, see text for details.}\label{T:2009} 
-% \end{center}
-% \end{table}
-
-
-% \begin{table}
-% \begin{center}
-% \begin{tabular}{rrrr|rrr|rrr|rrr}
-%       & \multicolumn{3}{c}{PAN} & \multicolumn{3}{c}{PRI$^*$} & \multicolumn{3}{c}{PRD coalition} & \multicolumn{3}{c}{Other} \\
-% state &$S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ \\ \hline
-% ags &   2 & $-1$& $-1$&   1 & $+1$& $+1$&      &      &       &    &    & \\       
-%  bc &   1 &     &     &   7 &     &     &      &      &       &    &    & \\       
-% bcs &   2 &     &     &     &     &     &      &      &       &    &    & \\       
-% cam &     &     &     &   2 &     &     &      &      &       &    &    & \\       \hdashline
-% coa &   3 &     &     &   4 &     &     &      &      &       &    &    & \\       
-% col &     &     &     &   2 &     &     &      &      &       &    &    & \\       
-% cps &     &     &     &   9 & $+1$& $+2$&      &      &       & 3  &    & $-1$ \\       
-% cua &   1 & $-1$&     &   8 & $+1$&     &      &      &       &    &    & \\       \hdashline
-%  df &   1 &     &     &     &     &     &   26 &  $-3$&  $-3$ &    &    & \\       
-% dgo &     &     &     &   4 &     &     &      &      &       &    &    & \\       
-% gua &   7 & $+2$& $+2$&   7 & $-1$& $-1$&      &      &       &    &    & \\       
-% gue &     &     &     &     &     &     &    9 &      &       &    &    & \\       \hdashline
-% hgo &     &     &     &   7 &     &     &      &      &       &    &    & \\       
-% jal &   1 &     &     &  18 &     &     &      &  $+1$&  $+1$ &    &    & \\       
-% mex &   1 & $-1$& $-1$&  31 & $+3$& $+2$&    8 &  $-1$&       &    &    & \\       
-% mic &     &     &     &   8 & $+1$&     &    4 &  $-1$&       &    &    & \\       \hdashline
-% mor &     &     &     &   1 &     &     &    4 &      &       &    &    & \\       
-% nay &     &     &     &   3 &     &     &      &      &       &    &    & \\       
-%  nl &   6 & $-2$& $-2$&   6 & $+2$& $+2$&      &      &       &    &    & \\       
-% oax &     &     &     &   1 & $-1$& $-1$&   10 &      &       &    &    & \\       \hdashline
-% pue &   4 & $-1$&     &  12 & $-1$& $-2$&      &  $+1$&  $+1$ &    &    & \\       
-% que &   2 & $+1$& $+1$&   2 &     &     &      &      &       &    &    & \\       
-% qui &     &     &     &   2 &     &     &    1 &  $+1$&  $+1$ &    &    & \\       
-% san &   2 & $+1$&     &   5 & $-1$&     &      &      &       &    &    & \\       \hdashline
-% sin &   2 &     &     &   6 & $-1$& $-1$&      &      &       &    &    & \\       
-% son &   5 &     &     &   2 &     &     &      &      &       &    &    & \\       
-% tab &     &     &     &     &     &     &    6 &      &       &    &    & \\       
-% tam &   6 & $-1$& $-1$&   2 & $+2$& $+2$&      &      &       &    &    & \\       \hdashline
-% tla &     &     &     &   1 &     &     &    2 &      &       &    &    & \\       
-% ver &   5 & $+1$&     &  15 & $-2$& $-1$&    1 &      &       &    &    & \\       
-% yuc &   1 &     &     &   4 &     &     &      &      &       &    &    & \\       
-% zac &     &     &     &   4 &     &     &      &      &       &    &    & \\ \hline
-% tot &  52 & $-2$& $-2$& 174 & $+4$& $+3$&   71 &  $-2$&       & 3  &    & $-1$ \\       
-% abs &     & $12$& $8$ &      &$18$& $15$&      &  $8$ &  $6$  &    &    & $2$  \\       
-% % \begin{tabular}{rrrr|rrr|rrr|rrr|rrr}
-% %       & \multicolumn{3}{c}{PAN} & \multicolumn{3}{c}{PRI} & \multicolumn{3}{c}{PRI coalition} & \multicolumn{3}{c}{PRD coalition} & \multicolumn{3}{c}{Other} \\
-% % state &$S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ & $S$& $\Delta_1$ &  $\Delta_3$ \\ \hline
-% % ags &   2 & $-1$& $-1$&   1 & $+1$& $+1$&      &      &      &      &      &       &    &    & \\       
-% %  bc &   1 &     &     &     &     &     &    7 &      &      &      &      &       &    &    & \\       
-% % bcs &   2 &     &     &     &     &     &      &      &      &      &      &       &    &    & \\       
-% % cam &     &     &     &   1 &     &     &    1 &      &      &      &      &       &    &    & \\       \hdashline
-% % coa &   3 &     &     &   4 &     &     &      &      &      &      &      &       &    &    & \\       
-% % col &     &     &     &     &     &     &    2 &      &      &      &      &       &    &    & \\       
-% % cps &     &     &     &     &     & $+1$&    9 &  $+1$&  $+1$&      &      &       & 3  &    & $-1$ \\       
-% % cua &   1 & $-1$&     &   8 & $+1$&     &      &      &      &      &      &       &    &    & \\       \hdashline
-% %  df &   1 &     &     &     &     &     &      &      &      &   26 &  $-3$&  $-3$ &    &    & \\       
-% % dgo &     &     &     &   4 &     &     &      &      &      &      &      &       &    &    & \\       
-% % gua &   7 & $+2$& $+2$&     &     &     &    7 &  $-1$&  $-1$&      &      &       &    &    & \\       
-% % gue &     &     &     &     &     &     &      &      &      &    9 &      &       &    &    & \\       \hdashline
-% % hgo &     &     &     &   7 &     &     &      &      &      &      &      &       &    &    & \\       
-% % jal &   1 &     &     &     &     &     &   18 &      &      &      &  $+1$&  $+1$ &    &    & \\       
-% % mex &   1 & $-1$& $-1$&     &     &     &   31 &  $+3$&  $+2$&    8 &  $-1$&       &    &    & \\       
-% % mic &     &     &     &   6 & $+1$&     &    2 &      &      &    4 &  $-1$&       &    &    & \\       \hdashline
-% % mor &     &     &     &     &     &     &    1 &      &      &    4 &      &       &    &    & \\       
-% % nay &     &     &     &   3 &     &     &      &      &      &      &      &       &    &    & \\       
-% %  nl &   6 & $-2$& $-2$&     &     &     &    6 &  $+2$&  $+2$&      &      &       &    &    & \\       
-% % oax &     &     &     &   1 & $-1$& $-1$&      &      &      &   10 &      &       &    &    & \\       \hdashline
-% % pue &   4 & $-1$&     &   1 &     &     &   11 &  $-1$&  $-2$&      &  $+1$&  $+1$ &    &    & \\       
-% % que &   2 & $+1$& $+1$&   1 &     &     &    1 &      &      &      &      &       &    &    & \\       
-% % qui &     &     &     &     &     &     &    2 &      &      &    1 &  $+1$&  $+1$ &    &    & \\       
-% % san &   2 & $+1$&     &   4 &     &     &    1 &  $-1$&      &      &      &       &    &    & \\       \hdashline
-% % sin &   2 &     &     &   6 & $-1$& $-1$&      &      &      &      &      &       &    &    & \\       
-% % son &   5 &     &     &   2 &     &     &      &      &      &      &      &       &    &    & \\       
-% % tab &     &     &     &     &     &     &      &      &      &    6 &      &       &    &    & \\       
-% % tam &   6 & $-1$& $-1$&   2 & $+2$& $+2$&      &      &      &      &      &       &    &    & \\       \hdashline
-% % tla &     &     &     &   1 &     &     &      &      &      &    2 &      &       &    &    & \\       
-% % ver &   5 & $+1$&     &     &     &     &   15 &  $-2$&  $-1$&    1 &      &       &    &    & \\       
-% % yuc &   1 &     &     &     &     &     &    4 &      &      &      &      &       &    &    & \\       
-% % zac &     &     &     &     &     &     &    4 &      &      &      &      &       &    &    & \\ \hline
-% % tot &  52 & $-2$& $-2$&  52 & $+3$& $+2$&  122 &  $+1$&  $+1$&   71 &  $-2$&       & 3  &    & $-1$ \\       
-% \end{tabular}
-% \caption{Seats won by state and counterfactual differences in 2012. See Table \ref{T:2006} for column and row label meanings. $^*$Includes 122 seats that the PRI won in coalition in 199 districts from 17 states.}\label{T:2012}
-% \end{center}
-% \end{table}
 
 % Seen from the national level (bottom line in each table), distributive effects are quite small. The largest drop observed is 4 seats subtracted from PAN in 2006 by the third proposal ($\Delta_3$), the largest hikes 4 extra seats for PAN in 2006 and PRI in 2009 by the first proposal ($\Delta_1$). Mean changes in the period are milder: proposal 1 returns $+\frac{1}{3}$ seat for PAN on average, $+\frac{2}{3}$ for PRI, and $-1$ for PRD; proposal 3 returns $-2$ for PAN, $+3$ for PRI, and $-\frac{2}{3}$ for the left. Adjustments made from first to final proposal are interesting. Party feedback turned the PRI from loser of one seat to winner of three in both 2006 and 2009, a net change of $\bar{\Delta_3} - \bar{\Delta_1} = 4$. Party feedback hurt the PAN almost symmetrically those years, with net changes between $-3$ and $-4$. The puzzle is that PAN had the most counter-proposals accepted (see Table \ref{T:counterprops}), which could be explained by a priority to preserve margins in strongholds and not just victories. Our analysis could presumably show this. 
 
@@ -476,11 +271,11 @@ First is the selection of criteria to use during redistricting. Without clear le
 
 Second is the operationalization of the criteria. The choice of Mexico to permit a rather expansive 15\% population deviation, coupled with the often sizable lag in years between a national census and a redistricting, effectively injects a substantial amount of malapportionment into the districts. The most recent failure to adopt a new plan despite substantial malapportionment harkens back to the pre-1960s failures in the United States that ultimately forced the U.S. Supreme Court to force states to draw new districts. Then, states forestalled redistricting to the benefit of existing political hegemons with their power bases located in rural areas. Redistricting in Mexico ---or the lack of it ---similarly appears to be politically motivated in that redistricting is not directly tied to a new census. Furthermore, the generous malapportionment that results both from the stale census and the permissive population deviations adopted suggest political considerations are present.
 
-Third is the computation of the cost function. Once criteria have been choosen and operationalized, for automation to work a cost function must be computed for a computer algorithm to minimize. Like the criteria and their operationalization, the weighted components of the cost funcation have changed over time. This again suggests to us that the parties have priors over how balancing criteria translate into outcomes. A subtle point is that the operationlization of the criteria is also effectively part of the weigting function. Simply, if two equally weighted criteria have values that are orders of magnitide different, then the criteria that is scored with the higher values will be effectively given more weight.
+Third is the computation of the cost function. Once criteria have been chosen and operationalized, for automation to work a cost function must be computed for a computer algorithm to minimize. Like the criteria and their operationalization, the weighted components of the cost function have changed over time. This again suggests to us that the parties have priors over how balancing criteria translate into outcomes. A subtle point is that the operationalization of the criteria is also effectively part of the weighing function. Simply, if two equally weighted criteria have values that are orders of magnitude different, then the criteria that is scored with the higher values will be effectively given more weight.
 
 Fourth, and perhaps most important, is the limitations of the optimization algorithm in the context of Mexico's redistricting process. If the algorithm produced a map that was the objectively best on the scoring function, perhaps the process would end once the computer provided a solution. In practice, redistricting is a complex partitioning problem with many local optima that can trap an optimization algorithm, even one that is a sophisticated simulated annealing algorithm allowed to burn in for a month \citep{altman.mcdonald2011bard}. Once map solutions were presented to the technical committee and the parties, humans were able to improve upon them. We cannot stress this enough: despite their increasing popularity in social sciences to reveal ``truths'' about the political process, automated redistricting algorithms have greatly under-appreciated limitations and likely do not support the claims their proponents make. The consequences for practical applications are twofold. First, redistricting by computer does in itself not guarantee an optimal solution will be found; the map a computer finds may be nothing more than a quasi-random draw. Second, because the computer produces non-optimal solutions, the process is open to manipulation. The political parties will draw plans that may improve upon the cost function. They are under no obligation to make all the plans they discover public. Since we cannot observe these private plans, we may assume that parties will only present amendments that improve their position.
 
-We believe that greater transparency can innoculate against some of the issues we raise. Mexico's electoral management board implemented a web-based map sharing tool in the last failed redistricting. This tool was only available to those who were formally part of the process. Not only can map-sharing tools be made available online, but also software applications that would allow the public to become a partner in the process. Having more eyes on the redistricting problem may yield more solutions that beat the optimization algorithm, further reducing opportunities for manipulation, and would further allow the public to look under the hood to understand more fully the political consequences embodied the choice of criteria, their operationalization, and their weighting in the cost function.
+We believe that greater transparency can inoculate against some of the issues we raise. Mexico's electoral management board implemented a web-based map sharing tool in the last failed redistricting. This tool was only available to those who were formally part of the process. Not only can map-sharing tools be made available online, but also software applications that would allow the public to become a partner in the process. Having more eyes on the redistricting problem may yield more solutions that beat the optimization algorithm, further reducing opportunities for manipulation, and would further allow the public to look under the hood to understand more fully the political consequences embodied the choice of criteria, their operationalization, and their weighting in the cost function.
 
 %Comment [Alejandro]: 
 
