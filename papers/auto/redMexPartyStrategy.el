@@ -1,25 +1,33 @@
 (TeX-add-style-hook "redMexPartyStrategy"
  (lambda ()
     (LaTeX-add-bibliographies
-     "../bib/magar")
+     "../bib/strategy")
     (LaTeX-add-labels
      "T:counterprops"
      "F:propsAndCost"
      "T:simIndex"
-     "T:volatMarginsd0"
-     "F:malmgnat")
+     "T:volatMarginsd0")
     (TeX-add-symbols
      "mc")
     (TeX-run-style-hooks
-     "amsmath"
      "arydshln"
+     "courier"
+     "helvet"
+     "scaled=.90"
+     "mathptmx"
      "natbib"
      "sort"
      "longnamesfirst"
+     "tikz"
+     "hyperref"
+     "hidelinks"
      "graphicx"
      "pdftex"
      "url"
-     "hyperref"
+     "amssymb"
+     "amsmath"
+     "fontenc"
+     "T1"
      "setspace"
      ""
      "geometry"
