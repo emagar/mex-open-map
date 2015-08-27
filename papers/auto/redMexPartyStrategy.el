@@ -4,9 +4,7 @@
      "../bib/strategy")
     (LaTeX-add-labels
      "T:counterprops"
-     "F:propsAndCost"
-     "T:simIndex"
-     "T:volatMarginsd0")
+     "F:propsAndCost")
     (TeX-add-symbols
      "mc")
     (TeX-run-style-hooks
