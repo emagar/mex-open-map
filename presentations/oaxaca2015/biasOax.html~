@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>Party bias in Mexico</title>
+<title>Measuring partisan bias in multi-party systems</title>
 <meta name="author" content="(Eric Magar (with Micah Altman, Mike McDonald, and Alex Trelles))"/>
 
 <link rel="stylesheet" href="file:///home/eric/.emacs.d/reveal/reveal.js/css/reveal.css"/>
@@ -26,7 +26,7 @@
 <div class="reveal">
 <div class="slides">
 <section id="sec-title-slide">
-<h1>Party bias in Mexico</h1>
+<h1>Measuring partisan bias in multi-party systems</h1>
 <h2>Eric Magar (with Micah Altman, Mike McDonald, and Alex Trelles)</h2>
 <h2><a href="mailto:emagar@itam.edu">emagar@itam.edu</a></h2>
 <h2></h2>
@@ -34,7 +34,63 @@
 
 <section>
 <section id="slide-sec-1">
-<h2 id="sec-1">Background on Mexico</h2>
+<h2 id="sec-1">Motivation</h2>
+<p>
+Empirical procedure to measure and analyze the difference between the 
+<b>votes</b> and <b>seats</b> that parties win in general elections
+</p>
+
+<span class="fragment roll-in"><p>
+Central concern of electoral reform debates
+</p></span>
+
+<pre  class="fragment roll-in">
+Kendall&amp;Stuart 1950, Rae 1967, Erikson 1972, Tufte 1973, Taagepera 1973, Johnston 1979, 
+Gudgin&amp;Taylor 1980, Grofman 1983, Cain 1985, Niemi&amp;Fett 1986, King&amp;Browning 1987, 
+Gelman&amp;King 1994, Balinski&amp;Young 2001, Cox&amp;Katz 2002, Engstrom 2006...
+</pre>
+
+<span class="fragment roll-in"><p>
+Methods exits, but limited to (exceptional) two-party competition
+</p></span>
+
+<span class="fragment roll-in"><p>
+Contributions: 
+</p></span>
+
+<ol class="fragment roll-in">
+<li>Extension to multi-party competition</li>
+<li>Overcome small-N obstacle</li>
+<li>Application to recent Mexican elections</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2">
+<h2 id="sec-2">Overview</h2>
+<p>
+Key quantity of interest is the system's <b>partisan bias</b> (aka disproportionality) = undue
+advantage conferred to some party in the conversion of votes into legislative seats
+</p>
+
+<p>
+→ Potential distortion wherever districts are drawn to allocate seats
+</p>
+
+<p>
+Theory highlights three sources of partisan bias
+ 1 Gerrymanders (eg., Cox&amp;Katz 2002)
+ 2 Turnout differentials (Rosenstone&amp;Hansen 1993)
+ 3 Malapportionment and demographic shifts (Johnston 1979)
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3">
+<h2 id="sec-3">Background on Mexico</h2>
 <ul>
 <li>Hegemonic party 1929&#x2013;1997</li>
 
@@ -54,8 +110,8 @@
 </section>
 </section>
 <section>
-<section id="slide-sec-2">
-<h2 id="sec-2">Questions</h2>
+<section id="slide-sec-4">
+<h2 id="sec-4">Questions</h2>
 <p>
 Did 1997 reform remove <b><b>party bias</b></b> in representation? 
 </p>
@@ -77,8 +133,8 @@ If party bias remains, what <b>factors</b> drive it? (Grofman et al. 1997)
 </ul>
 
 </section>
-<section id="slide-sec-2-1">
-<h3 id="sec-2-1">Answers</h3>
+<section id="slide-sec-4-1">
+<h3 id="sec-4-1">Answers</h3>
 <ol>
 <li>Persistent bias against the right</li>
 <li>But components of bias often cancel each other</li>
@@ -90,10 +146,10 @@ If party bias remains, what <b>factors</b> drive it? (Grofman et al. 1997)
 </section>
 </section>
 <section>
-<section id="slide-sec-3">
-<h2 id="sec-3">What is party bias</h2>
+<section id="slide-sec-5">
+<h2 id="sec-5">What is partisan bias</h2>
 <p>
-It is the excess/defect seat share that a party with half of the votes gets:  
+It is the excess/defect seat share that a party winning half of the votes gets:  
 </p>
 
 <p>
@@ -115,9 +171,7 @@ It is the excess/defect seat share that a party with half of the votes gets:
 
 <colgroup>
 <col  class="left" />
-</colgroup>
 
-<colgroup>
 <col  class="left" />
 
 <col  class="left" />
@@ -144,6 +198,10 @@ It is the excess/defect seat share that a party with half of the votes gets:
 </table>
 
 <p>
+<a href="https://github.com/yjwen/org-reveal/issues/61">problems with org table borders here</a>
+</p>
+
+<p>
 UK 2015: SNP v. LibDems
 </p>
 
@@ -151,8 +209,8 @@ UK 2015: SNP v. LibDems
 </section>
 </section>
 <section>
-<section id="slide-sec-4">
-<h2 id="sec-4">Obstacle 1: measure party bias</h2>
+<section id="slide-sec-6">
+<h2 id="sec-6">Obstacle 1: measure partisan bias</h2>
 <p>
 Fitting votes&#x2013;seats curves: \(s = f(v)\)  
 </p>
@@ -178,8 +236,8 @@ Fitting votes&#x2013;seats curves: \(s = f(v)\)
 </section>
 </section>
 <section>
-<section id="slide-sec-5">
-<h2 id="sec-5">Steps to export</h2>
+<section id="slide-sec-7">
+<h2 id="sec-7">Steps to export</h2>
 <ol>
 <li><code>M-x load-library RET ox-reveal</code></li>
 
@@ -189,8 +247,8 @@ Fitting votes&#x2013;seats curves: \(s = f(v)\)
 
 
 </section>
-<section id="slide-sec-5-1">
-<h3 id="sec-5-1">Resources (one floor down!)</h3>
+<section id="slide-sec-7-1">
+<h3 id="sec-7-1">Resources (one floor down!)</h3>
 <p>
 <a href="http://nwidger.github.io/blog/post/making-a-reveal.js-presentation-with-org-reveal/">http://nwidger.github.io/blog/post/making-a-reveal.js-presentation-with-org-reveal/</a>
 </p>
@@ -199,8 +257,8 @@ Fitting votes&#x2013;seats curves: \(s = f(v)\)
 </section>
 </section>
 <section>
-<section id="slide-sec-6">
-<h2 id="sec-6">You insert images thus</h2>
+<section id="slide-sec-8">
+<h2 id="sec-8">You insert images thus</h2>
 <div class="org-src-container">
 
 <pre  class="src src-org"><span style="color: #ff7f24;">#+ATTR_HTML: :height 200%, :width 200%</span>
@@ -211,8 +269,8 @@ Fitting votes&#x2013;seats curves: \(s = f(v)\)
 </section>
 </section>
 <section>
-<section id="slide-sec-7">
-<h2 id="sec-7">Bullets</h2>
+<section id="slide-sec-9">
+<h2 id="sec-9">Bullets</h2>
 <ul>
 <li>one</li>
 <li>two</li>
@@ -223,12 +281,12 @@ Fitting votes&#x2013;seats curves: \(s = f(v)\)
 </section>
 </section>
 <section>
-<section id="slide-sec-8">
-<h2 id="sec-8">Configure</h2>
-<div class="outline-text-2" id="text-8">
+<section id="slide-sec-10">
+<h2 id="sec-10">Configure</h2>
+<div class="outline-text-2" id="text-10">
 </div></section>
-<section id="slide-sec-8-1">
-<h3 id="sec-8-1">The HLevel</h3>
+<section id="slide-sec-10-1">
+<h3 id="sec-10-1">The HLevel</h3>
 <p>
 Org-reveal maps each heading and its contents to one Reveal.js
 slide. Since Reveal.js arranges slides into a 2-dimensional matrix,
@@ -250,8 +308,8 @@ parent level 1 heading.
 </p>
 
 </section>
-<section id="slide-sec-8-1-1">
-<h4 id="sec-8-1-1">HLevel's Affects on Slides Layout</h4>
+<section id="slide-sec-10-1-1">
+<h4 id="sec-10-1-1">HLevel's Affects on Slides Layout</h4>
 <p>
 Assume we have a simple Org file as below:
 </p>
@@ -289,8 +347,8 @@ a vertical slide below it.
 </div>
 
 </section>
-<section id="slide-sec-8-1-2">
-<h4 id="sec-8-1-2">Configure HLevel's Value</h4>
+<section id="slide-sec-10-1-2">
+<h4 id="sec-10-1-2">Configure HLevel's Value</h4>
 <ul>
 <li>Change variable <code>org-reveal-hlevel</code>'s value to set HLevel globally.<br  />
       For example, add the following statement to your <code>.emacs</code> file.</li>
@@ -313,8 +371,8 @@ a vertical slide below it.
 </div>
 
 </section>
-<section id="slide-sec-8-2">
-<h3 id="sec-8-2">Force Split</h3>
+<section id="slide-sec-10-2">
+<h3 id="sec-10-2">Force Split</h3>
 <p>
 If one heading has too many things to fit into one slide, you can
 split the contents into multiple vertical slides manually, by inserting
@@ -334,8 +392,8 @@ Now a new slide begins after <code>#+REVEAL</code> keyword.
 </p>
 
 </section>
-<section id="slide-sec-8-3">
-<h3 id="sec-8-3">Select Theme and Transition</h3>
+<section id="slide-sec-10-3">
+<h3 id="sec-10-3">Select Theme and Transition</h3>
 <p>
 Themes and transition styles are set globally throughout the whole
 file by setting options <code>REVEAL_THEME</code>, <code>REVEAL_TRANS</code>, and <code>REVEAL_SPEED</code>.
@@ -354,16 +412,16 @@ Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
 </p>
 
 </section>
-<section id="slide-sec-8-4">
-<h3 id="sec-8-4">Set Slide Background</h3>
+<section id="slide-sec-10-4">
+<h3 id="sec-10-4">Set Slide Background</h3>
 <p>
 Slide background can be set to a color, an image or a repeating image
 array by setting heading properties.
 </p>
 
 </section>
-<section id="slide-sec-8-4-1" data-background="#543210">
-<h4 id="sec-8-4-1">Single Colored Background</h4>
+<section id="slide-sec-10-4-1" data-background="#543210">
+<h4 id="sec-10-4-1">Single Colored Background</h4>
 
 <p>
 Set property <code>reveal_background</code> to either an RGB color value, or any
@@ -380,8 +438,8 @@ supported CSS color format.
 </div>
 
 </section>
-<section id="slide-sec-8-4-2" data-background="./images/whale.jpg" data-background-transition="slide">
-<h4 id="sec-8-4-2">Single Image Background</h4>
+<section id="slide-sec-10-4-2" data-background="./images/whale.jpg" data-background-transition="slide">
+<h4 id="sec-10-4-2">Single Image Background</h4>
 
 <p>
 Set property <code>reveal_background</code> to an URL of background image.
@@ -399,8 +457,8 @@ sliding rather than fading.
 </div>
 
 </section>
-<section id="slide-sec-8-4-3" data-background="./images/whale.jpg" data-background-size="200px" data-background-repeat="repeat">
-<h4 id="sec-8-4-3">Repeating Image Background</h4>
+<section id="slide-sec-10-4-3" data-background="./images/whale.jpg" data-background-size="200px" data-background-repeat="repeat">
+<h4 id="sec-10-4-3">Repeating Image Background</h4>
 
 <p>
 Resize background image by setting property
@@ -423,8 +481,8 @@ image on the background.
 </div>
 
 </section>
-<section id="slide-sec-8-4-4">
-<h4 id="sec-8-4-4">Title Slide Background Image</h4>
+<section id="slide-sec-10-4-4">
+<h4 id="sec-10-4-4">Title Slide Background Image</h4>
 <p>
 To set the title slide's background image, please specify the
 following options:
@@ -438,8 +496,8 @@ following options:
 </ul>
 
 </section>
-<section id="slide-sec-8-5">
-<h3 id="sec-8-5">Slide Size</h3>
+<section id="slide-sec-10-5">
+<h3 id="sec-10-5">Slide Size</h3>
 <p>
 Reveal.js scales slides to best fit the display resolution, but you can
 also specify the desired size by settings the option tags <code>width</code> and <code>height</code>.
@@ -460,25 +518,25 @@ ratio.</dd>
 </dl>
 
 </section>
-<section id="slide-sec-8-6">
-<h3 id="sec-8-6">Slide Numbering</h3>
+<section id="slide-sec-10-6">
+<h3 id="sec-10-6">Slide Numbering</h3>
 <p>
 Activate slide numbers by setting <code>#+REVEAL_SLIDE_NUMBER:</code> to <code>t</code> (true).
 </p>
 
 </section>
-<section id="slide-sec-8-7">
-<h3 id="sec-8-7">Slide Header/Footer</h3>
+<section id="slide-sec-10-7">
+<h3 id="sec-10-7">Slide Header/Footer</h3>
 <p>
 Specify Slide header/footer by <code>#+REVEAL_SLIDE_HEADER:</code> and
 <code>#+REVEAL_SLIDE_FOOTER:</code>. The option content will be put into
 divisions of class <code>slide-header</code> and <code>slide-footer</code>, so you can
-control their appearance in custom CSS file(see <a href="#sec-8-17">Extra Stylesheets</a>).
+control their appearance in custom CSS file(see <a href="#sec-10-17">Extra Stylesheets</a>).
 </p>
 
 </section>
-<section id="slide-sec-8-8">
-<h3 id="sec-8-8">Fragmented Contents</h3>
+<section id="slide-sec-10-8">
+<h3 id="sec-10-8">Fragmented Contents</h3>
 <p>
 Make contents fragmented (show up one-by-one) by setting option
 <code>ATTR_REVEAL</code> with property ":frag frag-style", as illustrated
@@ -500,8 +558,8 @@ Pictures, tables and many other HTML elements can be fragmented.
 </p></span>
 
 </section>
-<section id="slide-sec-8-8-1">
-<h4 id="sec-8-8-1">Fragment Styles</h4>
+<section id="slide-sec-10-8-1">
+<h4 id="sec-10-8-1">Fragment Styles</h4>
 <p>
 Available fragment styles are:
 </p>
@@ -524,8 +582,8 @@ global variable <code>org-reveal-default-frag-style</code>.
 </p>
 
 </section>
-<section id="slide-sec-8-8-2">
-<h4 id="sec-8-8-2">Fragment Index</h4>
+<section id="slide-sec-10-8-2">
+<h4 id="sec-10-8-2">Fragment Index</h4>
 <p>
 Fragment sequence can be changed by assigning adding <code>:frag_idx</code>
 property to each fragmented element.
@@ -544,8 +602,8 @@ This paragraph shows at first.
 </p></span>
 
 </section>
-<section id="slide-sec-8-8-3">
-<h4 id="sec-8-8-3">List Fragments</h4>
+<section id="slide-sec-10-8-3">
+<h4 id="sec-10-8-3">List Fragments</h4>
 <p>
 <code>#+ATTR_REVEAL: :frag frag-style</code> above a list defines fragment
 style for the list as a whole.
@@ -620,8 +678,8 @@ assigns each item of a list the <code>appear</code> fragment style.
 
 
 </section>
-<section id="slide-sec-8-9" data-state="alert">
-<h3 id="sec-8-9">Data State</h3>
+<section id="slide-sec-10-9" data-state="alert">
+<h3 id="sec-10-9">Data State</h3>
 
 <p>
 Set property <code>reveal_data_state</code> to headings to change this slide's
@@ -633,8 +691,8 @@ Available data states are: alert|blackout|soothe.
 </p>
 
 </section>
-<section id="slide-sec-8-10">
-<h3 id="sec-8-10">Plug-ins</h3>
+<section id="slide-sec-10-10">
+<h3 id="sec-10-10">Plug-ins</h3>
 <p>
 Reveal.js provides several plug-in functions.
 </p>
@@ -649,8 +707,8 @@ Reveal.js provides several plug-in functions.
 </ul>
 
 </section>
-<section id="slide-sec-8-10-1">
-<h4 id="sec-8-10-1">Configure Plug-ins</h4>
+<section id="slide-sec-10-10-1">
+<h4 id="sec-10-10-1">Configure Plug-ins</h4>
 <p>
 Each plugin can be toggled on/off by adding <code>#+OPTIONS</code> tags or
 by setting custom variables.
@@ -670,8 +728,8 @@ by setting custom variables.
 For an example, please refer to the heading part of this document.
 </p>
 </section>
-<section id="slide-sec-8-11">
-<h3 id="sec-8-11">Source Codes</h3>
+<section id="slide-sec-10-11">
+<h3 id="sec-10-11">Source Codes</h3>
 <p>
 Org-reveal use Org-Babel to highlight source codes.
 </p>
@@ -697,7 +755,7 @@ If code is not highlighted, please make sure <code>htmlize.el</code> is installe
 
 </section>
 <section id="slide-my-heading">
-<h3 id="my-heading"><a id="sec-8-12" name="sec-8-12"></a>MathJax</h3>
+<h3 id="my-heading"><a id="sec-10-12" name="sec-10-12"></a>MathJax</h3>
 
 
 <p>
@@ -722,8 +780,8 @@ to the local MathJax location.
 </p>
 
 </section>
-<section id="slide-sec-8-13">
-<h3 id="sec-8-13">Preamble and Postamble</h3>
+<section id="slide-sec-10-13">
+<h3 id="sec-10-13">Preamble and Postamble</h3>
 <p>
 You can define preamble and postamble contents which will not be
 shown as slides, but will be exported into the body part of the
@@ -748,8 +806,8 @@ variable <code>org-reveal-head-preamble</code> or option
 </p>
 
 </section>
-<section id="slide-sec-8-13-1">
-<h4 id="sec-8-13-1">Generating Pre/Postamble by Emacs-Lisp Functions</h4>
+<section id="slide-sec-10-13-1">
+<h4 id="sec-10-13-1">Generating Pre/Postamble by Emacs-Lisp Functions</h4>
 <p>
 If the contents of pre/postamble is the name of an evaluated
 Emacs-Lisp function, which must accept an argument of Org-mode
@@ -763,8 +821,8 @@ block and mark it to be evaluated when exporting the document.
 </p>
 
 </section>
-<section id="slide-sec-8-14">
-<h3 id="sec-8-14">Raw HTML in Slides</h3>
+<section id="slide-sec-10-14">
+<h3 id="sec-10-14">Raw HTML in Slides</h3>
 <p>
 Besides the Org contents, you can embed raw HTML contents
 into slides by placing a <code>#+REVEAL_HTML</code> keyword.
@@ -776,8 +834,8 @@ The famous cat jump fail:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/OQzJR3BqS7o" frameborder="0" allowfullscreen></iframe>
 
 </section>
-<section id="slide-sec-8-15">
-<h3 id="sec-8-15">Speaker Notes</h3>
+<section id="slide-sec-10-15">
+<h3 id="sec-10-15">Speaker Notes</h3>
 <p>
 Reveal.js supports speaker notes, which are displayed in a separate
 browser window. Pressing 's' on slide's windows will pop up a window
@@ -820,8 +878,8 @@ reopen it in the browser.
 </p>
 
 </section>
-<section id="slide-sec-8-16">
-<h3 id="sec-8-16">Multiplexing</h3>
+<section id="slide-sec-10-16">
+<h3 id="sec-10-16">Multiplexing</h3>
 <p>
 Reveal.js supports multiplexing, which allows allows your audience to view
 the slides of the presentation you are controlling on their own phone, tablet
@@ -859,8 +917,8 @@ them to track your presentation on their own device.
 </p>
 
 </section>
-<section id="slide-sec-8-17">
-<h3 id="sec-8-17">Extra Stylesheets</h3>
+<section id="slide-sec-10-17">
+<h3 id="sec-10-17">Extra Stylesheets</h3>
 <p>
 Set <code>REVEAL_EXTRA_CSS</code> to a stylesheet file path in order to load extra custom
 styles after loading a theme.
@@ -873,8 +931,8 @@ styles after loading a theme.
 </div>
 
 </section>
-<section id="slide-sec-8-18">
-<h3 id="sec-8-18">Select Built-In Scripts</h3>
+<section id="slide-sec-10-18">
+<h3 id="sec-10-18">Select Built-In Scripts</h3>
 <p>
 Set option <code>REVEAL_PLUGINS</code> or variable <code>org-reveal-plugins</code> to a
 lisp list to select built-in scripts.
@@ -899,8 +957,8 @@ The following examples select <i>markdown</i> and <i>highlight</i> only.
 </div>
 
 </section>
-<section id="slide-sec-8-19">
-<h3 id="sec-8-19">Extra Dependent Script</h3>
+<section id="slide-sec-10-19">
+<h3 id="sec-10-19">Extra Dependent Script</h3>
 <p>
 Set <code>REVEAL_EXTRA_JS</code> to the url of extra reveal.js dependent
 script if necessary.
@@ -912,8 +970,8 @@ script if necessary.
 </div>
 
 </section>
-<section id="slide-sec-8-20">
-<h3 id="sec-8-20">Extra Slide attribute</h3>
+<section id="slide-sec-10-20">
+<h3 id="sec-10-20">Extra Slide attribute</h3>
 <p>
 Set property <code>reveal_extra_attr</code> to headings to add any necessary attributes
 to slides.
@@ -922,12 +980,12 @@ to slides.
 </section>
 </section>
 <section>
-<section id="slide-sec-9">
-<h2 id="sec-9">Tips</h2>
-<div class="outline-text-2" id="text-9">
+<section id="slide-sec-11">
+<h2 id="sec-11">Tips</h2>
+<div class="outline-text-2" id="text-11">
 </div></section>
-<section id="slide-sec-9-1">
-<h3 id="sec-9-1">Disable Heading Numbers</h3>
+<section id="slide-sec-11-1">
+<h3 id="sec-11-1">Disable Heading Numbers</h3>
 <p>
 Add <code>num:nil</code> to <code>#+OPTIONS</code>
 </p>
@@ -938,8 +996,8 @@ Add <code>num:nil</code> to <code>#+OPTIONS</code>
 </div>
 
 </section>
-<section id="slide-sec-9-2">
-<h3 id="sec-9-2">Internal Links</h3>
+<section id="slide-sec-11-2">
+<h3 id="sec-11-2">Internal Links</h3>
 <p>
 Reveal.js supports only jump between slides, but not between
 elements on slides. Thus, we can only link to headlines in an Org
@@ -952,7 +1010,7 @@ custom-id, as the examples below:
 </p>
 
 <ul>
-<li><a href="#sec-9">Tips</a>.</li>
+<li><a href="#sec-11">Tips</a>.</li>
 <li><a href="#my-heading">Heading</a> with a <code>CUSTOM_ID</code> property.</li>
 
 </ul>
@@ -960,8 +1018,8 @@ custom-id, as the examples below:
 </section>
 </section>
 <section>
-<section id="slide-sec-10">
-<h2 id="sec-10">Thanks</h2>
+<section id="slide-sec-12">
+<h2 id="sec-12">Thanks</h2>
 <p>
 Courtesy to:
 </p>

@@ -37,7 +37,7 @@
 \begin{document}
 
 
-\title{Measuring malapportionment, boundary-delimitation, and turnout effects in multi-party systems\thanks{For presentation at CIDE's \emph{pol\'itica y gobierno} seminar, 26 Aug.\ 2015. We are grateful to Jonathan Slapin, conference participants at the Univ.\ of Houston (14--15 Nov.\ 2014), seminar attendees at the Univ.\ of Florida (13 Mar.\ 2015), and workshop members of the Political Economy of Social Choices workshop, Casa Matem\'atica Oaxaca (28 Jul.\ 2015) for comments and critiques; to Drew Linzer and Javier M\'arquez for guidance to read their computer code; and to IFE's Cartography Department for sharing their experience with automated redistricting since 1996 and most of the data we analyze. The first author would like to acknowledge the support of Asociaci\'on Mexicana de Cultura A.C., of Conacyt, and of Washington University in St.\ Louis, where he was visiting scholar when a good part of this paper was written.}}
+\title{Measuring malapportionment, gerrymandering, and turnout effects in multi-party systems\thanks{For presentation at ITAM's \emph{seminario de ciencia pol\'itica}, 25 Sept.\ 2015. We are grateful to Jonathan Slapin, conference participants at the Univ.\ of Houston (14--15 Nov.\ 2014), seminar attendees at the Univ.\ of Florida (13 Mar.\ 2015), workshop members of the Political Economy of Social Choices workshop, Casa Matem\'atica Oaxaca (28 Jul.\ 2015) and at CIDE (26 Aug.\ 2015) for comments and critiques; to Drew Linzer and Javier M\'arquez for guidance to read their computer code; and to IFE's Cartography Department for sharing their experience with automated redistricting since 1996 and most of the data we analyze. The first author would like to acknowledge the support of Asociaci\'on Mexicana de Cultura A.C., of Conacyt, and of Washington University in St.\ Louis, where he was visiting scholar when a good part of this paper was written.}}
 \author{E.~Magar\footnote{Corresponding author: \url{emagar@itam.mx}.  We describe contributions to the paper using a standard taxonomy \citep{allen2014credit}. E.~Magar (EM) was lead author, having taken primary responsibility for writing. EM prepared the original draft. and A.~Trelles (AT), M.~Altman (MA) and M.~McDonald (MM) contributed to writing through editing and review. All authors contributed equally to conceptualization. EM lead methodology, with contributions from MM. AT lead data curation, with contributions from EM.} \\ \emph{ITAM} \and
         A.~Trelles \\ \emph{Pitt} \and  
         M.~Altman \\ \emph{MIT} \and
@@ -46,8 +46,18 @@
 \date{\today}
 \maketitle
 
-% Pre-submission comments: 
+% Pre-submission to LSQ comments: 
 % [EM] "gerrymander" effects changed to "boundary delimitation" in the title and parts of the text. Three alternatives: "distributive", "gerrymander", and "boundary delimitation"---need to discuss pros and cons of each.
+% [EM] MM will edit to remove EM's poor English in text. MM will also re-write the justification for studying SMD tier only relying on Cox 1997: strategic voting in SMDs rewards top-two parties; given that SMD votes carry over to the PR tier, any distorsion at the SMD level also carries over to the PR tier, distorting "compensation" to parties. 
+
+% CIDE comments:
+% SERIOUS: Applying King's model (with a rigid functional form) to data from Linzer's Monte Carlo may be driving the results. The advantages of Linzer's approach may, in fact, be totally lost. EM: we could simply use seats-votes swing ratios, but then we only have a piece on Mexico... 
+% SERIOUS: Contrary to claim in present framing, there are two papers by Borisyuk, Johnston et al that actually extend Brooke's method to estimate partisan bias for a three party system. Need to address this.
+% Discuss priors in Bayesian analysis (EM: non-informative priors were used, mean=0 and large variance).
+% EASY: Mention how partisan bias relates to disproportionality literature. 
+% Several people suggested breaking into two papers: a methods piece and an analysis of Mexico.
+% CSES surveys show that PRI excels in contact with voters relative to other parties---consistent with turnout effects we uncover.
+% There is a Larreguy et al paper about to appear (in AJPS?) on turnout buying in Mexican elections. Relates to our argument.  
 
 % Oaxaca comments
 % Norman: why did the PRI lose?

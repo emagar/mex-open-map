@@ -47,7 +47,7 @@ Contributions:
 
 * Overview
 
-Key quantity of interest is the system's *partisan bias* (aka disproportionality) = undue
+Key quantity of interest is the system's *partisan bias* = undue
 advantage conferred to some party in the conversion of votes into legislative seats
 
 → Potential distortion wherever districts are drawn to allocate seats
@@ -58,6 +58,12 @@ Theory highlights three sources of partisan bias
 3. Malapportionment and demographic shifts (Johnston 1979)
 
 Procedure measures partisan bias and its sources
+
+* Illustration
+
+#+ATTR_HTML: :height 175%, :width 175%
+[[./images/uk.jpg]]
+
 
 * Background on Mexico
 
