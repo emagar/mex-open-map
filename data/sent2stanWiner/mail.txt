@@ -1,0 +1,9 @@
+Hi Stan, I am sending you part of the code for the analysis I presented. I include only the portion that tweaks Linzer's functions to generate a large number of simulated elections. After reading/preparing the data, the procedure follows the steps described by Linzer about halfway through. It stops after generating 1000 vote/seat shares for the parties nationwide in the year selected. The swing ratio can be got by regressing a party's simulated seats on the simulated votes. 
+
+Also included is data to execute the script. Adapting this to Canadian elections should be easier after watching the procedure operate with a Mexican example. If this didn't work, you could perhaps send me one year's contituency-level returns so that I try running the script on it. 
+
+I also include the paper I presented, any comment/critique will be very welcome. I will do the same with the paper you gave me.
+
+A possible collaboration may arise in the near future. I am curious to see your latent measure perform in a case that the classic literature describes as increasingly competitive---the erosion of Japan's LDP, Sweden's Social Democrats, the U.S.'s vanishing marginals, the classic PRI, or the replacement of Libs by Lab in the UK. But let me read your paper first. 
+
+It was a pleasure to meet you, I wish you a safe return home.
