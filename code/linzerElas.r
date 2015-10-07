@@ -375,7 +375,7 @@ tmp.abst <- tmp.ptot - tmp.efec # useful later
 ## ## ROUTE 1: keep efec and votes only (as Linzer does) to use standard functions
 ## # vote shares
 ## dat <- dat/tmp.efec
-## # add efec vote in 1st column (or, in included, ptot in 1st col and efec in 2nd) 
+## # add efec vote in 1st column (or, if included, ptot in 1st col and efec in 2nd) 
 ## dat <- cbind(tmp.efec, dat); colnames(dat)[which(colnames(dat)=="tmp.efec")] <- "efec"
 ## rm(tmp.ptot, tmp.efec, tmp.abst)
 #
