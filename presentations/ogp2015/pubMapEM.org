@@ -1,0 +1,50 @@
+#+REVEAL_ROOT: file:///home/eric/.emacs.d/reveal/reveal.js
+#+Title: From Open Govt. to Participation
+#+Subtitle: Malapportionment, turnout, and gerrymandering effects in Mexico
+#+Author: Eric Magar (ITAM)
+#+Email: emagar@itam.mx
+
+#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t
+#+OPTIONS: reveal_mathjax:t reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
+#+OPTIONS: reveal_width:1200 reveal_height:800
+#+OPTIONS: toc:nil
+#+REVEAL_MARGIN: 0.1
+#+REVEAL_MIN_SCALE: 0.5
+#+REVEAL_MAX_SCALE: 2.5
+#+REVEAL_TRANS: linear
+#+REVEAL_THEME: night
+#+REVEAL_HLEVEL: 1
+#+REVEAL_HEAD_PREAMBLE: <meta name="presentation" content="Org-Reveal Presentation.">
+#+REVEAL_POSTAMBLE: <p> Created by Eric Magar based on yjwen's code. </p>
+#+REVEAL_PLUGINS: (highlight markdown notes)
+#+REVEAL_EXTRA_CSS: ./extra.css
+
+* Three grades of openness
+
+1. Open data
+2. Replicability
+3. Participation
+
+* Grade A. Open data
+
+- Freedom of information right
+- All information relevant for policy classified as public
+- Optimal if made available in an internet repository  
+
+* Grade AA. Replicability
+
+- Requisite for external audit of policy
+- Anyone can *use* data to reconstruct policy and process
+- Protocols must be available, code must be open source
+
+* Grade AAA. Participation
+
+- Engage the public, involve non-specialists
+- With complex policy, requires interfase to ease data manipulation
+- Crowdsourcing increases representativeness, may detect unintentional flaws
+
+#+ATTR_REVEAL: :frag roll-in
+Without participation, open goverment does not lead to accountability 
+
+* Thanks!
+

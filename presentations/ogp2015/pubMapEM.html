@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>From Open Govt. to Participation</title>
+<meta name="author" content="(Eric Magar (ITAM))"/>
+
+<link rel="stylesheet" href="file:///home/eric/.emacs.d/reveal/reveal.js/css/reveal.css"/>
+<link rel="stylesheet" href="file:///home/eric/.emacs.d/reveal/reveal.js/css/theme/night.css" id="theme"/>
+<link rel="stylesheet" href="./extra.css"/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'file:///home/eric/.emacs.d/reveal/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<meta name="presentation" content="Org-Reveal Presentation.">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1>From Open Govt. to Participation</h1>
+<h2>Eric Magar (ITAM)</h2>
+<h2><a href="mailto:emagar@itam.mx">emagar@itam.mx</a></h2>
+<h2></h2>
+</section>
+
+<section>
+<section id="slide-sec-1">
+<h2 id="sec-1">Three grades of openness</h2>
+<ol>
+<li>Open data</li>
+<li>Replicability</li>
+<li>Participation</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2">
+<h2 id="sec-2">Grade A. Open data</h2>
+<ul>
+<li>Freedom of information right</li>
+<li>All information relevant for policy classified as public</li>
+<li>Optimal if made available in an internet repository</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3">
+<h2 id="sec-3">Grade AA. Replicability</h2>
+<ul>
+<li>Requisite for external audit of policy</li>
+<li>Anyone can <b>use</b> data to reconstruct policy and process</li>
+<li>Protocols must be available, code must be open source</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4">
+<h2 id="sec-4">Grade AAA. Participation</h2>
+<ul>
+<li>Engage the public, involve non-specialists</li>
+<li>With complex policy, requires interfase to ease data manipulation</li>
+<li>Crowdsourcing increases representativeness, may detect unintentional flaws</li>
+
+</ul>
+
+<span class="fragment roll-in"><p>
+Without participation, open goverment does not lead to accountability 
+</p></span>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-5">
+<h2 id="sec-5">Thanks!</h2>
+</section>
+</section>
+</div>
+</div>
+<p> Created by Eric Magar based on yjwen's code. </p>
+
+<script src="file:///home/eric/.emacs.d/reveal/reveal.js/lib/js/head.min.js"></script>
+<script src="file:///home/eric/.emacs.d/reveal/reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: true,
+rollingLinks: true,
+keyboard: true,
+overview: true,
+width: 1200,
+height: 800,
+margin: 0.10,
+minScale: 0.50,
+maxScale: 2.50,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'file:///home/eric/.emacs.d/reveal/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: 'file:///home/eric/.emacs.d/reveal/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'file:///home/eric/.emacs.d/reveal/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'file:///home/eric/.emacs.d/reveal/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+]
+});
+</script>
+</body>
+</html>
