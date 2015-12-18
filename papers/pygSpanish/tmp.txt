@@ -1,0 +1,31 @@
+;; This buffer is for notes you don't want to save, and for Lisp evaluation.
+;; If you want to create a file, visit that file with C-x C-f,
+;; then enter the text in that file's own buffer.
+
+Hola Alex, ya revisé el paper para pyg. Va quedando mucho mejor. Añadí algunas citas y podé las notas al pie. Hice una reorganización de los ejemplos, agrupándolos en una sección propia. Y pulí la redacción, para que la lectura fluya (espero) mejor. He dejado dobles asteriscos comentados en los sitios del texto que aún requieren que les eches mano. Le añadí un renglón al cuadro 1, que hay que importar al documento de tal modo que ocupe una sola página. También deberás incorporar los cambios de última hora que hiciste a la versión 07. Una vez hecho eso, el borrador estará listo para mandar a la revista.
+
+Es imperativo elevar los niveles de transparencia y mejorar mecanismos de información existentes para hacer un proceso auditable por cualquiera. 
+
+Hoy por hoy, no existen formatos accesibles o resulta casi imposible vincular los datos de distintas fuentes para replicar la totalidad del proceso de redistritación.  
+
+Poner a disposición del público imágenes o fotos de la cartografía electoral (como archivos en pdf) satisfacen solo las nesidades más superficiales de la política de datos abiertos, ya que no pueden ser fácilmente convertidos en formatos legibles y no permiten el análisis o la evaluación de distintos escenarios. fn {La cartografía electoral local del Estado de México, por ejemplo, sólo está disponible en formato pdf, pero no están disponibles los archivos cartográficos que permitan replicar o analizar la información: http://www.ieem.org.mx/numeralia/msd/msd01.html (última consulta realizada en octubre de 2015).}
+
+Tras posibilitar la replicabilidad del proceso por cualquiera sigue un esfuerzo para involucrar a un número importante de actores externos. 
+
+Crear y distribuir plataforma(s) que permitan analizar y evaluar las decisiones del proceso fácilmente por no especialistas ayudaría a que todos los datos sean accesibles en línea, y puedan ser usados, reutilizados, y redistribuidos por cualquier interesado. Las herramientas en línea, hoy por hoy, ofrecen tecnología que posibilita la participación y añaden un valor sustancial al proceso. El crowdsourcing, por ejemplo, ofrece a la autoridad electoral la posibilidad de incrementar y mejorar sustancialmente la información que recibe durante las distintas etapas del proceso (Altman 2011, Altman y McDonald 2014). Elaboramos acerca de este tipo de herramientas en la siguinete sección. 
+
+
+
+
+fn {Hoy por hoy, la complejidad para conseguir los archivos vectoriales (archivos tipo MDB, Mapinfo, Shapefile y Smartstore) de la cartografía electoral local en cada entidad es alta (ver Cuadro 1). En algunos estados, las imágenes en pdf de los distritos locales están disponibles a través de los portales de internet, pero no los archivos que permiten utilizar o replicar los escenarios distritales.}
+
+
+
+
+
+
+En gran medida, la decisión para centralizar la responsabilidad de los procesos de redistritación en los estados en el INE respondió a la ausencia de un sistema efectivo de pesos y contrapesos y a la falta de confianza de los mismos partidos a nivel nacional para que las autoridades electorales en los estados pudiesen llevar a cabo este proceso –así como otros aspectos clave de la administración electoral– de manera transparente e imparcial.}
+
+
+
+
