@@ -1,4 +1,4 @@
-(TeX-add-style-hook "redMexBias07"
+(TeX-add-style-hook "redMexBias07(anonymous)"
  (lambda ()
     (LaTeX-add-bibliographies
      "../bib/redMex")
@@ -16,15 +16,8 @@
      "T:GKBbreakdown"
      "T:swRatios")
     (TeX-add-symbols
-     "mc"
-     "listofendnotes"
-     "footnote"
-     "enotesize")
+     "mc")
     (TeX-run-style-hooks
-     "endnotes"
-     "endfloat"
-     "nolists"
-     "nomarkers"
      "arydshln"
      "dcolumn"
      "courier"

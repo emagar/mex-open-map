@@ -34,30 +34,31 @@
 %\usepackage{epigraph}         % write/format epigraphs
 
 
-%for submission: sends figs, tables, and footnotes to last pages
-\RequirePackage[nomarkers,nolists]{endfloat}     % sends tables and figures to the end
-\RequirePackage{endnotes}                        % turns fn into endnotes; place \listofendnotes where you want 
-                                                 %the endnotes to appear (it must be after the last endnote).
-\let\footnote=\endnote
-\newcommand{\listofendnotes}{
-   \begingroup
-   \parindent 0pt
-   \parskip 2ex
-   \def\enotesize{\normalsize}
-   \theendnotes
-   \endgroup
-}
+%% for submission: sends figs, tables, and footnotes to last pages
+% \RequirePackage[nomarkers,nolists]{endfloat}     % sends tables and figures to the end
+% \RequirePackage{endnotes}                        % turns fn into endnotes; place \listofendnotes where you want 
+%                                                  %the endnotes to appear (it must be after the last endnote).
+% \let\footnote=\endnote
+% \newcommand{\listofendnotes}{
+%    \begingroup
+%    \parindent 0pt
+%    \parskip 2ex
+%    \def\enotesize{\normalsize}
+%    \theendnotes
+%    \endgroup
+% }
 
 
 \begin{document}
 
 
-\title{Components of Partisan Bias Originating from Single-Member Districts in Multi-Party Systems: The Case of Mexico\thanks{We are grateful to Jonathan Slapin, conference participants at the Univ.\ of Houston (14--15 Nov.\ 2014), seminar attendees at the Univ.\ of Florida (13 Mar.\ 2015), workshop members of the Political Economy of Social Choices workshop, Casa Matem\'atica Oaxaca (28 Jul.\ 2015) at CIDE (26 Aug.\ 2015) and ITAM (25 Sept.\ 2015) for comments and critiques; to Drew Linzer and Javier M\'arquez for guidance with their computer code; and to IFE's Cartography Department for sharing their experience with automated redistricting since 1996 and most of the data we analyze. The first author would like to acknowledge the support of Asociaci\'on Mexicana de Cultura A.C., of Conacyt, and of Washington University in St.\ Louis, where he was visiting scholar when a good part of this paper was written.}}
-\author{E.~Magar\footnote{Corresponding author: \url{emagar@itam.mx}.  We describe contributions to the paper using a standard taxonomy \citep{allen2014credit}. E.~Magar (EM) was lead author, having taken primary responsibility for writing. EM prepared the original draft. and A.~Trelles (AT), M.~Altman (MA) and M.~McDonald (MM) contributed to writing through editing and review. All authors contributed equally to conceptualization. EM lead methodology, with contributions from MM. AT lead data curation, with contributions from EM.} \\ \emph{ITAM} \and
-        A.~Trelles \\ \emph{Pitt} \and  
-        M.~Altman \\ \emph{MIT} \and
-        M.P.~McDonald \\ \emph{UF}
-      }
+\title{Components of Partisan Bias Originating from Single-Member Districts in Multi-Party Systems: The Case of Mexico%\thanks{We are grateful to Jonathan Slapin, conference participants at the Univ.\ of Houston (14--15 Nov.\ 2014), seminar attendees at the Univ.\ of Florida (13 Mar.\ 2015), workshop members of the Political Economy of Social Choices workshop, Casa Matem\'atica Oaxaca (28 Jul.\ 2015) at CIDE (26 Aug.\ 2015) and ITAM (25 Sept.\ 2015) for comments and critiques; to Drew Linzer and Javier M\'arquez for guidance with their computer code; and to IFE's Cartography Department for sharing their experience with automated redistricting since 1996 and most of the data we analyze. The first author would like to acknowledge the support of Asociaci\'on Mexicana de Cultura A.C., of Conacyt, and of Washington University in St.\ Louis, where he was visiting scholar when a good part of this paper was written.}
+}
+%\author{E.~Magar\footnote{Corresponding author: \url{emagar@itam.mx}.  We describe contributions to the paper using a standard taxonomy \citep{allen2014credit}. E.~Magar (EM) was lead author, having taken primary responsibility for writing. EM prepared the original draft. and A.~Trelles (AT), M.~Altman (MA) and M.~McDonald (MM) contributed to writing through editing and review. All authors contributed equally to conceptualization. EM lead methodology, with contributions from MM. AT lead data curation, with contributions from EM.} \\ \emph{ITAM} \and
+%        A.~Trelles \\ \emph{Pitt} \and  
+%        M.~Altman \\ \emph{MIT} \and
+%        M.P.~McDonald \\ \emph{UF}
+%      }
 \date{\today}
 \maketitle
 
@@ -282,7 +283,7 @@ Partial PRI--Green coalitions took place in 2009 and 2012---the partners fielded
 % [Micah] Since they are projections, these should be accompanied by a measure of uncertainty. The uncertainty should be represented in this graph (error regions) or in the appendix.
 % [Eric] I searched for a confidence interval in the census' population figures (they are estimates, after all) but could find none. These are, presumably, necessary to achieve Micah's suggestion.
 
-Mexico is familar with malapportionment. Districts of unequal population are common practice in Mexico despite a set of clear quantitative redistricting criteria that since 1997 includes population equality \citep{altman.magar.mcd.trelles2014apsa}. In practice, Mexican parties in general, and the election board in particular, have been tolerant of malapportionment. Malapportionment typically occurs in electoral systems around the world when apportionment formulas assign districts to geographic units, such as states, according to their population. Unequal-sized districts result when the geographic units' populations are not neatly divided by the number of seats. An additional source of malapportionment exists in Mexico: a time lag between the conduct of the national census and redistricting, what \citet{JohnstonCreepingMal} calls ``creeping malapportionment.'' Mexico's constitution mandates the use of the census for redistricting, but the government has no obligation to redistrict as soon as population data become available. As a consequence, six or more years have routinely passed between a new census and the time new district boundaries are inaugurated. Rectifying malapportionment is, ironically, an essential representational justification to periodically redistrict. Yet, substantial malapportionment exists  even as a new map is implemented. 
+Mexico is familar with malapportionment. Districts of unequal population are common practice in Mexico despite a set of clear quantitative redistricting criteria that since 1997 includes population equality [CITE DROPPED]. In practice, Mexican parties in general, and the election board in particular, have been tolerant of malapportionment. Malapportionment typically occurs in electoral systems around the world when apportionment formulas assign districts to geographic units, such as states, according to their population. Unequal-sized districts result when the geographic units' populations are not neatly divided by the number of seats. An additional source of malapportionment exists in Mexico: a time lag between the conduct of the national census and redistricting, what \citet{JohnstonCreepingMal} calls ``creeping malapportionment.'' Mexico's constitution mandates the use of the census for redistricting, but the government has no obligation to redistrict as soon as population data become available. As a consequence, six or more years have routinely passed between a new census and the time new district boundaries are inaugurated. Rectifying malapportionment is, ironically, an essential representational justification to periodically redistrict. Yet, substantial malapportionment exists  even as a new map is implemented. 
 
 % PLOT PREPARED IN RED.R
 \begin{figure}
@@ -300,7 +301,7 @@ The lag between census and redistricting is, of course, not the only cause of ma
 
 Creeping malapportionment and bureaucratic discretion potentially compound to produce considerable malapportionment in Mexico's congressional districts. We examine how malapportionment distorts representation, following \citet{ansolabehere.gerber.snyderCourtRedis2002}. We measure a district's relative representation index as $RRI = \frac{1/\text{district size}}{300/\text{national population}}$, where the numerator is the number of diputado seats per person in the district and the denominator is the average number of diputado seats per person nationwide (300 is the number plurality seats). A district with unity index value has representation matching the `one person, one vote' ideal perfectly. Values above one indicate over-representation, values below one under-representation, and the measure is continuous. An example shows how the index is interpreted. The 3rd district of Aguascalientes in 2012 had about 306,000 inhabitants, and 300 divided by Mexico's population was about 387,000. So the district in question had 26\% more representation than the national average, for an index value of 1.26. As above, we used population projections to compute $RRI$s.
 
-The percentiles corresponding to $RRI$s at .85 and 1.15 (the bounds of the board's $\pm15\%$ tolerance range) in 2006 were 10 and 87, respectively, implying that $10+100-87=23\%$ of districts exceeded IFE's discretionary malapportionment range in the map's inaugural year, as caused by the census lag.\footnote{This is not entirely accurate, as the $\pm15$ range is in reference to average state population \citep[not average national population, analyzed here, see][]{altman.magar.mcd.trelles2014apsa}. The percentiles using state population $RRI$s are .06 and .89, or 17 percent out-of-legal-range districts in 2006.} By 2012, more than one-third districts were outside the tolerance range, and by 2015 just shy of two-fifths were outside the tolerance range. As the U.S. Supreme Court found in the 1960's, using antiquated population data impairs drawing equal-sized district boundaries and substantially distorts representation. 
+The percentiles corresponding to $RRI$s at .85 and 1.15 (the bounds of the board's $\pm15\%$ tolerance range) in 2006 were 10 and 87, respectively, implying that $10+100-87=23\%$ of districts exceeded IFE's discretionary malapportionment range in the map's inaugural year, as caused by the census lag.\footnote{This is not entirely accurate, as the $\pm15$ range is in reference to average state population (not average national population, analyzed here, see CITE DROPPED). The percentiles using state population $RRI$s are .06 and .89, or 17 percent out-of-legal-range districts in 2006.} By 2012, more than one-third districts were outside the tolerance range, and by 2015 just shy of two-fifths were outside the tolerance range. As the U.S. Supreme Court found in the 1960's, using antiquated population data impairs drawing equal-sized district boundaries and substantially distorts representation. 
 
 % USED CODE IN RED.R TO DO THIS PLOT
 \begin{figure}
@@ -479,7 +480,7 @@ Turnout played favorably for the PRI relative to other major parties in every el
 
 The distributional component often predominates among the components of bias: for the PRD in midterm elections, the PAN in 2012, and systematically for the selected minor parties. Owing to formidable entry barriers in the election law, no minor party is regional-based. Meager nationwide support provides few opportunites for minor parties to win seats---hence the negative sign. Year 2012 is an exception, when Greens nominated the coalition's candidate in a concurrent gubernatorial race whose coattails returned three congressional seats \citep{magar.gubCoatMx.2012}. The distributional component's volatility for major parties, in size and in polarity, is consistent with the absence of partisan gerrymandering---as we might expect from the major-party power-sharing arrangements on the election board that draws districts. Also notable is how the total bias sum hides large components that contribute in opposite directions and therefore cancel out. The PAN and PRD's extraordinary performances in 2006 led them to the lowest measures of total partisan bias (in absolute value) in the period. Decomposition of raw partisan bias makes it possible to note that a distributional advantage was key to compensate for even larger turnout disadvantages. The PRD experienced something similar, but less balanced, in 2009, when a sizable distributional advantage was only partially offset by a more modest turnout disadvantage. 
 
-Also distinctive---and surprising given the presence of substantial malapportionment---is how generally small the malapportionment component of partisan bias is compared to other sources. The PAN experienced no bias realtive to the PAN attributable to district size differentials over the period---these are the only estimates, by the way, with sizable probabilities that these estimates are of wrong sign. The party's success was therefore not likelier in districts confined at one end of the RRI distribution. The PRD was slightly advantaged relative to the PRI in every year observed. This is very likely due to overrepresentation of Mexico City's Federal District---a PRD stronghold---but the effect is easily eclipsed by the other components of partisan bias. \citep[The drop from +.14 to +.05 between 2003 and 2006 actually coincides with reapportionment and the accessory reduction---not removal---of the capital's overrepresentation in Congress, see][.]{altman.magar.mcd.trelles2014apsa} Malapportionment-driven bias is not much larger for minor parties, whose perennial small vote shares locate at the wrong end of the system's responsiveness to size. 
+Also distinctive---and surprising given the presence of substantial malapportionment---is how generally small the malapportionment component of partisan bias is compared to other sources. The PAN experienced no bias realtive to the PAN attributable to district size differentials over the period---these are the only estimates, by the way, with sizable probabilities that these estimates are of wrong sign. The party's success was therefore not likelier in districts confined at one end of the RRI distribution. The PRD was slightly advantaged relative to the PRI in every year observed. This is very likely due to overrepresentation of Mexico City's Federal District---a PRD stronghold---but the effect is easily eclipsed by the other components of partisan bias. (The drop from +.14 to +.05 between 2003 and 2006 actually coincides with reapportionment and the accessory reduction---not removal---of the capital's overrepresentation in Congress, see CITE DROPPED.) Malapportionment-driven bias is not much larger for minor parties, whose perennial small vote shares locate at the wrong end of the system's responsiveness to size. 
 
 % comment [Mike] is the malapportionment component suprising because some parties (the PRI, right?) have support bases located in rural districts, and thus might be expected to benefit from malapportionment?  
 % comment [Eric] Also surprising given the sheer size of malapportionment. 
@@ -569,10 +570,9 @@ That these components mostly work against each other to yield modest total parti
 % \end{verbatim}
 % \end{scriptsize}
 
-\listofendnotes
+%\listofendnotes
 
-%\onehalfspacing
-
+\onehalfspacing
 
 \bibliographystyle{apsrInitials}
 \bibliography{../bib/redMex}
