@@ -121,91 +121,6 @@ $M$,
 respectively.
 \@endanenote 
 \@doanenote {5}
-macro:->We
-did
-not
-pursue
-Linzer's
-swing
-ratios.
-The
-relation
-of
-that
-quantity
-with
-the
-notion
-of
-partisan
-bias
-adopted
-here
-is
-straightforward
-in
-balanced
-two-party
-competition
-\citep
-[see][:410]{linzerSeatVoteElasticity2012},
-but
-not
-when
-multiple
-parties
-compete.
-We
-therefore
-partially
-follow
-his
-method,
-borrowing
-his
-code
-to
-generate
-hypothetical
-national
-party
-vote
-and
-seat
-pairs,
-then
-fitting
-a
-standard
-votes--seats
-curve
-on
-those.
-\@endanenote 
-\@doanenote {6}
-macro:->An
-online
-appendix
-describing
-the
-multiplication
-procedure
-in
-detail,
-and
-with
-commented
-code
-extending
-Linzer's
-procedure
-will
-be
-posted
-upon
-publication.
-\@endanenote 
-\@doanenote {7}
 macro:->Each
 voter
 casts
@@ -263,7 +178,7 @@ threshold
 \citep
 {weldonMixedMemberSys2001}.
 \@endanenote 
-\@doanenote {8}
+\@doanenote {6}
 macro:->Compensating
 \emph
 {parties}
@@ -386,7 +301,28 @@ underrepresented
 districts
 only.
 \@endanenote 
-\@doanenote {9}
+\@doanenote {7}
+macro:->Upon
+publication,
+all
+data
+and
+code
+for
+our
+analysis
+will
+be
+made
+available
+through
+a
+durable
+publicly
+accessible
+archive.
+\@endanenote 
+\@doanenote {8}
 macro:->\emph
 {Secciones
 electorales}
@@ -464,7 +400,7 @@ the
 period
 possible.
 \@endanenote 
-\@doanenote {10}
+\@doanenote {9}
 macro:->\citet
 [][:fn.
 4]{linzerSeatVoteElasticity2012}
@@ -489,7 +425,7 @@ in
 2006
 (ASDC).
 \@endanenote 
-\@doanenote {11}
+\@doanenote {10}
 macro:->More
 precisely,
 the
@@ -565,7 +501,7 @@ the
 projection
 exercise.
 \@endanenote 
-\@doanenote {12}
+\@doanenote {11}
 macro:->The
 rationale
 is
@@ -619,7 +555,7 @@ redistricting
 authority
 made
 a
-concious
+conscious
 effort
 to
 segregate
@@ -628,7 +564,7 @@ tribes
 \citep
 {stephanopoulos.redisCommunity2012}.
 \@endanenote 
-\@doanenote {13}
+\@doanenote {12}
 macro:->This
 is
 not
@@ -672,7 +608,7 @@ districts
 in
 2006.
 \@endanenote 
-\@doanenote {14}
+\@doanenote {13}
 macro:->The
 comparative
 survey
@@ -725,7 +661,7 @@ underestimated
 Mexico's
 malapportionment.
 \@endanenote 
-\@doanenote {15}
+\@doanenote {14}
 macro:->\citet
 {gelman.hill.2007}
 is
@@ -738,7 +674,7 @@ estimation.
 For
 each
 vote
-opeartionalization
+operationalization
 ($v$,
 $\bar
 {v}$,
@@ -788,7 +724,8 @@ inspected
 visually
 in
 chain
-traceplots
+trace
+plots
 of
 each
 of
@@ -831,7 +768,7 @@ on-line
 upon
 publication.
 \@endanenote 
-\@doanenote {16}
+\@doanenote {15}
 macro:->National
 vote
 shares
