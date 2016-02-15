@@ -1,0 +1,80 @@
+\documentclass[preprint,authoryear,letter,12pt]{elsarticle} % class for submitting to Elsevier journals
+%\documentclass[letter,12pt]{article}
+\usepackage[letterpaper,right=1.25in,left=1.25in,top=1in,bottom=1in]{geometry}
+\usepackage{setspace}
+
+%\usepackage[utf8]{inputenc}   % allows direct input of accented and other special characters input directly (instead of \'a etc).
+\usepackage[T1]{fontenc}      % what fonts to use when printing characters       (output encoding)
+\usepackage{amsmath}          % facilitates writing math formulas and improves the typographical quality of their output
+\usepackage{amssymb}          % extended symbol collection
+\usepackage{url}              % adds line breaks to long urls
+%\usepackage[pdftex]{graphicx} % enhanced support for graphics
+\usepackage[pdftex, hidelinks]{hyperref} % 
+\usepackage{tikz}
+
+%\usepackage[longnamesfirst, sort]{natbib}\bibpunct[]{(}{)}{,}{a}{}{;} % elsarticle loads natbib, options given in next line
+\biboptions{longnamesfirst, sort}
+
+\usepackage{mathptmx}           % set font type to Times
+\usepackage[scaled=.90]{helvet} % set font type to Times (Helvetica for some special characters)
+\usepackage{courier}            % set font type to Times (Courier for other special characters)
+
+%\usepackage{rotating}
+%\usepackage{pdflscape}
+
+\newcommand{\mc}{\multicolumn}
+
+\usepackage{dcolumn}          % aligns tabular columns at decimal point---column type D{.}{.}{N decimal places}
+
+\usepackage{arydshln}         % dashed lines in tables (usage: \hdashline, \cdashline{3-4}, 
+                              %see http://tex.stackexchange.com/questions/20140/can-a-table-include-a-horizontal-dashed-line)
+                              % must be loaded AFTER dcolumn, 
+                              %see http://tex.stackexchange.com/questions/12672/which-tabular-packages-do-which-tasks-and-which-packages-
+
+\graphicspath{{../graphs/}}   % double braces needed for this to work
+
+%\usepackage{epigraph}         % write/format epigraphs
+
+
+%for submission: sends figs, tables, and footnotes to last pages
+\RequirePackage[nomarkers,nolists]{endfloat}     % sends tables and figures to the end
+\RequirePackage{endnotes}                        % turns fn into endnotes; place \listofendnotes where you want 
+                                                 %the endnotes to appear (it must be after the last endnote).
+\let\footnote=\endnote
+\newcommand{\listofendnotes}{
+   \begingroup
+   \parindent 0pt
+   \parskip 2ex
+   \def\enotesize{\normalsize}
+   \theendnotes
+   \endgroup
+}
+
+
+\begin{document}
+
+
+\title{Components of Partisan Bias Originating from Single-Member Districts in Multi-Party Systems: The Case of Mexico\tnoteref{t2}}
+\tnotetext[t2]{We are grateful to Jonathan Slapin, conference participants at the Univ.\ of Houston (14--15 Nov.\ 2014), seminar attendees at the Univ.\ of Florida (13 Mar.\ 2015), workshop members of the Political Economy of Social Choices workshop, Casa Matem\'atica Oaxaca (28 Jul.\ 2015) at CIDE (26 Aug.\ 2015) and ITAM (25 Sept.\ 2015) for comments and critiques; to Drew Linzer and Javier M\'arquez for guidance with their computer code; and to IFE's Cartography Department for sharing their experience with automated redistricting since 1996 and most of the data we analyze. The first author would like to acknowledge the support of Asociaci\'on Mexicana de Cultura A.C., of Conacyt, and of Washington University in St.\ Louis, where he was visiting scholar when a good part of this paper was written. Mistakes and omissions are the authors' responsibility.}
+\author[itam]{E.~Magar\corref{cor1}\fnref{fn1}} \ead{emagar@itam.mx}
+\author[pitt]{A.~Trelles} \ead{lat44@pitt.edu}
+\author[mit]{M.~Altman} \ead{escience@mit.edu}
+\author[ufl]{M.P.~McDonald} \ead{Michael.mcdonald@ufl.edu}
+\cortext[cor1]{Corresponding author}
+\fntext[fn1]{We describe contributions to the paper using a standard taxonomy \citep{allen2014credit}. E.~Magar (EM) was lead author, having taken primary responsibility for writing. EM prepared the original draft. and A.~Trelles (AT), M.~Altman (MA) and M.~McDonald (MM) contributed to writing through editing and review. All authors contributed equally to conceptualization. EM lead methodology, with contributions from MM. AT lead data curation, with contributions from EM.}
+\address[itam]{Instituto Tecnol\'ogico Aut\'onomo de M\'exico, Depto de Ciencia Pol\'itica, R\'io Hondo 1, Tizap\'an San Angel, M\'exico DF 01000, Mexico, Tel +52(55)5628-4079, Fax +52(55)5490-4672}
+\address[pitt]{University of Pittsburgh, 4600 Wesley W. Posvar Hall, Pittsburgh PA 15260, USA}
+\address[mit]{Massachusetts Institute of Technology, E25-131, 77 Massachusetts Ave, Cambridge MA 02139, USA}
+\address[ufl]{University of Florida, 234 Anderson Hall, Gainesville FL 32611, USA}
+
+\date{\today}
+
+\begin{abstract}
+\noindent We measure the components of partisan bias---i.e., undue advantage conferred to some party in the conversion of votes into legislative seats---in recent Mexican multi-party congressional elections. Methods to estimate the contributions to partisan bias from malapportionment, boundary delimitations, and turnout are limited to two-party competition. In order to assess the spatial dimension of multi-party elections, we propose an empirical procedure combining three existing approaches. Analysis reveals advantageous, albeit modest, partisan bias in favor of Mexico's former hegemonic ruling party, and especially for the left, relative to the right. The method uncovers systematic and large turnout-based bias in favor of the PRI that has been offset by district geography substantively helping one or both other major parties. 
+\end{abstract}
+
+\begin{keyword}
+redistricting \sep partisan bias \sep malapportionment \sep gerrymandering \sep voter turnout \sep Mexican congressional elections
+\end{keyword}
+
+\maketitle

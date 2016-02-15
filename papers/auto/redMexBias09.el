@@ -1,4 +1,4 @@
-(TeX-add-style-hook "redMexBias08"
+(TeX-add-style-hook "redMexBias09"
  (lambda ()
     (LaTeX-add-bibliographies
      "../bib/redMex")
@@ -21,7 +21,6 @@
      "footnote"
      "enotesize")
     (TeX-run-style-hooks
-     "lipsum"
      "endnotes"
      "endfloat"
      "nolists"
@@ -32,13 +31,9 @@
      "helvet"
      "scaled=.90"
      "mathptmx"
-     "natbib"
-     "sort"
-     "longnamesfirst"
      "tikz"
      "hyperref"
      "hidelinks"
-     "graphicx"
      "pdftex"
      "url"
      "amssymb"
@@ -54,8 +49,10 @@
      "right=1.25in"
      "letterpaper"
      "latex2e"
-     "art12"
-     "article"
+     "elsarticle12"
+     "elsarticle"
      "12pt"
-     "letter")))
+     "letter"
+     "authoryear"
+     "preprint")))
 

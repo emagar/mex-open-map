@@ -1,27 +1,11 @@
-(TeX-add-style-hook "redMexBias08"
+(TeX-add-style-hook "elsevierPreamble"
  (lambda ()
-    (LaTeX-add-bibliographies
-     "../bib/redMex")
-    (LaTeX-add-labels
-     "fn:cites"
-     "E:kingBi"
-     "E:cubeLaw"
-     "F:lambdaRhoEx"
-     "E:kingMulti"
-     "T:3bias"
-     "F:singleYrSeatsVotes"
-     "F:disRelPop2006map"
-     "F:malapp"
-     "F:posterior_s0s3"
-     "T:GKBbreakdown"
-     "T:swRatios")
     (TeX-add-symbols
      "mc"
      "listofendnotes"
      "footnote"
      "enotesize")
     (TeX-run-style-hooks
-     "lipsum"
      "endnotes"
      "endfloat"
      "nolists"
@@ -32,13 +16,9 @@
      "helvet"
      "scaled=.90"
      "mathptmx"
-     "natbib"
-     "sort"
-     "longnamesfirst"
      "tikz"
      "hyperref"
      "hidelinks"
-     "graphicx"
      "pdftex"
      "url"
      "amssymb"
@@ -54,8 +34,10 @@
      "right=1.25in"
      "letterpaper"
      "latex2e"
-     "art12"
-     "article"
+     "elsarticle12"
+     "elsarticle"
      "12pt"
-     "letter")))
+     "letter"
+     "authoryear"
+     "preprint")))
 
