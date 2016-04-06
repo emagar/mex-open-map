@@ -484,7 +484,7 @@ summary(swRats)
 
 rm(dat,dat.pat,elas,elas.ci,fit,prep,tmp) # clean
 
-# Hi Mike, I ran the code above and all seems to be working ok. I have R version 3.2.4 in my machine (ubuntu Linux 14.04). I am puzzled about the old seatsvotes error message you are getting. One workaround is to define all Linzers's functions directly in your session (not just those that I manipulated --- they are prefixed "my." in the code above, and most are commented). Linzer's suite should thus be unnecessary, so long as you replace each call to his functions with the corresponding my.function. Be sure to also load three required packages: mvtnorm, ellipse, and plyr.
+# Hi Mike, I ran the code above and all seems to be working ok. I am running R version 3.2.4 in my machine (ubuntu Linux 14.04). I am puzzled about the "old seatsvotes" error message you are getting. One workaround is to define all Linzers's functions directly in your session (not just those that I manipulated --- they are prefixed "my." in the code above, and most are commented). Linzer's suite should thus be unnecessary, so long as you replace each call to his functions with the corresponding my.function. Be sure to also load three required packages: mvtnorm, ellipse, and plyr.
 # Let me know if this works. 
 
 
