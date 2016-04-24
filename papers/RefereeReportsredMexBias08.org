@@ -1,0 +1,123 @@
+#+SEQ_TODO: DEFEND CONCEDE 2ROUTES TRUE? WAIT | NOCRITIQUE DONE DROPPED
+
+* DONE Mail
+  CLOSED: [2016-04-15 Fri 11:29]
+Dear Dr. Buhaug, 
+It is with great pleasure that I read the good news about our submission. The reviews are constructive, offering substantive advise, and arrived rather fast! I am sure that they will help us improve the manuscript in the hope that it is acceptable for publication in Political Geography. My co-authors and I will gladly proceed with the revise and resubmit. We will send you a revised manuscript within two months. 
+Best,
+
+
+
+Ref.:  Ms. No. PG-2218
+
+Dear Dr. Eric Magar,
+
+Three expert reviewers have now commented on your manuscript. Thank you for waiting. Based on these reviews and my own reading, I invite you to resubmit a revised manuscript. You will see from the review reports appended below that all reviewers see considerable merit in your paper, although they also offer constructive advice on how to make the contribution clearer.
+
+Please let me know within the next couple of weeks whether you will proceed to revise and resubmit this manuscript for Political Geography. The revision should be accompanied with a brief anonymous response letter to the referees. Explain what you did to meet their feedback (or did not do, and why). This response must be anonymous (that is, do not sign the letter).
+
+We need the revision back within the next three months. It will then go back to the same referees for another look. The resubmission must stay below 11,000 words (inclusive) to be acceptable for further processing.
+
+To submit a revision, go to http://ees.elsevier.com/jpgq/ and log in as an Author.  You will find your submission record under the menu item 'Submission Needing Revision'.
+
+Your username is: emagar@itam.mx
+
+If you need to retrieve password details, please go to:
+http://ees.elsevier.com/jpgq/automail_query.asp
+
+PLEASE NOTE: The journal would like to enrich online articles by visualising and providing geographical details described in Political Geography articles. For this purpose, corresponding KML (GoogleMaps) files can be uploaded in our online submission system. Submitted KML files will be published with your online article on ScienceDirect. Elsevier will generate maps from the KML files and include them in the online article.
+
+Political Geography features the Interactive Map Viewer, http://www.elsevier.com/googlemaps. Interactive Maps visualize geospatial data provided by the author in a GoogleMap. To include one with your article, please submit a .kml or .kmz file and test it online at http://elsevier-apps.sciverse.com/GoogleMaps/verification before uploading it with your submission.
+
+Please let me know if you have any questions or concerns.
+
+Yours sincerely
+
+Halvard Buhaug, PhD
+Associate Editor
+Political Geography
+
+Additional Comments:
+
+
+* Mike: The two comments I received from MPSA were:
+- Need a little more detail on the MCMC algorithm
+- Need more context for non-Mexico scholars
+
+* Reviewer #2
+
+** NOCRITIQUE This MS deals with partisan bias, in terms of discrepancies between seat and vote shares, looking more closely at three particular sources of such bias. Using data from recent Mexican elections, the paper details a procedure on how to calculate the different sources of this bias in single-member district systems where more than two parties compete.
+   CLOSED: [2016-04-11 Mon 16:13]
+
+** NOCRITIQUE I have to admit from the outset that I'm no expert on this particular topic, although I am familiar with it and work on topics that are not too far removed. Hence, my comments are those of a "generalist reviewer", and are more related to the framing of the paper and different conceptual issues that are not entirely clear to me.
+   CLOSED: [2016-04-11 Mon 16:14]
+
+** NOCRITIQUE But, my overall impression of this MS is that it has the potential to make a nice contribution to the literature and study of partisan bias, not the least because the authors provide a very clear template describing how others could go about in calculating partisan bias in other single-member district system. The summary of sources of partisan biases and the comprehensive treatment and discussion of the issue also makes for a good overview, also for those not working closely on the topic (such as myself). The methods and design are transparent, and mostly well justified, and from what I can understand the analysis is well conducted. I think this could become a publishable article, even in a top outlet such as Political Geography, without too much extra effort on the part of the authors. Still, there are a few things that need to be revisited before the MS is publishable.
+   CLOSED: [2016-04-11 Mon 16:14]
+
+** CONCEDE The first issue relates to the "dual framing" of the paper: There is the methodological procedure for calculating sources of bias when there are more than two parties, and there are the substantive results on party biases for the larger Mexican parties. I think the main contribution is the former and this is also mostly how this paper is framed. However, there are parts of the paper that reads as if the results for Mexican bias is the key contribution, and the "dual framing" is also reflected in the rather lengthy (but well written) sections on Mexico starting on p.13.
+
+** CONCEDE I would go for a purer methodological framing of this paper, and make even clearer that Mexico is "just" an application/illustration (even if it is an interesting one, and for a large country). This could potentially go together with shortening the discussion on Mexico, and  freeing up some more space for discussion about the methodological choices and potential problems, conceptual discussions of the various sources of bias etc. There is another particular reason why I think this way of framing the paper is advantageous: As the authors remark, Mexico is a mixed-member electoral system, with a PR tier to reduce disproportionality. This is completely left out of the authors' analysis. While the authors make some pertinent remarks about effects of partisan bias in the single-member tier on political behavior on pp.13-14, it is still the case that we cannot learn much about the overall extent of partisan bias and issues of representation in the Mexican system from this analysis: There will be in all likelihood be a huge upwards bias, and statements such as those made in the abstract concerning the "partisan bias in favor of Mexico's former hegemonic ruling party" etc will be misleading to those who just skim the paper and do not read carefully. If the authors want to make a substantive contribution on partisan bias in a particular country, they would then either need to incorporate the PR tier when discussing overall partisan bias in Mexico, or choose another country  that is a pure single-member system.
+- Might raise issue with other reviewers?
+- This is actually how an earlier version of the paper went about.
+
+** CONCEDE However, if the authors rather chose to frame this even more clearly as a methodological contribution with single-member tier of Mexico as an illustration, I think this issue is not to big (substantive conclusions on overall bias in Mexico would still need to come with some clear caveats, however, so the abstract, for example, would need re-phrasing.
+
+** NOCRITIQUE I basically buy the approach, and the different sources of bias all seem plausible and are well discussed. Still, there are a couple of things that could be discussed/elaborated on:
+   CLOSED: [2016-04-15 Fri 11:33]
+
+** CONCEDE First, it is not clear from the outset how measuring pure partisan bias is/can be differentiated from biases related to the size of the party and characteristics of the system favoring larger parties in general (not because of the party's identity, but because of its size). For example, consider two hypothetical elections in which two parties A and B receive the exact same vote share in all districts in a given election. In election 1, A receives 51% and B 49% of votes, in all districts, and A receives all delegates. In election 2, B receives 51% in all districts and all delegates. Now, to me, I wouldn't say that the system is necessarily biased in favor of  A in the first election and B in the second; this is not about the party's identity but about the responsiveness of the system (which does not change from election 1 to 2). An early clarifying discussion, which should be really simple so that non-experts can understand, of how such issues are conceptually handled when delineating what is partisan bias, and a clarification if this truly matters for any of the sources of bias calculated would be very welcome.
+
+** CONCEDE Second, given the definition of party bias, I see why the "turnout-based" bias should be part of it. However, one problem here that could be discussed is that turnout in a given district is not something that is exogenously given, but rather affected by the actions and campaign strategies of the different parties. Parties may, for example, campaign harder to get out the vote in districts that are close to call, and some parties may simply be better at winning such districts. Hence, if, let's say the PRI wins a lot of high-turnout districts, it could be due to some inherent actions and capacities of the party, and in a sense it would be wrong to consider this a bias against the PRI in the system. I don't think this is a very big issue, but I think it merits some discussion.
+
+** CONCEDE Considering PRI-Green as an alliance and assigning all wins to PRI seems to be a major assumption (which the authors are open about). Now, even if the substantive results for Mexico is downplayed, it would also be interesting from a general point of view to know by how much such assumptions alter the results and conclusions. What happens to the results if PRI-Green is measured as one entity, for example (as suggested on top p.16)?
+
+** CONCEDE The rationale for studying partisan bias for each election separately is well explained. However, what if one wants to generalize and test for a systematic bias (or even particular systematic such sources) for/against a party within a system that lasted for a specific period of time? I understand that creeping malapportionment and turnout will change by the election, but if researchers want to make such generalizations, how could they apply/alter your framework to produce (at least rough) tests of this. It's interesting to come up with exact numbers for a particular election, but sometimes the question is whether this is an inherent/more systematic feature of the system, and as the authors show some sources of bias show substantial changes between elections, favoring a party in one and disfavoring it in the next. If the authors could devise a strategy for conducting such a test, this would greatly enhance their contribution, I think.
+
+** CONCEDE Very minor point: Population levels in districts are based on linear interpolations between censuses. Following standard models of population growth, it would be more appropriate to assume constant population growth rates over the time interval, which can easily be calculated (meaning that population growth in absolute numbers will be smaller for earlier years, if growth is positive).
+
+** NOCRITIQUE All in all, I learned a lot from reading this paper, and I think it is a very good piece of scholarly work. I recommend that the authors are given the chance to revise and resubmit the paper.
+   CLOSED: [2016-04-11 Mon 16:13]
+
+
+* Reviewer #3
+
+** NOCRITIQUE This article was a pleasure to read and to evaluate. It is well written, with a theory clearly presented, interesting findings, and a contribution to the estimation of seats and votes in multi-party systems. The article brings together three different traditions in the study of seats and votes, unifying them in a model that allows researchers to discriminate the sources of biases in multi-party races. The article will be of interest to those that conduct basic research on seat-vote models as well as those interested in the mechanical properties of electoral rules in Mexico. Consequently, I recommend publication as is.
+   CLOSED: [2016-04-11 Mon 16:18]
+
+** NOCRITIQUE I do not have recommended changes to the article. The article is honest in stating that it is an original and interesting improvement on existing models but not a radically different modeling strategy. I appreciate that the article does not try to oversell their contribution or findings. 
+   CLOSED: [2016-04-11 Mon 16:18]
+
+** CONCEDE That said, the authors could be more aggressive in the introduction to convey to readers how the current article changes prior conventional wisdom in the Mexican election and what contributions will result from estimating their model in other electoral systems. Beyond that, I could only hope that every manuscript I have to review would be such an easy and interesting reading.
+
+
+
+
+* Reviewer #4
+
+** NOCRITIQUE This paper intends to identify the relative and (assumed independent) impact of three different components of partisan bias  in the Mexican electoral system. Application case are lower-chamber federal legislative elections 2003-2012. The paper focuses exclusively on the single member districts  component of the Mexican electoral system.
+   CLOSED: [2016-04-11 Mon 16:19]
+
+** TRUE? The objective of this paper is ambitious. The authors claim to combine most important methodical contributions in this context (Grofman et al. 1997, King 1990, Linzer 2012).  More specifically, it aims at separating the relative impact of malapportionment, boundary delimitations, and differential turnout in an additive multinomial logit model. Sometimes, one has the impression, that a failed redistricting reform is at the center of the paper --- which is confusing.
+- Two elements:
+  1. Are we really using an additive multinomial model? Check King for clues. 
+  2. Failed redistricting reform at center: Re-phrase, we use the failed reform to test some expectations, such as that malapp should drop; are we using it as "quasi-experiment" in our research design?
+
+** CONCEDE Description and discussion of the Mexican electoral system is negligent. The author writes: "Section 4 describes Mexico's mixed-member electoral system, isolating the plurality tier for analysis" (p. 5). The description of the electoral system can actually be found in footnote 5. But  what does 'isolating' mean? The authors state: "We examine, in isolation, the elections held in the single member plurality-win districts. We do so because all voting and most campaigning take place in the plurality tier." The reviewer considers this legitimation as not sufficient. Note that the current Mexican electoral system includes stipulations balancing excessive partisan bias and including compensation schemes. More specifically, the electoral law prescribes an upper bound of seat-vote deviation of 8%. The is not referred in the paper. Why ? Actually, estimating partisan bias for the SMD component exclusively without referring to this stipulation seems to be misleading.
+
+** 2ROUTES One would never seriously propose, to measure partisan bias exclusively for the SMD component in a mixed system like, e.g. the German electoral system.
+1. Defend
+2. Estimate bias in mixed system and report in fn
+
+** CONCEDE It is reasonable to expect strategic coordination of parties, candidates and voters in this context. The paper does not propose a theory what partisan bias means in such a setting. The authors cite Calvo/Micozzi (2005) but do not systematically take into account their arguments, especially the insight that "with more than two parties the relative change in seats depends critically on changes in the number of parties" (Calvo/Micozzi p. 1051)
+ 
+** DEFEND More specifically: What are the causes of, and what is the extent of pre-coalitions in districts? Does it really make sense to estimate partisan bias in the proposed way in such a context? The authors' statement on p.16, that just adding up joint votes shares consisting of precoalitions of parties is 'far from satisfactory' but 'practical' is far from being convincing. How to validly assess asymmetries in the seats-votes relationship if parties coordinate on joint candidates, and withdraw/strategically place candidates in strategically chosen districts ? It would be helpful to have a systematic description of the occurence and spatial distribution of these facts (see e.g. Linzer 2012, fig  1.)
+
+** CONCEDE Section 3 is titled 'Measurement via Monte Carlo simulation'. I guess, the authors mean 'estimation'. The one-page section is not very instructive --- it provides no detailed insights to the applied procedure. The description of the modeling approach is not precise enough. (Some details are provided in footnote 14 in the results section).  More details of the formal setup (including the electoral system) are necessary. The derivation from, and the combination of the existing approaches should be precise and  transparent.
+
+** TRUE? The authors use a multinomial logit type of model --- I missed a discussion of the crucial assumption of the independence of irrelevant alternatives (IIA) which implies equal substitution patterns which may not be met. How do the authors account for districts with varying sets and sizes of candidates in the estimation?
+
+** DEFEND On p. 21, the authors state: "Leaving aside the question of how meaningful the estimated quantities are..."  I admit that this statement is somewhat disturbing. The interpretation and usage of the estimated effects seem to be problematic: it is meanwhile established knowledge that coefficients of multiple nonlinear functions (as in MNL)  cannot be interpreted simply based on statistical significance, and even on the sign of a coefficient. Covariates have to be explicitly fixed for explicit values in order to get conditional probabilities / market shares, marginals and elasticies. Insafar the study should reassess the impact of the estimated coefficients for relevant and typical situations, and for the respective partisan biases in terms of  changes in market shares. E.g., illustrative scenarios in Table 1 could be provided for estimated coefficients.
+
+** CONCEDE Table 3 uses OLS regression for deriving swing ratios: "We derive swing ratios by regressing a party's seat shares in simulated elections on the party's simulated vote shares." Does this regression account for the uncertainity/credibility of simulated shares?
+
