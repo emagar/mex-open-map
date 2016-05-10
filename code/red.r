@@ -1,6 +1,3 @@
-# Note: 2015 map was originally called 2013 (the year 2013 still appears in some graphs)
-# When cleaning the code, will have to change object and column names from "13" to "15"
-
 rm(list=ls())
 
 wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/")
@@ -9,7 +6,7 @@ gd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/g
 setwd(wd)
 
 #########################################################################################
-# IMPORTS AND PREPARES OBJECT MAPPING SECTIONS TO 1979, 1997, 2006, AND 2015 DISTRICTS ##
+# IMPORTS AND PREPARES OBJECT MAPPING SECTIONS TO 1979, 1997, 2006, AND 2013 DISTRICTS ##
 #########################################################################################
 #
 cd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/code/")
@@ -17,20 +14,20 @@ source(file = paste(cd, "eqPrep.r", sep = ""), echo = TRUE)
 rm(cd)
 #
 ####################################################################################
-## IMPORTS 2015 DISTRICT DATA --- no longer needed, info is included in object eq ##
+## IMPORTS 2013 DISTRICT DATA --- no longer needed, info is included in object eq ##
 ####################################################################################
 ## #source("codeFor2015districts.r") # RUN TO CODE 1st and 3rd PROPOSALS
 ## load(file="dis2015.RData")
 ## head(dis2013)
 
-###########################################
-# nomenclatura de estructuras distritales #
-# 1977-1995: 1979 map                     #
-# 1996-2004: 1997 map                     #
-# 2005-2015: 2006 map                     #
-# 2013.1: 2015 map proposal 1             #
-# 2013.3: 2015 map proposal 3 (final)     #
-###########################################
+#################################################
+# nomenclatura de estructuras distritales       #
+# 1977-1995: 1979 map                           #
+# 1996-2004: 1997 map                           #
+# 2005-2015: 2006 map                           #
+# 2013.1: 2013 redistricting proposal 1         #
+# 2013.3: 2013 redistricting proposal 3 (final) #
+#################################################
 
 ##################################
 ## READ SECTION-LEVEL ELEC DATA ##
@@ -52,10 +49,12 @@ elecs060912.seccion <- list(e06=e06, e09=e09, e12=e12); rm(e06, e09, e12)
 ############################################################################################################
 ## READ 0312 ELEC DATA AGGREGATED IN 2012, 2013.1, AND 2013.3 DISTRICTS PREPARED WITH analizaEscenarios.r ##
 ############################################################################################################
+# emm 1may16: hasta aquí he revisado. Hay que correr analizaEscenarios.r para cerciorar que siga jalando bien
 ls()
-dd2 <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # prepared data directory
-load(file = paste(dd2, "elec0312.RData"))
+dd2 <- c("/home/eric/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # prepared data directory
+load(file = paste(dd2, "elec0312.RData", sep=""))
 #elec0312 <- elec03060912; rm(elec03060912)
+ls()
 rm(dd2)
 #
 ## use to extract all objects from list elec0312 just imported
@@ -889,7 +888,7 @@ tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
 ## 31 yuc  1545690  1556622  -0.7022900
 ## 32 zac  1121740  1336496 -16.0685853
 #
-## # compare 2006 population with estimate using 1995-2000 rate of change (what ife used in 2004-5)
+## # compare 2006 population with estimate using 1995-2000 rate of change (what ife could have used in 2004-5)
 ## tmp.b <- (pob.edos$ptot2000 * 1994 - pob.edos$ptot1994 * 2000) / (1994 - 2000); tmp.a <- (pob.edos$ptot1994 - tmp.b) / 1994; # interpolation parameters
 ## pob.edos$est2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 1);
 ## pob.edos$dif <- (pob.edos$est2006 - pob.edos$ptot2006)*100 / pob.edos$ptot2006
@@ -954,7 +953,7 @@ target.edos.func <- function(apportionment2use = "s"){
                 if (apportionment2use == "r"){
                     apportionment <- app.structures$map2015p
                 } else {
-                    print("Valid apportionment2use options are 'h' for map1979 (heroles), 'l' for map1997 (lujambio), 's' for map2006 (sanchez), and 'r' for map2015p (rojano)"); apportionment <- rep(0, 32)}
+                    print("Valid apportionment2use options are 'h' for map1979 (heroles), 'l' for map1997 (lujambio), 's' for map2006 (sanchez), and 'r' for map2013.3 (rojano)"); apportionment <- rep(0, 32)}
             }
         }
     }
@@ -1191,7 +1190,6 @@ votPobDis0018 <- list(pob.distMap1997=pob.distMap1997,
 save(votPobDis0018, file = paste(wd, "votPobDis0018.RData", sep = ""))
 
 rm(tmp, tmp2)
-head(df2006d0)
 #
 #### Not always needed, it seems, because object with rrin and rris and no reln nor rels, exported below, is imported above. Fix this
 # paste district populations to election objects
