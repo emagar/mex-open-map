@@ -1494,7 +1494,6 @@ colnames(df2012d1)[which( names(df2012d1)=="prdcw" )] <- "prdw"
 colnames(df2012d3)[which( names(df2012d3)=="prdcw" )] <- "prdw"
 #
 
-
 #################################################################
 #################################################################
 ## compute district similarity index (cox+katz book pp. 15-17) ##
@@ -1577,7 +1576,11 @@ quantile(similarityMap2015p3with2015p1$simPob)
 table(similarityMap2015p3with2015p1$simPob==1)
 rm(i, n, natQ, stateQ, tmp, tmp2, tmp3)
 
-
+head(similarityMap2015p3with2015p1)
+save(similarityMap2015p1with2012, similarityMap2015p3with2012, similarityMap2015p3with2015p1, file = "dsi.RData")
+write.csv(similarityMap2015p1with2012,   file = "dsi2013-1-2006.csv", row.names = FALSE)
+write.csv(similarityMap2015p3with2012,   file = "dsi2013-3-2006.csv", row.names = FALSE)
+write.csv(similarityMap2015p3with2015p1, file = "dsi2013-3-2013-1.csv", row.names = FALSE)
 
 ##############################################################################################################################################
 ## 2006 MAP DISTRICT VOLATILITY AND MEAN MARGIN (HOW CAN THEY BE COMPOUNDED IN A MEASURE? MG/VOL SEEMS NOT TO WORK ... FINANCE LITERATURE?) ##

@@ -30,6 +30,527 @@ rm(cd)
 ##################################
 ## READ SECCION-LEVEL ELEC DATA ##
 ##################################
+#
+##################################
+## pegué este bloque el 11may16 ##
+##################################
+## añade voto 2015, hay que revisar si "extracts 2013 districts only", que se repite en el bloque 2012, no es redundante en 2012
+tmp <- read.csv( paste(dd, "dfSeccion2015.csv", sep=""), header=TRUE)
+tmp <- tmp[order(tmp$edon, tmp$disn, tmp$seccion),]
+# compute effective vote (without void ballots)
+tmp$efec <- tmp$pan + tmp$pri + tmp$prd + tmp$pvem + tmp$pt + tmp$mc + tmp$panal + tmp$morena + tmp$ph + tmp$ps + tmp$pri_pvem + tmp$prd_pt + tmp$indep1 + tmp$indep2 
+# aggregates coalition votes where needed
+tmp$dcoalpri <- rep(0, times=nrow(tmp))
+tmp$dcoalpri[tmp$pri_pvem>0] <- 1 # misses sections with coalition but no joint pri-pvem vote... next lines fix this
+#table(tmp$dcoalpri) # debug
+tmp1 <- ave(tmp$dcoalpri, as.factor(tmp$edon*100+tmp$disn), FUN=sum, na.rm=TRUE)
+tmp2 <- ave(rep(1,length(tmp$dcoalpri)), as.factor(tmp$edon*100+tmp$disn), FUN=sum, na.rm=TRUE)
+tmp3 <- tmp1/tmp2
+tmp$dcoalpri[tmp3>=.5] <- 1
+rm(tmp1,tmp2,tmp3)
+tmp$pric <- tmp$pri+tmp$pvem+tmp$pri_pvem
+#
+tmp$dcoalprd <- rep(0, times=nrow(tmp))
+tmp$dcoalprd[tmp$prd_pt>0] <- 1 # misses sections with coalition but no joint pri-pvem vote... next lines fix this
+#table(tmp$dcoalprd) # debug
+tmp1 <- ave(tmp$dcoalprd, as.factor(tmp$edon*100+tmp$disn), FUN=sum, na.rm=TRUE)
+tmp2 <- ave(rep(1,length(tmp$dcoalprd)), as.factor(tmp$edon*100+tmp$disn), FUN=sum, na.rm=TRUE)
+tmp3 <- tmp1/tmp2
+tmp$dcoalprd[tmp3>0] <- 1 # rule for pt must be different than pvem: will not get vote in many secciones where it teamed with prd
+rm(tmp1,tmp2,tmp3)
+tmp$prdc <- tmp$prd+tmp$pt+tmp$prd_pt
+#
+#
+# extracts 2013 districts to re-map 2006 districts
+dis2013 <-       eq[,c("edon","dis2015","munn","seccion","dis2013.3","dis2013.1")]
+colnames(dis2013) <- c("edon","disn","munn","seccion","dis3er13","dis1er13")
+#
+# unassigned secciones need to be removed (these remain unassigned even after eqPrep's work
+## sel <- which(dis2013$disn==0 & dis2013$dis1er13==0); sel
+## dis2013[sel,]
+dis2013 <- dis2013[-which(dis2013$disn==0 | dis2013$dis1er13==0 | dis2013$dis3er13==0),]
+## THESE WERE DROPPED IN EXCEL: dis2013 <- dis2013[-which(dis2013$seccion>8000),] # two secciones in puebla have disconnected seccion nums and blank municipality... ife anticipates but awaits court ruling?
+#
+# maybe unnecessary (IFE's municipal codes slightly differ from census)
+dis2013$ife <- dis2013$edon*1000 + dis2013$munn
+dis2013 <- dis2013[,c("edon","disn","munn","seccion","ife","dis3er13","dis1er13")]
+#
+## NO LONGER NEEDED, OBJECT eq IMPORTED ABOVE HAS ALL THIS INFO
+## ## IMPORTS 2013 DISTRICTS PROPOSAL DATA
+## #source("codeFor2013districts.r") # RUN TO CODE 2013 ESCENARIO 1 and 3  DISTRICTS
+## load(file=paste(dd, "dis2013.RData", sep=""))
+#
+tmp$edon.secn <- tmp$edon*10000 + tmp$seccion
+dis2013$edon.secn <- dis2013$edon*10000 + dis2013$seccion
+tmp1 <- dis2013[,c("edon.secn","dis1er13","dis3er13")]
+tmp <- merge(x = tmp, y = tmp1, by = "edon.secn", all.x = TRUE)
+colnames(tmp)[which(colnames(tmp)=="dis1er13")] <- "dis13.1"
+colnames(tmp)[which(colnames(tmp)=="dis3er13")] <- "dis13.3"
+rm(tmp1)
+#
+# OJO: some secciones used in 2015 may not appear listed in IFE's 2013 redistricting scenarios. List of such secciones follows.
+## select <- which(dis2013$dis1er13>0 & dis2013$dis3er13==0)
+## data.frame(edon=dis2013$edon[select], seccion=dis2013$seccion[select])
+## #data.frame(edon=dis2013$edon[is.na(dis2013$dis3er13)==TRUE], seccion=dis2013$seccion[is.na(dis2013$dis3er13)==TRUE])
+## dim(tmp); dim(dis2013)
+## dis2013[dis2013$dis3er13==0,] # debug
+#
+colnames(tmp)
+## Aggregates 2015 results by district
+df2015d0 <- tmp[order(tmp$edon, tmp$disn),] # resultados con distritos reales (adoptados en 2005)
+# así se hace en R un by yr mo: egen tmp=sum(invested) de stata
+df2015d0$pan <- ave(df2015d0$pan, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$pri <- ave(df2015d0$pri, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$pric <- ave(df2015d0$pric, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$prd <- ave(df2015d0$prd, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$prdc <- ave(df2015d0$prdc, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$pt <- ave(df2015d0$pt, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$pvem <- ave(df2015d0$pvem, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$mc <- ave(df2015d0$mc, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$panal <- ave(df2015d0$panal, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$morena <- ave(df2015d0$morena, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$ph <- ave(df2015d0$ph, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$ps <- ave(df2015d0$ps, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$indep1 <- ave(df2015d0$indep1, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$indep2 <- ave(df2015d0$indep2, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$pri_pvem <- ave(df2015d0$pri_pvem, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$prd_pt <- ave(df2015d0$prd_pt, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$nr <- ave(df2015d0$nr, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$nul <- ave(df2015d0$nul, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$efec <- ave(df2015d0$efec, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$lisnom <- ave(df2015d0$lisnom, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$tmp <- rep(1, times = nrow(df2015d0))
+df2015d0$tmp <- ave(df2015d0$tmp, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$dcoalpri <- ave(df2015d0$dcoalpri, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$dcoalpri <- df2015d0$dcoalpri/df2015d0$tmp # share of secciones with pri coalition in district
+colnames(df2015d0)[which(colnames(df2015d0)=="dcoalpri")] <- "shSecCoalPri"
+df2015d0$dcoalprd <- ave(df2015d0$dcoalprd, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
+df2015d0$dcoalprd <- df2015d0$dcoalprd/df2015d0$tmp # share of secciones with prd coalition in district
+colnames(df2015d0)[which(colnames(df2015d0)=="dcoalprd")] <- "shSecCoalPrd"
+df2015d0$tmp <- NULL
+df2015d0 <- df2015d0[duplicated(df2015d0$edon*100+df2015d0$disn)==FALSE,]
+## table(df2015d0$shSecCoalPri) ## debug: should now be 0 or 1 after fix used above
+## table(df2015d0$shSecCoalPrd) ## debug: should now be 0 or 1 after fix used above
+df2015d0$pri_pvem[df2015d0$shSecCoalPri==0] # debug: no need to assign, all == 0
+df2015d0$pric[df2015d0$shSecCoalPri==0] <- 0
+df2015d0$pri[df2015d0$shSecCoalPri==1] <- 0
+df2015d0$pvem[df2015d0$shSecCoalPri==1] <- 0
+#df2015d0$pri_pvem <- NULL
+#
+df2015d0$prd_pt[df2015d0$shSecCoalPrd==0] # debug: no need to assign, all == 0
+df2015d0$prdc[df2015d0$shSecCoalPrd==0] <- 0
+df2015d0$prd[df2015d0$shSecCoalPrd==1] <- 0
+df2015d0$pt[df2015d0$shSecCoalPrd==1] <- 0
+#df2015d0$prd_pt <- NULL
+df2015d0[df2015d0$edon==9,]
+#
+# RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 1)
+df2015d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2015d1$pan <- ave(df2015d1$pan, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$pri <- ave(df2015d1$pri, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$pric <- ave(df2015d1$pric, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$prd <- ave(df2015d1$prd, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$prdc <- ave(df2015d1$prdc, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$pt <- ave(df2015d1$pt, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$pvem <- ave(df2015d1$pvem, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$mc <- ave(df2015d1$mc, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$panal <- ave(df2015d1$panal, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$morena <- ave(df2015d1$morena, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$ph <- ave(df2015d1$ph, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$ps <- ave(df2015d1$ps, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$indep1 <- ave(df2015d1$indep1, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$indep2 <- ave(df2015d1$indep2, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$pri_pvem <- ave(df2015d1$pri_pvem, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$prd_pt <- ave(df2015d1$prd_pt, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$nr <- ave(df2015d1$nr, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$nul <- ave(df2015d1$nul, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$efec <- ave(df2015d1$efec, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$lisnom <- ave(df2015d1$lisnom, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$tmp <- rep(1, times = nrow(df2015d1))
+df2015d1$tmp <- ave(df2015d1$tmp, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$dcoalpri <- ave(df2015d1$dcoalpri, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$dcoalpri <- df2015d1$dcoalpri/df2015d1$tmp # share of secciones with pri coalition in district
+colnames(df2015d1)[which(colnames(df2015d1)=="dcoalpri")] <- "shSecCoalPri"
+df2015d1$dcoalprd <- ave(df2015d1$dcoalprd, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
+df2015d1$dcoalprd <- df2015d1$dcoalprd/df2015d1$tmp # share of secciones with prd coalition in district
+colnames(df2015d1)[which(colnames(df2015d1)=="dcoalprd")] <- "shSecCoalPrd"
+df2015d1$tmp <- NULL
+df2015d1 <- df2015d1[duplicated(df2015d1$edon*100+df2015d1$dis13.1)==FALSE,]
+df2015d1$shSecCoalPri[df2015d1$edon==9] ## debug: should have some districts with incomplete coalition...
+#
+# RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 3)
+df2015d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2015d3$pan <- ave(df2015d3$pan, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$pri <- ave(df2015d3$pri, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$pric <- ave(df2015d3$pric, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$prd <- ave(df2015d3$prd, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$prdc <- ave(df2015d3$prdc, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$pt <- ave(df2015d3$pt, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$pvem <- ave(df2015d3$pvem, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$mc <- ave(df2015d3$mc, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$panal <- ave(df2015d3$panal, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$morena <- ave(df2015d3$morena, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$ph <- ave(df2015d3$ph, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$ps <- ave(df2015d3$ps, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$indep1 <- ave(df2015d3$indep1, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$indep2 <- ave(df2015d3$indep2, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$pri_pvem <- ave(df2015d3$pri_pvem, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$prd_pt <- ave(df2015d3$prd_pt, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$nr <- ave(df2015d3$nr, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$nul <- ave(df2015d3$nul, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$efec <- ave(df2015d3$efec, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$lisnom <- ave(df2015d3$lisnom, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$tmp <- rep(1, times = nrow(df2015d3))
+df2015d3$tmp <- ave(df2015d3$tmp, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$dcoalpri <- ave(df2015d3$dcoalpri, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$dcoalpri <- df2015d3$dcoalpri/df2015d3$tmp # share of secciones with pri coalition in district
+colnames(df2015d3)[which(colnames(df2015d3)=="dcoalpri")] <- "shSecCoalPri"
+df2015d3$dcoalprd <- ave(df2015d3$dcoalprd, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
+df2015d3$dcoalprd <- df2015d3$dcoalprd/df2015d3$tmp # share of secciones with prd coalition in district
+colnames(df2015d3)[which(colnames(df2015d3)=="dcoalprd")] <- "shSecCoalPrd"
+df2015d3$tmp <- NULL
+df2015d3 <- df2015d3[duplicated(df2015d3$edon*100+df2015d3$dis13.3)==FALSE,]
+df2015d3$shSecCoalPri[df2015d3$edon==9] ## debug: should have some districts with incomplete coalition...
+#
+# removes redundant columns
+df2015d0 <- df2015d0[,c("edon","disn"   ,"pan","pri","pric","prd","prdc","pt","pvem","mc","panal","morena","ph","ps","pri_pvem","prd_pt","indep1","indep2","efec","nr","nul","lisnom","shSecCoalPri","shSecCoalPrd")]
+df2015d1 <- df2015d1[,c("edon","dis13.1","pan","pri","pric","prd","prdc","pt","pvem","mc","panal","morena","ph","ps","pri_pvem","prd_pt","indep1","indep2","efec","nr","nul","lisnom","shSecCoalPri","shSecCoalPrd")]
+df2015d3 <- df2015d3[,c("edon","dis13.3","pan","pri","pric","prd","prdc","pt","pvem","mc","panal","morena","ph","ps","pri_pvem","prd_pt","indep1","indep2","efec","nr","nul","lisnom","shSecCoalPri","shSecCoalPrd")]
+#
+colnames(df2015d0)[2] <- colnames(df2015d1)[2] <- colnames(df2015d3)[2] <- "disn"
+#
+dim(df2015d0)
+dim(df2015d1)
+dim(df2015d3)
+head(df2015d0[df2015d0$edon==6,])
+head(df2015d1)
+head(df2015d3)
+#
+# agrega votos de coalicion pri donde las hubo con base en la proporcion de secciones con coalicion en el nuevo distrito
+## df2015d0$pric[df2015d0$shSecCoalPri<.5] <- 0
+df2015d0$pri_pvem <- NULL
+df2015d0$prd_pt <- NULL
+## df2015d0$pri[df2015d0$shSecCoalPri>=.5] <- 0
+## df2015d0$pvem[df2015d0$shSecCoalPri>=.5] <- 0
+#
+#df2015d1$pripvem[df2015d1$shSecCoalPri<.5] # debug: need to assign >0 to pri and pvem in new districts coded as having no coalition
+df2015d1$pric[df2015d1$shSecCoalPri<.5] <- 0
+shrPri <- df2015d1$pri[df2015d1$shSecCoalPri<.5] / ( df2015d1$pri[df2015d1$shSecCoalPri<.5] + df2015d1$pvem[df2015d1$shSecCoalPri<.5] )
+df2015d1$pri[df2015d1$shSecCoalPri<.5] <- df2015d1$pri[df2015d1$shSecCoalPri<.5] + shrPri * df2015d1$pri_pvem[df2015d1$shSecCoalPri<.5]
+df2015d1$pvem[df2015d1$shSecCoalPri<.5] <- df2015d1$pvem[df2015d1$shSecCoalPri<.5] + (1-shrPri) * df2015d1$pri_pvem[df2015d1$shSecCoalPri<.5]
+df2015d1$pri_pvem <- NULL
+df2015d1$pri[df2015d1$shSecCoalPri>=.5] <- 0
+df2015d1$pvem[df2015d1$shSecCoalPri>=.5] <- 0
+#
+df2015d1$prdc[df2015d1$shSecCoalPrd<.5] <- 0
+shrPrd <- df2015d1$prd[df2015d1$shSecCoalPrd<.5] / ( df2015d1$prd[df2015d1$shSecCoalPrd<.5] + df2015d1$pt[df2015d1$shSecCoalPrd<.5] )
+df2015d1$prd[df2015d1$shSecCoalPrd<.5] <- df2015d1$prd[df2015d1$shSecCoalPrd<.5] + shrPrd * df2015d1$prd_pt[df2015d1$shSecCoalPrd<.5]
+df2015d1$pt[df2015d1$shSecCoalPrd<.5] <- df2015d1$pt[df2015d1$shSecCoalPrd<.5] + (1-shrPrd) * df2015d1$prd_pt[df2015d1$shSecCoalPrd<.5]
+df2015d1$prd_pt <- NULL
+df2015d1$prd[df2015d1$shSecCoalPrd>=.5] <- 0
+df2015d1$pt[df2015d1$shSecCoalPrd>=.5] <- 0
+#
+df2015d3$pric[df2015d3$shSecCoalPri<.5] <- 0
+shrPri <- df2015d3$pri[df2015d3$shSecCoalPri<.5] / ( df2015d3$pri[df2015d3$shSecCoalPri<.5] + df2015d3$pvem[df2015d3$shSecCoalPri<.5] )
+df2015d3$pri[df2015d3$shSecCoalPri<.5] <- df2015d3$pri[df2015d3$shSecCoalPri<.5] + shrPri * df2015d3$pri_pvem[df2015d3$shSecCoalPri<.5]
+df2015d3$pvem[df2015d3$shSecCoalPri<.5] <- df2015d3$pvem[df2015d3$shSecCoalPri<.5] + (1-shrPri) * df2015d3$pri_pvem[df2015d3$shSecCoalPri<.5]
+df2015d3$pri_pvem <- NULL
+df2015d3$pri[df2015d3$shSecCoalPri>=.5] <- 0
+df2015d3$pvem[df2015d3$shSecCoalPri>=.5] <- 0
+#
+df2015d3$prdc[df2015d3$shSecCoalPrd<.5] <- 0
+shrPrd <- df2015d3$prd[df2015d3$shSecCoalPrd<.5] / ( df2015d3$prd[df2015d3$shSecCoalPrd<.5] + df2015d3$pt[df2015d3$shSecCoalPrd<.5] )
+df2015d3$prd[df2015d3$shSecCoalPrd<.5] <- df2015d3$prd[df2015d3$shSecCoalPrd<.5] + shrPrd * df2015d3$prd_pt[df2015d3$shSecCoalPrd<.5]
+df2015d3$pt[df2015d3$shSecCoalPrd<.5] <- df2015d3$pt[df2015d3$shSecCoalPrd<.5] + (1-shrPrd) * df2015d3$prd_pt[df2015d3$shSecCoalPrd<.5]
+df2015d3$prd_pt <- NULL
+df2015d3$prd[df2015d3$shSecCoalPrd>=.5] <- 0
+df2015d3$pt[df2015d3$shSecCoalPrd>=.5] <- 0
+rm(shrPri,shrPrd)
+df2015d1[df2015d1$edon==9,]
+#
+## winner (different methos than used in 2012 and earlier)
+# handy function to sort one data frame by order of another, matching data frame
+sortBy <- function(target, By){
+    t <- target; b <- By;
+    do.call(rbind, lapply(seq_len(nrow(b)), 
+            function(i) as.character(unlist(t[i,])[order(unlist(-b[i,]))]))) # change to -b if decreasing wished
+}
+## # example
+## v <- data.frame(c1=c(30,15,3), c2=c(10,25,2), c3=c(20,35,4))
+## w <- data.frame(c1=c("thirty","fifteen","three"), c2=c("ten","twenty-five","two"), c3=c("twenty","thirty-five","four"))
+## v.sorted <- t(apply(v, 1, function(x) sort(x, decreasing = TRUE))) # sort each row of df -- http://stackoverflow.com/questions/6063881/sorting-rows-alphabetically
+## w.sorted <- sortBy(target = w, By = v)
+## sortBy(target = v, By = v)
+#
+## this sorts matrix rows faster than function above
+# vot <- t(apply(vot, 1, function(x) sort(x, decreasing = TRUE)))
+#colnames(df2015d0)
+tmp <- c("pan", "pri", "pric", "prd", "prdc", "pt", "pvem", "mc", "panal", "morena", "ph", "ps","indep1","indep2")
+tmpv <- df2015d0[,tmp]
+tmpl <- matrix(rep(tmp,300), byrow=TRUE, nrow=300)
+tmpl <- sortBy(target=tmpl, By=tmpv)
+tmpv <- t(apply(tmpv, 1, function(x) sort(x, decreasing = TRUE)))
+df2015d0$win <- tmpl[,1]
+#table(tmpl[,1])
+df2015d0$panw <- df2015d0$priw <- df2015d0$pricw <- df2015d0$prdw <- df2015d0$prdcw <- df2015d0$morenaw <- df2015d0$mcw <- df2015d0$panalw <- df2015d0$indepw <- rep(0, times=300)
+df2015d0$panw[df2015d0$win=="pan"] <- 1
+df2015d0$priw[df2015d0$win=="pri"] <- 1
+df2015d0$pricw[df2015d0$win=="pric"] <- 1
+df2015d0$prdw[df2015d0$win=="prd"] <- 1
+df2015d0$prdcw[df2015d0$win=="prdc"] <- 1
+df2015d0$morenaw[df2015d0$win=="morena"] <- 1
+df2015d0$mcw[df2015d0$win=="mc"] <- 1
+df2015d0$panalw[df2015d0$win=="panal"] <- 1
+df2015d0$indepw[df2015d0$win=="indep1"] <- 1
+## winner's margin
+df2015d0$winmg <- (tmpv[,1] - tmpv[,2])/df2015d0$efec
+#
+colnames(df2015d1)
+tmp <- c("pan", "pri", "pric", "prd", "prdc", "pt", "pvem", "mc", "panal", "morena", "ph", "ps","indep1","indep2")
+tmpv <- df2015d1[,tmp]
+tmpl <- matrix(rep(tmp,300), byrow=TRUE, nrow=300)
+tmpl <- sortBy(target=tmpl, By=tmpv)
+tmpv <- t(apply(tmpv, 1, function(x) sort(x, decreasing = TRUE)))
+df2015d1$win <- tmpl[,1]
+#table(tmpl[,1])
+df2015d1$panw <- df2015d1$priw <- df2015d1$pricw <- df2015d1$prdw <- df2015d1$prdcw <- df2015d1$morenaw <- df2015d1$mcw <- df2015d1$panalw <- df2015d1$indepw <- rep(0, times=300)
+df2015d1$panw[df2015d1$win=="pan"] <- 1
+df2015d1$priw[df2015d1$win=="pri"] <- 1
+df2015d1$pricw[df2015d1$win=="pric"] <- 1
+df2015d1$prdw[df2015d1$win=="prd"] <- 1
+df2015d1$prdcw[df2015d1$win=="prdc"] <- 1
+df2015d1$morenaw[df2015d1$win=="morena"] <- 1
+df2015d1$mcw[df2015d1$win=="mc"] <- 1
+df2015d1$panalw[df2015d1$win=="panal"] <- 1
+df2015d1$indepw[df2015d1$win=="indep1"] <- 1
+## winner's margin
+df2015d1$winmg <- (tmpv[,1] - tmpv[,2])/df2015d1$efec
+#
+tmp <- c("pan", "pri", "pric", "prd", "prdc", "pt", "pvem", "mc", "panal", "morena", "ph", "ps","indep1","indep2")
+tmpv <- df2015d3[,tmp]
+tmpl <- matrix(rep(tmp,300), byrow=TRUE, nrow=300)
+tmpl <- sortBy(target=tmpl, By=tmpv)
+tmpv <- t(apply(tmpv, 1, function(x) sort(x, decreasing = TRUE)))
+df2015d3$win <- tmpl[,1]
+#table(tmpl[,1])
+df2015d3$panw <- df2015d3$priw <- df2015d3$pricw <- df2015d3$prdw <- df2015d3$prdcw <- df2015d3$morenaw <- df2015d3$mcw <- df2015d3$panalw <- df2015d3$indepw <- rep(0, times=300)
+df2015d3$panw[df2015d3$win=="pan"] <- 1
+df2015d3$priw[df2015d3$win=="pri"] <- 1
+df2015d3$pricw[df2015d3$win=="pric"] <- 1
+df2015d3$prdw[df2015d3$win=="prd"] <- 1
+df2015d3$prdcw[df2015d3$win=="prdc"] <- 1
+df2015d3$morenaw[df2015d3$win=="morena"] <- 1
+df2015d3$mcw[df2015d3$win=="mc"] <- 1
+df2015d3$panalw[df2015d3$win=="panal"] <- 1
+df2015d3$indepw[df2015d3$win=="indep1"] <- 1
+## winner's margin
+df2015d3$winmg <- (tmpv[,1] - tmpv[,2])/df2015d3$efec
+#
+rm(tmp,tmpl,tmpv)
+#
+# debug
+df2015d0[df2015d0$edon==6,]
+df2015d1[df2015d1$edon==24,]
+df2015d3[df2015d3$edon==24,]
+#
+# state aggregates statistics
+df2015s0 <- df2015d0
+df2015s0 <- df2015s0[order(df2015s0$edon),]
+## # WILL DROP THIS STEP THAT FORCES STATES WITH PARTIAL COALITION TO REPORT ALL VOTES IN PRI OR IN PRIC... MAYBE NEEDED TO COMPUTE PRI BIAS?
+## colnames(df2015s0)[which(colnames(df2015s0)=="shSecCoalPri")] <- "shDisCoalPri"
+## df2015s0$shDisCoalPri <- rep(0, 300)
+## df2015s0$shDisCoalPri[df2015s0$pric>0] <- 1
+## df2015s0$shDisCoalPri <- ave(df2015s0$shDisCoalPri, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$pan <- ave(df2015s0$pan, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$pri <- ave(df2015s0$pri, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$pric <- ave(df2015s0$pric, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$prd <- ave(df2015s0$prd, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$prdc <- ave(df2015s0$prdc, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$pt <- ave(df2015s0$pt, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$pvem <- ave(df2015s0$pvem, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$mc <- ave(df2015s0$mc, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$panal <- ave(df2015s0$panal, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$morena <- ave(df2015s0$morena, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$ph <- ave(df2015s0$ph, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$ps <- ave(df2015s0$ps, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$indep1 <- ave(df2015s0$indep1, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$indep2 <- ave(df2015s0$indep2, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$efec <- ave(df2015s0$efec, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$ndis <- rep(1, 300)
+df2015s0$ndis <- ave(df2015s0$ndis, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$panw <- ave(df2015s0$panw, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$priw <- ave(df2015s0$priw, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$pricw <- ave(df2015s0$pricw, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$prdw <- ave(df2015s0$prdw, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$prdcw <- ave(df2015s0$prdcw, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$morenaw <- ave(df2015s0$morenaw, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$mcw <- ave(df2015s0$mcw, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$panalw <- ave(df2015s0$panalw, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0$indepw <- ave(df2015s0$indepw, as.factor(df2015s0$edon), FUN=sum, na.rm=TRUE)
+df2015s0 <- df2015s0[duplicated(df2015s0$edon)==FALSE,]
+tmp <- df2015s0; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2015s0 <- tmp # drop useless columns
+#
+# shares
+df2015s0$pansh   <- df2015s0$pan/df2015s0$efec
+df2015s0$prish   <- df2015s0$pri/df2015s0$efec
+df2015s0$pricsh  <- df2015s0$pric/df2015s0$efec
+df2015s0$prdsh   <- df2015s0$prd/df2015s0$efec
+df2015s0$prdcsh  <- df2015s0$prdc/df2015s0$efec
+df2015s0$ptsh    <- df2015s0$pt/df2015s0$efec
+df2015s0$pvemsh  <- df2015s0$pvem/df2015s0$efec
+df2015s0$mcsh    <- df2015s0$mc/df2015s0$efec
+df2015s0$panalsh <- df2015s0$panal/df2015s0$efec
+df2015s0$morenash  <- df2015s0$morena/df2015s0$efec
+df2015s0$phsh  <- df2015s0$ph/df2015s0$efec
+df2015s0$pssh  <- df2015s0$ps/df2015s0$efec
+df2015s0$indep1sh  <- df2015s0$indep1/df2015s0$efec
+df2015s0$indep2sh  <- df2015s0$indep2/df2015s0$efec
+#
+df2015s0$panw   <- df2015s0$panw/df2015s0$ndis
+df2015s0$priw   <- df2015s0$priw/df2015s0$ndis
+df2015s0$pricw  <- df2015s0$pricw/df2015s0$ndis
+df2015s0$prdw   <- df2015s0$prdw/df2015s0$ndis
+df2015s0$prdcw  <- df2015s0$prdcw/df2015s0$ndis
+df2015s0$mcw    <- df2015s0$mcw/df2015s0$ndis
+df2015s0$panalw <- df2015s0$panalw/df2015s0$ndis
+df2015s0$morenaw   <- df2015s0$morenaw/df2015s0$ndis
+df2015s0$indepw   <- df2015s0$indepw/df2015s0$ndis
+#df2015s0$shDisCoalPri <-  df2015s0$shDisCoalPri/df2015s0$ndis
+#df2015s0$shDisCoalPrd <-  df2015s0$shDisCoalPrd/df2015s0$ndis
+head(df2015s0)
+#
+df2015s1 <- df2015d1
+df2015s1 <- df2015s1[order(df2015s1$edon),]
+## # WILL DROP THIS STEP THAT FORCES STATES WITH PARTIAL COALITION TO REPORT ALL VOTES IN PRI OR IN PRIC... MAYBE NEEDED TO COMPUTE PRI BIAS?
+## colnames(df2015s1)[which(colnames(df2015s1)=="shSecCoalPri")] <- "shDisCoalPri"
+## df2015s1$shDisCoalPri <- rep(0, 300)
+## df2015s1$shDisCoalPri[df2015s1$pric>0] <- 1
+## df2015s1$shDisCoalPri <- ave(df2015s1$shDisCoalPri, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$pan <- ave(df2015s1$pan, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$pri <- ave(df2015s1$pri, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$pric <- ave(df2015s1$pric, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$prd <- ave(df2015s1$prd, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$prdc <- ave(df2015s1$prdc, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$pt <- ave(df2015s1$pt, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$pvem <- ave(df2015s1$pvem, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$mc <- ave(df2015s1$mc, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$panal <- ave(df2015s1$panal, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$morena <- ave(df2015s1$morena, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$ph <- ave(df2015s1$ph, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$ps <- ave(df2015s1$ps, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$indep1 <- ave(df2015s1$indep1, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$indep2 <- ave(df2015s1$indep2, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$efec <- ave(df2015s1$efec, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$ndis <- rep(1, 300)
+df2015s1$ndis <- ave(df2015s1$ndis, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$panw <- ave(df2015s1$panw, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$priw <- ave(df2015s1$priw, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$pricw <- ave(df2015s1$pricw, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$prdw <- ave(df2015s1$prdw, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$prdcw <- ave(df2015s1$prdcw, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$morenaw <- ave(df2015s1$morenaw, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$mcw <- ave(df2015s1$mcw, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$panalw <- ave(df2015s1$panalw, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1$indepw <- ave(df2015s1$indepw, as.factor(df2015s1$edon), FUN=sum, na.rm=TRUE)
+df2015s1 <- df2015s1[duplicated(df2015s1$edon)==FALSE,]
+tmp <- df2015s1; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2015s1 <- tmp # drop useless columns
+#
+# shares
+df2015s1$pansh   <- df2015s1$pan/df2015s1$efec
+df2015s1$prish   <- df2015s1$pri/df2015s1$efec
+df2015s1$pricsh  <- df2015s1$pric/df2015s1$efec
+df2015s1$prdsh   <- df2015s1$prd/df2015s1$efec
+df2015s1$prdcsh  <- df2015s1$prdc/df2015s1$efec
+df2015s1$ptsh    <- df2015s1$pt/df2015s1$efec
+df2015s1$pvemsh  <- df2015s1$pvem/df2015s1$efec
+df2015s1$mcsh    <- df2015s1$mc/df2015s1$efec
+df2015s1$panalsh <- df2015s1$panal/df2015s1$efec
+df2015s1$morenash  <- df2015s1$morena/df2015s1$efec
+df2015s1$phsh  <- df2015s1$ph/df2015s1$efec
+df2015s1$pssh  <- df2015s1$ps/df2015s1$efec
+df2015s1$indep1sh  <- df2015s1$indep1/df2015s1$efec
+df2015s1$indep2sh  <- df2015s1$indep2/df2015s1$efec
+#
+df2015s1$panw   <- df2015s1$panw/df2015s1$ndis
+df2015s1$priw   <- df2015s1$priw/df2015s1$ndis
+df2015s1$pricw  <- df2015s1$pricw/df2015s1$ndis
+df2015s1$prdw   <- df2015s1$prdw/df2015s1$ndis
+df2015s1$prdcw  <- df2015s1$prdcw/df2015s1$ndis
+df2015s1$mcw    <- df2015s1$mcw/df2015s1$ndis
+df2015s1$panalw <- df2015s1$panalw/df2015s1$ndis
+df2015s1$morenaw   <- df2015s1$morenaw/df2015s1$ndis
+df2015s1$indepw   <- df2015s1$indepw/df2015s1$ndis
+#df2015s1$shDisCoalPri <-  df2015s1$shDisCoalPri/df2015s1$ndis
+#df2015s1$shDisCoalPrd <-  df2015s1$shDisCoalPrd/df2015s1$ndis
+head(df2015s1)
+#
+df2015s3 <- df2015d3
+df2015s3 <- df2015s3[order(df2015s3$edon),]
+## # WILL DROP THIS STEP THAT FORCES STATES WITH PARTIAL COALITION TO REPORT ALL VOTES IN PRI OR IN PRIC... MAYBE NEEDED TO COMPUTE PRI BIAS?
+## colnames(df2015s3)[which(colnames(df2015s3)=="shSecCoalPri")] <- "shDisCoalPri"
+## df2015s3$shDisCoalPri <- rep(0, 300)
+## df2015s3$shDisCoalPri[df2015s3$pric>0] <- 1
+## df2015s3$shDisCoalPri <- ave(df2015s3$shDisCoalPri, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$pan <- ave(df2015s3$pan, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$pri <- ave(df2015s3$pri, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$pric <- ave(df2015s3$pric, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$prd <- ave(df2015s3$prd, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$prdc <- ave(df2015s3$prdc, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$pt <- ave(df2015s3$pt, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$pvem <- ave(df2015s3$pvem, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$mc <- ave(df2015s3$mc, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$panal <- ave(df2015s3$panal, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$morena <- ave(df2015s3$morena, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$ph <- ave(df2015s3$ph, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$ps <- ave(df2015s3$ps, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$indep1 <- ave(df2015s3$indep1, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$indep2 <- ave(df2015s3$indep2, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$efec <- ave(df2015s3$efec, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$ndis <- rep(1, 300)
+df2015s3$ndis <- ave(df2015s3$ndis, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$panw <- ave(df2015s3$panw, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$priw <- ave(df2015s3$priw, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$pricw <- ave(df2015s3$pricw, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$prdw <- ave(df2015s3$prdw, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$prdcw <- ave(df2015s3$prdcw, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$morenaw <- ave(df2015s3$morenaw, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$mcw <- ave(df2015s3$mcw, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$panalw <- ave(df2015s3$panalw, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3$indepw <- ave(df2015s3$indepw, as.factor(df2015s3$edon), FUN=sum, na.rm=TRUE)
+df2015s3 <- df2015s3[duplicated(df2015s3$edon)==FALSE,]
+tmp <- df2015s3; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2015s3 <- tmp # drop useless columns
+#
+# shares
+df2015s3$pansh   <- df2015s3$pan/df2015s3$efec
+df2015s3$prish   <- df2015s3$pri/df2015s3$efec
+df2015s3$pricsh  <- df2015s3$pric/df2015s3$efec
+df2015s3$prdsh   <- df2015s3$prd/df2015s3$efec
+df2015s3$prdcsh  <- df2015s3$prdc/df2015s3$efec
+df2015s3$ptsh    <- df2015s3$pt/df2015s3$efec
+df2015s3$pvemsh  <- df2015s3$pvem/df2015s3$efec
+df2015s3$mcsh    <- df2015s3$mc/df2015s3$efec
+df2015s3$panalsh <- df2015s3$panal/df2015s3$efec
+df2015s3$morenash  <- df2015s3$morena/df2015s3$efec
+df2015s3$phsh  <- df2015s3$ph/df2015s3$efec
+df2015s3$pssh  <- df2015s3$ps/df2015s3$efec
+df2015s3$indep1sh  <- df2015s3$indep1/df2015s3$efec
+df2015s3$indep2sh  <- df2015s3$indep2/df2015s3$efec
+#
+df2015s3$panw   <- df2015s3$panw/df2015s3$ndis
+df2015s3$priw   <- df2015s3$priw/df2015s3$ndis
+df2015s3$pricw  <- df2015s3$pricw/df2015s3$ndis
+df2015s3$prdw   <- df2015s3$prdw/df2015s3$ndis
+df2015s3$prdcw  <- df2015s3$prdcw/df2015s3$ndis
+df2015s3$mcw    <- df2015s3$mcw/df2015s3$ndis
+df2015s3$panalw <- df2015s3$panalw/df2015s3$ndis
+df2015s3$morenaw   <- df2015s3$morenaw/df2015s3$ndis
+df2015s3$indepw   <- df2015s3$indepw/df2015s3$ndis
+#df2015s3$shDisCoalPri <-  df2015s3$shDisCoalPri/df2015s3$ndis
+#df2015s3$shDisCoalPrd <-  df2015s3$shDisCoalPrd/df2015s3$ndis
+head(df2015s3)
+## hasta aquí 11may16 ##
+#
+#
 tmp <- read.csv( paste(dd, "dfSeccion2012.csv", sep=""), header=TRUE)
 tmp <- tmp[order(tmp$edon, tmp$disn, tmp$seccion),]
 # compute effective vote (without void ballots)
@@ -50,24 +571,6 @@ rm(tmp1,tmp2,tmp3)
 tmp$pric <- tmp$pri+tmp$pvem+tmp$pripvem
 #
 #
-# extracts 2013 districts only to map 2012 ones
-dis2013 <-       eq[,c("edon","dis2012","munn","seccion","dis2013.3","dis2013.1")]
-colnames(dis2013) <- c("edon","disn","munn","seccion","dis3er13","dis1er13")
-#
-# unassigned secciones need to be removed
-dis2013 <- dis2013[-which(dis2013$disn==0),]
-dis2013 <- dis2013[-which(dis2013$dis1er13==0),]
-## THESE WERE DROPPED IN EXCEL: dis2013 <- dis2013[-which(dis2013$seccion>8000),] # two secciones in puebla have disconnected seccion nums and blank municipality... ife anticipates but awaits court ruling?
-#
-# maybe unnecessary (IFE's municipal codes slightly differ from census)
-dis2013$ife <- dis2013$edon*1000 + dis2013$munn
-dis2013 <- dis2013[,c("edon","disn","munn","seccion","ife","dis3er13","dis1er13")]
-#
-## NO LOGER NEEDED, OBJECT eq IMPORTED ABOVE HAS ALL THIS INFO
-## ## IMPORTS 2013 DISTRICTS PROPOSAL DATA
-## #source("codeFor2013districts.r") # RUN TO CODE 2013 ESCENARIO 1 and 3  DISTRICTS
-## load(file=paste(dd, "dis2013.RData", sep=""))
-#
 tmp$edon.secn <- tmp$edon*10000 + tmp$seccion
 dis2013$edon.secn <- dis2013$edon*10000 + dis2013$seccion
 tmp1 <- dis2013[,c("edon.secn","dis1er13","dis3er13")]
@@ -77,11 +580,11 @@ colnames(tmp)[which(colnames(tmp)=="dis3er13")] <- "dis13.3"
 rm(tmp1)
 #
 # OJO: some secciones used in 2012 do not appear listed in IFE's 2013 redistricting scenarios. List of such secciones follows.
+# 11may16: fixed
 select <- which(dis2013$dis1er13>0 & dis2013$dis3er13==0)
 data.frame(edon=dis2013$edon[select], seccion=dis2013$seccion[select])
 #data.frame(edon=dis2013$edon[is.na(dis2013$dis3er13)==TRUE], seccion=dis2013$seccion[is.na(dis2013$dis3er13)==TRUE])
 dim(tmp); dim(dis2013)
-dis2013[dis2013$dis3er13==0,] # debug
 #
 colnames(tmp)
 ## Aggregates 2012 results by district
@@ -205,7 +708,7 @@ df2012d3$pripvem <- NULL
 df2012d3$pri[df2012d3$shSecCoalPri>=.5] <- 0
 df2012d3$pvem[df2012d3$shSecCoalPri>=.5] <- 0
 rm(shrPri)
-df2012d1[df2012d1$edon==24,]
+df2012d3[df2012d3$edon==24,]
 #
 ## winner
 tmp <- rep(0, times=300)
@@ -234,8 +737,8 @@ df2012d1$panalw[df2012d1$panal==tmp] <- 1
 tmp <- apply( df2012d1[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, max) - apply( df2012d1[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
 df2012d1$winmg <- tmp/df2012d1$efec
 #
-table(df2012d3$disn) # there are disn==0... i'll drop them but they need fixing
-df2012d3 <- df2012d3[-which(df2012d3$disn==0),]
+## table(df2012d3$disn) # there are disn==0... i'll drop them but they need fixing ... 11may16 no more
+## df2012d3 <- df2012d3[-which(df2012d3$disn==0),]
 tmp <- rep(0, times=300)
 df2012d3$panw <- df2012d3$priw <- df2012d3$pricw <- df2012d3$prdcw <- df2012d3$pvemw <- df2012d3$panalw <- tmp
 tmp <- apply( df2012d3[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, max)
@@ -278,6 +781,7 @@ df2012s0$prdcw <- ave(df2012s0$prdcw, as.factor(df2012s0$edon), FUN=sum, na.rm=T
 df2012s0$pvemw <- ave(df2012s0$pvemw, as.factor(df2012s0$edon), FUN=sum, na.rm=TRUE)
 df2012s0$panalw <- ave(df2012s0$panalw, as.factor(df2012s0$edon), FUN=sum, na.rm=TRUE)
 df2012s0 <- df2012s0[duplicated(df2012s0$edon)==FALSE,]
+tmp <- df2012s0; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2012s0 <- tmp # drop useless columns
 #
 # shares
 df2012s0$pansh   <- df2012s0$pan/df2012s0$efec
@@ -318,6 +822,7 @@ df2012s1$prdcw <- ave(df2012s1$prdcw, as.factor(df2012s1$edon), FUN=sum, na.rm=T
 df2012s1$pvemw <- ave(df2012s1$pvemw, as.factor(df2012s1$edon), FUN=sum, na.rm=TRUE)
 df2012s1$panalw <- ave(df2012s1$panalw, as.factor(df2012s1$edon), FUN=sum, na.rm=TRUE)
 df2012s1 <- df2012s1[duplicated(df2012s1$edon)==FALSE,]
+tmp <- df2012s1; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2012s1 <- tmp # drop useless columns
 #
 # shares
 df2012s1$pansh   <- df2012s1$pan/df2012s1$efec
@@ -359,6 +864,7 @@ df2012s3$prdcw <- ave(df2012s3$prdcw, as.factor(df2012s3$edon), FUN=sum, na.rm=T
 df2012s3$pvemw <- ave(df2012s3$pvemw, as.factor(df2012s3$edon), FUN=sum, na.rm=TRUE)
 df2012s3$panalw <- ave(df2012s3$panalw, as.factor(df2012s3$edon), FUN=sum, na.rm=TRUE)
 df2012s3 <- df2012s3[duplicated(df2012s3$edon)==FALSE,]
+tmp <- df2012s3; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2012s3 <- tmp # drop useless columns
 #
 # shares
 df2012s3$pansh   <- df2012s3$pan/df2012s3$efec
@@ -480,7 +986,7 @@ df2009d3$dcoalpri <- df2009d3$dcoalpri/df2009d3$tmp # share of secciones with pr
 df2009d3$tmp <- NULL
 df2009d3 <- df2009d3[duplicated(df2009d3$edon*100+df2009d3$dis13.3)==FALSE,]
 dim(df2009d3)
-df2009d3 <- df2009d3[-which(df2009d3$dis13.3==0),]  # drops unassigned sections in 3rd plan (thisinfo should arrive later)
+## df2009d3 <- df2009d3[-which(df2009d3$dis13.3==0),]  # drops unassigned sections in 3rd plan (thisinfo should arrive later)
 #
 # removes redundant columns
 df2009d0 <- df2009d0[,c("edon","disn"   ,"pan","pri","pric","prd","pvem","panal","pripvem","ptc","nr","nul","tot","lisnom","dcoalpri")]
@@ -593,6 +1099,7 @@ df2009s0$pvemw <- ave(df2009s0$pvemw, as.factor(df2009s0$edon), FUN=sum, na.rm=T
 df2009s0$panalw <- ave(df2009s0$panalw, as.factor(df2009s0$edon), FUN=sum, na.rm=TRUE)
 df2009s0$ptcw <- ave(df2009s0$ptcw, as.factor(df2009s0$edon), FUN=sum, na.rm=TRUE)
 df2009s0 <- df2009s0[duplicated(df2009s0$edon)==FALSE,]
+tmp <- df2009s0; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2009s0 <- tmp # drop useless columns
 #
 # shares
 df2009s0$pansh   <- df2009s0$pan/df2009s0$efec
@@ -639,6 +1146,7 @@ df2009s1$panalw <- ave(df2009s1$panalw, as.factor(df2009s1$edon), FUN=sum, na.rm
 df2009s1$ptcw <- ave(df2009s1$ptcw, as.factor(df2009s1$edon), FUN=sum, na.rm=TRUE)
 df2009s1 <- df2009s1[duplicated(df2009s1$edon)==FALSE,]
 df2009s1[df2009s1$edon==9,]
+tmp <- df2009s1; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2009s1 <- tmp # drop useless columns
 #
 # shares
 df2009s1$pansh   <- df2009s1$pan/df2009s1$efec
@@ -684,6 +1192,7 @@ df2009s3$pvemw <- ave(df2009s3$pvemw, as.factor(df2009s3$edon), FUN=sum, na.rm=T
 df2009s3$panalw <- ave(df2009s3$panalw, as.factor(df2009s3$edon), FUN=sum, na.rm=TRUE)
 df2009s3$ptcw <- ave(df2009s3$ptcw, as.factor(df2009s3$edon), FUN=sum, na.rm=TRUE)
 df2009s3 <- df2009s3[duplicated(df2009s3$edon)==FALSE,]
+tmp <- df2009s3; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2009s3 <- tmp # drop useless columns
 #
 # shares
 df2009s3$pansh   <- df2009s3$pan/df2009s3$efec
@@ -761,7 +1270,7 @@ df2006d3$nul <- ave(df2006d3$nul, as.factor(df2006d3$edon*100+df2006d3$dis13.3),
 df2006d3$efec <- ave(df2006d3$efec, as.factor(df2006d3$edon*100+df2006d3$dis13.3), FUN=sum, na.rm=TRUE)
 df2006d3 <- df2006d3[duplicated(df2006d3$edon*100+df2006d3$dis13.3)==FALSE,]
 head(df2006d3)
-df2006d3 <- df2006d3[-which(df2006d3$dis13.3==0),]  # drops unassigned sections in 3rd plan (thisinfo should arrive later)
+## df2006d3 <- df2006d3[-which(df2006d3$dis13.3==0),]  # drops unassigned sections in 3rd plan (thisinfo should arrive later)
 dim(df2006d3)
 #
 # removes redundant columns
@@ -825,6 +1334,7 @@ df2006s0$prdcw <- ave(df2006s0$prdcw, as.factor(df2006s0$edon), FUN=sum, na.rm=T
 df2006s0$panalw <- ave(df2006s0$panalw, as.factor(df2006s0$edon), FUN=sum, na.rm=TRUE)
 df2006s0$asdcw <- ave(df2006s0$asdcw, as.factor(df2006s0$edon), FUN=sum, na.rm=TRUE)
 df2006s0 <- df2006s0[duplicated(df2006s0$edon)==FALSE,]
+tmp <- df2006s0; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2006s0 <- tmp # drop useless columns
 #
 # shares
 df2006s0$pansh   <- df2006s0$pan/df2006s0$efec
@@ -856,6 +1366,7 @@ df2006s1$prdcw <- ave(df2006s1$prdcw, as.factor(df2006s1$edon), FUN=sum, na.rm=T
 df2006s1$panalw <- ave(df2006s1$panalw, as.factor(df2006s1$edon), FUN=sum, na.rm=TRUE)
 df2006s1$asdcw <- ave(df2006s1$asdcw, as.factor(df2006s1$edon), FUN=sum, na.rm=TRUE)
 df2006s1 <- df2006s1[duplicated(df2006s1$edon)==FALSE,]
+tmp <- df2006s1; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2006s1 <- tmp # drop useless columns
 #
 # shares
 df2006s1$pansh   <- df2006s1$pan/df2006s1$efec
@@ -887,7 +1398,7 @@ df2006s3$prdcw <- ave(df2006s3$prdcw, as.factor(df2006s3$edon), FUN=sum, na.rm=T
 df2006s3$panalw <- ave(df2006s3$panalw, as.factor(df2006s3$edon), FUN=sum, na.rm=TRUE)
 df2006s3$asdcw <- ave(df2006s3$asdcw, as.factor(df2006s3$edon), FUN=sum, na.rm=TRUE)
 df2006s3 <- df2006s3[duplicated(df2006s3$edon)==FALSE,]
-head(df2006s3)
+tmp <- df2006s3; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2006s3 <- tmp # drop useless columns
 #
 # shares
 df2006s3$pansh   <- df2006s3$pan/df2006s3$efec
@@ -911,6 +1422,9 @@ df2009s0$N <- df2009s1$N <- df2009s3$N <- 1/hh ## laakso y taagepera
 #
 hh <- df2012s0$pansh^2 + df2012s0$prish^2 + df2012s0$pricsh^2 + df2012s0$prdcsh^2 + df2012s0$pvemsh^2 + df2012s0$panalsh^2
 df2012s0$N <- df2012s1$N <- df2012s3$N <- 1/hh ## laakso y taagepera
+#
+hh <- df2015s0$pansh^2 + df2015s0$prish^2 + df2015s0$pricsh^2 + df2015s0$prdsh^2 + df2015s0$prdcsh^2 + df2015s0$ptsh^2 + df2015s0$pvemsh^2 + df2015s0$mcsh^2 + df2015s0$panalsh^2 + df2015s0$morenash^2 + df2015s0$phsh^2 + df2015s0$pssh^2 + df2015s0$indep1sh^2 + df2015s0$indep2sh^2
+df2015s0$N <- df2015s1$N <- df2015s3$N <- 1/hh ## laakso y taagepera
 #
 
 ## # work 1997d97, 2000d97, and 2003d97 from district data (section aggregatios do not work, see below)
@@ -1045,7 +1559,6 @@ dim(df2003d0)
 ## winner  OJO: PREPARE CODE FOR MARGIN AS WELL
 ## state aggregates statistics
 
-
 ###############################
 ###############################
 ##   describe seat changes   ##
@@ -1054,6 +1567,88 @@ dim(df2003d0)
 edo <- c("ags", "bc", "bcs", "cam", "coa", "col", "cps", "cua", "df", "dgo", "gua", "gue", "hgo", "jal", "mex", "mic", "mor", "nay", "nl", "oax", "pue", "que", "qui", "san", "sin", "son", "tab", "tam", "tla", "ver", "yuc", "zac")
 estados <- c("aguascalientes", "baja california", "baja california sur", "campeche", "coahuila", "colima", "chiapas", "chihuahua", "distrito federal", "durango", "guanajuato", "guerrero", "hidalgo", "jalisco", "mexico", "michoacan", "morelos", "nayarit", "nuevo leon", "oaxaca", "puebla", "queretaro", "quintana roo", "san luis potosi", "sinaloa", "sonora", "tabasco", "tamaulipas", "tlaxcala", "veracruz", "yucatan", "zacatecas")
 ##
+## 2015
+tmp10 <- df2015s0$panw * df2015s0$ndis
+tmp11 <- (df2015s1$panw * df2015s1$ndis)
+tmp13 <- (df2015s3$panw * df2015s3$ndis)
+#
+tmp20 <- df2015s0$priw * df2015s0$ndis
+tmp21 <- (df2015s1$priw * df2015s1$ndis)
+tmp23 <- (df2015s3$priw * df2015s3$ndis)
+#
+tmp30 <- df2015s0$pricw * df2015s0$ndis
+tmp31 <- (df2015s1$pricw * df2015s1$ndis)
+tmp33 <- (df2015s3$pricw * df2015s3$ndis)
+#
+tmp40 <- df2015s0$prdw * df2015s0$ndis
+tmp41 <- (df2015s1$prdw * df2015s1$ndis)
+tmp43 <- (df2015s3$prdw * df2015s3$ndis)
+#
+tmp50 <- df2015s0$prdcw * df2015s0$ndis
+tmp51 <- (df2015s1$prdcw * df2015s1$ndis)
+tmp53 <- (df2015s3$prdcw * df2015s3$ndis)
+#
+tmp60 <- df2015s0$morenaw * df2015s0$ndis
+tmp61 <- (df2015s1$morenaw * df2015s1$ndis)
+tmp63 <- (df2015s3$morenaw * df2015s3$ndis)
+#
+# other
+tmp70 <- df2015s0$ndis - tmp10 - tmp20 - tmp30 - tmp40 - tmp50 - tmp60  
+tmp71 <- df2015s1$ndis - tmp11 - tmp21 - tmp31 - tmp41 - tmp51 - tmp61
+tmp73 <- df2015s3$ndis - tmp13 - tmp23 - tmp33 - tmp43 - tmp53 - tmp63
+#
+tmp11 <- tmp11 - tmp10
+tmp13 <- tmp13 - tmp10
+tmp21 <- tmp21 - tmp20
+tmp23 <- tmp23 - tmp20
+tmp31 <- tmp31 - tmp30
+tmp33 <- tmp33 - tmp30
+tmp41 <- tmp41 - tmp40
+tmp43 <- tmp43 - tmp40
+tmp51 <- tmp51 - tmp50
+tmp53 <- tmp53 - tmp50
+tmp61 <- tmp61 - tmp60
+tmp63 <- tmp63 - tmp60
+tmp71 <- tmp71 - tmp70
+tmp73 <- tmp73 - tmp70
+#
+tmp10 <- c(tmp10, sum(tmp10))
+tmp11 <- c(tmp11, sum(tmp11))
+tmp13 <- c(tmp13, sum(tmp13))
+tmp20 <- c(tmp20, sum(tmp20))
+tmp21 <- c(tmp21, sum(tmp21))
+tmp23 <- c(tmp23, sum(tmp23))
+tmp30 <- c(tmp30, sum(tmp30))
+tmp31 <- c(tmp31, sum(tmp31))
+tmp33 <- c(tmp33, sum(tmp33))
+tmp40 <- c(tmp40, sum(tmp40))
+tmp41 <- c(tmp41, sum(tmp41))
+tmp43 <- c(tmp43, sum(tmp43))
+tmp50 <- c(tmp50, sum(tmp50))
+tmp51 <- c(tmp51, sum(tmp51))
+tmp53 <- c(tmp53, sum(tmp53))
+tmp60 <- c(tmp60, sum(tmp60))
+tmp61 <- c(tmp61, sum(tmp61))
+tmp63 <- c(tmp63, sum(tmp63))
+tmp70 <- c(tmp70, sum(tmp70))
+tmp71 <- c(tmp71, sum(tmp71))
+tmp73 <- c(tmp73, sum(tmp73))
+#
+print("** 2015 seats won by state and difference with redistricting scenarios 1 and 3 **")
+data.frame(edo=c(edo, "tot"),
+#data.frame(edo=c(estados, "total"),
+           pan0=tmp10, pan1=tmp11, pan3=tmp13,
+           pri0=tmp20, pri1=tmp21, pri3=tmp23,
+           pric0=tmp30, pric1=tmp31, pric3=tmp33,
+           prd0=tmp40, prd1=tmp41, prd3=tmp43,
+           prdc0=tmp50, prdc1=tmp51, prdc3=tmp53,
+           morena0=tmp60, morena1=tmp61, morena3=tmp63,
+           oth0=tmp70, oth1=tmp71, oth3=tmp73)
+#
+# sum of squares 2015
+sqrt(sum(tmp13^2, tmp23^2, tmp33^2, tmp43^2, tmp53^2, tmp63^2, tmp73^2)/2)
+##
+
 ## 2012
 tmp10 <- df2012s0$panw * df2012s0$ndis
 tmp11 <- (df2012s1$panw * df2012s1$ndis) - (df2012s0$panw * df2012s0$ndis)
@@ -1192,17 +1787,33 @@ data.frame(edo=c(edo, "tot"),
            pric0=tmp30, pric1=tmp31, pric3=tmp33,
            prdc0=tmp40, prdc1=tmp41, prdc3=tmp43,
            oth0=tmp50, oth1=tmp51, oth3=tmp53)
-
-
-rm(tmp10, tmp11, tmp13, tmp20, tmp21, tmp23, tmp30, tmp31, tmp33, tmp40, tmp41, tmp43, tmp50, tmp51, tmp53)
-
+#
+rm( list = ls()[grep("tmp", ls())] )
 
 ## change s0/s1/s3 and years from here on to graph/estimate different data subsets
 ## 3-year symmetric vote share matrix
+obj4 <- df2015s0
 obj1 <- df2012s0
 obj2 <- df2009s0
 obj3 <- df2006s0
 v <- data.frame(
+    pan =   obj4$pansh,
+    pri =   obj4$prish,
+    pric =  obj4$pricsh, 
+    prd =   obj4$prdsh,
+    prdc =  obj4$prdcsh, 
+    pvem =  obj4$pvemsh, 
+    panal = obj4$panalsh,
+    ptc =   rep(0,32),
+    pt = obj4$pt,
+    mc = obj4$mc,
+    morena = obj4$morena,
+    ph = obj4$ph,
+    ps = obj4$ps,
+    indep1 = obj4$indep1,
+    indep2 = obj4$indep2,
+    asdc =  rep(0,32))
+v <- rbind(v, data.frame(
     pan =   obj1$pansh,
     pri =   obj1$prish,
     pric =  obj1$pricsh, 
@@ -1211,7 +1822,14 @@ v <- data.frame(
     pvem =  obj1$pvemsh, 
     panal = obj1$panalsh,
     ptc =   rep(0,32),
-    asdc =  rep(0,32))
+    pt = rep(0,32),
+    mc = rep(0,32),
+    morena = rep(0,32),
+    ph = rep(0,32),
+    ps = rep(0,32),
+    indep1 = rep(0,32),
+    indep2 = rep(0,32),
+    asdc =  rep(0,32)))
 v <- rbind(v, data.frame(
     pan =   obj2$pansh,
     pri =   obj2$prish,
@@ -1221,6 +1839,13 @@ v <- rbind(v, data.frame(
     pvem =  obj2$pvemsh, 
     panal = obj2$panalsh,
     ptc =   obj2$ptcsh,  
+    pt = rep(0,32),
+    mc = rep(0,32),
+    morena = rep(0,32),
+    ph = rep(0,32),
+    ps = rep(0,32),
+    indep1 = rep(0,32),
+    indep2 = rep(0,32),
     asdc =  rep(0,32)))
 v <- rbind(v, data.frame(
     pan =   obj3$pansh,
@@ -1231,17 +1856,53 @@ v <- rbind(v, data.frame(
     pvem =  rep(0,32),
     panal = obj3$panalsh,
     ptc =   rep(0,32),
+    pt = rep(0,32),
+    mc = rep(0,32),
+    morena = rep(0,32),
+    ph = rep(0,32),
+    ps = rep(0,32),
+    indep1 = rep(0,32),
+    indep2 = rep(0,32),
     asdc =  obj3$asdcsh))
 v <- round(v, digits  =  3)
 
 ## tmp is the object to graph (adds pri+pric and prd+prdc)
-tmp <- data.frame(votes=c(obj1$pansh, obj1$prish+obj1$pricsh, obj1$prdcsh, obj1$pvemsh, obj1$panalsh),
+tmp <- data.frame(votes=c(obj4$pansh,
+                          obj4$prish+obj4$pricsh,
+                          obj4$prdsh+obj4$prdcsh,
+                          obj4$ptsh,
+                          obj4$pvemsh,
+                          obj4$mcsh,
+                          obj4$panalsh,
+                          obj4$morenash,
+                          obj4$phsh,
+                          obj4$pssh,
+                          obj4$indep1sh,
+                          obj4$indep2sh),
+                  seats=c(obj4$panw*obj4$ndis,
+                         (obj4$priw+obj4$pricw)*obj4$ndis,
+                         (obj4$prdw+obj4$prdcw)*obj4$ndis,
+                          rep(0, 32), 
+                          rep(0, 32),
+                          obj4$mcw*obj4$ndis,
+                          obj4$panalw*obj4$ndis,
+                          obj4$morenaw*obj4$ndis,
+                          rep(0, 32),
+                          rep(0, 32),
+                          obj4$indepw*obj4$ndis,
+                          rep(0, 32)),
+                  ndis=rep(obj4$ndis, times=12), N=rep(obj4$N, times=12), P=rep(12, times=(12*32)),
+                  pty=c(rep(1, 32), rep(2, 32), rep(3, 32), rep(4, 32), rep(5, 32), rep(6, 32), rep(7, 32), rep(8, 32), rep(9, 32), rep(10, 32), rep(11, 32), rep(12, 32)),
+                  lab=c(rep("pan", 32), rep("pric", 32), rep("prdc", 32), rep("pt", 32), rep("pvem", 32), rep("mc", 32), rep("panal", 32), rep("morena", 32), rep("ph", 32), rep("ps", 32), rep("indep", 32), rep("indep", 32)),
+                  yr=rep(2012,times=(32*12)))
+color <- c(rep("blue", 32), rep("red", 32), rep("gold", 32), rep("red", 32), rep("green", 32), rep("orange", 32), rep("cyan", 32), rep("brown", 32), rep("purple", 32), rep("indigo", 32), rep("gray", 32), rep("gray", 32))
+tmp <- rbind(tmp, data.frame(votes=c(obj1$pansh, obj1$prish+obj1$pricsh, obj1$prdcsh, obj1$pvemsh, obj1$panalsh),
                   seats=c(obj1$panw*obj1$ndis, (obj1$priw+obj1$pricw)*obj1$ndis, obj1$prdcw*obj1$ndis, obj1$pvemw*obj1$ndis, obj1$panalw*obj1$ndis),
                   ndis=rep(obj1$ndis, times=5), N=rep(obj1$N, times=5), P=rep(5, times=(5*32)),
                   pty=c(rep(1, 32),     rep(2, 32),      rep(3, 32),      rep(4, 32),      rep(5, 32)),
                   lab=c(rep("pan", 32), rep("pric", 32), rep("prdc", 32), rep("pvem", 32), rep("panal", 32)),
-                  yr=rep(2012,times=(32*5)))
-color <- c(rep("blue", 32), rep("red", 32), rep("gold", 32), rep("green", 32), rep("cyan", 32))
+                  yr=rep(2012,times=(32*5))))
+color <- c(color, c(rep("blue", 32), rep("red", 32), rep("gold", 32), rep("green", 32), rep("cyan", 32)))
 tmp <- rbind(tmp, data.frame(votes=c(obj2$pansh, obj2$prish+obj2$pricsh, obj2$prdsh, obj2$pvemsh, obj2$panalsh, obj2$ptcsh),
                   seats=c(obj2$panw*obj2$ndis, (obj2$priw+obj2$pricw)*obj2$ndis, obj2$prdw*obj2$ndis, obj2$pvemw*obj2$ndis, obj2$panalw*obj2$ndis, obj2$ptcw*obj2$ndis),
                   ndis=rep(obj2$ndis, times=6), N=rep(obj2$N, times=6), P=rep(6, times=(6*32)),
@@ -1257,9 +1918,11 @@ tmp <- rbind(tmp, data.frame(votes=c(obj3$pansh, obj3$pricsh, obj3$prdcsh, obj3$
                   yr=rep(2006,times=(32*5))))
 color <- c(color, c(rep("blue", 32), rep("red", 32), rep("gold", 32), rep("cyan", 32), rep("violet", 32)))
 ## paste v to compute denominator of King's bias/responsiveness algorythm
-tmp2 <- rbind( v[1:32,], v[1:32,], v[1:32,], v[1:32,], v[1:32,],
-               v[33:64,], v[33:64,], v[33:64,], v[33:64,], v[33:64,], v[33:64,],
-               v[65:96,], v[65:96,], v[65:96,], v[65:96,], v[65:96,])
+tmp2 <- rbind( v[1:32,], v[1:32,], v[1:32,], v[1:32,], v[1:32,], v[1:32,], v[1:32,], v[1:32,], v[1:32,], v[1:32,], v[1:32,], v[1:32,], 
+               v[33:64,], v[33:64,], v[33:64,], v[33:64,], v[33:64,], 
+               v[65:96,], v[65:96,], v[65:96,], v[65:96,], v[65:96,], v[65:96,],
+               v[97:128,], v[97:128,], v[97:128,], v[97:128,], v[97:128,])
+colnames(tmp2)
 tmp <- cbind(tmp, tmp2)
 colnames(tmp)
 ## dummies to know which v-columns are relevant (needs revision given I aggregated pri+pric and prd+prdc)
