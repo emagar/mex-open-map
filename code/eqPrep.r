@@ -2,6 +2,7 @@
 ## Code is invoked from other scripts                                    ##
 ## It imports and prepares data frame mapping secciones to 1977, 1996,   ##
 ## and 2005 districts, and also two redistricting proposals made in 2013 ##
+## ** revised May 2016 to include 2014 reseccionamiento **               ##
 ###########################################################################
 #
 # START EQ PREP

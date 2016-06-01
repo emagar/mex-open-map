@@ -1,0 +1,51 @@
+InfoBegin
+InfoKey: ModDate
+InfoValue: D:20160601094418
+InfoBegin
+InfoKey: CreationDate
+InfoValue: D:20160601094418
+InfoBegin
+InfoKey: Title
+InfoValue: R Graphics Output
+InfoBegin
+InfoKey: Creator
+InfoValue: R
+InfoBegin
+InfoKey: Producer
+InfoValue: R 3.3.0
+NumberOfPages: 7
+PageMediaBegin
+PageMediaNumber: 1
+PageMediaRotation: 0
+PageMediaRect: 0 0 504 504
+PageMediaDimensions: 504 504
+PageMediaBegin
+PageMediaNumber: 2
+PageMediaRotation: 0
+PageMediaRect: 0 0 504 504
+PageMediaDimensions: 504 504
+PageMediaBegin
+PageMediaNumber: 3
+PageMediaRotation: 0
+PageMediaRect: 0 0 504 504
+PageMediaDimensions: 504 504
+PageMediaBegin
+PageMediaNumber: 4
+PageMediaRotation: 0
+PageMediaRect: 0 0 504 504
+PageMediaDimensions: 504 504
+PageMediaBegin
+PageMediaNumber: 5
+PageMediaRotation: 0
+PageMediaRect: 0 0 504 504
+PageMediaDimensions: 504 504
+PageMediaBegin
+PageMediaNumber: 6
+PageMediaRotation: 0
+PageMediaRect: 0 0 504 504
+PageMediaDimensions: 504 504
+PageMediaBegin
+PageMediaNumber: 7
+PageMediaRotation: 0
+PageMediaRect: 0 0 504 504
+PageMediaDimensions: 504 504

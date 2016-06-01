@@ -1,3 +1,71 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+ 
+\usepackage{color}
 
-The lag between census and redistricting is, of course, not the only cause of malapportionment. Small deviations around mean district population are almost always unavoidable simply because districts usually cannot slice populations so finely to create perfect population balance between districts. Courts in the U.S.\ have struck down new U.S. House district maps bearing less than 1\% differences within states without proper justification \citep{tuckerApportionment.1985}. U.S. redistricting authorities generally view \emph{de minimus} population deviations of as little as one or zero persons between congressional districts as desirable to inoculate against litigation---although larger differences are permitted for elections at other levels of government. In stark contrast, Mexico's electoral board has permitted deviations between 10\% (in 2006) and 15\% (in 1997 and 2015) above or below mean state district size \citep{lujambio.vives.2008,trelles.mtz.polygob2012}. The greater population deviation is designed to give deference to competing redistricting criteria, such as minimizing the number of municipalities that must be partitioned into two (or more) federal districts and keeping within the same district municipalities with large indigenous populations.\footnote{The rationale is minority protection. In practice, however, there is no consideration of primordial differences between contiguous, and possibly antagonistic indigenous communities---all fall in the `indigenous' category, and are grouped in one congressional district \citep{sonnleitner.elsCps2012}. The case of Arizona's Hopi and Navajo tribes is an example where a redistricting authority made a conscious effort to segregate antagonistic tribes \citep{stephanopoulos.redisCommunity2012}.} The representational effect is substantial: two districts with populations exactly at the bounds of the legal spread afford citizens at the bottom bound one-third more representation in Congress than those at the top. 
+% listings CUSTOMIZATION STARTS HERE     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{listings} % better than verbatim to report code (color highlights etc)
 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle}
+% listings CUSTOMIZATION ENDS HERE     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+\begin{document}
+
+\begin{lstlisting}
+lambda.rho.4 <- function() {
+    for (i in 1:I){     # loop over state-years
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
+            S[i,j] ~ dbin(pi[i,j], D[i])  # D is the number of SMD seats
+        }
+        numerator[i,1] <- dummy[i,1] * exp( lambda[1] + rho * log(v[i,1]) )
+        numerator[i,2] <- dummy[i,2] * exp(             rho * log(v[i,2]) )
+        for (j in 3:J){
+#            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] + rho * log(v[i,j]) )
+            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] ) * v[i,j]^rho
+        }
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
+            d1[i,j] <- dummy[i,1] * exp( lambda[1] ) * v[i,1]^rho 
+            d2[i,j] <- dummy[i,2]                    * v[i,2]^rho # pri is reference
+            d3[i,j] <- dummy[i,3] * exp( lambda[2] ) * v[i,3]^rho 
+            d4[i,j] <- dummy[i,4] * exp( lambda[3] ) * v[i,4]^rho 
+            d5[i,j] <- dummy[i,5] * exp( lambda[4] ) * v[i,5]^rho 
+            d6[i,j] <- dummy[i,6] * exp( lambda[5] ) * v[i,6]^rho 
+            denominator[i,j] <- d1[i,j]+d2[i,j]+d3[i,j]+d4[i,j]+d5[i,j]+d6[i,j]
+            pi[i,j] <- numerator[i,j] / denominator[i,j]
+        }
+    }
+    ### priors
+    for (p in 1:5){ # there are 6 party labels in the 3-election data, PRI is reference
+        lambda[p] ~ dnorm( 0, tau.lambda )
+    }
+    tau.lambda <- pow(.25, -2)
+    rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
+}
+\end{lstlisting}
+
+
+\end{document}

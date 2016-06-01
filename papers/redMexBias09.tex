@@ -17,7 +17,7 @@
 \usepackage[scaled=.90]{helvet} % set font type to Times (Helvetica for some special characters)
 \usepackage{courier}            % set font type to Times (Courier for other special characters)
 
-%\usepackage{rotating}
+\usepackage{rotating}
 %\usepackage{pdflscape}
 
 \newcommand{\mc}{\multicolumn}
@@ -32,6 +32,36 @@
 \graphicspath{{../graphs/}}   % double braces needed for this to work
 
 %\usepackage{epigraph}         % write/format epigraphs
+
+% listings CUSTOMIZATION STARTS HERE     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{listings} % better than verbatim to report code (color highlights etc)
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+%\lstset{style=mystyle}
+% listings CUSTOMIZATION ENDS HERE     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % %for submission: sends figs, tables, and footnotes to last pages
@@ -100,7 +130,7 @@
 
 \noindent A fundamental function of representative democracy is the conversion of parties' electoral support into legislative representation \citep{lijphartElSysPtySys.1994}. Often, scholars measure the quality of representation by examining the difference between the vote share that a party receives in the electorate and the seat share it subsequently wins in elections to the legislature. The congruence of vote and seat shares is at the heart of electoral reform debates and has received much attention from political scientists, economists, sociologists, geographers, mathematicians, and statisticians studying electoral systems utilizing single-member, plurality-win districts operating within party systems that have competition among two major political parties.\footnote{See \citet{altman.mcdonald2011bard,balinskiYoung2001FairRep,brady.grofmanBiasResponsiveness1991,cain.partisanRedistricting.1985,cox.katz.2002,engstrom2006redisttrictApsr,erikson1972malapportionment,gelman.king.1994EvalElSysRedis,grofmanBiasProportionality.1983,grofman.etalBiasMalapp.1997,gudgin.taylor.1980decomposeBias,JohnstonCreepingMal,kendall.stuartCubeLaw1950,king.browning1987biasRespUS,niemi.fett1986swing,rae.1967,rossiter.etal.1997,taagepera.CubeLaw.1973,trelles.mtz.polygob2012,tufte1973seatsVotes}.\label{fn:cites}}
 
-The standard approach to study votes-seats curves focuses on two characteristics: responsiveness and partisan bias \citep{tufte1973seatsVotes,king.browning1987biasRespUS}. \emph{Responsiveness} measures a change in seats for a change in votes, or the slope of the votes-seats curve. In a perfect proportional representation (PR) system, a party receives a seat share equal to its vote share and responsiveness equals one \citep{taagepera.shugart.1989,linzerSeatVoteElasticity2012}. For many reasons, responsiveness is rarely equal to one; even in PR systems, thresholds to win a seat preclude a smooth translation of votes into seats. In district systems, responsiveness deviates further from PR because of how voters are assigned to geographical units. In the extreme, when every district is perfectly competitive between the parties, a small change in votes yields a large change in seats, or high responsiveness. If every district is perfectly uncompetitive, seat shares are largely unaffected by vote shares, and responsiveness is near zero. In two-party systems, responsiveness can be described as a symmetric distortion of the seats to votes curve, in the sense that a party wins seats at the expense of their opposition \citep{grofman.king.2008.partisansymmetry}. In contrast, \emph{partisan bias} introduces an asymmetry in the votes-seats relationship. The term ``partisan bias'' describes an undue advantage in the ability to win legislative seats. A party favored by systematic bias win seats with fewer votes than their opposition, which can lead to counter-majoritarian outcomes when the party winning the most votes fails to win a legislative majority.
+The standard approach to study votes-seats curves focuses on two characteristics: responsiveness and partisan bias \citep{tufte1973seatsVotes,king.browning1987biasRespUS}. \emph{Responsiveness} measures a change in seats for a change in votes, or the slope of the votes-seats curve. In a perfect proportional representation (PR) system, a party receives a seat share equal to its vote share and responsiveness equals one \citet{taagepera.shugart.1989,linzerSeatVoteElasticity2012}. For many reasons, responsiveness is rarely equal to one; even in PR systems, thresholds to win a seat preclude a smooth translation of votes into seats. In district systems, responsiveness deviates further from PR because of how voters are assigned to geographical units. In the extreme, when every district is perfectly competitive between the parties, a small change in votes yields a large change in seats, or high responsiveness. If every district is perfectly uncompetitive, seat shares are largely unaffected by vote shares, and responsiveness is near zero. In two-party systems, responsiveness can be described as a symmetric distortion of the seats to votes curve, in the sense that a party wins seats at the expense of their opposition \citep{grofman.king.2008.partisansymmetry}. In contrast, \emph{partisan bias} introduces an asymmetry in the votes-seats relationship. The term ``partisan bias'' describes an undue advantage in the ability to win legislative seats. A party favored by systematic bias win seats with fewer votes than their opposition, which can lead to counter-majoritarian outcomes when the party winning the most votes fails to win a legislative majority.
 
 Theory highlights three sources of partisan bias. One is \emph{malapportionment}---differences in district populations. A party with stronger voting bases in smaller-population districts receives a seat bonus nationwide \citep{JohnstonCreepingMal,jackmanMeasuringBias1994}. Another is \emph{distributional}, and is often associated with partisan gerrymandering---the practice of strategically drawing district boundaries to achieve partisan bias. Partisan gerrymandering strategies involve wasting an opposition party's votes by either packing their supporters into a few districts they win by overwhelming majorities or spreading them thin across several districts that they cannot win \citep{owen.grofman.1988.partisangerrymandering,cox.katz.2002,engstrom2006redisttrictApsr}. Distributional distortions may occur through the intentional practice of gerrymandering, or unintentionally through the confluence of geography and the rules governing the drawing of district boundaries. The third source is \emph{turnout differences} across districts. A party enjoying stronger support in high-turnout districts pays a seat penalty relative to opposition parties that do well in low-turnout districts; the latter parties win seats with fewer votes \citep{campbellTurnoutBias1996,rosenstone.hansen.1993}.  
 
@@ -108,7 +138,7 @@ We explore the independent contribution of these three sources of partisan bias 
 
 %EM MAY INCLUDE IN PARAGRAPH ABOVE, BEFORE "We uncover...", TO ADD MORE DETAIL ON MEXICO Leaving the compensatory PR (discussed below) seats aside, major parties have been systematically over-represented, jointly receiving 14 percent more single-member district (SMD) seats than votes on average. Individually, the former hegemonic Institutional Revolutionary Party (PRI) stands out, achieving remarkable 19 percentage points over-representation in the 2012 election with just 36 percent of the vote, and as many as 23 points in 2009 with a vote base of 39 percent. With such background, partisan bias merits investigation and analysis. 
 
-We proceed as follows. We describe the three models upon which we build our approach in sections 1, 2, and 3. Each model removes obstacles: \citet{king.1990elRespBiasMultiparty} measures partisan bias in multi-party systems; \citet{grofman.etalBiasMalapp.1997} breaks down the size and polarity of three independent sources of partisan bias; and \citet{linzerSeatVoteElasticity2012} estimates quantities of interest with a limited number of observation points. Our method stands at the intersection of this trio. The remainder of the paper applies our proposed procedure to a case of substantive interest to students of elections and political geography, in general, and Latin America, in particular. Section 4 describes Mexico's mixed-member electoral system, isolating the plurality tier for analysis. We describe the sources and limits of the data we analyze for four consecutive elections between 2003 and 2012. Section 5 is an examination of substantial creeping malapportionment in these elections. Section 6 reports results. Section 7 concludes with a discussion of the importance to the method for future scholars and practical applications. 
+We proceed as follows. We describe the three models upon which we build our approach in sections 1, 2, and 3. Each model removes obstacles: \citet{king.1990elRespBiasMultiparty} measures partisan bias in multi-party systems; \citet{grofman.etalBiasMalapp.1997} breaks down the size and polarity of three independent sources of partisan bias; and \citet{linzerSeatVoteElasticity2012} estimates quantities of interest with a limited number of observation points. Our method stands at the intersection of this trio. The remainder of the paper applies our proposed procedure to a case of substantive interest to students of elections and political geography, in general, and Latin America, in particular. Section 4 describes Mexico's mixed-member electoral system, isolating the plurality tier for analysis. We describe the sources and limits of the data we analyze for five consecutive elections between 2003 and 2015. Section 5 is an examination of substantial creeping malapportionment in these elections. Section 6 reports results. Section 7 concludes with a discussion of the importance to the method for future scholars and practical applications. 
 
 \section{Partisan bias in the multi-party context}
 
@@ -133,9 +163,11 @@ We begin by formalizing partisan bias and responsiveness. The two-party case \ci
 \end{center}
 \end{figure}
 
-The three centered lines, which intersect at fifty percent of the vote and fifty percent of the seats, illustrate variable responsiveness without partisan bias. A system with $\rho=1$ is perfect proportional representation, the ideal type against which electoral systems are often contrasted. PR appears as the dotted diagonal line: every party winning $v$\% of the vote gets, precisely, $s=v$\% of seats. $\rho=3$ characterizes the classic cube law, the dotted curve over-representing the winner (points above the diagonal). Here a party with 55\% of the vote wins two-thirds of the seats, but with 33\% it wins only one-tenth of the seats. As responsiveness grows, the curve becomes steeper, until barely crossing the majority threshold suffices to win all the available seats. 
+The three centered lines, which intersect at fifty percent of the vote and fifty percent of the seats, illustrate variable responsiveness without partisan bias. A system with $\rho=1$ is perfect proportional representation, the ideal type against which electoral systems are often contrasted. PR appears as the dotted diagonal line: every party winning $v$\% of the vote gets, precisely, $s=v$\% of seats. As responsiveness grows, the curve becomes steeper, over-representing the winner (points above the diagonal). At the limit, when $\rho$ tends to infinity, every district is a microcosm of the national electorate, such that the party receiving 51\% of the vote wins all districts and receives 100\% delegates. $\rho=3$, the dotted line, characterizes the classic cube law that many have associated with plurality rule in single-member districts \citep{taagepera.CubeLaw.1973}. With cube responsiveness, a party with 55\% of the vote wins two-thirds of the seats, but with 33\% it wins only one-tenth of the seats. 
 
-Partisan bias can be defined as asymmetric party treatment within the votes-seats function. Lines crossing fifty percent seats to the left of fifty percent of the votes in Figure \ref{F:lambdaRhoEx} replicate the values of $\rho$ just discussed, but with $\lambda = +1.5$ added. A bias-favored party requires fewer votes to reach the threshold for large-party over-representation, thereby generating manufactured parliamentary majorities with less than a vote majority \citep{lijphartElSysPtySys.1994}. (The dotted convex line shows how, due to logit links in Equation \ref{E:kingBi}, partisan bias also reshapes the function's trace.) When bias is present, parties winning identical vote shares nationwide earn different shares of seats. 
+Responsiveness is a symmetric property of the electoral system: \emph{any} party coming first in votes will accrue the large party bonus. Partisan bias, in contrast, can be defined as \emph{asymmetric} party treatment within the votes-seats function. Gray lines crossing fifty percent seats to the left of fifty percent of the votes in Figure \ref{F:lambdaRhoEx} replicate the values of $\rho$ just discussed, but with $\lambda = +1.5$ added. A bias-favored party requires fewer votes to reach the threshold for large-party over-representation, thereby generating manufactured parliamentary majorities with less than a vote majority \citep{lijphartElSysPtySys.1994}. (The dotted convex line shows how, due to logit links in Equation \ref{E:kingBi}, partisan bias also reshapes the function's trace.) When bias is present, parties winning identical vote shares nationwide earn different shares of seats. 
+
+% from reviewer 2: In election 1, A receives 51% and B 49% of votes, in all districts, and A receives all delegates. In election 2, B receives 51% in all districts and all delegates. Now, to me, I wouldn't say that the system is necessarily biased in favor of  A in the first election and B in the second; this is not about the party's identity but about the responsiveness of the system (which does not change from election 1 to 2). An early clarifying discussion, which should be really simple so that non-experts can understand, of how such issues are conceptually handled when delineating what is partisan bias, and a clarification if this truly matters for any of the sources of bias calculated would be very welcome.
 
 % comment [Mike] I can't see a difference between black and gray lines on my computer. Maybe it's my eyes. I rewrote without referencing the colors.
 
@@ -145,7 +177,7 @@ A multi-party, estimable version of equation \ref{E:kingBi} is King (\citeyear{k
  E(s_p) = \frac{e^{\lambda_p} \times v_p^\rho}{\sum_{q=1}^{P} e^{\lambda_q} \times v_q^\rho}
 \end{equation}
 
-\noindent with parameters indexed to identify the parties. Setting $\lambda_1 = 0$ restricts the remainder $\lambda_{p \neq 1}$ to express partisan bias in relation to party $p=1$ without loss of generality. (We use this as a convenience, for expositional purposes) Partisan bias in two-party competition is the shift away from $s=.5$ when the votes-seats curve is evaluated or ``centered'' at $v=.5$ (in Figure \ref{F:lambdaRhoEx}, it is the gap between the black lines and gray lines crossing points). While partisan bias shifts operate similarly, there is no reason to expect a curve centered at $v=.5$ in multi-party competition. Nor is it evident \emph{a priori} what vote share serves as a center point---which poses a difficulty when expressing a partisan bias estimate $\hat{\lambda}_p$ as a percentage points advantage or handicap for party $p$, as is commonly done in analysis of two-party systems \citep[e.g.,][]{cox.katz.2002}. Imposing the $\lambda_1 = 0$ restriction, estimating $\lambda_{p \neq 1}<0$ is evidence of bias against party $p \neq 1$ relative to party $p=1$.
+\noindent with parameters indexed to identify the parties. Setting $\lambda_1 = 0$ restricts the remainder $\lambda_{p \neq 1}$ to express partisan bias in relation to party $p=1$ without loss of generality. This is convenient for multipartism. Partisan bias in two-party competition is the shift away from $s=.5$ when the votes-seats curve is evaluated or ``centered'' at $v=.5$ (in Figure \ref{F:lambdaRhoEx}, it is the gap between the black lines and gray lines crossing points). While partisan bias shifts operate similarly, there is no reason to expect a curve centered at $v=.5$ in multi-party competition. Nor is it evident \emph{a priori} what vote share serves as a center point\footnote{From \citet[][:Fig.~1]{calvo.micozzi.govReform.2005}, we can expect that center to shift progressively to the left as party competition increases. We note that partisan bias achieves precisely such a leftward pull---but for a favored party only: a more efficient votes to seats conversion. For unfavored parties, the pull is rightward. So whereas the effect of multipartism remains symmetric, that of partisan bias does not. We are grateful to an anonymous referee for pointing this out.}---which poses a difficulty when expressing a partisan bias estimate $\hat{\lambda}_p$ as a percentage points advantage or handicap for party $p$, as is commonly done in analysis of two-party systems \citep[e.g.,][]{cox.katz.2002}. With the $\lambda_1 = 0$ restriction, estimating $\lambda_{p \neq 1}<0$ is evidence of bias against party $p \neq 1$ relative to party $p=1$.
 
 \section{Three sources of partisan bias}
 
@@ -245,8 +277,9 @@ The final obstacle we face is fitting the votes-seats curve to data of interest,
     \includegraphics[width=.4\columnwidth]{vs2006.pdf} \\
     \includegraphics[width=.4\columnwidth]{vs2009.pdf} &
     \includegraphics[width=.4\columnwidth]{vs2012.pdf} \\
+    \includegraphics[width=.4\columnwidth]{vs2015.pdf} & \\
 \end{tabular}
-\caption{Votes and plurality seats in four elections. Actual data in black, simulated elections in gray. Source: prepared with data from \url{www.ine.org.mx}.}\label{F:singleYrSeatsVotes}
+\caption{Votes and plurality seats in five elections. Actual data in black, simulated elections in gray. Source: prepared with data from \url{www.ine.org.mx}.}\label{F:singleYrSeatsVotes}
 \end{center}
 \end{figure}
 
@@ -259,42 +292,30 @@ Another technical problem is that parties may not field candidates in all legisl
 
 \section{Mexican C\'amara de Diputados elections}
 
-We demonstrate our procedure through analysis of recent elections of Mexico's lower chamber of Congress. The C\'amara de Diputados has been elected with a mixed-member electoral system for decades. Systems of this nature give voters a direct role in the election of representatives from single-member districts, while additionally using some form of PR to reduce votes-seats distortions often magnified in plurality systems \citep{shugart.wattenbergIntro2001}.\footnote{Each voter casts a unique, non-exclusive, pooling vote to choose among candidates in 300 single-member districts with seats allocated by plurality. Votes then transfer to the party to which the candidate originally voted belongs, in order to allocate seats in five second-tier districts of magnitude 40, by closed-list Hare PR, using a 2\% threshold \citep{weldonMixedMemberSys2001}.} We examine, in isolation, the elections held in the single-member plurality-win districts. We thus single out, for analysis, the tier where all congressional voting and most campaigning in Mexico take place, with the potential for distortion of the votes-to-seats conversion at its fullest. 
+We demonstrate our procedure by analysis of recent elections of Mexico's lower chamber of Congress. The C\'amara de Diputados has been elected with a mixed-member electoral system for decades. Systems of this nature give voters a direct role in the election of representatives from single-member districts, while additionally using some form of PR to reduce votes-seats distortions often magnified in plurality systems \citep{shugart.wattenbergIntro2001}.\footnote{Each voter casts a unique, non-exclusive, pooling vote to choose among candidates in 300 single-member districts with seats allocated by plurality. Votes then transfer to the party to which the candidate originally voted belongs, in order to allocate seats in five second-tier districts of magnitude 40, by closed-list Hare PR, using a 2\% threshold (3\% since 2015). Compensation tops over-representation at 8\% or less. See \citet{weldonMixedMemberSys2001}.} We examine, in isolation, the elections held in the single-member plurality-win districts. We thus single out, for analysis, the tier where the potential for distortion of the votes-to-seats conversion is at its fullest---fertile ground to see our procedure at work.
 
-We therefore suspect partisan bias in the data such as is regularly found in other single-member plurality systems. \citet{marquez2014biasBlog}, using a multi-election approach to analyze votes and seats won over two decades, uncovers a degree of responsivity characteristic of plurality systems and substantive partisan bias against the PAN. Our proposed procedure offers a way to answer questions of theoretical interest by showing the contributions of malapportionment, distributional, and turnout to bias in each election. 
+Even if the mixed system, in the end, will attenuate votes-seats distorsions in the overall composition of the C\'amara, the plurality tier bias we analyze retains potential to mess up representation. Some inter-party distorsion may carry to the PR tier. \citet{cox.1997} shows how in SMDs, election contests tend to devolve into competition between the two leading party's candidates in each district. If systematic partisan bias further depresses seat-winning opportunities of trailing parties, these will find themselves disadvantaged in the PR tier as their voters abandon their candidates to select one of the top two candidates most likely to win the district election. And compensation is not free of intra-party distributive consequences. A party with a plurality seat deficit vis-\`a-vis its votes will receive extra Diputados from the national lists. Unlike district candidates, who are often nominated by the local party, PR lists are overwhelmingly decided by the national party leadership \citep{poire.phd.2002}. Evidence of systematic differences in how plurality and list Deputies behave in the C\'amara \citep{kerevelPork2015} suggests they do indeed represent different sets of interests. Plurality bias therefore deprives local parties of some influence.\footnote{Plurality bias has normative consequences too. Compensating \emph{parties} bears relation to, but is not the same as, compensating \emph{citizens} of oversized, electorally uncompetitive, low turnout districts. Keeping these compensations distinct is important. Much of the evidence presented here, as in the scholarly literature, deals with party votes to seats ratios. From the normative standpoint, however, it is the `one person, one vote' principle---one of Dahl's \citeyearpar{dahl.1972} preconditions of democratic government---that bias antagonizes, and party compensation is not designed to redress this imbalance.} 
 
-Mexico held its first free and fair congressional election in 1997. In advance of this election, election management was delegated to the Federal Electoral Institute (IFE), a newly-appointed independent board \citep{lujambio.vives.2008}. Closer inspection of the board's structure and process reveals how, in practice, it is a power-sharing agent of the major congressional parties \citep{estevez.magar.rosas.2008}. Systematic partisan segmentation of the board is evidence of major-party influence in election regulation. This extends to redistricting, as the IFE was charged with drawing Diputado districts. 
+Mexico held its first free and fair congressional election in 1997. Electoral rules have remained fundamentally unchanged since, but district maps have been redrawn, using machine-assisted mapping, by and independent electoral board \citep{lujambio.vives.2008,trelles.mtz.polygob2012}. The ``1997 map'' was used up to 2003, the other elections were conducted using the ``2006 map''. Another was proposed in 2015, but the board rejected implementation of this plan when redistricting became conflated with a broader package of electoral reforms. We examine Diputado midterm elections of 2003, 2009, and 2015, and elections concurrent with the presidential races of 2006 and 2012. We take advantage of redistricting in the period to add perspective to the analysis, with a hypothetical map approach. (We ask how the 2003 votes would have converted into seats if the 2006 map had been used? If the 2015 map had been implemented for that year's election?) 
 
-New district boundaries were drawn, using machine-assisted mapping, in 1997 and 2006. A new map was also proposed in 2015, but the board rejected implementation of this plan when redistricting became conflated with a broader package of electoral reforms. We explore all the board's proposed redistricting plans in our analysis, including, in a counter-factual approach, the recently rejected map. We examine Diputado midterm elections of 2003 and 2009, and elections concurrent with the presidential races of 2006 and 2012. District maps changed between the first and remainder elections in the analysis. 
+Analysis relies on district- and secci\'on-level vote returns, the former to simulate national vote and seat shares by party, the latter to re-aggregate votes into hypothetical district maps.\footnote{Data is from IFE's official election returns, available at \url{www.ine.mx}. \emph{Secciones electorales} are analogous to U.S.\ census tracts (median secci\'on population in the 2010 census was 1,280, with a maximum at 79,232; median tract population in the 2010 census was 3,995, with a maximum at 37,452). Secciones are the basic units for district cartography. The 1997, 2006, and 2015 maps (kindly shared by IFE's cartography department) relate more than sixty-six thousand secciones to 300 congressional districts. This made reconstitution of hypothetical election outcomes in the period possible. Upon publication, all data and code for our analysis will be distributed through a durable publicly accessible archive *which?*.} Party vote shares are defined as the number of votes won divided by the effective vote, which is a district's vote total minus voided ballots, votes for write-in candidates, and votes for small parties dropped from analysis {\citep[cf.][:fn. 4]{linzerSeatVoteElasticity2012}. To gauge malapportionment, district-level populations (and, for hypothetical map analysis, secci\'on-level populations) were compiled from years 2000 and 2010 census data, and the 2005 population count, prepared by Mexico's census bureau (INEGI). Linear 2000--05 and 2005--10 projections provide point estimates of between-census election-year populations.
 
-Analysis relies on district- and secci\'on-level vote returns, the former to simulate national vote and seat shares by party, the latter to re-aggregate votes into hypothetical district maps in the counter-factual analysis.\footnote{Data is from IFE's official election returns, available at \url{www.ine.mx}. \emph{Secciones electorales} are analogous to U.S.\ census tracts (median secci\'on population in the 2010 census was 1,280, with a maximum at 79,232; median tract population in the 2010 census was 3,995, with a maximum at 37,452). Secciones are the basic units for district cartography. The 1997, 2006, and 2015 maps (kindly shared by IFE's cartography department) relate more than sixty-six thousand secciones to 300 congressional districts. This made reconstitution of hypothetical election outcomes in the period possible. Upon publication, all data and code for our analysis will be distributed through a durable publicly accessible archive.} Party district-level vote shares are defined as the number of votes won divided by a district's effective vote; which is a district's vote total minus voided ballots, votes for write-in candidates, and votes for parties failing to clear the 2\% threshold nationwide {\citep[cf.][:fn. 4, five parties dropped in 2003 and one in 2006]{linzerSeatVoteElasticity2012}. To gauge malapportionment, district-level populations (and, for hypothetical map analysis, secci\'on-level populations) were compiled from years 2000 and 2010 census data, and the 2005 population count, prepared by Mexico's census bureau (INEGI). Linear 2000--05 and 2005--10 projections provide point estimates of between-census election-year populations.
+Six parties are included. Three are major parties, with vote shares above 15\% (albeit volatile, as seen in Figure \ref{F:singleYrSeatsVotes}): the right-of-center National Action Party (PAN) that controlled the presidency in the observed period up to 2012; the formerly hegemonic Institutional Revolutionary Party (PRI) in the presidency since 2012; and the left-of-center Democratic Revolution Party (PRD). Minor parties had vote shares between 2 and 9\%. Major parties contested every district systematically, but often in pre-election coalitions. The PRI routinely coalesced with the Green party, but other than in 2012, when they fielded join candidates in every plurality district, the deal was partial---the partners fielded joint candidates in some districts, but competed against each other in the remainder. Partial PRI-Green coalitions complicate national votes and seats aggregation. The option of computing separate aggregates for PRI, for Green, and for PRI-Green is attractive for describing the situation faithfully, but we decided against it. Notably, the PRI would wrongly appear as fielding no candidates in numerous districts, thereby artificially underestimating its true electoral strength. We opted instead to exploit the coalition partners' size asymmetry by considering PRI-Green votes won in tandem as if the PRI had won them solo---thus contributing returns in every district for the national aggregate. While this approach is far from satisfactory (the Green is the largest and most successful of minor parties, it may soon qualify as major) the solution is practical, and credits the fact that the partners never failed to team electorally to some degree throughout the period.\footnote{Minor parties included---all personalistic---are the Green, MC, and, in 2015 only, Morena, an important splinter from the PRD. Ten smaller/ephemeral parties were dropped from analysis (among them are the PT and the PANAL, which had presence throughout the period). Electoral coalitions occurred thus: the PRD fielded common candidates with MC and the PT nationwide in 2006 and in 2012 (they are labeled `left' in plots); MC and PT ran together nationwide in 2009; and the PRI-Green covered one-third of districts jointly in 2003, all districts in 2006, one-fifth in 2009, and two-thirds in 2012.} 
 
-
-Seven parties are included in the analysis. Three are major parties, with vote shares above 15\% (albeit volatile, as seen in Figure \ref{F:singleYrSeatsVotes}): the right-of-center National Action Party (PAN) that controlled the presidency throughout the period; the formerly hegemonic Institutional Revolutionary Party (PRI); and the left-of-center Democratic Revolution Party (PRD). Minor parties had vote shares between 2 and 7\%. Major parties contested every district systematically, but often in pre-election coalitions. Partial PRI-Green coalitions in 2003, 2009, and 2012---the partners fielded joint candidates in some districts, but competed against each other in the remainder---complicate national votes and seats aggregation. The option of computing separate aggregates for PRI, for Green, and for PRI-Green is attractive for describing the situation faithfully, but we decided against it. Notably, the PRI would wrongly appear as fielding no candidates in numerous districts, thereby artificially underestimating its true electoral strength. We opted instead to exploit the coalition partners' size asymmetry by considering PRI-Green votes won in tandem as if the PRI had won them solo---thus contributing returns in every district for the national aggregate. While this approach is far from satisfactory (the Green is the largest and most successful of minor parties, it may soon qualify as major) the solution is practical, and credits the fact that the partners never failed to team electorally to some degree throughout the period.\footnote{Minor parties mentioned were the Green (personalistic), the PANAL (with links to the teachers' union), Convergencia (personalistic), and the PT (personalistic of Maoist bend). Electoral coalitions occurred thus: the PRD fielded common candidates with Convergencia and the PT nationwide in 2006 and in 2012 (they are labeled `left' in plots); Convergencia and PT ran together in 2009; and the PRI routinely allied with the Green, covering one-third of districts in 2003, all districts in 2006, one-fifth in 2009, and two-thirds in 2012.} 
+Previous research gives reason to suspect partisan bias. \citet{marquez2014biasBlog}, using a multi-election approach to analyze votes and seats won over two decades, uncovers a degree of responsivity characteristic of plurality systems and substantive partisan bias against the right. Our proposed procedure offers a way to answer questions of theoretical interest by showing the contributions of malapportionment, distributional, and turnout to bias in each election. 
 
 \section{One Mexican, one vote?}
 
 % [Micah] Since they are projections, these should be accompanied by a measure of uncertainty. The uncertainty should be represented in this graph (error regions) or in the appendix.
 % [Eric] I searched for a confidence interval in the census' population figures (they are estimates, after all) but could find none. These are, presumably, necessary to achieve Micah's suggestion.
 
-Prevalent malapportionment adds to the attractiveness of the application case. Districts of unequal size are common practice in Mexico despite a set of clear quantitative redistricting criteria that includes population equality. Malapportionment arises around the world when apportionment formulas assign districts to geographic units, such as states, according to their population. Unequal-sized districts result when the geographic units' populations are not neatly divided by the number of seats. An additional source of malapportionment in Mexico is a time lag between the conduct of the national census and redistricting, what \citet{JohnstonCreepingMal} calls ``creeping malapportionment.'' Ironically, the constitution mandates the use of the census for redistricting, but the government has no obligation to redistrict as soon as population data become available. As a consequence, six or more years have routinely passed between a new census and the time new district boundaries are inaugurated. Substantial malapportionment exists  even as a new map is implemented. 
+Prevalent malapportionment adds to the attractiveness of the application case. Districts of unequal size are common practice in Mexico despite a set of clear quantitative redistricting criteria that includes population equality. One way malapportionment arises around the world is when apportionment formulas assign districts to geographic units, such as states, according to their populations that are not neatly divided by the number of seats \citep{balinskiYoung2001FairRep}. This is compounded in Mexico by a time lag between the conduct of the national census and redistricting, what \citet{JohnstonCreepingMal} calls ``creeping malapportionment.'' Ironically, the constitution mandates the use of the census for redistricting, but the government has no obligation to redistrict as soon as population counts become available. In practive, six or more years have routinely passed between a new census and the time new district boundaries are inaugurated. If districts experienced similar population growths, this would be inconsequential. With growth differentials, however, substantial malapportionment exists  even as a new map is implemented.\footnote{The comparative survey by \citet{snyder.samuelsMalapp2004} ranked Mexico among well-apportioned cases. The measure reported is for the 1997 map, but no guidance is offered about the population figures used in denominators. We suspect reliance---as the board did then and still does now---on raw 1990 census data, severely underestimated Mexico's malapportionment.}  
 
-% PLOT PREPARED IN RED.R
-\begin{figure}
-\centering 
-  \includegraphics[width=.8\columnwidth]{disRelPopProj2006map.pdf} 
-  \caption{The 2006 map and demographic change. Plotted population projections relied on the 2000--2010 censuses rate of change (see text for details). Letters \textsc{e} in the horizontal axis indicate elections using this map. Source: prepared with data from \url{www.inegi.org.mx} and \url{www.ine.mx}.}\label{F:disRelPop2006map}
-\end{figure}
+Another cause of malapportionment is bureaucratic discretion. Small deviations around mean district population are usually unavoidable simply because populations cannot be sliced so finely to create perfectly balanced districts. Courts have struck down new U.S. House district maps bearing less than 1\% differences within states without proper justification \citep{tuckerApportionment.1985}. U.S. redistricting authorities generally view \emph{de minimus} population deviations of as little as one or zero persons between congressional districts as desirable to inoculate against litigation---although larger differences are permitted for elections at other levels of government. In stark contrast, Mexico's electoral board has permitted deviations between 10\% (in 2006) and 15\% (in 1997 and 2015) above or below mean state district size \citep{lujambio.vives.2008,trelles.mtz.polygob2012}. The greater size deviation is designed to give deference to competing redistricting criteria, such as avoiding district lines that bisect municipalities or keeping units with large indigenous populations within the same district. 
 
-Figure \ref{F:disRelPop2006map} illustrates how creeping malapportionment affects Mexico's redistricting. We project inter-census populations linearly to estimate yearly district growth.\footnote{More precisely, the 2000--2005 rate of growth was used before year 2006, and the 2005--2010 rate afterwards. Population projections for different maps were done after secci\'on census populations had been aggregated into actual or hypothetical districts. Performing linear projection on secciones before any aggregation might have been preferable (because they are much smaller geographic units), but a fair amount of over-populated secciones are routinely split into new ones between elections, complicating the projection exercise.} Compared to the 2000 census, projected district populations in 2006 are off by 9.7\% in absolute value on average, with a standard deviation of 10.6\%. With one additional year away from the reference census, the 1997 map had even less success achieving proper representation. Indexing 2000 census district populations at 100, as the figure does, reveals how different the most demographically dynamic units were on paper and in reality. The fastest-growing district was 88\% larger in 2006 than what census data otherwise suggested (the line labeled `max'). The district shedding most population was 16\% smaller (the `min' line). These are outliers, but central tendencies reflect sizable lags as well. The inter-quartile range (lines Q.25 and Q.75) covered 1\%--13\% above census in the 2006 election, and expanded to 4\%--20\%, 7\%--27\%, and 10\%--35\% in the three subsequent elections using the same map.
+We follow \citet{ansolabehere.gerber.snyderCourtRedis2002} to examine how malapportionment distorts representation. We measure a district's relative representation index as $RRI = \frac{1/\text{district size}}{300/\text{national population}}$, where the numerator is the number of seats per person in the district and the denominator is the average number of seats per person nationwide (300 is the number plurality seats). A district with unity index value has representation matching the `one person, one vote' ideal perfectly. Values above one indicate over-representation, values below one under-representation, and the measure is continuous. An example shows how the index is interpreted. The 3rd district of Aguascalientes in 2012 had about 306,000 inhabitants, and 300 divided by Mexico's population was about 387,000. So the district in question had 26\% more representation than the national average, for an index value of 1.26. We project inter-census populations linearly to estimate yearly district populations when computing $RRI$s.\footnote{More precisely, the 2000--2005 rate of growth was used before year 2006, and the 2005--2010 rate afterwards. Population projections for different maps were done after secci\'on census populations had been aggregated into actual or hypothetical districts. Performing linear projection on secciones before any aggregation might have been preferable (because they are much smaller geographic units), but a fair amount of over-populated secciones are routinely split into new ones between elections, complicating the projection exercise.} 
 
-%One year closer to census makes a huge difference, as the abandoned map for 2015 reveals (although this is probably compounded with a less dynamic demography): the dotted vertical line at year 2013 reports how the new plan might have looked, had it been adopted. 
-
-Another cause of malapportionment is bureaucratic discretion. Small deviations around mean district population are usually unavoidable simply because populations cannot be sliced so finely to create perfectly balanced districts. Courts have struck down new U.S. House district maps bearing less than 1\% differences within states without proper justification \citep{tuckerApportionment.1985}. U.S. redistricting authorities generally view \emph{de minimus} population deviations of as little as one or zero persons between congressional districts as desirable to inoculate against litigation---although larger differences are permitted for elections at other levels of government. In stark contrast, Mexico's electoral board has permitted deviations between 10\% (in 2006) and 15\% (in 1997 and 2015) above or below mean state district size \citep{lujambio.vives.2008,trelles.mtz.polygob2012}. The greater size deviation is designed to give deference to competing redistricting criteria, such as avoiding district lines that bisect municipalities or keeping units with large indigenous populations within the same district. Compounded, with the creeping element, discretion has potential to produce considerable malapportionment: two districts with populations exactly at the bounds of the legal spread afford citizens at the bottom bound one-third more representation in Congress than those at the top. 
-
-We follow \citet{ansolabehere.gerber.snyderCourtRedis2002} to examine how malapportionment distorts representation. We measure a district's relative representation index as $RRI = \frac{1/\text{district size}}{300/\text{national population}}$, where the numerator is the number of seats per person in the district and the denominator is the average number of seats per person nationwide (300 is the number plurality seats). A district with unity index value has representation matching the `one person, one vote' ideal perfectly. Values above one indicate over-representation, values below one under-representation, and the measure is continuous. An example shows how the index is interpreted. The 3rd district of Aguascalientes in 2012 had about 306,000 inhabitants, and 300 divided by Mexico's population was about 387,000. So the district in question had 26\% more representation than the national average, for an index value of 1.26. As above, we used population projections to compute $RRI$s.
-
-The percentiles corresponding to $RRI$s at .85 and 1.15 (the bounds of the board's $\pm15\%$ tolerance range) in 2006 were 10 and 87, respectively, implying that $10+100-87=23\%$ of districts exceeded IFE's discretionary malapportionment range in the map's inaugural year, as caused by the census lag.\footnote{This is not entirely accurate, as the $\pm15$ range is in reference to average state population \citep[not average national population, analyzed here, see][]{altman.magar.mcd.trelles2014apsa}. The percentiles using state population $RRI$s are .06 and .89, or 17 percent out-of-legal-range districts in 2006.} By 2012, more than one-third districts were outside the tolerance range, and by 2015 just shy of two-fifths were outside the tolerance range. As the U.S. Supreme Court found in the 1960s, using antiquated population data impairs drawing equal-sized district boundaries and substantially distorts representation. 
+The percentiles corresponding to $RRI$s at .85 and 1.15 (the bounds of the board's $\pm15\%$ tolerance range) in 2006 were 10 and 87, respectively, implying that $10+100-87=23\%$ of districts exceeded IFE's discretionary malapportionment range in the map's inaugural year, as caused by the census lag. By 2012, more than one-third districts were outside the tolerance range, and by 2015 just shy of two-fifths. As the U.S. Supreme Court found in the 1960s, using antiquated population data impairs drawing equal-sized district boundaries and substantially distorts representation. 
 
 % USED CODE IN RED.R TO DO THIS PLOT
 \begin{figure}
@@ -310,18 +331,15 @@ The percentiles corresponding to $RRI$s at .85 and 1.15 (the bounds of the board
 \end{center}
 \end{figure}
 
-Figure \ref{F:malapp} summarizes the effects of creeping and discretionary malapportionment in representation. Vertical dashed lines in gray mark the board's tolerance band, which has been amply and systematically surpassed. Consider the top plot, portraying the status quo map, first. Each point represents one district. The fine horizontal line connects the $RRI$ values corresponding to the 5th and 95th percentiles---both well outside the tolerance range, since the map's inception. The thick horizontal line is the inter-quartile range, not far from covering the full tolerance range by 2012 (if it did, half the districts would be off-range). For the 2015 midterm congressional election (not analyzed here), citizens in the plot's right-most districts (in central Monterrey and two in battered Ju\'arez) will be worth \emph{four times more} in Congress than citizens in the left-most districts (one each in suburban Monterrey and Mexico City, the other in Canc\'un). In matters politic, citizens at one quartile will be worth nearly twice as much as those at the other quartile. 
+Figure \ref{F:malapp} summarizes observed malapportionment. Vertical dashed lines in gray mark the 15\% tolerance band, which has been amply and systematically surpassed. Consider the top plot, portraying the status quo map, first. Each point represents one district. The fine horizontal line connects the $RRI$ values corresponding to the 5th and 95th percentiles---both well outside the tolerance range, since the map's inception. The thick horizontal line is the inter-quartile range, not far from covering the full tolerance range by 2012 (if it did, half the districts would be off-range). In the C\'amara elected in the 2015 midterm, citizens in the plot's right-most districts (in central Monterrey and two in battered Ju\'arez) will be worth \emph{four times more} in Congress than citizens in the left-most districts (one each in suburban Monterrey and Mexico City, the other in Canc\'un). In matters politic, citizens at one quartile will be worth nearly twice as much as those at the other quartile. 
 
-The bottom plot is hypothetical, analyzing the map proposed for the 2015 election, but not adopted. It is quite clear that, even if outliers remained upon implementation, this hypothetical map would have represented Mexicans much better than the status quo (note the narrower horizontal lines). Taking this thought experiment further, it is possible to aggregate section-level population projections for 2009 into the hypothetical map to assess its performance in the year closest to the reference census. Like fish, fresh demographic information is still a must: a handful of the proposed districts in that year are still outside the tolerance band. 
-
-% comment [Mike] I rewrote this to argue that the new plan still had creeping malapportionment. Please check.
-% comment [Eric] "rejected by C\'amara de Diputados" dropped. 
-
-The evidence is unambiguous: malapportionment in Mexico is systematic and substantial, a consequence of using outdated census data and of balancing population equality against other criteria that permits unequal district populations.\footnote{The comparative survey by \citet{snyder.samuelsMalapp2004} ranked Mexico among well-apportioned cases. The measure reported is for the 1997 map, but no guidance is offered about the population figures used in denominators. We suspect reliance---as the board did then and still does now---on raw 1990 census data, severely underestimated Mexico's malapportionment.} 
+The bottom plot is hypothetical, analyzing the map proposed for 2015, but not adopted. It is quite clear that, using more up to date reference census counts improves representation substantially (note the narrower horizontal lines). Applying our method on the same election in both the actual and the hypothetical maps offers perspective to gauge the effect that less malapportionment has on partisan bias and its components. 
 
 \section{Results}
 
 We now turn to estimating overall bias and its components. We fit equation \ref{E:kingMulti} using MCMC estimation to generate overall bias and responsiveness estimates.\footnote{\citet{gelman.hill.2007} is a comprehensive introduction to MCMC estimation. For each vote operationalization ($v$, $\bar{v}$, and $\bar{w}$), three chains were iterated 100 thousand times, taking every 500th observation of the last 50 thousand to sample the posterior distribution. The Gelman-Hill $\hat{R} \approx 1$, evidence that the chains had reached a steady state. Convergence was also inspected visually in chain trace plots of each of the model's parameters. Estimation performed with open-source software \texttt{Jags} \citep{jags.cite}, implemented in \texttt{R} \citep{r.cite} with library \texttt{R2jags} \citep{r.r2jags}. Data and commented code to replicate the analysis will be posted on-line upon publication.} The responsiveness parameter is of secondary interest here, but useful to assess model fit. Judging the 90\% Bayesian confidence intervals (i.e., the 5th to 95th percentile range of $\hat{\rho}$'s posterior sample) reveals sizable shifts in the estimate between congressional elections: from a low of $[2.2,2.4]$ in 2012 to a high of $[2.6,3.0]$ in 2006. The large-party premium of recent Mexican plurality congressional races is about one-sixth smaller than the power of the putative cube law of plurality elections \citep{taagepera.CubeLaw.1973}. 
+
+
 
 \begin{figure}
 \begin{center}
@@ -349,7 +367,9 @@ We now turn to estimating overall bias and its components. We fit equation \ref{
 
 The raw partisan bias estimates (i.e., the $\lambda_p^v$ parameters) are of direct interest to our investigation. Figure \ref{F:posterior_s0s3} summarizes posterior samples for different parties. We choose the PRI as the reference category and therefore express partisan bias measures relative to the reference (it is for this reason the PRI is absent from the figure). Recall that a negative estimate for a given party is evidence of bias against that party relative to the PRI. Several patterns are noteworthy. Estimate precision (i.e., how concentrated the posterior cloud appears) is consistently higher for major parties than for minor parties (this is true for Convergencia as well, excluded from the plot to save space). Among major parties, the PAN's estimates are the most precise with variation around the median posterior value (taken as the point estimate) nearly indistinguishable at the chosen scale every year. The PRD's estimates are slightly less precise in midterm elections (2003 and 2009) than in presidential election years.  
 
-The size and polarity of the bias estimates reveal important party differences. The PAN experienced negative, albeit small partisan bias vis-\`a-vis the PRI in every year observed. Leaving aside the question of how meaningful the estimated quantities are---we analyze swing ratios below---the near exception was 2006, when the tiny estimate's cloud slightly overlaps with the vertical line at zero. In contrast, the PRD experienced favorable and substantive bias relative to the PRI in some years but not in others. Paradoxically, partisan bias in favor of the leftist PRD is a mirror image of its electoral fortunes: bias vanished when its candidates for Congress rode L\'opez Obrador's presidential campaign coattails (the party's national congressional vote was 30 percent on average in 2006 and 2012), but emerged in midterm elections (when its vote averaged 16 percent).\footnote{National vote shares in the period were: \begin{tabular}{rrrrrr} Year & PAN & PRI & PRD & Green & PANAL \\ \hline 2003 & .32 & .38 & .18 & .04 & --- \\ 2006 & .34 & .28 & .31 & --- & .05 \\ 2009 & .29 & .40 & .14 & .06 & .04 \\ 2012 & .27 & .38 & .28 & .02 & .04 \\ \end{tabular}} In spite of losing about half of its support from presidential to midterm elections, the PRD converted votes into seats much more efficiently than either the PRI or PAN in midterm election years. How can a party experience less partisan bias when it fares worse at the polls? Decomposing the components of partisan bias can reveal whether or not this dynamic is due to PRD winning smaller or lower-turnout districts.
+The size and polarity of the bias estimates reveal important party differences. The PAN experienced negative, albeit small partisan bias vis-\`a-vis the PRI in every year observed. Leaving aside the question of how meaningful the estimated quantities are---we analyze swing ratios below---the near exception was 2006, when the tiny estimate's cloud slightly overlaps with the vertical line at zero. In contrast, the PRD experienced favorable and substantive bias relative to the PRI in some years but not in others. Paradoxically, partisan bias in favor of the leftist PRD is a mirror image of its electoral fortunes: bias vanished when its candidates for Congress rode L\'opez Obrador's presidential campaign coattails (the party's national congressional vote was 30 percent on average in 2006 and 2012), but emerged in midterm elections (when its vote averaged 16 percent).\footnote{National vote shares in the period were: \begin{tabular}{rrrrrr} Party   & 2003 & 2006 & 2009 & 2012 & 2015 \\ \hline PAN    & .32  & .34  & .29  & .27  & .22  \\ PRI    & .38  & .28  & .40  & .38  & .37  \\ PRD    & .18  & .31  & .14  & .28  & .13  \\ Green  & .04  & ---  & .06  & .02  & .01  \\ MC     & .02  & ---  & .07  & ---  & .06  \\ Morena & ---  & ---  & ---  & ---  & .09  \\ \end{tabular}} In spite of losing about half of its support from presidential to midterm elections, the PRD converted votes into seats much more efficiently than either the PRI or PAN in midterm election years. How can a party experience less partisan bias when it fares worse at the polls? Decomposing the components of partisan bias can reveal whether or not this dynamic is due to PRD winning smaller or lower-turnout districts.
+
+
 
 % %% Reports state-agg in 3 yrs and in 2 maps
 % \begin{table}
@@ -420,72 +440,132 @@ The size and polarity of the bias estimates reveal important party differences. 
 % \caption{Relative major-partisan bias. Single-election entries report raw bias and its additive components from parameters estimated with the state aggregates model. Multi-election bias estimated with the national aggregates model.}
 % \end{table}
 
+% # below is table reported in polgeo original submission
+% \begin{table}
+% \centering
+% %\newcolumntype{d}[1]{D{.}{.}{#1}} % D column with 1 decimal spaces default, usage d{2} for two spaces
+% \newcolumntype{d}{D{.}{.}{2}} % D column with space for 2 decimal spaces
+% \begin{tabular}{lddd|ddd}
+%               &  \mc{3}{c|}{Actual map} & \mc{3}{c}{Hypothetical map} \\
+% partisan bias    &  \mc{1}{c}{\textsc{pan}--\textsc{pri}}  &  \mc{1}{c}{\textsc{prd}--\textsc{pri}} &  \mc{1}{c|}{min--\textsc{pri}}  & \mc{1}{c}{\textsc{pan}--\textsc{pri}}  &  \mc{1}{c}{\textsc{prd}--\textsc{pri}} &  \mc{1}{c}{min--\textsc{pri}} \\  \hline
+% \mc{4}{l}{\textbf{~2003 election}}     & \mc{3}{c}{(with 2006 map)} \\
+% total           &   -.37 &  +.72 &  -1.01 &    -.41 &  +.57 &  -1.00   \\ [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}    \\
+% distrib.       &   -.09 &  +.69 &  -.88 &    -.13 &  +.62 &  -.90   \\ [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}    \\
+% turnout       &   -.26 &  -.11 &  -.08 &    -.26 &  -.09 &  -.09   \\ [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}    \\
+% malapp.       &   -.01 &  +.14 &  -.05 &    -.02 &  +.05 &  -.02   \\ [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(.11)}}&   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(.12)}} &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\
+% \mc{7}{l}{\textbf{~2006 election}}                                 \\
+% total          &   -.08 &  -.06 & -1.10  &        &        &        \\ [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+% distrib.       &   +.28 &  +.30 &  -.62  &        &        &        \\ [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+% turnout       &   -.36 &  -.41 &  -.43  &        &        &        \\ [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+% malapp.       &   -.00 &  +.05 &  -.05  &        &        &        \\ [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(.42)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+% \mc{7}{l}{\textbf{~2009 election}}                                 \\ 
+% total          &   -.25 &  +.82 &  -.91  &        &        &        \\  [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+% distrib.       &   -.11 & +1.01 &  -.79  &        &        &        \\  [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+% turnout       &   -.14 &  -.24 &  -.12  &        &        &        \\  [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+% malapp.       &   -.00 &  +.05 &  -.00  &        &        &        \\  [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(.36)}}&   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+% \mc{4}{l}{\textbf{~2012 election}}      & \mc{3}{c}{(with 2015 map)} \\
+% total          &   -.35 &  -.09 & +1.40  &    -.32 &  -.13 & +1.03  \\  [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\
+% distrib.       &   -.28 &  -.07 & +1.41  &    -.24 &  -.05 & +1.02  \\  [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(.06)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\
+% turnout       &   -.07 &  -.08 &  +.02  &    -.08 &  -.09 &  +.01  \\  [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(.02)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(.26)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\
+% malapp.       &   +.01 &  +.06 &  -.02  &    -.00 &  +.01 &  +.00  \\  [-1ex]
+%               &   \mc{1}{r}{\footnotesize{(.42)}} &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(.38)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\ \hline 
+% \end{tabular}
+% \caption{Relative major-party total bias and its additive components. Entries report the median of the posterior sample of parameters estimated with the single-election models. Numbers in parentheses are the share of the posterior sample with sign opposite to the reported point estimate's. The right column reports bias estimates using election data re-arranged according to district boundaries adopted after an election (i.e., a hypothetical 2003 election with the 2006 map and a hypothetical 2012 election with the 2015 map).}\label{T:GKBbreakdown}
+% \end{table}
+
 \begin{table}
 \centering
 %\newcolumntype{d}[1]{D{.}{.}{#1}} % D column with 1 decimal spaces default, usage d{2} for two spaces
 \newcolumntype{d}{D{.}{.}{2}} % D column with space for 2 decimal spaces
 \begin{tabular}{lddd|ddd}
               &  \mc{3}{c|}{Actual map} & \mc{3}{c}{Hypothetical map} \\
-partisan bias    &  \mc{1}{c}{\textsc{pan}--\textsc{pri}}  &  \mc{1}{c}{\textsc{prd}--\textsc{pri}} &  \mc{1}{c|}{min--\textsc{pri}}  & \mc{1}{c}{\textsc{pan}--\textsc{pri}}  &  \mc{1}{c}{\textsc{prd}--\textsc{pri}} &  \mc{1}{c}{min--\textsc{pri}} \\  \hline
+partisan bias    &  \mc{1}{c}{\textsc{pan}--\textsc{pri}}  &  \mc{1}{c}{\textsc{prd}--\textsc{pri}} &  \mc{1}{c|}{Green--\textsc{pri}}  & \mc{1}{c}{\textsc{pan}--\textsc{pri}}  &  \mc{1}{c}{\textsc{prd}--\textsc{pri}} &  \mc{1}{c}{Green--\textsc{pri}} \\  \hline
 \mc{4}{l}{\textbf{~2003 election}}     & \mc{3}{c}{(with 2006 map)} \\
-total           &   -.37 &  +.72 &  -1.01 &    -.41 &  +.57 &  -1.00   \\ [-1ex]
+total           &   -.19 &  +.52 &  -1.23 &    -.41 &  +.57 &  -1.06   \\ [-1ex]
               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}    \\
-distrib.       &   -.09 &  +.69 &  -.88 &    -.13 &  +.62 &  -.90   \\ [-1ex]
+distrib.       &   +.04 &  +.50 &  -1.11 &    -.13 &  +.63 &  -.96   \\ [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.03)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}    \\
+turnout       &   -.23 &  -.10 &  -.07 &    -.27 &  -.11 &  -.07   \\ [-1ex]
               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}    \\
-turnout       &   -.26 &  -.11 &  -.08 &    -.26 &  -.09 &  -.09   \\ [-1ex]
-              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}    \\
-malapp.       &   -.01 &  +.14 &  -.05 &    -.02 &  +.05 &  -.02   \\ [-1ex]
-              &   \mc{1}{r}{\footnotesize{(.11)}}&   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(.12)}} &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\
+malapp.       &   +.00 &  +.12 &  -.05 &    -.01 &  +.04 &  -.02   \\ [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.45)}}&   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(.33)}} &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\
 \mc{7}{l}{\textbf{~2006 election}}                                 \\
-total          &   -.08 &  -.06 & -1.10  &        &        &        \\ [-1ex]
-              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
-distrib.       &   +.28 &  +.30 &  -.62  &        &        &        \\ [-1ex]
-              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
-turnout       &   -.36 &  -.41 &  -.43  &        &        &        \\ [-1ex]
-              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
-malapp.       &   -.00 &  +.05 &  -.05  &        &        &        \\ [-1ex]
-              &   \mc{1}{r}{\footnotesize{(.42)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+total          &   +.22 &  +.09 &     &        &        &        \\ [-1ex]
+              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &    & & & \\
+distrib.       &   +.32 &  +.29 &      &        &        &        \\ [-1ex]
+              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &    & & & \\
+turnout       &   -.09 &  -.25 &      &        &        &        \\ [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.07)}}  &   \mc{1}{r}{\footnotesize{(0)}} &    & & & \\
+malapp.       &   -.01 &  +.05 &      &        &        &        \\ [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.36)}}  &   \mc{1}{r}{\footnotesize{(.25)}} &    & & & \\
 \mc{7}{l}{\textbf{~2009 election}}                                 \\ 
-total          &   -.25 &  +.82 &  -.91  &        &        &        \\  [-1ex]
+total          &   -.25 &  +1.01 &  -.85  &        &        &        \\  [-1ex]
               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
-distrib.       &   -.11 & +1.01 &  -.79  &        &        &        \\  [-1ex]
+distrib.       &   -.20 & +1.01 &  -.87  &        &        &        \\  [-1ex]
               &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
-turnout       &   -.14 &  -.24 &  -.12  &        &        &        \\  [-1ex]
-              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
-malapp.       &   -.00 &  +.05 &  -.00  &        &        &        \\  [-1ex]
-              &   \mc{1}{r}{\footnotesize{(.36)}}&   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
-\mc{4}{l}{\textbf{~2012 election}}      & \mc{3}{c}{(with 2015 map)} \\
-total          &   -.35 &  -.09 & +1.40  &    -.32 &  -.13 & +1.03  \\  [-1ex]
-              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\
-distrib.       &   -.28 &  -.07 & +1.41  &    -.24 &  -.05 & +1.02  \\  [-1ex]
-              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(.06)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\
-turnout       &   -.07 &  -.08 &  +.02  &    -.08 &  -.09 &  +.01  \\  [-1ex]
-              &   \mc{1}{r}{\footnotesize{(.02)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(.26)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\
-malapp.       &   +.01 &  +.06 &  -.02  &    -.00 &  +.01 &  +.00  \\  [-1ex]
-              &   \mc{1}{r}{\footnotesize{(.42)}} &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  \mc{1}{r}{\footnotesize{(.38)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(0)}}    \\ \hline 
+turnout       &   -.06 &  -.04 &  +.04  &        &        &        \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.19)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+malapp.       &   +.00 &  +.04 &  -.02  &        &        &        \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.46)}}&   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  & & & \\
+\mc{4}{l}{\textbf{~2012 election}}      & && \\
+total          &   -.52 &  -.27 & +.52  &     &   &   \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(.01)}}  &     &    &      \\
+distrib.       &   -.48 &  -.25 & +.53  &    & &  \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(.01)}}  &  & &    \\
+turnout       &   -.06 &  -.07 &  +.01  &    & &  \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.09)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  & &    \\
+malapp.       &   +.01 &  +.05 &  -.02  &    & &  \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.40)}} &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(0)}}  &  & &    \\
+
+\mc{4}{l}{\textbf{~2015 election}}      & \mc{3}{c}{(with 2015 map)} \\
+total          &   -.17 &  +.26 & +.01  &    -.27 &  +.26 & +.12  \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(.47)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(.27)}}    \\
+distrib.       &   +.02 &  +.40 & +.10  &    -.15 & +.43 & +.14  \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.35)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(.32)}}  &  \mc{1}{r}{\footnotesize{(0)}}   &   \mc{1}{r}{\footnotesize{(.06)}} &  \mc{1}{r}{\footnotesize{(.24)}}    \\
+turnout       &   -.19 &  -.19 &  -.04  &    -.12 &  -.19 &  -.02  \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(.46)}}  &  \mc{1}{r}{\footnotesize{(0)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(.11)}}    \\
+malapp.       &   +.00 &  +.05 &  -.05  &    +.01 &  +.01 &  -.01  \\  [-1ex]
+              &   \mc{1}{r}{\footnotesize{(.38)}} &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r|}{\footnotesize{(.42)}}  &  \mc{1}{r}{\footnotesize{(.42)}}  &   \mc{1}{r}{\footnotesize{(0)}} &  \mc{1}{r}{\footnotesize{(.11)}}    \\ \hline 
+
+
 \end{tabular}
-\caption{Relative major-party total bias and its additive components. Entries report the median of the posterior sample of parameters estimated with the single-election models. Numbers in parentheses are the share of the posterior sample with sign opposite to the reported point estimate's. The right column reports bias estimates using election data re-arranged according to district boundaries adopted after an election (i.e., a hypothetical 2003 election with the 2006 map and a hypothetical 2012 election with the 2015 map).}\label{T:GKBbreakdown}
+\caption{Relative partisan bias and its additive components. Entries report the median of the posterior sample of parameters estimated with the single-election models. Numbers in parentheses are the share of the posterior sample with sign opposite to the reported point estimate's. The right columns report bias estimates using election data re-arranged according to new district boundaries (i.e., a hypothetical 2003 election with the 2006 map and a hypothetical 2015 election with the map not implemented).}\label{T:GKBbreakdown}
 \end{table}
 
-Table \ref{T:GKBbreakdown} reports the estimated total and additive components of partisan bias. Bias estimates for the PAN, the PRD, and a selected minor party relative to PRI's for the elections as they were conducted in the implemented maps are presented in the first three columns. The minor party selected for 2006, 2009, and 2012 is the Green, and PANAL for 2006 (when Greens fielded no candidates outside the coalition with the PRI). Numbers in parentheses report the share of the posterior sample with a sign opposite to that reported in the table, serving as a test of the estimate's statistical significance (the probability that the estimate's sign is wrong). 
+Table \ref{T:GKBbreakdown} reports the estimated total and additive components of partisan bias. Bias estimates for the PAN, the PRD, and one minor party (the green) relative to PRI's for the elections as they were conducted in the implemented maps are presented in the first three columns. Numbers in parentheses report the share of the posterior sample with a sign opposite to that reported in the table, serving as a test of the estimate's statistical significance (the probability that the estimate's sign is wrong). 
 
-Turnout played favorably for the PRI relative to other major parties in every election in the period, as indicated by systematic negative signs. Winning lower-turnout districts gave the PRI a springboard to more efficient votes-to-seats conversion. The apex was the 2006 election, concurrent with a presidential race where the PRI finished in distant third place. When the PRI's support retracted to its core constituencies, the low-turnout effect grew in size quite remarkably as negative presidential coattails depressed the party's congressional vote in swing districts nationwide. The opposite happened in 2012, when favorable presidential coattails aided the party's congressional candidates.
+Turnout played favorably for the PRI relative to other major parties in every election in the period, as indicated by systematic negative signs. Years 2009, when sluggish economic performance and civil warfare hurt the incumbent PAN and deep internal divisions the PRD, and 2012, when favorable presidential coattails aided the PRI's congressional candidates, experienced more modest turnout effects. In all others, winning lower-turnout districts gave the PRI a springboard to more efficient votes-to-seats conversion against one (2003), the other (2006), or both (2015) other major parties. 
 
-The distributional component often predominates among the components of bias: for the PRD in midterm elections, the PAN in 2012, and systematically for the selected minor parties. Owing to formidable entry barriers in the election law, no minor party is regional-based. Meager nationwide support provides few opportunities for minor parties to win seats---hence the negative sign. Year 2012 is an exception, when Greens nominated the coalition's candidate in a concurrent gubernatorial race whose coattails returned three congressional seats \citep{magar.gubCoatMx.2012}. The distributional component's volatility for major parties, in size and in polarity, is consistent with the absence of partisan gerrymandering---as we might expect from the major-party power-sharing arrangements on the election board that draws districts. Also notable is how the total bias sum hides large components that contribute in opposite directions and therefore cancel out. The PAN and PRD's extraordinary performances in 2006 led them to the lowest measures of total partisan bias (in absolute value) in the period. Decomposition of raw partisan bias makes it possible to note that a distributional advantage was key to compensate for even larger turnout disadvantages. The PRD experienced something similar, but less balanced, in 2009, when a sizable distributional advantage was only partially offset by a more modest turnout disadvantage. 
+The distributional component often predominates among the components of bias: always for the PRD and the green, in 2006--2012 for the PAN. Owing to formidable entry barriers in the election law, no minor party is regional-based. Meager nationwide support provides few opportunities for minor parties to win plurality seats---hence the negative sign most get most of the time. Years 2012 and 2015 are exceptions for the greens, when they nominated and won the coalition's candidate in a concurrent gubernatorial race whose coattails returned three congressional seats \citep{magar.gubCoatMx.2012}. The distributional component's volatility for major parties, in size and in polarity, is consistent with the absence of partisan gerrymandering---as we might expect from the major-party power-sharing arrangements on the election board that draws districts. Also notable is how the total bias sum can hide large components that contribute in opposite directions and therefore cancel out. The PRD's extraordinary performance in 2006 led them to the lowest major-party measure of total partisan bias (in absolute value) in the period. Decomposition of raw partisan bias makes it possible to note that the left's distributional advantage was key to compensate for even larger turnout disadvantages. 
 
-Also distinctive---and surprising given the presence of substantial malapportionment---is how generally small the malapportionment component of partisan bias is compared to other sources. The PAN experienced no bias relative to the PAN attributable to district size differentials over the period---these are the only estimates, by the way, with sizable probabilities that these estimates are of wrong sign. The party's success was therefore not likelier in districts confined at one end of the RRI distribution. The PRD was slightly advantaged relative to the PRI in every year observed. This is very likely due to overrepresentation of Mexico City's Federal District---a PRD stronghold---but the effect is easily eclipsed by the other components of partisan bias. \citep[The drop from +.14 to +.05 between 2003 and 2006 actually coincides with reapportionment and the accessory reduction---not removal---of the capital's overrepresentation in Congress, see][.]{altman.magar.mcd.trelles2014apsa} Malapportionment-driven bias is not much larger for minor parties, whose perennial small vote shares locate at the wrong end of the system's responsiveness to size. 
+Also distinctive---and surprising given the presence of substantial malapportionment---is how generally small the malapportionment component of partisan bias is compared to other sources. The PAN experienced no bias relative to the PRI attributable to district size differentials over the period---these are most of the estimates, by the way, with sizable probabilities of being the wrong sign. The party's success was therefore not likelier in districts confined at one end of the RRI distribution. The PRD was slightly advantaged relative to the PRI in every year observed. This is very likely due to overrepresentation of Mexico City's Federal District---a PRD stronghold---but the effect is easily eclipsed by the other components of partisan bias. \citep[The drop from +.12 to +.05 between 2003 and 2006 actually coincides with reapportionment and the accessory reduction---not removal---of the capital's overrepresentation in Congress, see][.]{altman.magar.mcd.trelles2014apsa} Malapportionment-driven bias is not much larger for the minor party, whose perennial small vote shares locate at the wrong end of the system's responsiveness to size. 
 
 % comment [Mike] is the malapportionment component surprising because some parties (the PRI, right?) have support bases located in rural districts, and thus might be expected to benefit from malapportionment?  
 % comment [Eric] Also surprising given the sheer size of malapportionment. 
 % I'd like to see an assessment as to why malapportionment seems to have little effect. Can we compare the seat share of the parties in the say top quartile and bottom quartile of malapportioned districts? I suspect that no party holds a monopoly among badly malapportioned districts.
 
-For further perspective, we repeated the 2003 and 2012 estimations with hypothetical outcomes using the district boundaries of the map that was re-drawn immediately after those elections (reported in the right three columns of Table \ref{T:GKBbreakdown}). As expected, redistricting mitigated malapportionment-based partisan bias systematically: under hypothetical, more balanced districts, statistically insignificant bias against the PAN is observed (the probability that the estimate reported has wrong sign is .11); and the pro-PRD's discernible bias relative to the PRI shrinks to about one third its original size. The same is true inspecting the 2012 election in light of districts re-drawn with updated population figures. 
+For further perspective, we repeated the 2003 and 2015 estimations with hypothetical outcomes using the district boundaries of the 2006 and 2015 maps, respectively (reported in the right three columns of Table \ref{T:GKBbreakdown}). As expected, redistricting mitigated significant malapportionment-based partisan bias systematically: under hypothetical, more balanced districts, statistically insignificant bias observed against the PAN remains thus (the probability that the estimate reported has wrong sign is always 11 ore more); and the pro-PRD's discernible bias relative to the PRI shrinks to about one third its original size.  
 
 %\footnote{Hypothetical outcomes were generated with \emph{secci\'on}-level vote returns. \emph{Secciones electorales} are analogous to U.S.\ census tracts, but bigger (median population in the 2010 census was 1,280, with a maximum at 79,232). The 1997, 2006, and 2015 maps relate more than 66 thousand \emph{secciones}, the basic units for district cartography, to congressional districts. This makes reconstitution of hypothetical election outcomes in the period possible. \citet{altman.magar.mcd.trelles2014apsa} describe the redistricting process in detail.}
 
-We close with an assessment of how meaningful partisan bias is in recent congressional elections. As discussed above, translating the bias estimates into a percentage point advantage or handicap for each party in the votes-to-seats conversion is not straightforward in multi-party settings. We therefore gauge this with an alternative quantity of substantive interest: vote-seat swing ratios \citep{tufte1973seatsVotes,niemi.fett1986swing}. Swing ratios measure the sensitivity of individual parties' seat shares to marginal changes in voter preferences, and are computed by the percentage change in seats associated with a one-percent change in the party's national congressional vote. A party with unity swing ratio can expect to receive its fair share of additional seats. Larger values indicate that parties can expect to win more ($>1$) and lower values indicate parties can expect to win less ($<1$) than one percent of seats for a unit percentage change in vote share. \citep[We rule out negative swing ratios corresponding to a party losing seats as it wins votes; for violations of the monotonicity principle of representation, see][]{balinskiYoung2001FairRep}. 
+We close with an assessment of how meaningful partisan bias is in recent congressional elections. We discussed how translating the bias estimates into a percentage point advantage or handicap for each party in the votes-to-seats conversion is not straightforward in multi-party settings. We therefore gauge this with an alternative quantity of substantive interest: vote-seat swing ratios \citep{tufte1973seatsVotes,niemi.fett1986swing}. Swing ratios measure the sensitivity of individual parties' seat shares to marginal changes in voter preferences, and are computed by the percentage change in seats associated with a one-percent change in the party's national congressional vote. A party with unity swing ratio can expect to receive its fair share of additional seats. Larger values indicate that parties can expect to win more ($>1$) and lower values indicate parties can expect to win less ($<1$) than one percent of seats for a unit percentage change in vote share. \citep[We rule out negative swing ratios corresponding to a party losing seats as it wins votes; for violations of the monotonicity principle of representation, see][]{balinskiYoung2001FairRep}. 
 
-We derive swing ratios by regressing a party's seat shares in simulated elections on the party's simulated vote shares \citep{linzerSeatVoteElasticity2012}. To also gauge the effects of redistricting, we pool the latter with hypothetical elections using the map that supplanted the actual one (i.e., the 2006 map for the 2003 election and the 2015 map for the 2006--12 elections). Interacting this with a dummy $\text{reMap}$ (equal 1 for hypothetical simulated elections, 0 otherwise) yields the fitted equation: $s_p = \beta_0 + \beta_1 v + \beta_2 \text{reMap} + \beta_3 v \times \text{reMap} + \text{error}$. Coefficient $\beta_1$ is the swing ratio, coefficient $\beta_3$ is the swing ratio change attributable to redistricting. 
+We derive swing ratios by regressing a party's seat shares in simulated elections on the party's simulated vote shares \citep{linzerSeatVoteElasticity2012}. To also gauge the effects of redistricting, we pool the latter with hypothetical elections using the map that supplanted the actual one (i.e., the 2006 map for the 2003 election and the 2015 map for the rest). Interacting this with a dummy $\text{reMap}$ (equal 1 for hypothetical simulated elections, 0 otherwise) yields the fitted equation: $s_p = \beta_0 + \beta_1 v + \beta_2 \text{reMap} + \beta_3 v \times \text{reMap} + \text{error}$. Coefficient $\beta_1$ is the swing ratio, coefficient $\beta_3$ is the swing ratio change attributable to redistricting. 
 
 \begin{table}
 \centering
@@ -493,23 +573,27 @@ We derive swing ratios by regressing a party's seat shares in simulated election
          &                         & \mc{2}{c}{PAN} & \mc{2}{c}{PRI}  & \mc{2}{c}{PRD}         \\
 Year & Variable                & $\beta$ & (SE) & $\beta$ & (SE)  & $\beta$ & (SE)   \\ \hline
 2003 & $v$                         & $1.84$ & (.06) & $2.44$  & (.07) & $1.75$  & (.05)  \\
-     & $v \times \text{reMap}$     & $+.06$ & (.08) & $+.08$  & (.10) & \textbf{$-.12$}  & (.06)  \\ 
+     & $v \times \text{reMap}$     & $+.06$ & (.08) & $+.08$  & (.10) & $-.12$  & (.06)  \\ 
 \\ [-1.5ex]
-2006 & $v$                         & $2.18$ & (.07) & $2.17$  & (.10) & $1.73$  & (.05)  \\
-     & $v \times \text{reMap}$     & $+.13$ & (.10) & \textbf{$-.36$}  & (.14) & $-.07$  & (.08)  \\ 
+2006 & $v$                         & $2.22$ & (.06) & $1.97$  & (.10) & $1.69$  & (.05)  \\
+     & $v \times \text{reMap}$     & $+.01$ & (.08) & $-.15$  & (.14) & $+.01$  & (.08)  \\ 
 \\ [-1.5ex]
-2009 & $v$                         & $1.67$ & (.07) & $2.18$  & (.07) & $1.42$  & (.04)  \\
-     & $v \times \text{reMap}$     & \textbf{$+.44$} & (.10) & \textbf{$+.26$}  & (.11) & \textbf{$+.18$}  & (.07)  \\ 
+2009 & $v$                         & $1.77$ & (.08) & $2.22$  & (.08) & $1.60$  & (.06)  \\
+     & $v \times \text{reMap}$     & $+.19$ & (.11) & $+.15$  & (.12) & $+.05$  & (.08)  \\ 
 \\ [-1.5ex]
-2012 & $v$                         & $2.31$ & (.07) & $3.86$  & (.13) & $2.35$  & (.06)  \\
-     & $v \times \text{reMap}$     & \textbf{$-.24$} & (.09) & $+.03$  & (.17) & $-.11$  & (.09)  \\ \hline
+2012 & $v$                         & $2.10$ & (.07) & $3.88$  & (.12) & $2.10$  & (.06)  \\
+     & $v \times \text{reMap}$     & $-.16$ & (.09) & $-.18$  & (.17) & $+.02$  & (.09)  \\ 
+\\ [-1.5ex]
+2015 & $v$                         & $1.57$ & (.05) & $1.84$ & (.06) &  $1.26$  & (.04)  \\
+     & $v \times \text{reMap}$     & $-.04$ & (.08) & $+.08$ & (.10) &  $-.01$  & (.06)  \\ \hline
 \end{tabular}
 \caption{Vote-seat swing ratios. Also in the right side, but not reported, were a dummy indicating data simulated with the hypothetical map (reMap), and a constant. Method of estimation: OLS.}\label{T:swRatios}
 \end{table}
 
-Table \ref{T:swRatios} reports major party results. In general, major parties enjoyed quite favorable swing ratios in the period---2.14 on average, indicating a hike in seats surpassing 2 percentage points for an extra percentage point in votes. But a good deal of change, both between parties and between elections, is evident. The PRD enjoyed the smallest four-election average swing ratios (1.8), the PRI the largest (2.7), the PAN somewhere in between (2.0). Given 300 plurality seats, the PRI at its most elastic (in 2012) would have earned nearly 12 more seats with just one extra percent votes nationwide. Underscoring the importance of bias in the single-member district tier, a dozen seats would have amply sufficed to give the coalition majority status that it failed to achieve in the C\'amara de Diputados. Contrast this with the nearly 2.5 and 3 additional percentage points in votes, respectively, that it would have taken the PAN and the PRD at their least elastic (in 2009) in order to earn the same dozen extra seats. 
+Table \ref{T:swRatios} reports results. In general, major parties enjoyed quite favorable swing ratios in the period---2.02 on average, indicating a 2 percentage points hike in seats for an extra percentage point in votes. But a good deal of change, both between parties and between elections, is evident. The PRD enjoyed the smallest four-election average swing ratios (1.7), the PRI the largest (2.3), the PAN somewhere in between (1.9). Given 300 seats, the PRI at its most elastic (in 2012) would have earned nearly 12 more plurality seats with just one extra percent votes nationwide. Underscoring the importance of bias in the single-member district tier, a dozen seats would have amply sufficed to give the coalition majority status that it failed to achieve in the C\'amara.\footnote{Like the analysis, this statement obviates the compensatory PR tier and the 8 percent ceiling on over-representation. When the full mixed system is considered---as implied by the slice of seats needed for majority status---swing ratios will approximate unity. See \citet{weldonMixedMemberSys2001} and \citet{marquez.aparicio.2010}.} Contrast this with the 2.5 and 3.2 additional percentage points in votes, respectively, that it would have taken the PAN and the PRD at their least elastic (in 2015) in order to earn the same dozen extra plurality seats. 
 
-% [Mike] Eric, can you describe what you mean by "coalition"?
+% from jeff: Since the PRI was limited by the 8 percent rule, a one point increase in the vote would have yielded only 5 more seats (regardless of whether the party won 12 more districts). If you were referring to a majority of the 300 districts, the PRI-Verdes, already had 177 seats.
+
 
 \section{Conclusion}
 
@@ -525,43 +609,303 @@ That these components mostly work against each other to yield modest total parti
 
 %FOR CONC PERHAPS? Malapportionment also has implications for reelection and incumbency. Mexico recently removed single-term limits for legislators. Ambitious deputies elected in 2018 will, again, be allowed to seek reelection, restoring the electoral connection that was severed in the 1930s \citep{dworak.legisladorAexamen.2003}. The reform should reinvigorate the relation between citizens and their representatives in the SMD tier. The persistence of substantial variations in district size, however, acts against realizing the full potential of the electoral connection \citep{mayhew.1974}---widespread dissatisfaction and even protests in past years underscore how bad this is needed for the consolidation of Mexico's young democracy. 
 
-% \section*{Appendix: BUGS code}
+\section*{Online appendix}
 
-% \singlespacing
+We offer here a step-by-step description of the procedure's implementation for analysis of recent Mexican elections. Code to replicate the analysis is available *here*.  
 
-% \begin{scriptsize}
-% \begin{verbatim}
-% bugsModel <- function() {
-%     for (i in 1:I){     # loop over state-years
-%         for (p in 1:P){ # loop over parties (dummy selects those who ran that year) 
-%             S[i,p] ~ dbin(pi[i,p], D[i])  # D is number SMD seats in obs. i's state
-%         }
-%         numerator[i,1] <- dummy[i,1] * exp( lambda[1] + rho * log(v[i,1]) )
-%         numerator[i,2] <- dummy[i,2] * exp(             rho * log(v[i,2]) )
-%         for (p in 3:P){
-%             numerator[i,p] <- dummy[i,p] * exp( lambda[p-1] ) * v[i,p]^rho
-%         }
-%         for (p in 1:P){ # loop over parties (dummy=1 selects those who ran that year) 
-%             d1[i,p] <- dummy[i,1] * exp( lambda[1] ) * v[i,1]^rho 
-%             d2[i,p] <- dummy[i,2]                    * v[i,2]^rho 
-%             d3[i,p] <- dummy[i,3] * exp( lambda[2] ) * v[i,3]^rho 
-%             d4[i,p] <- dummy[i,4] * exp( lambda[3] ) * v[i,4]^rho 
-%             d5[i,p] <- dummy[i,5] * exp( lambda[4] ) * v[i,5]^rho 
-%             d6[i,p] <- dummy[i,6] * exp( lambda[5] ) * v[i,6]^rho 
-%             d7[i,p] <- dummy[i,7] * exp( lambda[6] ) * v[i,7]^rho 
-%             denominator[i,p] <- d1[i,p]+d2[i,p]+d3[i,p]+d4[i,p]+d5[i,p]+d6[i,p]+d7[i,p]
-%             pi[i,p] <- numerator[i,p] / denominator[i,p]
-%         }
-%     }
-%     ### priors
-%     for (q in 1:6){ # there are 7 party labels in the 3-election data, PRI is reference
-%         lambda[q] ~ dnorm( 0, tau.lambda )
-%     }
-%     tau.lambda <- pow(.25, -2)
-%     rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
-% }
-% \end{verbatim}
-% \end{scriptsize}
+\subsection*{Step 1: Aggregate secci\'on-level into district-level votes}
+
+\subsection*{Step 2: Produce inter-census population estimates}
+
+\subsection*{Step 3: Simulate national-level elections}
+
+\subsection*{Step 4: Estimate responsiveness and partisan bias}
+
+We use MCMC to estimate equation \ref{E:kingMulti}, implemented with Jags \citep{jags.cite}, called from R. Preparation involves generating data objects first: $i$ indexes $I=100$ simulated observations for a given year; $p$ indexes $P=6$ parties in the analysis; and $D=300$ is the number of plurality districts; votes and seats $I\times P$ matrices $\texttt{v}$ (where $\texttt{v}_{i,p}$ is party $p$'s vote share in the $i$th simulated election) and $\texttt{S}$ (where $\texttt{S}_{i,p}$ are the seats that party $p$ won in the $i$th simulation); and a $P$-length vector $\texttt{dummy}$ (where $\texttt{dummy}_p$ equals 1 if party $p$ contested the election in the given year, 0 otherwise). All data objects are bundled in a list 
+
+\begin{center}
+\lstinline[language=R]!lrdata <- list("S", "v", "I", "J", "D", "dummy")!.
+\end{center}
+
+\noindent We next randomize a set of initial values for the model parameters ($\lambda$ needs only $J-1=5$ initial values because we restrict $\lambda_{\text{PRI}}=0$)
+
+\begin{center}
+\lstinline[language=R]!lrinits <- function(){ list (lambda=rnorm(J-1), rho=rexp(1)) }!
+\end{center}
+
+\noindent and define objects to store  parameters' posterior distribution samples
+
+\begin{center}
+\lstinline[language=R]!lrparameters <- c("lambda", "rho")!.
+\end{center}
+
+\lstset{style=mystyle}
+\begin{table}
+\centering
+\setstretch{1}
+\begin{lstlisting}[language=R]
+lambda.rho <- function() {
+  for (i in 1:I){   # loop over observations (simulations)
+    for (p in 1:P){ # loop over parties (dummy selects who ran)
+      S[i,p] ~ dbin(pi[i,p], D[i])  # D is the number of SMD seats
+    }
+    numerator[i,1] <- dummy[i,1] * exp( lambda[1] ) * v[i,1]^rho
+    numerator[i,2] <- dummy[i,2]                    * v[i,2]^rho
+    for (p in 3:P){
+      numerator[i,p] <- dummy[i,p] * exp( lambda[p-1] ) * v[i,p]^rho
+    }
+    for (p in 1:P){ # loop over parties
+      d1[i,p] <- dummy[i,1] * exp( lambda[1] ) * v[i,1]^rho 
+      d2[i,p] <- dummy[i,2]                    * v[i,2]^rho # reference
+      d3[i,p] <- dummy[i,3] * exp( lambda[2] ) * v[i,3]^rho 
+      d4[i,p] <- dummy[i,4] * exp( lambda[3] ) * v[i,4]^rho 
+      d5[i,p] <- dummy[i,5] * exp( lambda[4] ) * v[i,5]^rho 
+      d6[i,p] <- dummy[i,6] * exp( lambda[5] ) * v[i,6]^rho 
+      denominator[i,p] <- d1[i,p] + d2[i,p] + d3[i,p] 
+                        + d4[i,p] + d5[i,p] + d6[i,p]
+      pi[i,p] <- numerator[i,p] / denominator[i,p]
+    }
+  }
+  ### priors
+  for (q in 1:5){ # P=6 party labels minus reference party is 5
+    lambda[q] ~ dnorm( 0, tau.lambda )
+  }
+  tau.lambda <- pow(.25, -2)
+  rho ~ dexp(.75) # has positive range, med about 1, mean 1.25, max 4.5
+}
+\end{lstlisting}
+\setstretch{2}
+\caption{Code for Bugs model}\label{T:bugsCode}
+\end{table}
+
+The formal model estimated appears in Table \ref{T:bugsCode}. Reliance on $\texttt{dummy}$ is convenient as is allows to proceed with six-party votes ans seats matrices regardless of the year selected---otherwise the code would need to be adapted each year for variable parties. Parties not contesting an election (Morena in 2003--12, Green in 2006, MC in 2006 and 2012), with zero votes and seats columns, need not be dropped from matrices. Instead, multiplying the corresponding $\lambda * v^\rho$ term by contestation $\texttt{dummy}$ annuls them from equation \ref{E:kingMulti}. 
+
+Package $\texttt{r2jags}$ \citep{r.r2jags} is an interface to send all this for Jags estimation:
+
+\setstretch{1}
+\begin{center}
+\begin{tabular}{ll}
+\\
+results~~<$-$~~\textbf{jags} ( & data = lrdata, \\ 
+                  & inits = lrinits, \\
+                  & parameters.to.save = lrparameters, \\
+                  & model.file = lambda.rho, \\
+                  & n.chains = 3, \\
+                  & n.iter = 50000, \\
+                  & n.burnin = 25000, \\
+                  & n.thin = 50~~~). \\ \\
+\end{tabular}
+\end{center}
+\setstretch{2}
+
+\noindent We stopped the algorithm after 50 thousand iterations had been completed. The first 25 thousand were discarded to let the model adapt by updating the prior distributions of parameters to the data. Non-informative priors were used across the board: $\lambda_q \sim \mathcal{N}(0, 4),~q=1,\ldots5)$ and $\rho \sim \texttt{exp}(\frac{3}{4})$ (the exponential distribution has positive range and, with this parameterization, a median of about 1, a mean of 1.25, and a maximum value of 4.5). Every fiftieth iteration of the final 25 thousand was saved as sample of parameters' posterior distributions (of size $3~\text{chains} \times 25000/50 = 1500$). 
+
+To verify convergence, Tables \ref{T:traceplotStart}--\ref{T:traceplotEnd} plot Gibbs sampler iterations (x-axis) and sampled values of model parameters (y-axis). One election/map is reported per Table, and one parameter per plot, with columns selecting three ways to measure votes: raw vote shares ($\texttt{v}$), mean district vote shares ($\bar{\texttt{v}}$), and population-weighted mean district votes ($\bar{\texttt{v}}$). With three chains utilized in each Jags call, plots allow verification of two things: that chains had reached a steady state; and that all chains (one in green, one in red, one in blue in the plots) had converged. With no exception, the parameter samples we report in the text had all converged.
+
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+                     & $\texttt{v}$ & $\bar{\texttt{v}}$ & $\bar{\texttt{w}}$ \\ 
+    Dev.             & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97v_1.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97vbar_1.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97wbar_1.pdf} \\
+    $\lambda_{PAN}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97v_2.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97vbar_2.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97wbar_2.pdf} \\
+    $\lambda_{PRD}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97v_3.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97vbar_3.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97wbar_3.pdf} \\
+    $\lambda_{Green}$  & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97v_4.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97vbar_4.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97wbar_4.pdf} \\
+    $\lambda_{MC}$    & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97v_5.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97vbar_5.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97wbar_5.pdf} \\
+    % $\lambda_{morena}$ & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97v_6.pdf} &
+    %                     \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97vbar_6.pdf} &
+    %                      \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97wbar_6.pdf} \\
+    $\rho$           & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97v_7.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97vbar_7.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d97wbar_7.pdf} \\
+\end{tabular}
+\caption{Three-chain traceplots for 2003 with status quo map}\label{T:traceplotStart}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+                     & $\texttt{v}$ & $\bar{\texttt{v}}$ & $\bar{\texttt{w}}$ \\ 
+    Dev.             & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0v_1.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0vbar_1.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0wbar_1.pdf} \\
+    $\lambda_{PAN}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0v_2.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0vbar_2.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0wbar_2.pdf} \\
+    $\lambda_{PRD}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0v_3.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0vbar_3.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0wbar_3.pdf} \\
+    $\lambda_{Green}$  & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0v_4.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0vbar_4.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0wbar_4.pdf} \\
+    $\lambda_{MC}$    & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0v_5.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0vbar_5.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0wbar_5.pdf} \\
+    % $\lambda_{morena}$ & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0v_6.pdf} &
+    %                     \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0vbar_6.pdf} &
+    %                      \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0wbar_6.pdf} \\
+    $\rho$           & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0v_7.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0vbar_7.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2003d0wbar_7.pdf} \\
+\end{tabular}
+\caption{Three-chain traceplots for 2003 with hypothetical map}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+                     & $\texttt{v}$ & $\bar{\texttt{v}}$ & $\bar{\texttt{w}}$ \\ 
+    Dev.             & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0v_1.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0vbar_1.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0wbar_1.pdf} \\
+    $\lambda_{PAN}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0v_2.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0vbar_2.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0wbar_2.pdf} \\
+    $\lambda_{PRD}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0v_3.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0vbar_3.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0wbar_3.pdf} \\
+    % $\lambda_{Green}$  & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0v_4.pdf} &
+    %                     \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0vbar_4.pdf} &
+    %                      \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0wbar_4.pdf} \\
+    % $\lambda_{MC}$    & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0v_5.pdf} &
+    %                     \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0vbar_5.pdf} &
+    %                      \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0wbar_5.pdf} \\
+    % $\lambda_{morena}$ & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0v_6.pdf} &
+    %                     \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0vbar_6.pdf} &
+    %                      \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0wbar_6.pdf} \\
+    $\rho$           & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0v_7.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0vbar_7.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2006d0wbar_7.pdf} \\
+\end{tabular}
+\caption{Three-chain traceplots for 2006 with status quo map}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+                     & $\texttt{v}$ & $\bar{\texttt{v}}$ & $\bar{\texttt{w}}$ \\ 
+    Dev.             & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0v_1.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0vbar_1.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0wbar_1.pdf} \\
+    $\lambda_{PAN}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0v_2.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0vbar_2.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0wbar_2.pdf} \\
+    $\lambda_{PRD}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0v_3.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0vbar_3.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0wbar_3.pdf} \\
+    $\lambda_{Green}$  & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0v_4.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0vbar_4.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0wbar_4.pdf} \\
+    $\lambda_{MC}$    & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0v_5.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0vbar_5.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0wbar_5.pdf} \\
+    % $\lambda_{morena}$ & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0v_6.pdf} &
+    %                     \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0vbar_6.pdf} &
+    %                      \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0wbar_6.pdf} \\
+    $\rho$           & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0v_7.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0vbar_7.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2009d0wbar_7.pdf} \\
+\end{tabular}
+\caption{Three-chain traceplots for 2009 with status quo map}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+                     & $\texttt{v}$ & $\bar{\texttt{v}}$ & $\bar{\texttt{w}}$ \\ 
+    Dev.             & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0v_1.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0vbar_1.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0wbar_1.pdf} \\
+    $\lambda_{PAN}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0v_2.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0vbar_2.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0wbar_2.pdf} \\
+    $\lambda_{PRD}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0v_3.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0vbar_3.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0wbar_3.pdf} \\
+    $\lambda_{Green}$  & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0v_4.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0vbar_4.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0wbar_4.pdf} \\
+    % $\lambda_{MC}$    & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0v_5.pdf} &
+    %                     \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0vbar_5.pdf} &
+    %                      \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0wbar_5.pdf} \\
+    % $\lambda_{morena}$ & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0v_6.pdf} &
+    %                     \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0vbar_6.pdf} &
+    %                      \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0wbar_6.pdf} \\
+    $\rho$           & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0v_7.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0vbar_7.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2012d0wbar_7.pdf} \\
+\end{tabular}
+\caption{Three-chain traceplots for 2012 with status quo map}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+                     & $\texttt{v}$ & $\bar{\texttt{v}}$ & $\bar{\texttt{w}}$ \\ 
+    Dev.             & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0v_1.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0vbar_1.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0wbar_1.pdf} \\
+    $\lambda_{PAN}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0v_2.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0vbar_2.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0wbar_2.pdf} \\
+    $\lambda_{PRD}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0v_3.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0vbar_3.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0wbar_3.pdf} \\
+    $\lambda_{Green}$  & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0v_4.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0vbar_4.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0wbar_4.pdf} \\
+    $\lambda_{MC}$    & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0v_5.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0vbar_5.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0wbar_5.pdf} \\
+    $\lambda_{morena}$ & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0v_6.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0vbar_6.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0wbar_6.pdf} \\
+    $\rho$           & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0v_7.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0vbar_7.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d0wbar_7.pdf} \\
+\end{tabular}
+\caption{Three-chain traceplots for 2015 with status quo map}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+                     & $\texttt{v}$ & $\bar{\texttt{v}}$ & $\bar{\texttt{w}}$ \\ 
+    Dev.             & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3v_1.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3vbar_1.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3wbar_1.pdf} \\
+    $\lambda_{PAN}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3v_2.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3vbar_2.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3wbar_2.pdf} \\
+    $\lambda_{PRD}$   & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3v_3.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3vbar_3.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3wbar_3.pdf} \\
+    $\lambda_{Green}$  & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3v_4.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3vbar_4.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3wbar_4.pdf} \\
+    $\lambda_{MC}$    & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3v_5.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3vbar_5.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3wbar_5.pdf} \\
+    $\lambda_{morena}$ & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3v_6.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3vbar_6.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3wbar_6.pdf} \\
+    $\rho$           & \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3v_7.pdf} &
+                        \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3vbar_7.pdf} &
+                         \includegraphics[width=.15\columnwidth]{../graphs/traceplots/2015d3wbar_7.pdf} \\
+\end{tabular}
+\caption{Three-chain traceplots for 2015 with hypothetical map}\label{T:traceplotEnd}
+\end{table}
+
+
 
 \nocite{allen2014credit}
 

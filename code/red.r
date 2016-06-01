@@ -32,6 +32,10 @@ rm(cd)
 ##################################
 ## READ SECTION-LEVEL ELEC DATA ##
 ##################################
+e15 <- read.csv( paste(dd, "dfSeccion2015.csv", sep=""), header=TRUE)
+e15 <- e15[order(e15$edon, e15$seccion),]
+head(e15); dim(e15); ls()
+#
 e12 <- read.csv( paste(dd, "dfSeccion2012.csv", sep=""), header=TRUE)
 e12 <- e12[order(e12$edon, e12$seccion),]
 head(e12); dim(e12); ls()
@@ -44,27 +48,26 @@ e06 <- read.csv( paste(dd, "dfSeccion2006.csv", sep=""), header=TRUE)
 e06 <- e06[order(e06$edon, e06$seccion),]
 head(e06); dim(e06); ls()
 #
-elecs060912.seccion <- list(e06=e06, e09=e09, e12=e12); rm(e06, e09, e12)
+elecs060915.seccion <- list(e06=e06, e09=e09, e12=e12, e15=e15); rm(e06, e09, e12, e15)
 
 ############################################################################################################
 ## READ 0312 ELEC DATA AGGREGATED IN 2012, 2013.1, AND 2013.3 DISTRICTS PREPARED WITH analizaEscenarios.r ##
 ############################################################################################################
-# emm 1may16: hasta aquí he revisado. Hay que correr analizaEscenarios.r para cerciorar que siga jalando bien
-ls()
 dd2 <- c("/home/eric/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # prepared data directory
-load(file = paste(dd2, "elec0312.RData", sep=""))
+#load(file = paste(dd2, "elec0312.RData", sep=""))
+load(file = paste(dd2, "elec0315.RData", sep=""))
 #elec0312 <- elec03060912; rm(elec03060912)
-ls()
+colnames(elec0315$df2006d0)
 rm(dd2)
 #
-## use to extract all objects from list elec0312 just imported
-for(i in 1:length(elec0312)){
+## use to extract all objects from list elec0315 just imported
+for(i in 1:length(elec0315)){
   ##first extract the object value
-  tempobj=elec0312[[i]]
+  tempobj=elec0315[[i]]
   ##now create a new variable with the original name of the list item
-  eval(parse(text=paste(names(elec0312)[[i]],"= tempobj")))
+  eval(parse(text=paste(names(elec0315)[[i]],"= tempobj")))
 }
-rm(elec0312)
+rm(elec0315)
 dim(df2003d97) # has 298 districts only
 
 ## poblacion del conteo 2005
@@ -447,7 +450,7 @@ tmp2 <- data.frame(edon=tmp[,c("ENTIDAD")],
 tmp2$munn <- as.integer(tmp2$seccion/100000) - as.integer(tmp2$seccion/100000000)*1000
 tmp2$seccion <- tmp2$seccion - as.integer(tmp2$seccion/10000)*10000
 #head(tmp2[tmp2$edon==7,]) # problemo: chiapas viene duplicado en pob10
-tmp2 <- tmp2[which(duplicated(tmp2$seccion)==FALSE),] # por alguna razón los datos de chiapas vienen duplicados, esto elimina
+tmp2 <- tmp2[which(duplicated(tmp2$seccion)==FALSE),] # por alguna raz\F3n los datos de chiapas vienen duplicados, esto elimina
 pob10 <- rbind(pob10, tmp2)
 #
 edo <- "cua"; fl <- "secciones_08.csv"
@@ -725,7 +728,7 @@ tmp2$munn <- as.integer(tmp2$seccion/100000) - as.integer(tmp2$seccion/100000000
 tmp2$seccion <- tmp2$seccion - as.integer(tmp2$seccion/10000)*10000
 pob10 <- rbind(pob10, tmp2)
 #
-# SOME STATS
+# SOME STATS REPORTED IN TEXT
 tmp <- pob10$ptot[pob10$ptot!=0]
 print( paste("Median section population in 2010 was", median(tmp), ". Minimun was", min(tmp), ", maximum was", max(tmp)) )
 
@@ -767,8 +770,8 @@ sum(pob$ptot00[pob$dcheck==1]); sum(pob$ptot05[pob$dcheck==1]); sum(pob$ptot10[p
 tmp <- pob[,c("edon","seccion","ptot00","ptot05","ptot10")];
 eq <- merge(x = eq, y = tmp, by = c("edon", "seccion"), all.x = TRUE)
 # SUMAR POBLACION DE LOS DISTRITOS
-# así se hace en R un by yr mo: egen e12=sum(invested) de stata
-table(eq$dis2012 - eq$dis2006) # ojo: hay secciones que cambian de distrito sin que medie redistritación (pocas, análisis de la info en objeto eq confirmaría que se trata de ajustes a límites municipales). Las ignoro.
+# asÃ­ se hace en R un by yr mo: egen e12=sum(invested) de stata
+table(eq$dis2012 - eq$dis2006) # ojo: hay secciones que cambian de distrito sin que medie redistritaciÃ³n (pocas, anÃ¡lisis de la info en objeto eq confirmarÃ­a que se trata de ajustes a lÃ­mites municipales). Las ignoro.
 #
 eq[,grep(x = colnames(eq), pattern = "ptot")][is.na(eq[,grep(x = colnames(eq), pattern = "ptot")])==TRUE] <- 0 # replace NAs with zero in population
 #
@@ -788,7 +791,26 @@ tmp <- tmp[duplicated(tmp$edon)==FALSE,] # drops redundant rows after aggregatin
 app.edos <- tmp
 head(app.edos)
 #
-# aggregate state and national pop
+
+## handy function to produce linear (standard) or exponential intercensal pop estimates
+interpolate <- function(t, t1=2005, t2=2010, p1=tmp$ptot05, p2=tmp$ptot10, exp.method=FALSE){
+    if (exp.method==TRUE){
+        est <- p1 * (p2/p1)^( (t-t1)/(t2-t1) )
+        return(round(est, digits = 0))
+    }
+    else {
+        b <- (p2 * t1 - p1 * t2) / (t1 - t2);
+        a <- (p1 - b) / t1;
+        est <- t * a + b
+        return(round(est, digits = 0))
+        }
+    }
+# exponential will work when we have census counts that are further apart (presently, 2005-2010)
+## plot( x = 2000:2015, y = interpolate(t=2000:2015, p1=100, p2=120, exp.method=FALSE) )
+## lines( x = 2000:2015, y = interpolate(t=2000:2015, p1=100, p2=120, exp.method=FALSE) )
+## lines( x = 2000:2015, y = interpolate(t=2000:2015, p1=100, p2=120, exp.method=TRUE) )
+
+# aggregate state and national population counts
 tmp <- eq[,c("edon","ptot05","ptot10")]
 tmp$ptot05 <- ave(tmp$ptot05, as.factor(tmp$edon), FUN=sum, na.rm=TRUE) # state totals
 tmp$ptot10 <- ave(tmp$ptot10, as.factor(tmp$edon), FUN=sum, na.rm=TRUE)
@@ -796,19 +818,17 @@ tmp <- tmp[duplicated(tmp$edon)==FALSE,] # drops redundant rows after aggregatin
 tmp <- tmp[order(tmp$edon),] # sort
 tmp2 <- tmp # will be used below
 ## THIS STILL DOES NOT USE PTOT00 FOR INTERPOLATION, ONLY PTOT05 AND PTOT10. ADD IT IF STATE POP IS USED FOR ANALYSIS
-tmp.b <- (tmp$ptot10 * 2005 - tmp$ptot05 * 2010) / (2005 - 2010); tmp.a <- (tmp$ptot05 - tmp.b) / 2005; # interpolation parameters
-tmp$ptot1994 <- round(x = tmp.a * 1994 + tmp.b, digits = 0);
-tmp$ptot1997 <- round(x = tmp.a * 1997 + tmp.b, digits = 0);
-tmp$ptot2000 <- round(x = tmp.a * 2000 + tmp.b, digits = 0);
-tmp$ptot2003 <- round(x = tmp.a * 2003 + tmp.b);
-tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b);
-tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b);
-tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b);
-tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b);
-tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b);
-tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b);
-tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b);
-#tmp$ptot1995 <- round(x = tmp.a * 1995 + tmp.b); # uncomment to compare extra-  and intra-polations, should be dropped
+tmp$ptot1994 <- interpolate(t = 1994);
+tmp$ptot1997 <- interpolate(t = 1997);
+tmp$ptot2000 <- interpolate(t = 2000);
+tmp$ptot2003 <- interpolate(t = 2003);
+tmp$ptot2006 <- interpolate(t = 2006);
+tmp$ptot2009 <- interpolate(t = 2009);
+tmp$ptot2010 <- interpolate(t = 2010);
+tmp$ptot2012 <- interpolate(t = 2012);
+tmp$ptot2013 <- interpolate(t = 2013);
+tmp$ptot2015 <- interpolate(t = 2015);
+tmp$ptot2018 <- interpolate(t = 2018);
 tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.edos <- tmp
 pob.nal <- apply(X = pob.edos, MARGIN = 2, sum); pob.nal <- pob.nal[-1]
@@ -817,7 +837,7 @@ head(pob.edos)
 # do state population using conteo 1995 and censo 2000
 tmp <- tmp2; rm(tmp2)
 # 1995 conteo
-pd <- "~/Dropbox/data/elecs/MXelsCalendGovt/censos/conteo1995"
+pd <- "/home/eric/Dropbox/data/elecs/MXelsCalendGovt/censos/conteo1995"
 tmp95 <- read.csv(file = paste(pd, "ptot1995.csv", sep = "/"))
 tmp95 <- tmp95[tmp95$inegi==0,]
 tmp95 <- tmp95[-which(tmp95$mun=="Otros Municipios"),]
@@ -834,20 +854,17 @@ tmp00 <- tmp00[,c("edon","ptot")]
 tmp$ptot00 <- tmp00$ptot
 rm(tmp00)
 #
-tmp.b <- (tmp$ptot00 * 1995 - tmp$ptot95 * 2000) / (1995 - 2000); tmp.a <- (tmp$ptot95 - tmp.b) / 1995; # interpolation parameters
-tmp$ptot1994 <- round(x = tmp.a * 1994 + tmp.b, digits = 0);
-tmp$ptot1997 <- round(x = tmp.a * 1997 + tmp.b, digits = 0);
+tmp$ptot1994 <- interpolate(t=1994, t1=1995, t2=2000, p1=tmp$ptot95, p2=tmp$ptot00); 
+tmp$ptot1997 <- interpolate(t=1997, t1=1995, t2=2000, p1=tmp$ptot95, p2=tmp$ptot00); 
 tmp$ptot2000 <- tmp$ptot00;
-tmp.b <- (tmp$ptot05 * 2000 - tmp$ptot00 * 2005) / (2000 - 2005); tmp.a <- (tmp$ptot00 - tmp.b) / 2000; # interpolation parameters
-tmp$ptot2003 <- round(x = tmp.a * 2003 + tmp.b, digits = 0);
-tmp.b <- (tmp$ptot10 * 2005 - tmp$ptot05 * 2010) / (2005 - 2010); tmp.a <- (tmp$ptot05 - tmp.b) / 2005; # interpolation parameters
-tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
-tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
-tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
-tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
-tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
-tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
-tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
+tmp$ptot2003 <- interpolate(t=2003, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05); 
+tmp$ptot2006 <- interpolate(t=2006); 
+tmp$ptot2009 <- interpolate(t=2009); 
+tmp$ptot2010 <- interpolate(t=2010); 
+tmp$ptot2012 <- interpolate(t=2012); 
+tmp$ptot2013 <- interpolate(t=2013); 
+tmp$ptot2015 <- interpolate(t=2015); 
+tmp$ptot2018 <- interpolate(t=2018); 
 #
 ## # COMPARE conteo1995 and censo2000 with 05-10 extrapolations by state (needs a commented line above)
 ## edos <- c("ags", "bc", "bcs", "cam", "coa", "col", "cps", "cua", "df", "dgo", "gua", "gue", "hgo", "jal", "mex", "mic", "mor", "nay", "nl", "oax", "pue", "que", "qui", "san", "sin", "son", "tab", "tam", "tla", "ver", "yuc", "zac")
@@ -1003,19 +1020,17 @@ print(paste("Total 2005 population unassigned to a district in", y, "election ="
 print(paste("Total 2010 population unassigned to a district in", y, "election =", sum(tmp$ptot10[which(tmp$disn==0)])))
 tmp <- tmp[-which(tmp$disn==0),] # removes secciones not assigned to some district
 tmp <- tmp[order(tmp$edon, tmp$disn),]
-tmp.b  <- (tmp$ptot10 * 2005 - tmp$ptot05 * 2010) / (2005 - 2010); tmp.a  <- (tmp$ptot05 - tmp.b) / 2005
-tmp.b0 <- (tmp$ptot05 * 2000 - tmp$ptot00 * 2005) / (2000 - 2005); tmp.a0 <- (tmp$ptot00 - tmp.b0) / 2000
-tmp$ptot1994 <- round(x = tmp.a0 * 1994 + tmp.b0, digits = 0);
-tmp$ptot1997 <- round(x = tmp.a0 * 1997 + tmp.b0, digits = 0);
-tmp$ptot2000 <- round(x = tmp.a0 * 2000 + tmp.b0, digits = 0);
-tmp$ptot2003 <- round(x = tmp.a0 * 2003 + tmp.b0, digits = 0);
-tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
-tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
-tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
-tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
-tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
-tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
-tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
+tmp$ptot1994 <- interpolate(t=1994, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot1997 <- interpolate(t=1997, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2000 <- interpolate(t=2000, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2003 <- interpolate(t=2003, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2006 <- interpolate(t=2006);
+tmp$ptot2009 <- interpolate(t=2009);
+tmp$ptot2010 <- interpolate(t=2010);
+tmp$ptot2012 <- interpolate(t=2012);
+tmp$ptot2013 <- interpolate(t=2013);
+tmp$ptot2015 <- interpolate(t=2015);
+tmp$ptot2018 <- interpolate(t=2018);
 tmp$ptot00 <- tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.distMap2006 <- tmp
 head(tmp)
@@ -1032,19 +1047,20 @@ print(paste("Total 2005 population unassigned to a district in", y, "=", sum(tmp
 print(paste("Total 2010 population unassigned to a district in", y, "=", sum(tmp$ptot10[which(tmp$disn==0)])))
 tmp <- tmp[-which(tmp$disn==0),] # removes secciones not assigned to some district
 tmp <- tmp[order(tmp$edon, tmp$disn),]
-tmp.b  <- (tmp$ptot10 * 2005 - tmp$ptot05 * 2010) / (2005 - 2010); tmp.a  <- (tmp$ptot05 - tmp.b) / 2005
-tmp.b0 <- (tmp$ptot05 * 2000 - tmp$ptot00 * 2005) / (2000 - 2005); tmp.a0 <- (tmp$ptot00 - tmp.b0) / 2000
-tmp$ptot1994 <- round(x = tmp.a0 * 1994 + tmp.b0, digits = 0);
-tmp$ptot1997 <- round(x = tmp.a0 * 1997 + tmp.b0, digits = 0);
-tmp$ptot2000 <- round(x = tmp.a0 * 2000 + tmp.b0, digits = 0);
-tmp$ptot2003 <- round(x = tmp.a0 * 2003 + tmp.b0, digits = 0);
-tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
-tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
-tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
-tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
-tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
-tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
-tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
+ 
+ 
+
+tmp$ptot1994 <- interpolate(t=1994, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot1997 <- interpolate(t=1997, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2000 <- interpolate(t=2000, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2003 <- interpolate(t=2003, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2006 <- interpolate(t=2006);
+tmp$ptot2009 <- interpolate(t=2009);
+tmp$ptot2010 <- interpolate(t=2010);
+tmp$ptot2012 <- interpolate(t=2012);
+tmp$ptot2013 <- interpolate(t=2013);
+tmp$ptot2015 <- interpolate(t=2015);
+tmp$ptot2018 <- interpolate(t=2018);
 tmp$ptot00 <- tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.distMap2015p1 <- tmp
 head(tmp)
@@ -1061,19 +1077,17 @@ print(paste("Total 2005 population unassigned to a district in", y, "=", sum(tmp
 print(paste("Total 2010 population unassigned to a district in", y, "=", sum(tmp$ptot10[which(tmp$disn==0)])))
 tmp <- tmp[-which(tmp$disn==0),] # removes secciones not assigned to some district
 tmp <- tmp[order(tmp$edon, tmp$disn),]
-tmp.b  <- (tmp$ptot10 * 2005 - tmp$ptot05 * 2010) / (2005 - 2010); tmp.a  <- (tmp$ptot05 - tmp.b) / 2005
-tmp.b0 <- (tmp$ptot05 * 2000 - tmp$ptot00 * 2005) / (2000 - 2005); tmp.a0 <- (tmp$ptot00 - tmp.b0) / 2000
-tmp$ptot1994 <- round(x = tmp.a0 * 1994 + tmp.b0, digits = 0);
-tmp$ptot1997 <- round(x = tmp.a0 * 1997 + tmp.b0, digits = 0);
-tmp$ptot2000 <- round(x = tmp.a0 * 2000 + tmp.b0, digits = 0);
-tmp$ptot2003 <- round(x = tmp.a0 * 2003 + tmp.b0, digits = 0);
-tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
-tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
-tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
-tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
-tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
-tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
-tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
+tmp$ptot1994 <- interpolate(t=1994, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot1997 <- interpolate(t=1997, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2000 <- interpolate(t=2000, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2003 <- interpolate(t=2003, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2006 <- interpolate(t=2006);
+tmp$ptot2009 <- interpolate(t=2009);
+tmp$ptot2010 <- interpolate(t=2010);
+tmp$ptot2012 <- interpolate(t=2012);
+tmp$ptot2013 <- interpolate(t=2013);
+tmp$ptot2015 <- interpolate(t=2015);
+tmp$ptot2018 <- interpolate(t=2018);
 tmp$ptot00 <- tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.distMap2015p3 <- tmp
 head(tmp)
@@ -1089,25 +1103,23 @@ print(paste("Total 2005 population unassigned to a district in", y, "election ="
 print(paste("Total 2010 population unassigned to a district in", y, "election =", sum(tmp$ptot10[which(tmp$disn==0)])))
 tmp <- tmp[-which(tmp$disn==0),] # removes secciones not assigned to some district
 tmp <- tmp[order(tmp$edon, tmp$disn),]
-tmp.b  <- (tmp$ptot10 * 2005 - tmp$ptot05 * 2010) / (2005 - 2010); tmp.a  <- (tmp$ptot05 - tmp.b) / 2005
-tmp.b0 <- (tmp$ptot05 * 2000 - tmp$ptot00 * 2005) / (2000 - 2005); tmp.a0 <- (tmp$ptot00 - tmp.b0) / 2000
-tmp$ptot1994 <- round(x = tmp.a0 * 1994 + tmp.b0, digits = 0);
-tmp$ptot1997 <- round(x = tmp.a0 * 1997 + tmp.b0, digits = 0);
-tmp$ptot2000 <- round(x = tmp.a0 * 2000 + tmp.b0, digits = 0);
-tmp$ptot2003 <- round(x = tmp.a0 * 2003 + tmp.b0, digits = 0);
-tmp$ptot2006 <- round(x = tmp.a * 2006 + tmp.b, digits = 0);
-tmp$ptot2009 <- round(x = tmp.a * 2009 + tmp.b, digits = 0);
-tmp$ptot2010 <- round(x = tmp.a * 2010 + tmp.b, digits = 0);
-tmp$ptot2012 <- round(x = tmp.a * 2012 + tmp.b, digits = 0);
-tmp$ptot2013 <- round(x = tmp.a * 2013 + tmp.b, digits = 0);
-tmp$ptot2015 <- round(x = tmp.a * 2015 + tmp.b, digits = 0);
-tmp$ptot2018 <- round(x = tmp.a * 2018 + tmp.b, digits = 0);
+tmp$ptot1994 <- interpolate(t=1994, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot1997 <- interpolate(t=1997, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2000 <- interpolate(t=2000, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2003 <- interpolate(t=2003, t1=2000, t2=2005, p1=tmp$ptot00, p2=tmp$ptot05);
+tmp$ptot2006 <- interpolate(t=2006);
+tmp$ptot2009 <- interpolate(t=2009);
+tmp$ptot2010 <- interpolate(t=2010);
+tmp$ptot2012 <- interpolate(t=2012);
+tmp$ptot2013 <- interpolate(t=2013);
+tmp$ptot2015 <- interpolate(t=2015);
+tmp$ptot2018 <- interpolate(t=2018);
 tmp$ptot00 <- tmp$ptot05 <- tmp$ptot10 <- NULL;
 pob.distMap1997 <- tmp
 head(tmp)
 #
 # clean
-rm(tmp.a, tmp.b, tmp.a0, tmp.b0, tmp, i, fl, pob, pob05, pob10, edo, y, tempobj, c05, c10)
+rm(tmp, i, fl, pob, pob05, pob10, edo, y, tempobj, c05, c10)
 ls()
 #
 
@@ -1116,12 +1128,12 @@ ls()
 #################################################
 save.image(file = "tmp.RData") # debug
 rm(list = ls())                # debug
-wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/")
+wd <- c("/home/eric/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/")
 setwd(wd)
 load(file = "tmp.RData")       # debug
 
 tmp <- tmp2 <- tmp3 <- tmp4 <- pob.distMap2006
-head(tmp)
+head(tmp3)
 #i <- 2 # debug
 for (i in 1:300){
 #    tmp[i, 3:13] <-   tmp[i, 3:13] / target.edos.func("s")[tmp$edon[i], 2:12];
@@ -1188,8 +1200,11 @@ votPobDis0018 <- list(pob.distMap1997=pob.distMap1997,
                       pob.distMap2015p1=pob.distMap2015p1,
                       pob.distMap2015p3=pob.distMap2015p3)
 save(votPobDis0018, file = paste(wd, "votPobDis0018.RData", sep = ""))
-
 rm(tmp, tmp2)
+
+# emm 1may16: hasta aquÃ­ he revisado (metÃ­ funciÃ³n interpolate mÃ¡s arriba, checar que jale bien). Hay que correr analizaEscenarios.r para cerciorar que siga corriendo ok
+ls()
+head(pob.distMap2006)
 #
 #### Not always needed, it seems, because object with rrin and rris and no reln nor rels, exported below, is imported above. Fix this
 # paste district populations to election objects
@@ -1325,7 +1340,7 @@ edon = c(1,1,1,2,2,2,2,2,2,2,2,3,3,4,4,5,5,5,5,5,5,5,6,6,7,7,7,7,7,7,7,7,7,7,7,7
 ,
 disn = c(1,2,3,1,2,3,4,5,6,7,8,1,2,1,2,1,2,3,4,5,6,7,1,2,1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,1,2,3,4,1,2,3,4,5,6,7,8,9,10,11,12,13,14,1,2,3,4,5,6,7,8,9,1,2,3,4,5,6,7,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,1,2,3,1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1,2,3,4,1,2,3,1,2,3,4,5,6,7,1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,1,2,3,4,5,6,1,2,3,4,5,6,7,8,1,2,3,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,1,2,3,4,5,1,2,3,4)
 ,
-cab = c("Jesús María","Aguascalientes","Aguascalientes","Mexicali","Mexicali","Ensenada","Tijuana","Tijuana","Tijuana","Mexicali","Tijuana","Mulegé","La Paz","Campeche","Carmen","Piedras Negras","San Pedro","Monclova","Saltillo","Torreón","Torreón","Saltillo","Colima","Manzanillo","Palenque","Bochil","Ocosingo","Ocozocoautla de Espinosa","San Cristóbal de las Casas","Tuxtla Gutiérrez","Tonalá","Comitán de Domínguez","Tuxtla Gutiérrez","Villaflores","Huixtla","Tapachula","Juárez","Juárez","Juárez","Juárez","Delicias","Chihuahua","Cuauhtémoc","Chihuahua","Hidalgo del Parral","Gustavo A. Madero","Gustavo A. Madero","Azcapotzalco","Iztapalapa","Tlalpan","Gustavo A. Madero","Gustavo A. Madero","Cuauhtémoc","Venustiano Carranza","Miguel Hidalgo","Venustiano Carranza","Cuauhtémoc","Iztacalco","Tlalpan","Benito Juárez","Alvaro Obregón","Alvaro Obregón","Iztapalapa","Iztapalapa","Iztapalapa","Xochimilco","Iztapalapa","Coyoacán","Coyoacán","Iztapalapa","La Magdalena Contreras","Tláhuac","Durango","Gómez Palacio","Guadalupe Victoria","Durango","San Luis de la Paz","Allende","León","Guanajuato","León","León","San Francisco del Rincón","Salamanca","Irapuato","Uriangato","Pénjamo","Celaya","Valle de Santiago","Acámbaro","Pungarabato","Iguala de la Independencia","José Azueta","Acapulco de Juárez","Tlapa de Comonfort","Chilapa de Alvarez","Chilpancingo de los Bravo","Ayutla de los Libres","Acapulco de Juárez","Huejutla de Reyes","Ixmiquilpan","Actopan","Tulancingo de Bravo","Tula de Allende","Pachuca de Soto","Tepeapulco","Tequila","Lagos de Moreno","Tepatitlán de Morelos","Zapopan","Puerto Vallarta","Zapopan","Tonalá","Guadalajara","Guadalajara","Zapopan","Guadalajara","Tlajomulco de Zúñiga","Guadalajara","Guadalajara","La Barca","Tlaquepaque","Jocotepec","Autlán de Navarro","Zapotlán El Grande","Jilotepec","Teoloyucán","Atlacomulco","Nicolás Romero","Teotihuacán","Coacalco de Berriozábal","Cuautitlán Izcalli","Tultitlán","Ixtlahuaca","Ecatepec de Morelos","Ecatepec de Morelos","Ixtapaluca","Ecatepec de Morelos","Atizapán de Zaragoza","Tlalnepantla de Baz","Ecatepec de Morelos","Ecatepec de Morelos","Huixquilucan","Tlalnepantla de Baz","Nezahualcóyotl","Naucalpan de Juárez","Naucalpan de Juárez","Valle de Bravo","Naucalpan de Juárez","Chimalhuacán","Toluca","Metepec","Zumpango","Nezahualcóyotl","Nezahualcóyotl","Nezahualcóyotl","Valle de Chalco Solidaridad","Chalco","Toluca","Tenancingo","Tejupilco","Cuautitlán","Texcoco","La Paz","Zinacantepec","Lázaro Cárdenas","Puruándiro","Zitácuaro","Jiquilpan","Zamora","Hidalgo","Zacapu","Morelia","Uruapan","Morelia","Pátzcuaro","Apatzingán","Cuernavaca","Jiutepec","Cuautla","Jojutla","Yautepec","Santiago Ixcuintla","Tepic","Compostela","Santa Catarina","Apodaca","General Escobedo","San Nicolás de los Garza","Monterrey","Monterrey","Monterrey","Guadalupe","Linares","Monterrey","Guadalupe","Cadereyta Jiménez","San Juan Bautista Tuxtepec","Teotitlán de Flores Magón","Heroica Ciudad de Huajuapan de León","Tlacolula de Matamoros","Santo Domingo Tehuantepec","Heroica Ciudad de Tlaxiaco","Juchitán de Zaragoza","Oaxaca de Juárez","Santa Lucía del Camino","Miahuatlán de Porfirio Díaz","Santiago Pinotepa Nacional","Huauchinango","Zacatlán","Teziutlán","Zacapoaxtla","San Martín Texmelucan","Puebla","Tepeaca","Chalchicomula de Sesma","Puebla","San Pedro Cholula","Puebla","Puebla","Atlixco","Izúcar de Matamoros","Tehuacán","Ajalpan","Cadereyta de Montes","San Juan del Río","Querétaro","Querétaro","Solidaridad","Othón P. Blanco","Benito Juárez","Matehuala","Soledad de Graciano Sánchez","Rioverde","Ciudad Valles","San Luis Potosí","San Luis Potosí","Tamazunchale","El Fuerte","Ahome","Salvador Alvarado","Guasave","Culiacán","Mazatlán","Culiacán","Mazatlán","San Luis Río Colorado","Nogales","Hermosillo","Guaymas","Hermosillo","Cajeme","Navojoa","Macuspana","Cárdenas","Comalcalco","Centro","Paraíso","Centro","Nuevo Laredo","Reynosa","Río Bravo","Matamoros","Victoria","El Mante","Ciudad Madero","Tampico","Apizaco","Tlaxcala","Zacatelco","Pánuco","Tantoyuca","Tuxpan","Veracruz","Poza Rica de Hidalgo","Papantla","Martínez de la Torre","Xalapa","Coatepec","Xalapa","Coatzacoalcos","Veracruz","Huatusco","Minatitlán","Orizaba","Córdoba","Cosamaloapan","Zongolica","San Andrés Tuxtla","Acayucan","Cosoleacaque","Valladolid","Progreso","Mérida","Mérida","Ticul","Fresnillo","Jerez","Zacatecas","Guadalupe")
+cab = c("Jes\FAs Mar\EDa","Aguascalientes","Aguascalientes","Mexicali","Mexicali","Ensenada","Tijuana","Tijuana","Tijuana","Mexicali","Tijuana","Muleg\E9","La Paz","Campeche","Carmen","Piedras Negras","San Pedro","Monclova","Saltillo","Torre\F3n","Torre\F3n","Saltillo","Colima","Manzanillo","Palenque","Bochil","Ocosingo","Ocozocoautla de Espinosa","San Crist\F3bal de las Casas","Tuxtla Guti\E9rrez","Tonal\E1","Comit\E1n de Dom\EDnguez","Tuxtla Guti\E9rrez","Villaflores","Huixtla","Tapachula","Ju\E1rez","Ju\E1rez","Ju\E1rez","Ju\E1rez","Delicias","Chihuahua","Cuauht\E9moc","Chihuahua","Hidalgo del Parral","Gustavo A. Madero","Gustavo A. Madero","Azcapotzalco","Iztapalapa","Tlalpan","Gustavo A. Madero","Gustavo A. Madero","Cuauht\E9moc","Venustiano Carranza","Miguel Hidalgo","Venustiano Carranza","Cuauht\E9moc","Iztacalco","Tlalpan","Benito Ju\E1rez","Alvaro Obreg\F3n","Alvaro Obreg\F3n","Iztapalapa","Iztapalapa","Iztapalapa","Xochimilco","Iztapalapa","Coyoac\E1n","Coyoac\E1n","Iztapalapa","La Magdalena Contreras","Tl\E1huac","Durango","G\F3mez Palacio","Guadalupe Victoria","Durango","San Luis de la Paz","Allende","Le\F3n","Guanajuato","Le\F3n","Le\F3n","San Francisco del Rinc\F3n","Salamanca","Irapuato","Uriangato","P\E9njamo","Celaya","Valle de Santiago","Ac\E1mbaro","Pungarabato","Iguala de la Independencia","Jos\E9 Azueta","Acapulco de Ju\E1rez","Tlapa de Comonfort","Chilapa de Alvarez","Chilpancingo de los Bravo","Ayutla de los Libres","Acapulco de Ju\E1rez","Huejutla de Reyes","Ixmiquilpan","Actopan","Tulancingo de Bravo","Tula de Allende","Pachuca de Soto","Tepeapulco","Tequila","Lagos de Moreno","Tepatitl\E1n de Morelos","Zapopan","Puerto Vallarta","Zapopan","Tonal\E1","Guadalajara","Guadalajara","Zapopan","Guadalajara","Tlajomulco de Z\FA\F1iga","Guadalajara","Guadalajara","La Barca","Tlaquepaque","Jocotepec","Autl\E1n de Navarro","Zapotl\E1n El Grande","Jilotepec","Teoloyuc\E1n","Atlacomulco","Nicol\E1s Romero","Teotihuac\E1n","Coacalco de Berrioz\E1bal","Cuautitl\E1n Izcalli","Tultitl\E1n","Ixtlahuaca","Ecatepec de Morelos","Ecatepec de Morelos","Ixtapaluca","Ecatepec de Morelos","Atizap\E1n de Zaragoza","Tlalnepantla de Baz","Ecatepec de Morelos","Ecatepec de Morelos","Huixquilucan","Tlalnepantla de Baz","Nezahualc\F3yotl","Naucalpan de Ju\E1rez","Naucalpan de Ju\E1rez","Valle de Bravo","Naucalpan de Ju\E1rez","Chimalhuac\E1n","Toluca","Metepec","Zumpango","Nezahualc\F3yotl","Nezahualc\F3yotl","Nezahualc\F3yotl","Valle de Chalco Solidaridad","Chalco","Toluca","Tenancingo","Tejupilco","Cuautitl\E1n","Texcoco","La Paz","Zinacantepec","L\E1zaro C\E1rdenas","Puru\E1ndiro","Zit\E1cuaro","Jiquilpan","Zamora","Hidalgo","Zacapu","Morelia","Uruapan","Morelia","P\E1tzcuaro","Apatzing\E1n","Cuernavaca","Jiutepec","Cuautla","Jojutla","Yautepec","Santiago Ixcuintla","Tepic","Compostela","Santa Catarina","Apodaca","General Escobedo","San Nicol\E1s de los Garza","Monterrey","Monterrey","Monterrey","Guadalupe","Linares","Monterrey","Guadalupe","Cadereyta Jim\E9nez","San Juan Bautista Tuxtepec","Teotitl\E1n de Flores Mag\F3n","Heroica Ciudad de Huajuapan de Le\F3n","Tlacolula de Matamoros","Santo Domingo Tehuantepec","Heroica Ciudad de Tlaxiaco","Juchit\E1n de Zaragoza","Oaxaca de Ju\E1rez","Santa Luc\EDa del Camino","Miahuatl\E1n de Porfirio D\EDaz","Santiago Pinotepa Nacional","Huauchinango","Zacatl\E1n","Teziutl\E1n","Zacapoaxtla","San Mart\EDn Texmelucan","Puebla","Tepeaca","Chalchicomula de Sesma","Puebla","San Pedro Cholula","Puebla","Puebla","Atlixco","Iz\FAcar de Matamoros","Tehuac\E1n","Ajalpan","Cadereyta de Montes","San Juan del R\EDo","Quer\E9taro","Quer\E9taro","Solidaridad","Oth\F3n P. Blanco","Benito Ju\E1rez","Matehuala","Soledad de Graciano S\E1nchez","Rioverde","Ciudad Valles","San Luis Potos\ED","San Luis Potos\ED","Tamazunchale","El Fuerte","Ahome","Salvador Alvarado","Guasave","Culiac\E1n","Mazatl\E1n","Culiac\E1n","Mazatl\E1n","San Luis R\EDo Colorado","Nogales","Hermosillo","Guaymas","Hermosillo","Cajeme","Navojoa","Macuspana","C\E1rdenas","Comalcalco","Centro","Para\EDso","Centro","Nuevo Laredo","Reynosa","R\EDo Bravo","Matamoros","Victoria","El Mante","Ciudad Madero","Tampico","Apizaco","Tlaxcala","Zacatelco","P\E1nuco","Tantoyuca","Tuxpan","Veracruz","Poza Rica de Hidalgo","Papantla","Mart\EDnez de la Torre","Xalapa","Coatepec","Xalapa","Coatzacoalcos","Veracruz","Huatusco","Minatitl\E1n","Orizaba","C\F3rdoba","Cosamaloapan","Zongolica","San Andr\E9s Tuxtla","Acayucan","Cosoleacaque","Valladolid","Progreso","M\E9rida","M\E9rida","Ticul","Fresnillo","Jerez","Zacatecas","Guadalupe")
 , stringsAsFactors = FALSE)
 
 df2003d0 <- merge(df2003d0, cab.d0, by = c("edon", "disn"))
@@ -1582,9 +1597,9 @@ write.csv(similarityMap2015p1with2012,   file = "dsi2013-1-2006.csv", row.names 
 write.csv(similarityMap2015p3with2012,   file = "dsi2013-3-2006.csv", row.names = FALSE)
 write.csv(similarityMap2015p3with2015p1, file = "dsi2013-3-2013-1.csv", row.names = FALSE)
 
-##############################################################################################################################################
-## 2006 MAP DISTRICT VOLATILITY AND MEAN MARGIN (HOW CAN THEY BE COMPOUNDED IN A MEASURE? MG/VOL SEEMS NOT TO WORK ... FINANCE LITERATURE?) ##
-##############################################################################################################################################
+##########################################################################################################################################
+## 2006 MAP DIST VOLATILITY AND MEAN MARGIN (HOW CAN THEY BE COMPOUNDED IN A MEASURE? MG/VOL SEEMS NOT TO WORK ... FINANCE LITERATURE?) ##
+##########################################################################################################################################
 head(df2006d0) # debug
 m1 <- df2006d0[,c("panm","prim","prdm")]
 m2 <- df2009d0[,c("panm","prim","prdm")]
@@ -1710,9 +1725,9 @@ seats.mix.0612 <- data.frame(pty=c("pan","pri-green","left","pt-c","panal","pasc
                              dip09=c(143,258,71,19,9,0)/500,
                              dip12=c(114,241,135,0,10,0)/500)
 # seats MR only
-s1 <- df2006d0[,c("panw","priw","prdw","panalw","asdcw")]     #/ df2006d0$efec
+s1 <- df2006d0[,c("panw","priw","prdw","panalw","asdcw")]        #/ df2006d0$efec
 s2 <- df2009d0[,c("panw","priw","prdw","pvemw","panalw","ptcw")] #/ df2009d0$efec
-s3 <- df2012d0[,c("panw","priw","prdw","pvemw","panalw")]      #/ df2012d0$efec
+s3 <- df2012d0[,c("panw","priw","prdw","pvemw","panalw")]        #/ df2012d0$efec
 # homogenize columns
 s1 <- cbind(s1, pvemw = rep(0,300), ptcw = rep(0,300)); s1 <- s1[,c("panw","priw","prdw","pvemw","ptcw","panalw","asdcw")]
 s2 <- cbind(s2, asdcw = rep(0,300)); s2 <- s2[,c("panw","priw","prdw","pvemw","ptcw","panalw","asdcw")]
@@ -2236,7 +2251,7 @@ summary(e12$lisnom)
 target.lisnom <- sum(e12$lisnom)/300 # lisnom that each district would have if all equal
 print( paste("lista nominal que distritos homogeneos tendrian =", round(target.lisnom, digits = 0)) )
 
-# así se hace en R un by yr mo: egen e12=sum(invested) de stata
+# as\ED se hace en R un by yr mo: egen e12=sum(invested) de stata
 e12$totln <- ave(e12$lisnom, as.factor(e12$edon+e12$disn/100), FUN=sum, na.rm=TRUE)
 
 ln2012 <- e12[duplicated(e12$edon+e12$disn/100)== FALSE,]
@@ -2258,7 +2273,7 @@ ln2012$rel <- (ln2012$lisnom - target.lisnom)*100/target.lisnom
 ## target.lisnom <- sum(tmp$lisnom)/300 # lisnom that each district would have if all equal
 ## print( paste("lista nominal que distritos homogeneos tendrian =", target.lisnom) )
 
-## # así se hace en R un by yr mo: egen tmp=sum(invested) de stata
+## # as\ED se hace en R un by yr mo: egen tmp=sum(invested) de stata
 ## tmp$totln <- ave(tmp$lisnom, as.factor(tmp$edon+tmp$disn/100), FUN=sum, na.rm=TRUE)
 
 ## ln2009 <- tmp[duplicated(tmp$edon+tmp$disn/100)== FALSE,]
@@ -2282,7 +2297,7 @@ ln2012$rel <- (ln2012$lisnom - target.lisnom)*100/target.lisnom
 ## target.lisnom <- sum(tmp$lisnom)/300 # lisnom that each district would have if all equal
 ## print( paste("lista nominal que distritos homogeneos tendrian =", target.lisnom) )
 
-## # así se hace en R un by yr mo: egen tmp=sum(invested) de stata
+## # as\ED se hace en R un by yr mo: egen tmp=sum(invested) de stata
 ## tmp$totln <- ave(tmp$lisnom, as.factor(tmp$edon+tmp$disn/100), FUN=sum, na.rm=TRUE)
 
 ## ln2006 <- tmp[duplicated(tmp$edon+tmp$disn/100)== FALSE,]
@@ -2306,7 +2321,7 @@ ln2012$rel <- (ln2012$lisnom - target.lisnom)*100/target.lisnom
 ## target.lisnom <- sum(tmp$lisnom)/300 # lisnom that each district would have if all equal
 ## print( paste("lista nominal que distritos homogeneos tendrian =", target.lisnom) )
 
-## # así se hace en R un by yr mo: egen tmp=sum(invested) de stata
+## # as\ED se hace en R un by yr mo: egen tmp=sum(invested) de stata
 ## tmp$totln <- ave(tmp$lisnom, as.factor(tmp$edon+tmp$disn/100), FUN=sum, na.rm=TRUE)
 
 ## ln2003 <- tmp[duplicated(tmp$edon+tmp$disn/100)== FALSE,]
@@ -2341,7 +2356,7 @@ library(Cairo)
 ##       dpi = 96)
 plot(ln2012$rel, ylab = "sobre-/sub-objetivo (%)", xlab = "distritos",
      ylim = c(min(ln2012$rel), max(ln2012$rel)+25),
-     type="n", main = "Lista nominal 2012 vs. tamaño ideal", axes = FALSE)
+     type="n", main = "Lista nominal 2012 vs. tama\F1o ideal", axes = FALSE)
 axis(1, at = c(1, seq(from = 50, to = 300, by = 50)))
 axis(2, at = seq(from = -40, to = 80, by = 20))
 polygon(x = c(-10,310,310,-10), y = c(-15,-15,15,15), lty = 0, col = "grey80")
