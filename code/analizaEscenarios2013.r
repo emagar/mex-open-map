@@ -3012,15 +3012,15 @@ v.tmp <- (1:999)/1000
 #
 library(Cairo)
 type <-  "pdf" 
-file <- paste("bias200612d0R.", type, sep="")
-setwd(save.dir)
-Cairo(file=file,
-      type = type,
-      width = 7,
-      height = 7,
-      units = "in",
-      dpi = 72,
-      bg = "transparent")
+## file <- paste("bias200612d0R.", type, sep="")
+## setwd(save.dir)
+## Cairo(file=file,
+##       type = type,
+##       width = 7,
+##       height = 7,
+##       units = "in",
+##       dpi = 72,
+##       bg = "transparent")
 #
 par(mar=c(5,2,2,2)+0.1) # drop space for title and left labels
 #jitter <- runif(n = 300, min=-.1, max=.1)
@@ -3090,7 +3090,7 @@ text(x = rep(2.1,4), y = -(1:4)-.3,    labels = rep("2012", 5), cex = .65)
 #text(x = rep(2.1,4), y = -(1:4)-.3,    labels = rep("todos", 5), cex = .65)
 #
 text(x = rep(-2.1,5), y = -c(1:4,4.9), labels = c("PAN", "PRD", "Green", "PANAL", "PT"))
-dev.off()
+## dev.off()
 setwd(wd)
 
 ### plot rho for s0 and s3

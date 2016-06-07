@@ -160,7 +160,7 @@ Best,
 ** Remove circularities btw red.r and analizaEscenarios.r
 ** Ask Micah for ideas on intercensal population estimation
 ** Write new cover letter explaining changes. Mention that we re-did all analysis to include 2015 election returns (previously unavailable), and also adding back secciones that were split in the period due to overpopulation. These had been dropped to save time. These units are relatively unimportant in sheer numbers (175 overpopulated secciones were split into 5034 new units in the period). But they are concentrated in suburban areas with fast demographic growth since the 1990s. Estimates for 2003--2012 have changed, but they tell the same general story.
-** Which repository for data, code, appendix? github? ericmagar.com? dataverse? several?
+** Ask Micah/Mike: Which repository for data, code, appendix? github? ericmagar.com? dataverse? several?
 ** For appendix: Population projections
 % PLOT PREPARED IN RED.R
 \begin{figure}
@@ -174,3 +174,7 @@ Figure \ref{F:disRelPop2006map} illustrates how creeping malapportionment affect
 %One year closer to census makes a huge difference, as the abandoned map for 2015 reveals (although this is probably compounded with a less dynamic demography): the dotted vertical line at year 2013 reports how the new plan might have looked, had it been adopted. 
 
 
+** DONE Re-do rri plots with cleaner seccion-to-dostroct aggregations for paper
+   CLOSED: [2016-06-07 Tue 04:45]
+** Re-do bias estimate plots with 2015 in for paper
+** Decide if we call it the 2013 map or the 2015 mqp

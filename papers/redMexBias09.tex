@@ -327,13 +327,14 @@ The percentiles corresponding to $RRI$s at .85 and 1.15 (the bounds of the board
     \includegraphics[width=.65\columnwidth]{rrin0615d0.pdf} \\
     \includegraphics[width=.65\columnwidth]{rrin0615d3.pdf} \\
 %\end{tabular}
-\caption{Representation in four elections and two maps. Panels portray (top) the status quo and (bottom) the hypothetical maps. Finer horizontal lines connect the 5th and 95th percentiles, thicker lines the quartiles, and white circles indicate the median. Points are districts.}\label{F:malapp}
+\caption{Representation in four elections and two maps. Points are districts. Panels portray (top) the status quo and (bottom) the hypothetical maps. Finer horizontal lines connect the 5th and 95th percentiles, thicker lines the quartiles, and white circles indicate the median.}\label{F:malapp}
+% \caption{Representation in four elections with the same map. Points are districts, finer horizontal lines connect the 5th and 95th percentiles, thicker lines the quartiles, and white circles indicate the median.}\label{F:malapp}
 \end{center}
 \end{figure}
 
-Figure \ref{F:malapp} summarizes observed malapportionment. Vertical dashed lines in gray mark the 15\% tolerance band, which has been amply and systematically surpassed. Consider the top plot, portraying the status quo map, first. Each point represents one district. The fine horizontal line connects the $RRI$ values corresponding to the 5th and 95th percentiles---both well outside the tolerance range, since the map's inception. The thick horizontal line is the inter-quartile range, not far from covering the full tolerance range by 2012 (if it did, half the districts would be off-range). In the C\'amara elected in the 2015 midterm, citizens in the plot's right-most districts (in central Monterrey and two in battered Ju\'arez) will be worth \emph{four times more} in Congress than citizens in the left-most districts (one each in suburban Monterrey and Mexico City, the other in Canc\'un). In matters politic, citizens at one quartile will be worth nearly twice as much as those at the other quartile. 
+Figure \ref{F:malapp} summarizes observed malapportionment. Vertical dashed lines in gray mark the 15\% tolerance band, which has been amply and systematically surpassed. Consider the top plot, portraying the status quo map, first. Each point represents one district. The fine horizontal line connects the $RRI$ values corresponding to the 5th and 95th percentiles---both well outside the tolerance range, since the map's inception. The thick horizontal line is the inter-quartile range, not far from covering the upper bound of the tolerance range by 2012, and towards coverinf the full tolerance range by year 2015 (if it did, half the districts would be off-range). In the C\'amara elected in the 2015 midterm, citizens in the plot's right-most districts (in central Monterrey and two in battered Ju\'arez) will be worth \emph{four times more} in Congress than citizens in the left-most districts (one each in suburban Monterrey and Mexico City, the other in Canc\'un). In matters politic, citizens at one quartile will be worth nearly twice as much as those at the other quartile. 
 
-The bottom plot is hypothetical, analyzing the map proposed for 2015, but not adopted. It is quite clear that, using more up to date reference census counts improves representation substantially (note the narrower horizontal lines). Applying our method on the same election in both the actual and the hypothetical maps offers perspective to gauge the effect that less malapportionment has on partisan bias and its components. 
+The bottom plot is hypothetical, analyzing the map proposed for 2015, but not adopted. It is quite clear that, using more up to date reference census counts improves representation substantially (note the narrower horizontal lines). Applying our method on the same election in both the actual and the hypothetical maps offers perspective to gauge the effect that a drop in malapportionment has on partisan bias and its components. 
 
 \section{Results}\label{S:results}
 
@@ -978,7 +979,11 @@ To verify convergence, Tables \ref{T:traceplotStart}--\ref{T:traceplotEnd} plot 
 \caption{Three-chain traceplots for 2015 with hypothetical map}\label{T:traceplotEnd}
 \end{table}
 
+\subsection*{How the PR tier mitigates under-representation}
 
+\begin{table}
+\includegraphics[width=.8\columnwidth]{votes-seatsSMDandMix0612.pdf}
+\end{table}
 
 \nocite{allen2014credit}
 

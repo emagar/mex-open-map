@@ -1200,113 +1200,154 @@ votPobDis0018 <- list(pob.distMap1997=pob.distMap1997,
                       pob.distMap2015p1=pob.distMap2015p1,
                       pob.distMap2015p3=pob.distMap2015p3)
 save(votPobDis0018, file = paste(wd, "votPobDis0018.RData", sep = ""))
-rm(tmp, tmp2)
+rm(tmp, tmp2, tmp3, tmp4)
 
 # emm 1may16: hasta aquí he revisado (metí función interpolate más arriba, checar que jale bien). Hay que correr analizaEscenarios.r para cerciorar que siga corriendo ok
 ls()
-head(pob.distMap2006)
-#
-#### Not always needed, it seems, because object with rrin and rris and no reln nor rels, exported below, is imported above. Fix this
-# paste district populations to election objects
-tmp <- pob.distMap1997[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
-#df2006d97 <- merge(x = df2006d97, y = tmp, by = c("edon", "disn"))
-#df2006s97 <- merge(x = df2006s97, y = tmp, by = c("edon", "disn"))
-tmp <- pob.distMap2006[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+colnames(pob.distMap2006)
+
+# recompute rrin (those in object seem obsolete... see my comment in next block) --- done for 2006-2012 only
+tmp <- pob.distMap2006[, c("edon","disn","ptot2006")]; colnames(tmp) <- c("edon", "disn", "ptot")
+tmp$rrin <- (1 / tmp$ptot) / (300 / sum(tmp$ptot))
+df2006d0$rrin <- NULL; tmp$ptot <- NULL
 df2006d0 <- merge(x = df2006d0, y = tmp, by = c("edon", "disn"))
-df2006s0 <- merge(x = df2006s0, y = tmp, by = c("edon", "disn"))
-tmp <- pob.distMap2015p1[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
-#df2006d1 <- merge(x = df2006d1, y = tmp, by = c("edon", "disn"))
-#df2006s1 <- merge(x = df2006s1, y = tmp, by = c("edon", "disn"))
-tmp <- pob.distMap2015p3[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
-df2006d3 <- merge(x = df2006d3, y = tmp, by = c("edon", "disn"))
-df2006s3 <- merge(x = df2006s3, y = tmp, by = c("edon", "disn"))
 #
-tmp <- pob.distMap2006[, c("edon","disn","ptot2009","rels2009","reln2009")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+tmp <- pob.distMap2006[, c("edon","disn","ptot2009")]; colnames(tmp) <- c("edon", "disn", "ptot")
+tmp$rrin <- (1 / tmp$ptot) / (300 / sum(tmp$ptot))
+df2009d0$rrin <- NULL; tmp$ptot <- NULL
 df2009d0 <- merge(x = df2009d0, y = tmp, by = c("edon", "disn"))
-df2009s0 <- merge(x = df2009s0, y = tmp, by = c("edon", "disn"))
-tmp <- pob.distMap2015p1[, c("edon","disn","ptot2009","rels2009","reln2009")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
-#df2009d1 <- merge(x = df2009d1, y = tmp, by = c("edon", "disn"))
-#df2009s1 <- merge(x = df2009s1, y = tmp, by = c("edon", "disn"))
-tmp <- pob.distMap2015p3[, c("edon","disn","ptot2009","rels2009","reln2009")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
-df2009d3 <- merge(x = df2009d3, y = tmp, by = c("edon", "disn"))
-df2009s3 <- merge(x = df2009s3, y = tmp, by = c("edon", "disn"))
 #
-tmp <- pob.distMap2006[, c("edon","disn","ptot2012","rels2012","reln2012")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+tmp <- pob.distMap2006[, c("edon","disn","ptot2012")]; colnames(tmp) <- c("edon", "disn", "ptot")
+tmp$rrin <- (1 / tmp$ptot) / (300 / sum(tmp$ptot))
+df2012d0$rrin <- NULL; tmp$ptot <- NULL
 df2012d0 <- merge(x = df2012d0, y = tmp, by = c("edon", "disn"))
-df2012s0 <- merge(x = df2012s0, y = tmp, by = c("edon", "disn"))
-tmp <- pob.distMap2015p1[, c("edon","disn","ptot2012","rels2012","reln2012")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
-#df2012d1 <- merge(x = df2012d1, y = tmp, by = c("edon", "disn"))
-#df2012s1 <- merge(x = df2012s1, y = tmp, by = c("edon", "disn"))
-tmp <- pob.distMap2015p3[, c("edon","disn","ptot2012","rels2012","reln2012")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+#
+tmp <- pob.distMap2006[, c("edon","disn","ptot2015")]; colnames(tmp) <- c("edon", "disn", "ptot")
+tmp$rrin <- (1 / tmp$ptot) / (300 / sum(tmp$ptot))
+df2015d0$rrin <- NULL; tmp$ptot <- NULL
+df2015d0 <- merge(x = df2015d0, y = tmp, by = c("edon", "disn"))
+#
+tmp <- pob.distMap2015p3[, c("edon","disn","ptot2006")]; colnames(tmp) <- c("edon", "disn", "ptot")
+tmp$rrin <- (1 / tmp$ptot) / (300 / sum(tmp$ptot))
+df2006d3$rrin <- NULL; tmp$ptot <- NULL
+df2006d3 <- merge(x = df2006d3, y = tmp, by = c("edon", "disn"))
+#
+tmp <- pob.distMap2015p3[, c("edon","disn","ptot2009")]; colnames(tmp) <- c("edon", "disn", "ptot")
+tmp$rrin <- (1 / tmp$ptot) / (300 / sum(tmp$ptot))
+df2009d3$rrin <- NULL; tmp$ptot <- NULL
+df2009d3 <- merge(x = df2009d3, y = tmp, by = c("edon", "disn"))
+#
+tmp <- pob.distMap2015p3[, c("edon","disn","ptot2012")]; colnames(tmp) <- c("edon", "disn", "ptot")
+tmp$rrin <- (1 / tmp$ptot) / (300 / sum(tmp$ptot))
+df2012d3$rrin <- NULL; tmp$ptot <- NULL
 df2012d3 <- merge(x = df2012d3, y = tmp, by = c("edon", "disn"))
-df2012s3 <- merge(x = df2012s3, y = tmp, by = c("edon", "disn"))
-
-## COMPUTE RELATIVE REPRESENTATION INDEX FOR DISTRICTS VIS-A-VIS STATE/NAT AVERAGES (ANSOLABEHERE ET AL 2002)
-tmp <- df2006d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2006d0 <- tmp
-tmp <- df2006d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2006d1 <- tmp
-tmp <- df2006d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2006d3 <- tmp
 #
-tmp <- df2009d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2009d0 <- tmp
-tmp <- df2009d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2009d1 <- tmp
-tmp <- df2009d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2009d3 <- tmp
-#
-tmp <- df2012d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d0 <- tmp
-tmp <- df2012d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d1 <- tmp
-tmp <- df2012d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d3 <- tmp
+tmp <- pob.distMap2015p3[, c("edon","disn","ptot2015")]; colnames(tmp) <- c("edon", "disn", "ptot")
+tmp$rrin <- (1 / tmp$ptot) / (300 / sum(tmp$ptot))
+df2015d3$rrin <- NULL; tmp$ptot <- NULL
+df2015d3 <- merge(x = df2015d3, y = tmp, by = c("edon", "disn"))
 #
 
-# prepare (until now, non-existant) df2015 with rri -- check, rri addition may be redundant
-tmp <- pob.distMap2006
-#tmp <- tmp[,c("edon","disn","ptot2015","rels2015","reln2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
-tmp <- tmp[,c("edon","disn","ptot2015","rris2015","rrin2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
-#tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
-df2015d0 <- tmp
+## #### Block was not always needed, it seems: object with rrin and rris and no reln nor rels, exported below, is imported above. If errors pop out, block must be skipped... *Fix this*
+## # paste district populations to election objects
+## tmp <- pob.distMap1997[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## #df2006d97 <- merge(x = df2006d97, y = tmp, by = c("edon", "disn"))
+## #df2006s97 <- merge(x = df2006s97, y = tmp, by = c("edon", "disn"))
+## tmp <- pob.distMap2006[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## df2006d0 <- merge(x = df2006d0, y = tmp, by = c("edon", "disn"))
+## df2006s0 <- merge(x = df2006s0, y = tmp, by = c("edon", "disn"))
+## tmp <- pob.distMap2015p1[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## #df2006d1 <- merge(x = df2006d1, y = tmp, by = c("edon", "disn"))
+## #df2006s1 <- merge(x = df2006s1, y = tmp, by = c("edon", "disn"))
+## tmp <- pob.distMap2015p3[, c("edon","disn","ptot2006","rels2006","reln2006")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## df2006d3 <- merge(x = df2006d3, y = tmp, by = c("edon", "disn"))
+## df2006s3 <- merge(x = df2006s3, y = tmp, by = c("edon", "disn"))
+## #
+## tmp <- pob.distMap2006[, c("edon","disn","ptot2009","rels2009","reln2009")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## df2009d0 <- merge(x = df2009d0, y = tmp, by = c("edon", "disn"))
+## df2009s0 <- merge(x = df2009s0, y = tmp, by = c("edon", "disn"))
+## tmp <- pob.distMap2015p1[, c("edon","disn","ptot2009","rels2009","reln2009")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## #df2009d1 <- merge(x = df2009d1, y = tmp, by = c("edon", "disn"))
+## #df2009s1 <- merge(x = df2009s1, y = tmp, by = c("edon", "disn"))
+## tmp <- pob.distMap2015p3[, c("edon","disn","ptot2009","rels2009","reln2009")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## df2009d3 <- merge(x = df2009d3, y = tmp, by = c("edon", "disn"))
+## df2009s3 <- merge(x = df2009s3, y = tmp, by = c("edon", "disn"))
+## #
+## tmp <- pob.distMap2006[, c("edon","disn","ptot2012","rels2012","reln2012")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## df2012d0 <- merge(x = df2012d0, y = tmp, by = c("edon", "disn"))
+## df2012s0 <- merge(x = df2012s0, y = tmp, by = c("edon", "disn"))
+## tmp <- pob.distMap2015p1[, c("edon","disn","ptot2012","rels2012","reln2012")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## #df2012d1 <- merge(x = df2012d1, y = tmp, by = c("edon", "disn"))
+## #df2012s1 <- merge(x = df2012s1, y = tmp, by = c("edon", "disn"))
+## tmp <- pob.distMap2015p3[, c("edon","disn","ptot2012","rels2012","reln2012")]; colnames(tmp) <- c("edon", "disn", "ptot", "rels", "reln")
+## df2012d3 <- merge(x = df2012d3, y = tmp, by = c("edon", "disn"))
+## df2012s3 <- merge(x = df2012s3, y = tmp, by = c("edon", "disn"))
+## #
+## ## COMPUTE RELATIVE REPRESENTATION INDEX FOR DISTRICTS VIS-A-VIS STATE/NAT AVERAGES (ANSOLABEHERE ET AL 2002)
+## tmp <- df2006d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2006d0 <- tmp
+## tmp <- df2006d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2006d1 <- tmp
+## tmp <- df2006d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2006d3 <- tmp
+## #
+## tmp <- df2009d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2009d0 <- tmp
+## tmp <- df2009d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2009d1 <- tmp
+## tmp <- df2009d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2009d3 <- tmp
+## #
+## tmp <- df2012d0; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d0 <- tmp
+## tmp <- df2012d1; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d1 <- tmp
+## tmp <- df2012d3; tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln; df2012d3 <- tmp
 #
-tmp <- pob.distMap2015p3
-#tmp <- tmp[,c("edon","disn","ptot2015","rels2015","reln2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
-tmp <- tmp[,c("edon","disn","ptot2015","rris2015","rrin2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
-#tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
-df2015d3 <- tmp
-#
-# prepare (until now, non-existant) df2018 with rri
-tmp <- pob.distMap2006
-#tmp <- tmp[,c("edon","disn","ptot2018","rels2018","reln2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
-tmp <- tmp[,c("edon","disn","ptot2018","rris2018","rrin2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
-#tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
-df2018d0 <- tmp
-#
-tmp <- pob.distMap2015p3
-#tmp <- tmp[,c("edon","disn","ptot2018","rels2018","reln2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
-tmp <- tmp[,c("edon","disn","ptot2018","rris2018","rrin2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
-#tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
-df2018d3 <- tmp
-#
-# prepare (until now, non-existant) df2000 with rri
-tmp <- pob.distMap2006
-#tmp <- tmp[,c("edon","disn","ptot2000","rels2000","reln2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
-tmp <- tmp[,c("edon","disn","ptot2000","rris2000","rrin2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
-#tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
-df2000d0 <- tmp
-#
-tmp <- pob.distMap2015p3
-#tmp <- tmp[,c("edon","disn","ptot2000","rels2000","reln2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
-tmp <- tmp[,c("edon","disn","ptot2000","rris2000","rrin2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
-#tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
-df2000d3 <- tmp
-#
-# prepare fake df2010 with rri (for use when graphing rris only, no elec results, but with structure that code below recognizes)
-tmp <- pob.distMap2006
-#tmp <- tmp[,c("edon","disn","ptot2010","rels2010","reln2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
-tmp <- tmp[,c("edon","disn","ptot2010","rris2010","rrin2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
-#tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
-df2010d0 <- tmp
-#
-tmp <- pob.distMap2015p3
-#tmp <- tmp[,c("edon","disn","ptot2010","rels2010","reln2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
-tmp <- tmp[,c("edon","disn","ptot2010","rris2010","rrin2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
-#tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
-df2010d3 <- tmp
-#
+## # prepare (until now, non-existant) df2015 with rri -- check, rri addition may be redundant
+## tmp <- pob.distMap2006
+## #tmp <- tmp[,c("edon","disn","ptot2015","rels2015","reln2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
+## tmp <- tmp[,c("edon","disn","ptot2015","rris2015","rrin2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
+## #tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+## df2015d0 <- tmp
+## #
+## tmp <- pob.distMap2015p3
+## #tmp <- tmp[,c("edon","disn","ptot2015","rels2015","reln2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
+## tmp <- tmp[,c("edon","disn","ptot2015","rris2015","rrin2015")]; colnames(tmp) <- sub(pattern = "2015", replacement = "", colnames(tmp))
+## #tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+## df2015d3 <- tmp
+## #
+## # prepare (until now, non-existant) df2018 with rri
+## tmp <- pob.distMap2006
+## #tmp <- tmp[,c("edon","disn","ptot2018","rels2018","reln2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
+## tmp <- tmp[,c("edon","disn","ptot2018","rris2018","rrin2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
+## #tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+## df2018d0 <- tmp
+## #
+## tmp <- pob.distMap2015p3
+## #tmp <- tmp[,c("edon","disn","ptot2018","rels2018","reln2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
+## tmp <- tmp[,c("edon","disn","ptot2018","rris2018","rrin2018")]; colnames(tmp) <- sub(pattern = "2018", replacement = "", colnames(tmp))
+## #tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+## df2018d3 <- tmp
+## #
+## # prepare (until now, non-existant) df2000 with rri
+## tmp <- pob.distMap2006
+## #tmp <- tmp[,c("edon","disn","ptot2000","rels2000","reln2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
+## tmp <- tmp[,c("edon","disn","ptot2000","rris2000","rrin2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
+## #tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+## df2000d0 <- tmp
+## #
+## tmp <- pob.distMap2015p3
+## #tmp <- tmp[,c("edon","disn","ptot2000","rels2000","reln2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
+## tmp <- tmp[,c("edon","disn","ptot2000","rris2000","rrin2000")]; colnames(tmp) <- sub(pattern = "2000", replacement = "", colnames(tmp))
+## #tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+## df2000d3 <- tmp
+## #
+## # prepare fake df2010 with rri (for use when graphing rris only, no elec results, but with structure that code below recognizes)
+## tmp <- pob.distMap2006
+## #tmp <- tmp[,c("edon","disn","ptot2010","rels2010","reln2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
+## tmp <- tmp[,c("edon","disn","ptot2010","rris2010","rrin2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
+## #tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+## df2010d0 <- tmp
+## #
+## tmp <- pob.distMap2015p3
+## #tmp <- tmp[,c("edon","disn","ptot2010","rels2010","reln2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
+## tmp <- tmp[,c("edon","disn","ptot2010","rris2010","rrin2010")]; colnames(tmp) <- sub(pattern = "2010", replacement = "", colnames(tmp))
+## #tmp$rris <- 1/tmp$rels; tmp$rrin <- 1/tmp$reln;
+## df2010d3 <- tmp
+## #
 # this block shows that inverting mu rels achieves rris
 ## # select year and map
 ## tmp.dis <- pob.distMap2006 # df2012d0 has target pop instead
@@ -1326,10 +1367,10 @@ df2010d3 <- tmp
 ## head(tmp.dis)
 ## #
 ## head(df2012d0[order(df2012d0$edon, df2012d0$disn),])
-#
+
 head(df2012d0)
 # this is reported in the text
-print (paste("Quota Q =", sum(df2012d0$ptot)/300)) # <-- Quota Q
+print (paste("Quota Q =", round(sum(df2012d0$ptot)/300),1)) # <-- Quota Q
 print ("Aguascalientes districts in 2012:")
 df2012d0[which(df2012d0$edon==1),] #<-- Ags districts
 # code to plot these is below
@@ -1422,7 +1463,7 @@ addMargin <- function(object = df2006d0, votecols = 3:7){
 }
 #
 df2006d0 <- addMargin(object = df2006d0, votecols = 3:7)
-df2006d1 <- addMargin(object = df2006d1, votecols = 3:7)
+#df2006d1 <- addMargin(object = df2006d1, votecols = 3:7)
 df2006d3 <- addMargin(object = df2006d3, votecols = 3:7)
 #
 # 2009 harder, partial coalitions
@@ -1453,7 +1494,7 @@ addMargin <- function(object = df2009d0, votecols = 3:9){
 }
 #
 df2009d0 <- addMargin(object = df2009d0)
-df2009d1 <- addMargin(object = df2009d1)
+#df2009d1 <- addMargin(object = df2009d1)
 df2009d3 <- addMargin(object = df2009d3)
 #
 # head(addMargin(object = df2009d0)) # debug
@@ -1486,7 +1527,7 @@ addMargin <- function(object = df2012d3, votecols = 3:8){
 }
 #
 df2012d0 <- addMargin(object = df2012d0)
-df2012d1 <- addMargin(object = df2012d1)
+#df2012d1 <- addMargin(object = df2012d1)
 df2012d3 <- addMargin(object = df2012d3)
 head(df2012d0)
 df2012d0$prim
@@ -1495,60 +1536,72 @@ df2012d0$prim
 #
 # SORT ELEC.DISTRICT DATA
 df2006d0 <- df2006d0[order(df2006d0$edon, df2006d0$disn),]
-df2006d1 <- df2006d1[order(df2006d1$edon, df2006d1$disn),]
+#df2006d1 <- df2006d1[order(df2006d1$edon, df2006d1$disn),]
 df2006d3 <- df2006d3[order(df2006d3$edon, df2006d3$disn),]
 df2009d0 <- df2009d0[order(df2009d0$edon, df2009d0$disn),]
-df2009d1 <- df2009d1[order(df2009d1$edon, df2009d1$disn),]
+#df2009d1 <- df2009d1[order(df2009d1$edon, df2009d1$disn),]
 df2009d3 <- df2009d3[order(df2009d3$edon, df2009d3$disn),]
 df2012d0 <- df2012d0[order(df2012d0$edon, df2012d0$disn),]
-df2012d1 <- df2012d1[order(df2012d1$edon, df2012d1$disn),]
+#df2012d1 <- df2012d1[order(df2012d1$edon, df2012d1$disn),]
 df2012d3 <- df2012d3[order(df2012d3$edon, df2012d3$disn),]
+df2015d0 <- df2015d0[order(df2015d0$edon, df2015d0$disn),]
+#df2015d1 <- df2015d1[order(df2015d1$edon, df2015d1$disn),]
+df2015d3 <- df2015d3[order(df2015d3$edon, df2015d3$disn),]
 #
-df2006s0 <- df2006s0[order(df2006s0$edon, df2006s0$disn),]
-df2006s1 <- df2006s1[order(df2006s1$edon, df2006s1$disn),]
-df2006s3 <- df2006s3[order(df2006s3$edon, df2006s3$disn),]
-df2009s0 <- df2009s0[order(df2009s0$edon, df2009s0$disn),]
-df2009s1 <- df2009s1[order(df2009s1$edon, df2009s1$disn),]
-df2009s3 <- df2009s3[order(df2009s3$edon, df2009s3$disn),]
-df2012s0 <- df2012s0[order(df2012s0$edon, df2012s0$disn),]
-df2012s1 <- df2012s1[order(df2012s1$edon, df2012s1$disn),]
-df2012s3 <- df2012s3[order(df2012s3$edon, df2012s3$disn),]
+df2006s0 <- df2006s0[order(df2006s0$edon),]
+#df2006s1 <- df2006s1[order(df2006s1$edon),]
+df2006s3 <- df2006s3[order(df2006s3$edon),]
+df2009s0 <- df2009s0[order(df2009s0$edon),]
+#df2009s1 <- df2009s1[order(df2009s1$edon),]
+df2009s3 <- df2009s3[order(df2009s3$edon),]
+df2012s0 <- df2012s0[order(df2012s0$edon),]
+#df2012s1 <- df2012s1[order(df2012s1$edon),]
+df2012s3 <- df2012s3[order(df2012s3$edon),]
+df2015s0 <- df2015s0[order(df2015s0$edon),]
+#df2015s1 <- df2015s1[order(df2015s1$edon),]
+df2015s3 <- df2015s3[order(df2015s3$edon),]
 #
 # consolidate coalition victories
 df2009d0$priw <- df2009d0$priw + df2009d0$pricw
-df2009d1$priw <- df2009d1$priw + df2009d1$pricw
+#df2009d1$priw <- df2009d1$priw + df2009d1$pricw
 df2009d3$priw <- df2009d3$priw + df2009d3$pricw
 df2009d0$pricw <- NULL
-df2009d1$pricw <- NULL
+#df2009d1$pricw <- NULL
 df2009d3$pricw <- NULL
 #
 df2012d0$priw <- df2012d0$priw + df2012d0$pricw
-df2012d1$priw <- df2012d1$priw + df2012d1$pricw
+#df2012d1$priw <- df2012d1$priw + df2012d1$pricw
 df2012d3$priw <- df2012d3$priw + df2012d3$pricw
 df2012d0$pricw <- NULL
-df2012d1$pricw <- NULL
+#df2012d1$pricw <- NULL
 df2012d3$pricw <- NULL
 #
 # remove pricm and prdcm to match other years' labels
 colnames(df2006d0)[which( names(df2006d0)=="pricm" )] <- "prim"
-colnames(df2006d1)[which( names(df2006d1)=="pricm" )] <- "prim"
+#colnames(df2006d1)[which( names(df2006d1)=="pricm" )] <- "prim"
 colnames(df2006d3)[which( names(df2006d3)=="pricm" )] <- "prim"
 colnames(df2006d0)[which( names(df2006d0)=="prdcm" )] <- "prdm"
-colnames(df2006d1)[which( names(df2006d1)=="prdcm" )] <- "prdm"
+#colnames(df2006d1)[which( names(df2006d1)=="prdcm" )] <- "prdm"
 colnames(df2006d3)[which( names(df2006d3)=="prdcm" )] <- "prdm"
 colnames(df2012d0)[which( names(df2012d0)=="prdcm" )] <- "prdm"
-colnames(df2012d1)[which( names(df2012d1)=="prdcm" )] <- "prdm"
+#colnames(df2012d1)[which( names(df2012d1)=="prdcm" )] <- "prdm"
 colnames(df2012d3)[which( names(df2012d3)=="prdcm" )] <- "prdm"
+colnames(df2015d0)[which( names(df2015d0)=="prdcm" )] <- "prdm"
+#colnames(df2015d1)[which( names(df2015d1)=="prdcm" )] <- "prdm"
+colnames(df2015d3)[which( names(df2015d3)=="prdcm" )] <- "prdm"
 #
 colnames(df2006d0)[which( names(df2006d0)=="pricw" )] <- "priw"
-colnames(df2006d1)[which( names(df2006d1)=="pricw" )] <- "priw"
+#colnames(df2006d1)[which( names(df2006d1)=="pricw" )] <- "priw"
 colnames(df2006d3)[which( names(df2006d3)=="pricw" )] <- "priw"
 colnames(df2006d0)[which( names(df2006d0)=="prdcw" )] <- "prdw"
-colnames(df2006d1)[which( names(df2006d1)=="prdcw" )] <- "prdw"
+#colnames(df2006d1)[which( names(df2006d1)=="prdcw" )] <- "prdw"
 colnames(df2006d3)[which( names(df2006d3)=="prdcw" )] <- "prdw"
 colnames(df2012d0)[which( names(df2012d0)=="prdcw" )] <- "prdw"
-colnames(df2012d1)[which( names(df2012d1)=="prdcw" )] <- "prdw"
+#colnames(df2012d1)[which( names(df2012d1)=="prdcw" )] <- "prdw"
 colnames(df2012d3)[which( names(df2012d3)=="prdcw" )] <- "prdw"
+colnames(df2015d0)[which( names(df2015d0)=="prdcw" )] <- "prdw"
+#colnames(df2015d1)[which( names(df2015d1)=="prdcw" )] <- "prdw"
+colnames(df2015d3)[which( names(df2015d3)=="prdcw" )] <- "prdw"
 #
 
 #################################################################
@@ -1826,7 +1879,7 @@ points(nat.vot.0612$dip12[nat.vot.0612$dip12>0], seats.mix.0612$dip12[nat.vot.06
 legend("bottomright", legend = c("SMD only","SMD + PR mix"), pch = c(19,19), col = c("gray50", "black"))
 #dev.off()
 
-# plot rrin 2006-2015 with d0 and d3
+# plot rrin 2006-2018 with d0 and d3
 m <- min(c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2018d0$rrin, df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)); M <- max(c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2018d0$rrin, df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)); # min and max for two graphs
 # with d0
 tmp <- c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2018d0$rrin)
@@ -1843,8 +1896,11 @@ rrin <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,
 ## #pdf(file = paste(gd, "rris0618d3.pdf", sep=""))
 ## bxp(tmp, pars = list(ylim=c(m,M)), , xlab = "year", ylab = "district relative representation index (RRI)", main = "2015 map (drawn with 2010 census)") # plot with this command that
 ## #dev.off()
-#
-### hand drawn
+
+### hand drawn with d0
+m <- min(c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)); M <- max(c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)); # min and max for two graphs
+tmp <- c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin)
+rrin <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300)), rri=tmp)
 jitter <- rnorm(n = 300, sd = .05)
 shift = .5 # useful if rris were also included in same plot
 ## pdf(file = paste(gd, "rrin0615d0.pdf", sep=""),
@@ -1871,13 +1927,11 @@ for (i in seq(4,1,-1)){
 }
 ## dev.off()
 #
-# with d3
-tmp <- c(df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin, df2018d3$rrin)
-rrin <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300), rep(2018,300)), rri=tmp)
-#
-### hand drawn
+### hand drawn for d3
 jitter <- rnorm(n = 300, sd = .05)
 shift = .5 # useful if rris were also included in same plot
+tmp <- c(df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)
+rrin <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300)), rri=tmp)
 ## pdf(file = paste(gd, "rrin0615d3.pdf", sep=""),
 ##       width = 7,
 ##       height = 3.5)
