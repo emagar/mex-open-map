@@ -35,7 +35,7 @@ rm(cd)
 ##################################
 ## pegué este bloque el 11may16 ##
 ##################################
-## añade voto 2015, hay que revisar si "extracts 2013 districts only", que se repite en el bloque 2012, no es redundante en 2012
+## añade voto 2015
 tmp <- read.csv( paste(dd, "dfSeccion2015.csv", sep=""), header=TRUE)
 tmp <- tmp[order(tmp$edon, tmp$disn, tmp$seccion),]
 # compute effective vote (without void ballots)
@@ -1558,6 +1558,15 @@ df2003d0 <-  df2003d0 [,c("edon", "disn", "pan", "pri", "prd", "pt", "pvem", "co
 dim(df2003d97) # <- OJO: two full districts missing: 506 and 1605
 dim(df2003d0)
 
+# adds winner, somehow not added for 2003 here
+#colnames(df2003d97)
+tmp <- c("pan", "pri", "prd", "pt", "pvem", "conve", "psn", "pas", "mp", "plm","fc","pric")
+tmpv <- df2003d97[,tmp]
+tmpl <- matrix(rep(tmp,298), byrow=TRUE, nrow=298) # OJO two districts missing from vote data
+tmpl <- sortBy(target=tmpl, By=tmpv)
+#tmpv <- t(apply(tmpv, 1, function(x) sort(x, decreasing = TRUE)))
+df2003d97$win <- tmpl[,1]
+
 ###############################
 ###############################
 ##   describe seat changes   ##
@@ -2362,7 +2371,7 @@ text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 ### Packages for JAGS
 library(R2jags)
 ### JAGS/BUGS models
-lambda.rho.1 <- function() {
+lambda.rho.A <- function() {
     ### Calvo-Micozzi likelihood
     for (i in 1:I){
         S[i] ~ dbin(pi[i], D[i])  # D is the number of SMD seats in observation i's state
@@ -2378,7 +2387,7 @@ lambda.rho.1 <- function() {
     tau.c <- pow(.25, -2)
 }
 ##
-lambda.rho.2 <- function() {
+lambda.rho.B <- function() {
     ### Calvo-Micozzi likelihood dropping N
     for (i in 1:I){
         S[i] ~ dbin(pi[i], D[i])  # D is the number of SMD seats in observation i's state
@@ -2391,7 +2400,7 @@ lambda.rho.2 <- function() {
     tau.lambda <- pow(.25, -2)
     rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
 }
-lambda.rho.3 <- function() {
+lambda.rho.C <- function() {
     ### King likelihood with no reference party
     for (i in 1:I){ # loop over state-years
         for (j in 1:J){ # loop over parties (dummy will select those voted)
@@ -2432,7 +2441,7 @@ lambda.rho.3 <- function() {
     tau.lambda <- pow(.25, -2)
     rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
 }
-lambda.rho.4 <- function() {
+lambda.rho.6 <- function() {
     ### King likelihood using PRI as reference party
     ### Note 30-4-2014: this code was prepared to estimate 2006-09-12-15 jointly, hence 6 parties. But I also use it to
     ### estimate each election alone, with fewer parties. Data below is structured to include zero seats and zero votes
@@ -2467,63 +2476,6 @@ lambda.rho.4 <- function() {
     tau.lambda <- pow(.25, -2)
     rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
 }
-lambda.rho.5 <- function() {
-    ### King likelihood using PRI as reference party and separating Grofman et al's (1997) 3-sources of party bias (haven't tried it)
-    for (i in 1:I){     # loop over state-years
-        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
-            S[i,j] ~ dbin(pi[i,j], D[i])  # D is the number of SMD seats in observation i's state ... WHY DON'T I USE S[i,1:J] ~ dmulti(pi[i,1:J], D[i])
-        }
-        numeratorR[i,1] <- dummy[i,1] * exp( lambdaR[1] + rho * log(v[i,1]) )
-        numeratorR[i,2] <- dummy[i,2] * exp(              rho * log(v[i,2]) )
-        numeratorP[i,1] <- dummy[i,1] * exp( lambdaP[1] + rho * log(v.bar[i,1]) )
-        numeratorP[i,2] <- dummy[i,2] * exp(              rho * log(v.bar[i,2]) )
-        numeratorM[i,1] <- dummy[i,1] * exp( lambdaM[1] + rho * log(w.bar[i,1]) )
-        numeratorM[i,2] <- dummy[i,2] * exp(              rho * log(w.bar[i,2]) )
-        for (j in 3:J){
-#            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] + rho * log(v[i,j]) )
-            numeratorR[i,j] <- dummy[i,j] * exp( lambdaR[j-1] ) * v[i,j]^rho
-            numeratorP[i,j] <- dummy[i,j] * exp( lambdaP[j-1] ) * v.bar[i,j]^rho
-            numeratorM[i,j] <- dummy[i,j] * exp( lambdaM[j-1] ) * w.bar[i,j]^rho
-        }
-        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
-            d1R[i,j] <- dummy[i,1] * exp( lambdaR[1] ) * v[i,1]^rho 
-            d2R[i,j] <- dummy[i,2]                     * v[i,2]^rho 
-            d3R[i,j] <- dummy[i,3] * exp( lambdaR[2] ) * v[i,3]^rho 
-            d4R[i,j] <- dummy[i,4] * exp( lambdaR[3] ) * v[i,4]^rho 
-            d5R[i,j] <- dummy[i,5] * exp( lambdaR[4] ) * v[i,5]^rho 
-            d6R[i,j] <- dummy[i,6] * exp( lambdaR[5] ) * v[i,6]^rho 
-            d7R[i,j] <- dummy[i,7] * exp( lambdaR[6] ) * v[i,7]^rho 
-            d1P[i,j] <- dummy[i,1] * exp( lambdaP[1] ) * v.bar[i,1]^rho 
-            d2P[i,j] <- dummy[i,2]                     * v.bar[i,2]^rho 
-            d3P[i,j] <- dummy[i,3] * exp( lambdaP[2] ) * v.bar[i,3]^rho 
-            d4P[i,j] <- dummy[i,4] * exp( lambdaP[3] ) * v.bar[i,4]^rho 
-            d5P[i,j] <- dummy[i,5] * exp( lambdaP[4] ) * v.bar[i,5]^rho 
-            d6P[i,j] <- dummy[i,6] * exp( lambdaP[5] ) * v.bar[i,6]^rho 
-            d7P[i,j] <- dummy[i,7] * exp( lambdaP[6] ) * v.bar[i,7]^rho 
-            d1M[i,j] <- dummy[i,1] * exp( lambdaM[1] ) * w.bar[i,1]^rho 
-            d2M[i,j] <- dummy[i,2]                     * w.bar[i,2]^rho 
-            d3M[i,j] <- dummy[i,3] * exp( lambdaM[2] ) * w.bar[i,3]^rho 
-            d4M[i,j] <- dummy[i,4] * exp( lambdaM[3] ) * w.bar[i,4]^rho 
-            d5M[i,j] <- dummy[i,5] * exp( lambdaM[4] ) * w.bar[i,5]^rho 
-            d6M[i,j] <- dummy[i,6] * exp( lambdaM[5] ) * w.bar[i,6]^rho 
-            d7M[i,j] <- dummy[i,7] * exp( lambdaM[6] ) * w.bar[i,7]^rho 
-            denominatorR[i,j] <- d1R[i,j]+d2R[i,j]+d3R[i,j]+d4R[i,j]+d5R[i,j]+d6R[i,j]+d7R[i,j]
-            denominatorP[i,j] <- d1P[i,j]+d2P[i,j]+d3P[i,j]+d4P[i,j]+d5P[i,j]+d6P[i,j]+d7P[i,j]
-            denominatorM[i,j] <- d1M[i,j]+d2M[i,j]+d3M[i,j]+d4M[i,j]+d5M[i,j]+d6M[i,j]+d7M[i,j]
-            pi[i,j] <- numeratorR[i,j] / denominatorR[i,j]
-        }
-    }
-    ### priors
-    for (p in 1:6){ # there are 7 party labels in the 3-election data, PRI is reference
-        lambdaR[p] ~ dnorm( 0, tau.lambdaR )
-        lambdaP[p] ~ dnorm( 0, tau.lambdaP )
-        lambdaM[p] ~ dnorm( 0, tau.lambdaM )
-    }
-    tau.lambdaR <- pow(.25, -2)
-    tau.lambdaP <- pow(.25, -2)
-    tau.lambdaM <- pow(.25, -2)
-    rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
-}
 
 ######################################################
 # wrap data prep and jags estimation in one function #
@@ -2533,7 +2485,7 @@ load(paste(dd, "swingRatios9715.RData", sep = ""))
 my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2012, 2015
                     which.map="d0",           #              "d0", "d1", "d3"
                     which.measure="v",        #              "v" for R, "v.bar" for P, "w.bar" for M
-                    model.file=lambda.rho.4,
+                    model.file=lambda.rho.6,
                     test.ride=TRUE,           # if TRUE, overrides n.chains, n.iter, n.thin 
                     n.chains=3,               # jags parameters
                     n.iter=50000,
@@ -2594,7 +2546,7 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
     message(sprintf("Will run jags with %s chains and %s iterations", n.chains, n.iter))
     ## estimate
     tmpRes <- jags (data=l.r.data, inits=l.r.inits, l.r.parameters,
-                    model.file=lambda.rho.4,
+                    model.file=lambda.rho.6,
                     n.chains=n.chains,
                     n.iter=n.iter,
                     n.thin=n.thin
@@ -2630,6 +2582,11 @@ save(biasRespOnLinzerSimsRPM,
 tmp$win <- NULL
 tmp <- df2015d0; round(colSums(tmp) / sum(tmp$efec), 2)
 
+################################
+################################
+###   LOAD SAVED ESTIMATES   ###
+################################
+################################
 ## run all above except jags estimations to proceed with saved data
 #load(file="biasResp2006-2012oldNewDistricts.RData")
 wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
@@ -2638,6 +2595,7 @@ dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/d
 #load(file=paste(dd, "biasRespOnLinzerSimsRPM.RData", sep =""))       # results reported in polgeo original submission
 load(file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep ="")) # results reported in polgeo rNr
 ls()
+
 
 ## ## useful to extract all objects from a list
 ## laLista <- biasRespOnLinzerSimsRPM
@@ -2661,6 +2619,13 @@ pdf(paste(gd2, "traceplot", which.elec, which.map, which.v, ".pdf", sep = ""))
 traceplot(tmp, ask = FALSE)
 dev.off()
 rm(gd2, which.elec, which.map, which.v, tmp)
+
+tmp <- df2003d97
+head(tmp)
+table(tmp$ps>0)
+sum(tmp$mc)/sum(tmp$efec)
+sum(tmp$morenaw)/300
+colnames(tmp)
 
 # summarize central tendency of party bias à la Grofman et al
 tmp <- biasRespOnLinzerSimsRPM
@@ -2963,7 +2928,7 @@ quantile(x = seat.sh$prd.seats * 300, probs = c(.025,.975))
 lambda.hat <- res$BUGSoutput$median$lambda
 rho.hat <- res$BUGSoutput$median$rho
 #
-### Uncomment if using reference party (model lambda.rho.4)
+### Uncomment if using reference party (model lambda.rho.6)
 ## PRI is the reference party with lambda=0
 lambda.hat <- c(lambda.hat[1], 0, lambda.hat[2:6])
 #

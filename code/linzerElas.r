@@ -393,6 +393,8 @@ colnames(dat)[which(colnames(dat)=="prd")] <- "left"
 colnames(dat)[which(colnames(dat)=="pvem")] <- "green"
 head(dat)
 
+
+
 # find patterns of party contestation, change data to lists
 dat.pat <- findpatterns(dat)
 head(dat.pat[[2]]) # debug
@@ -609,6 +611,7 @@ rm(tmp.ptot, tmp.efec, tmp.abst)
 colnames(dat)[which(colnames(dat)=="prdc")] <- "left"
 colnames(dat)[which(colnames(dat)=="pvem")] <- "green"
 head(dat)
+
 
 # find patterns of party contestation, change data to lists
 dat.pat <- findpatterns(dat)
@@ -833,6 +836,7 @@ rm(tmp.ptot, tmp.efec, tmp.abst)
 colnames(dat)[which(colnames(dat)=="pvem")] <- "green"
 colnames(dat)[which(colnames(dat)=="conve")] <- "mc"
 head(dat)
+
 
 # find patterns of party contestation, change data to lists
 dat.pat <- findpatterns(dat)
@@ -1240,7 +1244,7 @@ swRats$df2006d3 <- elas
 summary(swRats)
 save(swRats, file = paste(dd, "swingRatios9715.RData", sep = ""))
 
-
+summary(swRats$df2003d97$truevote)
 
 
 ## USE SEATS/VOTES REGRESSIONS TO SUMMARIZE ELASTICITIES (WITH STD ERRORS)
