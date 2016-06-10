@@ -2476,6 +2476,68 @@ lambda.rho.6 <- function() {
     tau.lambda <- pow(.25, -2)
     rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
 }
+lambda.rho.5 <- function() {
+    ### King likelihood using PRI as reference party
+    for (i in 1:I){     # loop over state-years
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
+            S[i,j] ~ dbin(pi[i,j], D[i])  # D is the number of SMD seats... WHY NOT USE S[i,1:J] ~ dmulti(pi[i,1:J], D[i])
+        }
+        numerator[i,1] <- dummy[i,1] * exp( lambda[1] + rho * log(v[i,1]) )
+        numerator[i,2] <- dummy[i,2] * exp(             rho * log(v[i,2]) )
+        for (j in 3:J){
+#            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] + rho * log(v[i,j]) )
+            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] ) * v[i,j]^rho
+        }
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
+            d1[i,j] <- dummy[i,1] * exp( lambda[1] ) * v[i,1]^rho 
+            d2[i,j] <- dummy[i,2]                    * v[i,2]^rho # pri is reference
+            d3[i,j] <- dummy[i,3] * exp( lambda[2] ) * v[i,3]^rho 
+            d4[i,j] <- dummy[i,4] * exp( lambda[3] ) * v[i,4]^rho 
+            d5[i,j] <- dummy[i,5] * exp( lambda[4] ) * v[i,5]^rho 
+            denominator[i,j] <- d1[i,j]+d2[i,j]+d3[i,j]+d4[i,j]+d5[i,j]
+            pi[i,j] <- numerator[i,j] / denominator[i,j]
+        }
+    }
+    ### priors
+    for (p in 1:4){ # there are 6 party labels in the 3-election data, PRI is reference
+        lambda[p] ~ dnorm( 0, tau.lambda )
+    }
+    tau.lambda <- pow(.25, -2)
+    rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
+}
+lambda.rho.7 <- function() {
+    ### King likelihood using PRI as reference party
+    for (i in 1:I){     # loop over state-years
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
+            S[i,j] ~ dbin(pi[i,j], D[i])  # D is the number of SMD seats... WHY NOT USE S[i,1:J] ~ dmulti(pi[i,1:J], D[i])
+        }
+        numerator[i,1] <- dummy[i,1] * exp( lambda[1] + rho * log(v[i,1]) )
+        numerator[i,2] <- dummy[i,2] * exp(             rho * log(v[i,2]) )
+        for (j in 3:J){
+#            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] + rho * log(v[i,j]) )
+            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] ) * v[i,j]^rho
+        }
+        for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
+            d1[i,j] <- dummy[i,1] * exp( lambda[1] ) * v[i,1]^rho 
+            d2[i,j] <- dummy[i,2]                    * v[i,2]^rho # pri is reference
+            d3[i,j] <- dummy[i,3] * exp( lambda[2] ) * v[i,3]^rho 
+            d4[i,j] <- dummy[i,4] * exp( lambda[3] ) * v[i,4]^rho 
+            d5[i,j] <- dummy[i,5] * exp( lambda[4] ) * v[i,5]^rho 
+            d6[i,j] <- dummy[i,6] * exp( lambda[5] ) * v[i,6]^rho 
+            d7[i,j] <- dummy[i,7] * exp( lambda[6] ) * v[i,7]^rho 
+            denominator[i,j] <- d1[i,j]+d2[i,j]+d3[i,j]+d4[i,j]+d5[i,j]+d6[i,j]+d7[i,j]
+            pi[i,j] <- numerator[i,j] / denominator[i,j]
+        }
+    }
+    ### priors
+    for (p in 1:6){ # there are 6 party labels in the 3-election data, PRI is reference
+        lambda[p] ~ dnorm( 0, tau.lambda )
+    }
+    tau.lambda <- pow(.25, -2)
+    rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
+}
+
+summary(swRats$df2015d0gree$seat)
 
 ######################################################
 # wrap data prep and jags estimation in one function #
@@ -2497,15 +2559,17 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
     ## read swing ratio simulated data (Linzer) to estimate sigma and lamda on 1000 simulated elections each year
     if (which.measure=="v") which.measure <- "vmat";                            # v is called vmat in linzer sims
     data <- eval(parse(text=paste("swRats$df", which.elec, which.map, sep=""))) # <-- select year/map object to manipulate
-                                        #data <- swRats$df2006d0                        # <-- select year/map object to manipulate
-    colnames(data$seatmat) <- colnames(data$vmat)                             # linzer code does not add names here
+    #data <- swRats$df2006d0                                                     # <-- select year/map object to manipulate
+    colnames(data$seatmat) <- colnames(data$vmat)                               # linzer code does not add names here
     v <- as.data.frame(eval(parse(text=paste("data", "$", which.measure, sep=""))))          # extracts vote aggregation for estimation
     S <- as.data.frame(data$seatmat)                                          # extracts seat allocations
-                                        #
-                                        # orders party columns, adds zeroes for those not fielding candidates that year
+    #
+    # orders party columns, adds zeroes for those not fielding candidates that year
     colnames(v)[which(colnames(v)=="left")] <- "prd"  # rename
     colnames(S)[which(colnames(S)=="left")] <- "prd"  # rename
-    ordered <- c("pan","pri","prd","green","mc","morena")
+    #ordered <- c("pan","pri","prd","green","mc","morena")        # 6 party reported in paper
+    #ordered <- c("pan","pri","pric","prd","green","mc","morena") # 7 party alternative coalition specification
+    ordered <- c("pan","pri","prd","mc","morena")                # 5 party alternative coalition specification
     tmp <- setdiff(ordered, colnames(v))
     if (length(tmp)>0) {
         tmp1 <- data.frame(matrix(0, nrow=nrow(v), ncol=length(tmp)))
@@ -2515,16 +2579,16 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
     }
     v <- v[, ordered]
     S <- S[, ordered]
-                                        #
+    #
     D <- 300 # OJO: 298 for df2003d97!
     S <- S*D # turn share into number of seats won 
-                                        #
+    #
     I <- nrow(S)
     J <- ncol(S)
     D <- rep(D, I)
     dummy <- v; dummy[,] <- 0; dummy[v>0] <- 1 # indicates parties with v>0
-                                        #
-                                        # labels to interpret parameters
+    #head(v)
+    # labels to interpret parameters
     party.labels <- list(party.labels.model = colnames(v),
                          lambda.labels      = paste(colnames(v)[-2], colnames(v)[2], sep = "."))
                                         #
@@ -2546,7 +2610,7 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
     message(sprintf("Will run jags with %s chains and %s iterations", n.chains, n.iter))
     ## estimate
     tmpRes <- jags (data=l.r.data, inits=l.r.inits, l.r.parameters,
-                    model.file=lambda.rho.6,
+                    model.file=model.file,
                     n.chains=n.chains,
                     n.iter=n.iter,
                     n.thin=n.thin
@@ -2558,11 +2622,13 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
 
 tmpRes <- my.jags(which.elec = 2015,
                   which.map  = "d0",
-                  which.measure = "v.bar",
+                  which.measure = "w.bar",
+                  model.file=lambda.rho.5,
                   test.ride=FALSE
-                  )
+)
 
-res2015d0v.bar <- tmpRes; #rm(tmpRes)
+res2015d0w.bar <- tmpRes; #rm(tmpRes)
+
 
 # inspect results
 quantile(tmpRes$BUGSoutput$sims.list$lambda[,1])
@@ -2595,7 +2661,6 @@ dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/d
 #load(file=paste(dd, "biasRespOnLinzerSimsRPM.RData", sep =""))       # results reported in polgeo original submission
 load(file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep ="")) # results reported in polgeo rNr
 ls()
-
 
 ## ## useful to extract all objects from a list
 ## laLista <- biasRespOnLinzerSimsRPM
@@ -2829,6 +2894,76 @@ round( quantile(tmp$res2015d0R$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)
 #round( quantile(tmp$res0612d0R$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
 
 
+###########################################################################
+## REPORT EFFECTS OF SPECIFYING PRI-GREEN PARTIAL COALITIONS DIFFERENTLY ##
+###########################################################################
+wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
+dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
+load(file=paste(dd, "biasRespOnLinzerSims3components2015altCoalSpecs.RData", sep ="")) # 2015 results w alternative partial coalition handling
+#
+biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$party.labels
+summary(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$BUGSoutput$sims.list$lambda)
+summary(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv.bar$BUGSoutput$sims.list$lambda)
+tmp <- biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$BUGSoutput$sims.list$lambda -
+       biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSw.bar$BUGSoutput$sims.list$lambda
+summary(tmp)
+tmp <- biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSw.bar$BUGSoutput$sims.list$lambda -
+       biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv.bar$BUGSoutput$sims.list$lambda
+summary(tmp)
+#
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$BUGSoutput$sims.list$lambda[,1]>0)
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$BUGSoutput$sims.list$lambda[,3]>0)
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$BUGSoutput$sims.list$lambda[,4]>0)
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$BUGSoutput$sims.list$lambda[,2]>0)
+#
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv.bar$BUGSoutput$sims.list$lambda[,1]>0)
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv.bar$BUGSoutput$sims.list$lambda[,3]>0)
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv.bar$BUGSoutput$sims.list$lambda[,4]>0)
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv.bar$BUGSoutput$sims.list$lambda[,2]>0)
+#
+tmp <- biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$BUGSoutput$sims.list$lambda -
+       biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSw.bar$BUGSoutput$sims.list$lambda
+table(tmp[,1]>0)/1500
+table(tmp[,3]>0)/1500
+table(tmp[,4]>0)/1500
+table(tmp[,2]>0)/1500
+#
+tmp <- biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSw.bar$BUGSoutput$sims.list$lambda -
+       biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv.bar$BUGSoutput$sims.list$lambda
+table(tmp[,1]>0)/1500
+table(tmp[,3]>0)/1500
+table(tmp[,4]>0)/1500
+table(tmp[,2]>0)/1500
+#
+#
+biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv$party.labels
+summary(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv$BUGSoutput$sims.list$lambda)
+summary(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv.bar$BUGSoutput$sims.list$lambda)
+tmp <- biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv$BUGSoutput$sims.list$lambda -
+       biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFw.bar$BUGSoutput$sims.list$lambda
+summary(tmp)
+tmp <- biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFw.bar$BUGSoutput$sims.list$lambda -
+       biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv.bar$BUGSoutput$sims.list$lambda
+summary(tmp)
+#
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv$BUGSoutput$sims.list$lambda[,1]>0)/1500
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv$BUGSoutput$sims.list$lambda[,2]>0)/1500
+#
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv.bar$BUGSoutput$sims.list$lambda[,1]>0)/1500
+table(biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv.bar$BUGSoutput$sims.list$lambda[,2]>0)/1500
+#
+tmp <- biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv$BUGSoutput$sims.list$lambda -
+       biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFw.bar$BUGSoutput$sims.list$lambda
+table(tmp[,1]>0)/1500
+table(tmp[,2]>0)/1500
+#
+tmp <- biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFw.bar$BUGSoutput$sims.list$lambda -
+       biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0GAPFv.bar$BUGSoutput$sims.list$lambda
+table(tmp[,1]>0)/1500
+table(tmp[,2]>0)/1500
+rm(tmp)
+
+
 # compute swing ratios with regressions from Linzer sims
 wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
 dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
@@ -3012,7 +3147,8 @@ v.tmp <- (1:999)/1000
 #
 library(Cairo)
 type <-  "pdf" 
-## file <- paste("bias200612d0R.", type, sep="")
+## #file <- paste("bias200612d0R.", type, sep="")
+## file <- paste("bias200615d0v.", type, sep="")
 ## setwd(save.dir)
 ## Cairo(file=file,
 ##       type = type,
@@ -3026,8 +3162,10 @@ par(mar=c(5,2,2,2)+0.1) # drop space for title and left labels
 #jitter <- runif(n = 300, min=-.1, max=.1)
 jitter <- rnorm(n = 300, sd = .03)
 color1.minus.pri <- c( "blue", "gold", "green", "cyan", "orange", "violet" )
-res <- tmp$res03d0R; shift.v <- .3
-plot( c( -2.5, 2.5), -c(.5,5),
+#
+# 2003
+res <- tmp$res2003d0v; shift.v <- .35
+plot( c( -2.5, 2.5), -c(.5,5-.35),
      type="n", axes = FALSE, ylab = "", xlab = "bias relative to PRI")#, main = "Party bias")#"Bias: 2015 map (hypothetical)")
 #     type="n", axes = FALSE, ylab = "", xlab = "sesgo en relación al PRI", main = "Distritos propuestos")#"Distritos en vigor")
 axis( side = 1, at = seq(from = -2.25, to = 2.25, by = .25), labels = FALSE)
@@ -3036,7 +3174,7 @@ abline(v=seq(-2,2,.5), col= "gray70")
 abline(v=0, lty=2)
 abline(h=seq(-4.5,-1.5,1), lty=3, col= "gray70")
 #for (i in 1:6){
-for (i in c(1:3,5)){ # some parties absent or dropped
+for (i in c(1:4)){ # some parties absent or dropped
     # if party color desired, this does the trick: col = color1.minus.pri[i]
     points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70");
     lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
@@ -3046,10 +3184,11 @@ for (i in c(1:3,5)){ # some parties absent or dropped
     points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
 }
 #
-res <- tmp$res06d0R; shift.v <- .1
-res$BUGSoutput$sims.list$lambda[,4] <- res$BUGSoutput$sims.list$lambda[,3] # move panal to 4th (3rd will be ignored)
+# 2006
+res <- tmp$res2006d0v; shift.v <- .175
+#res$BUGSoutput$sims.list$lambda[,4] <- res$BUGSoutput$sims.list$lambda[,3] # move panal to 4th (3rd will be ignored)
 #for (i in 1:6){
-for (i in c(1:2,4)){ # some parties absent or dropped
+for (i in c(1:2)){ # some parties absent or dropped
     # if party color desired, this does the trick: col = color1.minus.pri[i]
     points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70");
     lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
@@ -3059,8 +3198,9 @@ for (i in c(1:2,4)){ # some parties absent or dropped
     points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
 }
 #
-res <- tmp$res09d0R; shift.v <- -.1
-for (i in 1:6){ # some parties absent or dropped
+# 2009
+res <- tmp$res2009d0v; shift.v <- 0
+for (i in 1:4){ # some parties absent or dropped
     # if party color desired, this does the trick: col = color1.minus.pri[i]
     points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70");
     lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
@@ -3070,9 +3210,10 @@ for (i in 1:6){ # some parties absent or dropped
     points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
 }
 #
+# 2012
 #res <- tmp$res0612s0R; shift.v <- -.3
-res <- tmp$res12d0R; shift.v <- -.3 # use nation estimates
-for (i in 1:4){ # some parties absent
+res <- tmp$res2012d0v; shift.v <- -.175 # use nation estimates
+for (i in 1:3){ # some parties absent
     # if party color desired, this does the trick: col = color1.minus.pri[i]
     #points(res$BUGSoutput$sims.list$lambda[,i], -i+shift.v+jitter, cex=.1, col = "gray70");
     points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70"); # sample to get 300 points
@@ -3082,14 +3223,39 @@ for (i in 1:4){ # some parties absent
     #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
     points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
 }
+#
+# 2015
+res <- tmp$res2015d0v; shift.v <- -.35 # use nation estimates
+for (i in 1:4){ # some parties absent (Morena treated separately bec y shift
+    # if party color desired, this does the trick: col = color1.minus.pri[i]
+    #points(res$BUGSoutput$sims.list$lambda[,i], -i+shift.v+jitter, cex=.1, col = "gray70");
+    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70"); # sample to get 300 points
+    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
+    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
+    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
+    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
+    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
+}
+# morena 2015 separate bec y shift dift
+i <- 5
+shift.v <- .35
+points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70"); # sample to get 300 points
+lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
+lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
+points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
+#points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
+points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
+#
 text(x =     2.1   , y =  -1   +.55,   labels =     "Election", cex = .65)
-text(x = rep(2.1,4), y = -c(1:3,5)+.3, labels = rep("2003", 5), cex = .65)
-text(x = rep(2.1,5), y = -c(1:2,4)+.1, labels = rep("2006", 5), cex = .65)
-text(x = rep(2.1,4), y = -(1:5)-.1,    labels = rep("2009", 5), cex = .65)
-text(x = rep(2.1,4), y = -(1:4)-.3,    labels = rep("2012", 5), cex = .65)
+text(x = rep(2.1,4), y = -c(1:4)+.35,  labels = rep("2003", 4), cex = .65)
+text(x = rep(2.1,2), y = -c(1:2)+.175, labels = rep("2006", 2), cex = .65)
+text(x = rep(2.1,4), y = -(1:4),       labels = rep("2009", 4), cex = .65)
+text(x = rep(2.1,3), y = -(1:3)-.175,  labels = rep("2012", 3), cex = .65)
+text(x = rep(2.1,4), y = -(1:4)-.35,   labels = rep("2015", 5), cex = .65)
+text(x =     2.1   , y = -5     +.35,  labels =     "2015"    , cex = .65) # morena separate bec y shift dift
 #text(x = rep(2.1,4), y = -(1:4)-.3,    labels = rep("todos", 5), cex = .65)
 #
-text(x = rep(-2.1,5), y = -c(1:4,4.9), labels = c("PAN", "PRD", "Green", "PANAL", "PT"))
+text(x = rep(-2.1,5), y = -c(1:4,5-.35), labels = c("PAN", "PRD", "Green", "MC", "Morena"))
 ## dev.off()
 setwd(wd)
 

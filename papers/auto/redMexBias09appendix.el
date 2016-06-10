@@ -1,5 +1,5 @@
 (TeX-add-style-hook
- "redMexBias09"
+ "redMexBias09appendix"
  (lambda ()
    (TeX-add-to-alist 'LaTeX-provided-class-options
                      '(("article" "letter" "12pt")))
@@ -37,22 +37,20 @@
     "dcolumn"
     "arydshln"
     "listings"
-    "lipsum")
+    "lipsum"
+    "xr")
    (TeX-add-symbols
     "mc")
    (LaTeX-add-labels
-    "fn:cites"
-    "E:kingBi"
-    "E:cubeLaw"
-    "F:lambdaRhoEx"
-    "E:kingMulti"
-    "T:3bias"
-    "F:singleYrSeatsVotes"
-    "F:malapp"
-    "S:results"
-    "F:posterior_s0s3"
-    "T:GKBbreakdown"
-    "T:swRatios")
+    "T:votesUnprocessed"
+    "F:disRelPop2006map"
+    "F:linzerCorr"
+    "F:linzerMg"
+    "T:bugsCode"
+    "T:traceplotStart"
+    "T:traceplotEnd"
+    "T:coalSpec"
+    "T:mixedvs")
    (LaTeX-add-bibliographies
     "../bib/redMex"))
  :latex)
