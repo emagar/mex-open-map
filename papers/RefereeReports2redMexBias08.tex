@@ -1,4 +1,4 @@
-% Created 2016-06-10 Fri 22:00
+% Created 2016-06-11 Sat 21:39
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -120,15 +120,11 @@ Best,
 \item EM action: conceded.
 \item Elements for our response: As suggested by Reviewer \#2, we have expanded the discussion of the rho parameter in section 1 to attempt a clarification of how measuring pure partisan bias is/can be differentiated from biases related to the size of the party and characteristics of the system favoring larger parties in general (not because of the party's identity, but because of its size).
 \end{itemize}
-\item {\bfseries\sffamily WORK\_IN\_PROGRESS} Second, given the definition of party bias, I see why the "turnout-based" bias should be part of it. However, one problem here that could be discussed is that turnout in a given district is not something that is exogenously given, but rather affected by the actions and campaign strategies of the different parties. Parties may, for example, campaign harder to get out the vote in districts that are close to call, and some parties may simply be better at winning such districts. Hence, if, let's say the PRI wins a lot of high-turnout districts, it could be due to some inherent actions and capacities of the party, and in a sense it would be wrong to consider this a bias against the PRI in the system. I don't think this is a very big issue, but I think it merits some discussion.
+\item {\bfseries\sffamily DONE} Second, given the definition of party bias, I see why the "turnout-based" bias should be part of it. However, one problem here that could be discussed is that turnout in a given district is not something that is exogenously given, but rather affected by the actions and campaign strategies of the different parties. Parties may, for example, campaign harder to get out the vote in districts that are close to call, and some parties may simply be better at winning such districts. Hence, if, let's say the PRI wins a lot of high-turnout districts, it could be due to some inherent actions and capacities of the party, and in a sense it would be wrong to consider this a bias against the PRI in the system. I don't think this is a very big issue, but I think it merits some discussion.
 \label{sec:orgheadline11}
 \begin{itemize}
-\item EM suggested action: concede, add short discussion in text, \textbf{decide where}
-\item In line with Federico's critique\ldots{} need to talk to him.
-\item Of the three components, malapportionment is easiest to assess because origin easier to trace to institutions and human choices. Turnout component is much harder because of endogenous nature (Cox and Munger). So is border delimination: it could spring from intentional gerrymandering, but could simply be an accident of geography (Johnston's similar people live nearby argument).
-\item Even if two components are harder to interpret, the fact that the method separates malapportionment from the rest makes it an interesting contribution.
-\item Further theory on factors driving the other two components will make their interpretation easier.
-\item We are grateful to Federico Estévez and one anonymous referee for pointing this out.
+\item EM action: concede, added paragraph in results section to discuss volatility and turnout's endogeneity
+\item Element for response: Of the three components, malapportionment is easiest to assess because its origin lies squarely in institutions and human choices. The turnout component is much harder because mobilization has an endogenous component (cox.munger.1989, rosenstone.hansen.1993). So is border delimination: it could spring from intentional gerrymandering, but could simply be an accident of geography (Johnston's similar people live nearby argument). We have added a paragraph in the results section that deals with this issue (tangentially, at least) in the context of partisan bias volatility in the results.
 \end{itemize}
 \item {\bfseries\sffamily DONE} Considering PRI-Green as an alliance and assigning all wins to PRI seems to be a major assumption (which the authors are open about). Now, even if the substantive results for Mexico is downplayed, it would also be interesting from a general point of view to know by how much such assumptions alter the results and conclusions. What happens to the results if PRI-Green is measured as one entity, for example (as suggested on top p.16)?
 \label{sec:orgheadline12}
@@ -278,5 +274,39 @@ Best,
 
 \item Turn various code files (red.r, linzerElas.r, analizaEscenarios.r\ldots{}) into single---if longer---script
 \label{sec:orgheadline45}
+\end{enumerate}
+\section{{\bfseries\sffamily NO\_ACTION\_NEEDED} Other mails sent}
+\label{sec:orgheadline49}
+\begin{enumerate}
+\item {\bfseries\sffamily DONE} Mail on kml maps
+\label{sec:orgheadline47}
+Dear Dr. Halvard Buhaug, 
+My co-authors and I are working towards the revision of our manuscript. We should have it ready soon. I wish to inquire about digital maps that may be appropriate to illustrate the piece. 
+I visited Elsevier's Interactive Map Viewer. Unless I missed something, the example articles feature very simple maps pinpointing the studies' area(s). I have, however, prepared more elaborate kml files showing several features of federal districts --- such as coloring secciones according to recent electoral history, or adding bubbles indicating how many voters are registered --- in selected Mexican states. It should be straightforward to represent key variables in the manuscript (district malapportionment, turnout, and boundaries) in these maps. But Elsevier's verification tool will not show my maps. (One example is \url{http://ericmagar.com/data/maps/distFed/googleEarth/bc.kmz}).
+Two questions come to mind. How could I gauge how much of the problem is due to my inexperience with map-making or to the system's capacity? Would it be suitable to refer readers in a footnote to the repository where my kml files can be downloaded?
+Thank you for your advise.
+Best,
+
+\item {\bfseries\sffamily DONE} Mail 2 coauthors \textit{<2016-06-10 Fri>}
+\label{sec:orgheadline48}
+Dear co-authors, other than recovering from surgery (fractured shoulder in bike accident---painful indeed! but doing much much better), I have spent the last 6 weeks putting together a response to the Political Geography rNr. I have uploaded three items to our github repository for your consideration: 
+
+(A) the revised manuscript redMexBias09.pdf, 
+(B) a draft on an on-line appendix redMexBias09appendix.pdf, and 
+(C) all elements to write up a cover letter to the editor and referees RefereeReports2redMexBias08.pdf.  
+
+There are still a few revisions that need to be done to address all the referee's comments, but most is ready --- especially the time-consuming re-analysis. 
+
+I am asking you to please make time to have a good look at the three items so that we can to be ready to resubmit the manuscript. I haven't checked the calendar, but the three-month deadline must be a few weeks away. 
+
+Item C includes all the referee's comments broken into bite-size portions. Below each portion, the action I took in the revised manuscript is mentioned, and also a sketch of paragraph or two with a response, when needed, to the referees. These will be the substance for a cover letter. Please comment/critique/revise what I have done. 
+
+When we have agreement on the revisions/rebutals, the manuscript will need a final proof-read and edits to ensure that the English remains correct.
+
+I will finish polishing the on-line appendix when and if the article is accepted for publication. I will also clean my spaghetti code to make replication \textbf{much} easier. 
+
+Finally, if the article is accepted, we will need to decide where we want to store the appendix, data and code for replication. 
+
+Hope all is well, I look forward to reading your reactions.
 \end{enumerate}
 \end{document}
