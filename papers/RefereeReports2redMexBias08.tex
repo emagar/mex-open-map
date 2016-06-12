@@ -1,4 +1,4 @@
-% Created 2016-06-11 Sat 21:39
+% Created 2016-06-12 Sun 10:04
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -123,8 +123,9 @@ Best,
 \item {\bfseries\sffamily DONE} Second, given the definition of party bias, I see why the "turnout-based" bias should be part of it. However, one problem here that could be discussed is that turnout in a given district is not something that is exogenously given, but rather affected by the actions and campaign strategies of the different parties. Parties may, for example, campaign harder to get out the vote in districts that are close to call, and some parties may simply be better at winning such districts. Hence, if, let's say the PRI wins a lot of high-turnout districts, it could be due to some inherent actions and capacities of the party, and in a sense it would be wrong to consider this a bias against the PRI in the system. I don't think this is a very big issue, but I think it merits some discussion.
 \label{sec:orgheadline11}
 \begin{itemize}
-\item EM action: concede, added paragraph in results section to discuss volatility and turnout's endogeneity
-\item Element for response: Of the three components, malapportionment is easiest to assess because its origin lies squarely in institutions and human choices. The turnout component is much harder because mobilization has an endogenous component (cox.munger.1989, rosenstone.hansen.1993). So is border delimination: it could spring from intentional gerrymandering, but could simply be an accident of geography (Johnston's similar people live nearby argument). We have added a paragraph in the results section that deals with this issue (tangentially, at least) in the context of partisan bias volatility in the results.
+\item EM action: conceded, added paragraph in results section discussing volatility and turnout's endogeneity
+\item Element for response: Of the three components, the mechanism of malapportionment is easiest to assess because its origin lies squarely in institutions and human choices. Turnout is much harder because mobilization has an endogenous component (cox.munger.1989, rosenstone.hansen.1993). So is border delimination: it could spring from intentional gerrymandering, but could simply be an accident of geography (Johnston's similar people live nearby argument). We have added a paragraph in the results section that deals with this issue (tangentially, at least) in the context of partisan bias volatility in the results.
+\item Comment for co-authors: pls evaluate if the new paragraph is justified, and if the tangential treatment is enough to address the referee's concern. Should we expand the discussion in the paragraph, take a different approach to address the concern, or do nothing more?
 \end{itemize}
 \item {\bfseries\sffamily DONE} Considering PRI-Green as an alliance and assigning all wins to PRI seems to be a major assumption (which the authors are open about). Now, even if the substantive results for Mexico is downplayed, it would also be interesting from a general point of view to know by how much such assumptions alter the results and conclusions. What happens to the results if PRI-Green is measured as one entity, for example (as suggested on top p.16)?
 \label{sec:orgheadline12}
@@ -167,10 +168,10 @@ Best,
 \item {\bfseries\sffamily TO\_DO} That said, the authors could be more aggressive in the introduction to convey to readers how the current article changes prior conventional wisdom in the Mexican election and what contributions will result from estimating their model in other electoral systems. Beyond that, I could only hope that every manuscript I have to review would be such an easy and interesting reading.
 \label{sec:orgheadline19}
 \begin{itemize}
-\item EM suggested action: concede.
+\item EM suggested action: concede, but not too easy given downplay of the Mexican case.
+\item Most interesting case that we can mention is Britain, mention to MM's student work. Canada, India should be interesting too.
 \end{itemize}
 \end{enumerate}
-
 \section{Reviewer \#4}
 \label{sec:orgheadline31}
 \begin{enumerate}
@@ -218,12 +219,13 @@ Best,
 \begin{itemize}
 \item EM suggested action: verify if claim is true.
 \item see King p. 168 for 1st point, true?
+\item no clue yet about IIA.
 \end{itemize}
-\item {\bfseries\sffamily WORK\_IN\_PROGRESS} How do the authors account for districts with varying sets and sizes of candidates in the estimation?
+\item {\bfseries\sffamily DONE} How do the authors account for districts with varying sets and sizes of candidates in the estimation?
 \label{sec:orgheadline28}
 \begin{itemize}
 \item EM suggested action: clarified in text and expanded in the on-line appendix.
-\item Expand on Linzer's patterns of competition and my dummies (two ways: adapt code for exact number of parties in election, or use dummies to drop redundant columns). Expanded in appendix, with a mention in text.
+\item Districts with varying sets and sizes of candidates pose an obstacle to the Linzer simulation and, in multi-year research designs, to the MCMC estimation. Linzer's (p. 405) approach overcomes this obstacle by treating subsets of districts with different patterns of party contestation separately in the mixture model. The simulated national elections include all parties that contested one district at least (and were not dropped by the analyst at the start of the process). Our single-year research design avoids the obstacle in MCMC estimation (the analyst can adapt the Bugs model to the number of parties in the simulated elections). Our code (see Table A2), however, is prepared to tackle a multi-year problem: a set of dummy variables, one for each party in the analysis, equal 1 if the party contested the election and 0 otherwise, is computed from the data at the outset and fed to the MCMC process; each numerator and denominator additive components (the party's lambda * v\(^{\text{rho}}\)) is multiplied by the corresponding dummy, so that parties not contesting drop from the likelihood function. We have expanded this in the appendix, with a mention in text.
 \end{itemize}
 \item {\bfseries\sffamily TO\_DO} On p. 21, the authors state: "Leaving aside the question of how meaningful the estimated quantities are\ldots{}"  I admit that this statement is somewhat disturbing. The interpretation and usage of the estimated effects seem to be problematic: it is meanwhile established knowledge that coefficients of multiple nonlinear functions (as in MNL)  cannot be interpreted simply based on statistical significance, and even on the sign of a coefficient. Covariates have to be explicitly fixed for explicit values in order to get conditional probabilities / market shares, marginals and elasticies. Insafar the study should reassess the impact of the estimated coefficients for relevant and typical situations, and for the respective partisan biases in terms of  changes in market shares. E.g., illustrative scenarios in Table 1 could be provided for estimated coefficients.
 \label{sec:orgheadline29}
