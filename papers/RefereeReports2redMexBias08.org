@@ -124,10 +124,10 @@ Best,
 - Elements for our response: Section 3 now describes the modeling approach more explicitely. We have also written an on-line appendix (included along this re-submission) to accompany the article if it gets published. The appendix elaborates on the full applied procedure in a step-by-step approach, also serving as introduction to the code to replicate the analysis (that will be posted on-line upon publication). In particular, the appendix offer detail about the Monte Carlo to generate a large number of hypothetical national elections for each year (the Linzer method), and how three methods combine into our proposed procedure. 
 - More elements for our response: We also replaced `measurement' with `estimation' in the section name. 
 - More elements for our response: The attached appendix is still a work in progress, we plan to polish it if the article gets accepted. 
-** TO_DO The authors use a multinomial logit type of model --- I missed a discussion of the crucial assumption of the independence of irrelevant alternatives (IIA) which implies equal substitution patterns which may not be met. 
-- EM suggested action: verify if claim is true.
-- see King p. 168 for 1st point, true? 
-- no clue yet about IIA.
+** DONE The authors use a multinomial logit type of model --- I missed a discussion of the crucial assumption of the independence of irrelevant alternatives (IIA) which implies equal substitution patterns which may not be met. 
+   CLOSED: [2016-06-13 Mon 11:39]
+- EM action: conceded, the point is now elaborated in the on-line appendix (with no mention in the text, it is too specific).
+- Element for our response: Our multinomial logistic regression type of model satisfies the independence of irrelevant alternatives assumption in the same way that King's model does. Quoting him (King p. 168): "the implied assumption of independence of irrelevant alternatives is satisfied here, since the entire stochastic component is conditional on all parties and votes. The only random choice being made is by the electoral system in assigning seats to parties. Therefore, I use the multinomial probability distribution for the number of seats allocated to the J political parties, a straightforward generalization of the binomial". The only difference is our use of P binomial distributions instead of the multinomial.
 ** DONE How do the authors account for districts with varying sets and sizes of candidates in the estimation?
    CLOSED: [2016-06-12 Sun 10:04]
 - EM suggested action: clarified in text and expanded in the on-line appendix. 

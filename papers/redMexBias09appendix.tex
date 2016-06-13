@@ -197,7 +197,7 @@ Figure \ref{F:linzerMg} compares observed 2009 frequencies with the mixture mode
 
 \subsection*{Step 4: Estimate responsiveness and partisan bias}
 
-We use MCMC to estimate equation \ref{E:kingMulti}, implemented with Jags \citep{jags.cite}, called from R \citep[with library R2Jags,][]{r.r2jags}. Preparation involves generating data objects first: $i$ indexes $I=100$ simulated observations for a given year; $p$ indexes $P=6$ parties in the analysis; and $D=300$ is the number of plurality districts; votes and seats $I\times P$ matrices $\texttt{v}$ (where $\texttt{v}_{i,p}$ is party $p$'s vote share in the $i$th simulated election) and $\texttt{S}$ (where $\texttt{S}_{i,p}$ are the seats that party $p$ won in the $i$th simulation); and a $P$-length vector $\texttt{dummy}$ (where $\texttt{dummy}_p$ equals 1 if party $p$ contested the election in the given year, 0 otherwise). Our single-year research design avoids the obstacle posed by elections with varying sets and sizes of candidatesin in MCMC estimation (the analyst could adapt the Bugs model in Table \ref{T:bugsCode} to the number of parties in the simulated elections). The code, however, is prepared to tackle a multi-year estimation with different contestation patterns: $\texttt{dummy}$ indicates parties contesting each election and fed to the MCMC process. Each additive component of the numerator and denominator (i.e., the party's $\lambda * v^\rho$) is multiplied by the corresponding dummy, so that parties not contesting drop from the likelihood function. All data objects are bundled in a list 
+We use MCMC to estimate equation \ref{E:kingMulti}, implemented with Jags \citep{jags.cite}, called from R \citep{r.cite}. Preparation involves generating data objects first: $i$ indexes $I=100$ simulated observations for a given year; $p$ indexes $P=6$ parties in the analysis; and $D=300$ is the number of plurality districts; votes and seats $I\times P$ matrices $\texttt{v}$ (where $\texttt{v}_{i,p}$ is party $p$'s vote share in the $i$th simulated election) and $\texttt{S}$ (where $\texttt{S}_{i,p}$ are the seats that party $p$ won in the $i$th simulation); and a $P$-length vector $\texttt{dummy}$ (where $\texttt{dummy}_p$ equals 1 if party $p$ contested the election in the given year, 0 otherwise). Our single-year research design avoids the obstacle posed by elections with varying sets and sizes of candidatesin in MCMC estimation (the analyst could adapt the Bugs model in Table \ref{T:bugsCode} to the number of parties in the simulated elections). The code, however, is prepared to tackle a multi-year estimation with different contestation patterns: $\texttt{dummy}$ indicates parties contesting each election and fed to the MCMC process. Each additive component of the numerator and denominator (i.e., the party's $\lambda * v^\rho$) is multiplied by the corresponding dummy, so that parties not contesting drop from the likelihood function. All data objects are bundled in a list 
 
 \begin{center}
 \lstinline[language=R]!lrdata <- list("S", "v", "I", "J", "D", "dummy")!.
@@ -254,9 +254,16 @@ lambda.rho <- function() {
 \caption{Code for Bugs model}\label{T:bugsCode}
 \end{table}
 
-The formal model estimated appears in Table \ref{T:bugsCode}. Reliance on $\texttt{dummy}$ is convenient as is allows to proceed with six-party votes ans seats matrices regardless of the year selected---otherwise the code would need to be adapted each year for variable parties. Parties not contesting an election (Morena in 2003--12, Green in 2006, MC in 2006 and 2012), with zero votes and seats columns, need not be dropped from matrices. Instead, multiplying the corresponding $\lambda * v^\rho$ term by contestation $\texttt{dummy}$ annuls them from equation \ref{E:kingMulti}. 
+The formal model estimated appears in Table \ref{T:bugsCode}. Reliance on $\texttt{dummy}$ is convenient as is allows to proceed with six-party votes and seats matrices regardless of the year selected---otherwise the code would need to be adapted each year for variable parties, which is trivial. Parties not contesting an election (Morena in 2003--12, Green in 2006, MC in 2006 and 2012), with zero votes and seats columns, need not be dropped from matrices. Instead, multiplying the corresponding $\lambda * v^\rho$ term by contestation $\texttt{dummy}$ annuls them from equation \ref{E:kingMulti}. 
 
-Package $\texttt{r2jags}$ \citep{r.r2jags} is an interface to send all this for Jags estimation:
+Our multinomial logistic regression type model satisfies the independence of irrelevant alternatives assumption in the same way that King does. Quoting at length: 
+\begin{quotation} 
+\singlespacing
+\noindent [T]he implied assumption of independence of irrelevant alternatives is satisfied ... since the entire stochastic component is conditional on all parties and votes. The only random choice being made is by the electoral system in assigning seats to parties. Therefore, I use the multinomial probability distribution for the number of seats allocated to the $J$ political parties, a straightforward generalization of the binomial \citep[][:168]{king.1990elRespBiasMultiparty}.
+\end{quotation} 
+The only difference is our use of $P$ seat-allocating binomial distributions instead of one multinomial (line 4 of the code in Table \ref{T:bugsCode}).
+
+R package $\texttt{r2jags}$ \citep{r.r2jags} is a suite of functions to bind all these objects into a Jags call for estimation (and do post-estimation evaluations):
 
 \setstretch{1}
 \begin{center}
