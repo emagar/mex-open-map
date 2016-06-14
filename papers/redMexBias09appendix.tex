@@ -488,6 +488,15 @@ To verify convergence, Tables \ref{T:traceplotStart}--\ref{T:traceplotEnd} plot 
 \caption{Three-chain traceplots for 2015 with hypothetical map}\label{T:traceplotEnd}
 \end{table}
 
+\section{Swing ratio estimates and uncertainty}
+
+Swing ratios are a measure of how a party's seat share changes when its vote share increases or decreases by 1 percent \citep{niemi.fett1986swing,tufte1973seatsVotes}: $\frac{E(s_p|v_p+.01) - E(s_p|v_p-.01)}{.02}$. \citet[][:408]{linzerSeatVoteElasticity2012} suggests using OLS regression on simulated data as an alternative for deriving swing ratios: 
+\begin{quotation}
+\singlespacing
+\noindent Although equation (4) requires no parametric assumptions about the functional relationship between [party p's vote share and the p's expected simulated seat share], the relationship between simulated seat shares ... and simulated vote shares ... around [p's mean vote share] will be roughly oftentimes approximately linear. In that event, the slope of a linear regression of [p's simulated seat shares] on [p's simulated vote shares] will be roughly equivalent to the swing ratio estimate. 
+\end{quotation}
+Linzer simulations represent the plausibility of various national-level election outcomes---both vote shares and seat shares---given the observed district-level conditions of that election. The uncertainty (a, say, 95-percent confidence interval) of the swing ratio estimate is obtained sorting simulated seat shares for a given vote share (typically the mean simulated vote share), and taking the 2.5 and 97.5 percentiles. Our regresions report coefficient standard errors instead: since standard errors are derived from the very same simulations, they account for pretty much the same uncertainty as the confidence interval. We could alternatively report 95-percent CIs around predicted seat shares: these would require more explanation than standard SEs, so we prefer the latter. 
+
 \section{The effect of alternative coalition specifications}
 
 As recognized in the text, the solution to deal with partial coalitions---situations where two parties present a joint candidate in less than all districts, competing against each other in the rest---is less than perfect. We offer some perspective of how alternative approaches affect the bias estimates reported. We illustrate with the case of the PRI-Green partial coalition in the 2015 election (partners were rivals in 50 plurality districts, see Table \ref{T:votesUnprocessed}). Partial coalitions of this kind occurred every year in the period except 2006. Two cases in official vote returns need consideration. 
