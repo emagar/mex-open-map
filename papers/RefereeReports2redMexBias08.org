@@ -91,14 +91,17 @@ Best,
 ** NO_ACTION_NEEDED All in all, I learned a lot from reading this paper, and I think it is a very good piece of scholarly work. I recommend that the authors are given the chance to revise and resubmit the paper.
 - EM action: none. 
 
-* Reviewer #3
+* DONE Reviewer #3
+  CLOSED: [2016-06-15 Wed 12:36]
 ** NO_ACTION_NEEDED This article was a pleasure to read and to evaluate. It is well written, with a theory clearly presented, interesting findings, and a contribution to the estimation of seats and votes in multi-party systems. The article brings together three different traditions in the study of seats and votes, unifying them in a model that allows researchers to discriminate the sources of biases in multi-party races. The article will be of interest to those that conduct basic research on seat-vote models as well as those interested in the mechanical properties of electoral rules in Mexico. Consequently, I recommend publication as is.
 - EM action: none. 
 ** NO_ACTION_NEEDED I do not have recommended changes to the article. The article is honest in stating that it is an original and interesting improvement on existing models but not a radically different modeling strategy. I appreciate that the article does not try to oversell their contribution or findings. 
 - EM action: none. 
-** TO_DO That said, the authors could be more aggressive in the introduction to convey to readers how the current article changes prior conventional wisdom in the Mexican election and what contributions will result from estimating their model in other electoral systems. Beyond that, I could only hope that every manuscript I have to review would be such an easy and interesting reading.
-- EM suggested action: concede, but not too easy given downplay of the Mexican case.
-- Most interesting case that we can mention is Britain, mention to MM's student work. Canada, India should be interesting too.
+** DONE That said, the authors could be more aggressive in the introduction to convey to readers how the current article changes prior conventional wisdom in the Mexican election and what contributions will result from estimating their model in other electoral systems. Beyond that, I could only hope that every manuscript I have to review would be such an easy and interesting reading.
+   CLOSED: [2016-06-15 Wed 12:36]
+- EM action: conceded. 
+- Elements for our answer: We now stress, in the introduction, how our procedure opens up the comparative study of electoral systems. We mention Canada, India, the UK, France, Australia, Chile, and Ireland as some of the cases for the comparative study of partisan bias. Given that we pursued Reviewer #2's recommendation to downplay the Mexican case study in the framing, we have not stressed how our findings jibe with the conventional wisdom in the introduction---we leave this in the discussion that closes the manuscript.
+- For co-authors: Mike might mention something on his student's work on the UK. 
 * DONE Reviewer #4
   CLOSED: [2016-06-14 Tue 10:38]
 ** NO_ACTION_NEEDED This paper intends to identify the relative and (assumed independent) impact of three different components of partisan bias  in the Mexican electoral system. Application case are lower-chamber federal legislative elections 2003-2012. The paper focuses exclusively on the single member districts  component of the Mexican electoral system.
@@ -145,7 +148,8 @@ Best,
 - Elements for our response: Linzer (p. 408) suggests using OLS regressions as an alternative for deriving swing ratios ("Although equation (4) requires no parametric assumptions about the functional relationship between [party p's vote share and the p's expected simulated seat share], the relationship between simulated seat shares ... and simulated vote shares ... around [p's mean vote share] will be roughly oftentimes approximately linear. In that event, the slope of a linear regression of [p's simulated seat shares] on [p's simulated vote shares] will be roughly equivalent to the swing ratio estimate"). Linzer simulations represent the plausibility of various national-level election outcomes---both vote shares and seat shares---given the observed district-level conditions of that election. The uncertainty (a, say, 95-percent confidence interval) of the swing ratio estimate is obtained sorting simulated seat shares for a given vote share (typically the mean simulated vote share), and taking the 2.5 and 97.5 percentiles. Our regresions report coefficient standard errors instead: since standard errors are derived from the very same simulations, they account for pretty much the same uncertainty as the confidence interval. We could alternatively report 95-percent CIs around predicted seat shares: these would require more explanation than standard SEs, so we prefer the latter. We have added a section in the on-line appendix elaborating this point. 
 - Co-authors: does this make sense?
 * ToDo list
-** Write new cover letter explaining changes. Mention that we re-did all analysis to include 2015 election returns (previously unavailable), and also adding back secciones that were split in the period due to overpopulation. These had been dropped to save time. These units are relatively unimportant in sheer numbers (175 overpopulated secciones were split into 5034 new units in the period). But they are concentrated in suburban areas with fast demographic growth since the 1990s. Estimates for 2003--2012 have changed, but they tell the same general story.
+** Write cover letter explaining changes. The above list of issues has all the substance needed for this letter (and me may even choose to just send that list mostly as it is!). Letter should mention that we re-did all analysis to include 2015 election returns (previously unavailable), and also adding back secciones that were split in the period due to overpopulation. These had been dropped to save time. These units are relatively unimportant in sheer numbers (175 overpopulated secciones were split into 5034 new units in the period). But they are concentrated in suburban areas with fast demographic growth since the 1990s. Estimates for 2003--2012 have changed, but they tell the same general story.
+** Conclusion needs to be adapted to the methodological framing---present version seems to emphasize too much the substantive findings.
 ** Ask Micah/Mike: Which repository for data, code, appendix? github? ericmagar.com? dataverse? several?
 ** DONE Re-do rri plots with cleaner seccion-to-dostroct aggregations for paper
    CLOSED: [2016-06-07 Tue 04:45]
@@ -159,7 +163,6 @@ Best,
    CLOSED: [2016-06-10 Fri 16:35]
 *** Need more context for non-Mexico scholars
    
-** Conclusion needs to be adapted to the methodological framing---present version seems to emphasize too much the substantive findings.
 * ToDo list if we get publication
 ** Remove circularities btw red.r and analizaEscenarios.r
 ** DONE verify that error in king's denominator in red.r is innocuous

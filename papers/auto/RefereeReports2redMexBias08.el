@@ -68,17 +68,14 @@
     "sec:orgheadline35"
     "sec:orgheadline36"
     "sec:orgheadline37"
-    "sec:orgheadline40"
     "sec:orgheadline38"
-    "sec:orgheadline39"
     "sec:orgheadline41"
+    "sec:orgheadline39"
+    "sec:orgheadline40"
     "sec:orgheadline47"
     "sec:orgheadline43"
     "sec:orgheadline44"
     "sec:orgheadline45"
-    "sec:orgheadline46"
-    "sec:orgheadline50"
-    "sec:orgheadline48"
-    "sec:orgheadline49"))
+    "sec:orgheadline46"))
  :latex)
 
