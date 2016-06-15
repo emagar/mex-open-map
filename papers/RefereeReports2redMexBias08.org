@@ -44,7 +44,8 @@ Dear Dr. Buhaug,
 It is with great pleasure that I read the good news about our submission. The reviews are constructive, offering substantive advise, and arrived rather fast! I am sure that they will help us improve the manuscript in the hope that it is acceptable for publication in Political Geography. My co-authors and I will gladly proceed with the revise and resubmit. We will send you a revised manuscript within two months. 
 Best,
 
-* Reviewer #2
+* DONE Reviewer #2
+  CLOSED: [2016-06-14 Tue 19:21]
 ** NO_ACTION_NEEDED This MS deals with partisan bias, in terms of discrepancies between seat and vote shares, looking more closely at three particular sources of such bias. Using data from recent Mexican elections, the paper details a procedure on how to calculate the different sources of this bias in single-member district systems where more than two parties compete.
 - EM action: none. 
 ** NO_ACTION_NEEDED I have to admit from the outset that I'm no expert on this particular topic, although I am familiar with it and work on topics that are not too far removed. Hence, my comments are those of a "generalist reviewer", and are more related to the framing of the paper and different conceptual issues that are not entirely clear to me.
@@ -79,9 +80,10 @@ Best,
    CLOSED: [2016-06-10 Fri 11:36]
 - EM action: conceded.
 - Elements for our response: We have kept the manipulation described in the original manuscript in the text. We have also added a section in the on-line appendix devoted to elaborating two other approaches to handle partial coalitions: (1) one where the Green is summed to the PRI across the board, (2) another where the PRI-Green is treated as one entity. We re-estimated the 2015 election using these approaches, and compared them to reported results. We conclude that results change in predictable ways when coalitions are handled differently. We also underscore that partial coalitions are a Mexico specific feature that should pose no obstacle to estimation in other multi-party compatitions cases.
-** TO_DO The rationale for studying partisan bias for each election separately is well explained. However, what if one wants to generalize and test for a systematic bias (or even particular systematic such sources) for/against a party within a system that lasted for a specific period of time? I understand that creeping malapportionment and turnout will change by the election, but if researchers want to make such generalizations, how could they apply/alter your framework to produce (at least rough) tests of this. It's interesting to come up with exact numbers for a particular election, but sometimes the question is whether this is an inherent/more systematic feature of the system, and as the authors show some sources of bias show substantial changes between elections, favoring a party in one and disfavoring it in the next. If the authors could devise a strategy for conducting such a test, this would greatly enhance their contribution, I think.
-- EM suggested action: concede.
-- No clue on how to articulate this... longitudinal pool of Linzer sims? longitudinal a la Marquez? State-level multiplications? Something else?
+** DONE The rationale for studying partisan bias for each election separately is well explained. However, what if one wants to generalize and test for a systematic bias (or even particular systematic such sources) for/against a party within a system that lasted for a specific period of time? I understand that creeping malapportionment and turnout will change by the election, but if researchers want to make such generalizations, how could they apply/alter your framework to produce (at least rough) tests of this. It's interesting to come up with exact numbers for a particular election, but sometimes the question is whether this is an inherent/more systematic feature of the system, and as the authors show some sources of bias show substantial changes between elections, favoring a party in one and disfavoring it in the next. If the authors could devise a strategy for conducting such a test, this would greatly enhance their contribution, I think.
+   CLOSED: [2016-06-14 Tue 19:19]
+- EM action: conceded, added paragraph.
+- Elements for our response: The paper takes one national election, simulates many more observation points by adding random noise (noise that is plausible given observed district-level data), then estimates partisan bias and components from simulated data. The approach, however, is flexible and can be applied to different research designs. If conclusions over a longer period are of interest (to, say, investigate bias before/after an electoral reform, or to study a given "party system"), the analyst could pool elections in the period(s) and either use the Linzer multiplication approach (one election at a time, then pool simulation), or simply use the pooled data for direct estimation. The revised manuscript makes note of this in the concluding remarks.
 ** DONE Very minor point: Population levels in districts are based on linear interpolations between censuses. Following standard models of population growth, it would be more appropriate to assume constant population growth rates over the time interval, which can easily be calculated (meaning that population growth in absolute numbers will be smaller for earlier years, if growth is positive).
    CLOSED: [2016-06-10 Fri 13:01]
 - EM action: defend our approach, discuss alternative in on-line appendix.
@@ -149,13 +151,15 @@ Best,
    CLOSED: [2016-06-07 Tue 04:45]
 ** DONE Re-do bias estimate plots with 2015 in for paper
    CLOSED: [2016-06-10 Fri 12:27]
-** Decide if we call it the 2013 map or the 2015 map
+** DROPPED Decide if we call it the 2013 map or the 2015 map.
+   CLOSED: [2016-06-14 Tue 19:15]
 ** Make sure census gap mentioned in the text: I mention it in the appendix without introduction
 ** Mike: The two comments I received from MPSA were:
 *** DONE Need a little more detail on the MCMC algorithm
    CLOSED: [2016-06-10 Fri 16:35]
 *** Need more context for non-Mexico scholars
    
+** Conclusion needs to be adapted to the methodological framing---present version seems to emphasize too much the substantive findings.
 * ToDo list if we get publication
 ** Remove circularities btw red.r and analizaEscenarios.r
 ** DONE verify that error in king's denominator in red.r is innocuous

@@ -2963,7 +2963,9 @@ table(tmp[,1]>0)/1500
 table(tmp[,2]>0)/1500
 rm(tmp)
 
-# compute swing ratios with regressions from Linzer sims
+##########################################################
+# compute swing ratios with regressions from Linzer sims #
+##########################################################
 wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
 dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
 load(paste(dd, "swingRatios9715.RData", sep = ""))

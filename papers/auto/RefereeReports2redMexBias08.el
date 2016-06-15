@@ -3,14 +3,14 @@
  (lambda ()
    (TeX-add-to-alist 'LaTeX-provided-package-options
                      '(("inputenc" "utf8") ("fontenc" "T1") ("ulem" "normalem")))
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperref")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperimage")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperbaseurl")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "nolinkurl")
-   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "url")
    (add-to-list 'LaTeX-verbatim-macros-with-braces-local "path")
-   (add-to-list 'LaTeX-verbatim-macros-with-delims-local "url")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "url")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "nolinkurl")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperbaseurl")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperimage")
+   (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperref")
    (add-to-list 'LaTeX-verbatim-macros-with-delims-local "path")
+   (add-to-list 'LaTeX-verbatim-macros-with-delims-local "url")
    (TeX-run-style-hooks
     "latex2e"
     "article"
@@ -61,7 +61,7 @@
     "sec:orgheadline28"
     "sec:orgheadline29"
     "sec:orgheadline30"
-    "sec:orgheadline41"
+    "sec:orgheadline42"
     "sec:orgheadline32"
     "sec:orgheadline33"
     "sec:orgheadline34"
@@ -71,13 +71,14 @@
     "sec:orgheadline40"
     "sec:orgheadline38"
     "sec:orgheadline39"
-    "sec:orgheadline46"
-    "sec:orgheadline42"
+    "sec:orgheadline41"
+    "sec:orgheadline47"
     "sec:orgheadline43"
     "sec:orgheadline44"
     "sec:orgheadline45"
-    "sec:orgheadline49"
-    "sec:orgheadline47"
-    "sec:orgheadline48"))
+    "sec:orgheadline46"
+    "sec:orgheadline50"
+    "sec:orgheadline48"
+    "sec:orgheadline49"))
  :latex)
 

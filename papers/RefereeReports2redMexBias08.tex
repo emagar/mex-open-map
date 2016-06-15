@@ -1,4 +1,4 @@
-% Created 2016-06-14 Tue 10:36
+% Created 2016-06-14 Tue 19:20
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -133,11 +133,11 @@ Best,
 \item EM action: conceded.
 \item Elements for our response: We have kept the manipulation described in the original manuscript in the text. We have also added a section in the on-line appendix devoted to elaborating two other approaches to handle partial coalitions: (1) one where the Green is summed to the PRI across the board, (2) another where the PRI-Green is treated as one entity. We re-estimated the 2015 election using these approaches, and compared them to reported results. We conclude that results change in predictable ways when coalitions are handled differently. We also underscore that partial coalitions are a Mexico specific feature that should pose no obstacle to estimation in other multi-party compatitions cases.
 \end{itemize}
-\item {\bfseries\sffamily TO\_DO} The rationale for studying partisan bias for each election separately is well explained. However, what if one wants to generalize and test for a systematic bias (or even particular systematic such sources) for/against a party within a system that lasted for a specific period of time? I understand that creeping malapportionment and turnout will change by the election, but if researchers want to make such generalizations, how could they apply/alter your framework to produce (at least rough) tests of this. It's interesting to come up with exact numbers for a particular election, but sometimes the question is whether this is an inherent/more systematic feature of the system, and as the authors show some sources of bias show substantial changes between elections, favoring a party in one and disfavoring it in the next. If the authors could devise a strategy for conducting such a test, this would greatly enhance their contribution, I think.
+\item {\bfseries\sffamily DONE} The rationale for studying partisan bias for each election separately is well explained. However, what if one wants to generalize and test for a systematic bias (or even particular systematic such sources) for/against a party within a system that lasted for a specific period of time? I understand that creeping malapportionment and turnout will change by the election, but if researchers want to make such generalizations, how could they apply/alter your framework to produce (at least rough) tests of this. It's interesting to come up with exact numbers for a particular election, but sometimes the question is whether this is an inherent/more systematic feature of the system, and as the authors show some sources of bias show substantial changes between elections, favoring a party in one and disfavoring it in the next. If the authors could devise a strategy for conducting such a test, this would greatly enhance their contribution, I think.
 \label{sec:orgheadline13}
 \begin{itemize}
-\item EM suggested action: concede.
-\item No clue on how to articulate this\ldots{} longitudinal pool of Linzer sims? longitudinal a la Marquez? State-level multiplications? Something else?
+\item EM action: conceded, added paragraph.
+\item Elements for our response: The paper takes one national election, simulates many more observation points by adding random noise (noise that is plausible given observed district-level data), then estimates partisan bias and components from simulated data. The approach, however, is flexible and can be applied to different research designs. If conclusions over a longer period are of interest (to, say, investigate bias before/after an electoral reform, or to study a given "party system"), the analyst can pool elections in the period(s) and either use the Linzer multiplication approach (one election at a time, then pool simulation), or simply use the pooled data for direct estimation. The revised manuscript makes note of this in the concluding remarks.
 \end{itemize}
 \item {\bfseries\sffamily DONE} Very minor point: Population levels in districts are based on linear interpolations between censuses. Following standard models of population growth, it would be more appropriate to assume constant population growth rates over the time interval, which can easily be calculated (meaning that population growth in absolute numbers will be smaller for earlier years, if growth is positive).
 \label{sec:orgheadline14}
@@ -172,7 +172,7 @@ Best,
 \item Most interesting case that we can mention is Britain, mention to MM's student work. Canada, India should be interesting too.
 \end{itemize}
 \end{enumerate}
-\section{Reviewer \#4}
+\section{{\bfseries\sffamily DONE} Reviewer \#4}
 \label{sec:orgheadline31}
 \begin{enumerate}
 \item {\bfseries\sffamily NO\_ACTION\_NEEDED} This paper intends to identify the relative and (assumed independent) impact of three different components of partisan bias  in the Mexican electoral system. Application case are lower-chamber federal legislative elections 2003-2012. The paper focuses exclusively on the single member districts  component of the Mexican electoral system.
@@ -236,12 +236,12 @@ Best,
 \label{sec:orgheadline30}
 \begin{itemize}
 \item EM action: explain that, in fact, it does.
-\item Elements for our response: Linzer (p. 408) suggests using OLS regressions as an alternative for deriving swing ratios ("Although equation (4) requires no parametric assumptions about the functional relationship between [party p's vote share and the p's expected simulated seat share], the relationship between simulated seat shares \ldots{} and simulated vote shares \ldots{} around [p's mean vote share] will be roughly oftentimes approximately linear. In that event, the slope of a linear regression of [p's simulated seat shares] on [p's simulated vote shares] will be roughly equivalent to the swing ratio estimate"). Linzer simulations represent the plausibility of various national-level election outcomes---both vote shares and seat shares---given the observed district-level conditions of that election. The uncertainty (a, say, 95-percent confidence interval) of the swing ratio estimate is obtained sorting simulated seat shares for a given vote share (typically the mean simulated vote share), and taking the 2.5 and 97.5 percentiles. Our regresions report coefficient standard errors instead: since standard errors are derived from the very same simulations, they account for pretty much the same uncertainty as the confidence interval. We could alternatively report 95-percent CIs around predicted seat shares: these would require more explanation than standard SEs, so we prefer the latter. We have added a section in the appendix elaborating this point.
+\item Elements for our response: Linzer (p. 408) suggests using OLS regressions as an alternative for deriving swing ratios ("Although equation (4) requires no parametric assumptions about the functional relationship between [party p's vote share and the p's expected simulated seat share], the relationship between simulated seat shares \ldots{} and simulated vote shares \ldots{} around [p's mean vote share] will be roughly oftentimes approximately linear. In that event, the slope of a linear regression of [p's simulated seat shares] on [p's simulated vote shares] will be roughly equivalent to the swing ratio estimate"). Linzer simulations represent the plausibility of various national-level election outcomes---both vote shares and seat shares---given the observed district-level conditions of that election. The uncertainty (a, say, 95-percent confidence interval) of the swing ratio estimate is obtained sorting simulated seat shares for a given vote share (typically the mean simulated vote share), and taking the 2.5 and 97.5 percentiles. Our regresions report coefficient standard errors instead: since standard errors are derived from the very same simulations, they account for pretty much the same uncertainty as the confidence interval. We could alternatively report 95-percent CIs around predicted seat shares: these would require more explanation than standard SEs, so we prefer the latter. We have added a section in the on-line appendix elaborating this point.
 \item Co-authors: does this make sense?
 \end{itemize}
 \end{enumerate}
 \section{ToDo list}
-\label{sec:orgheadline41}
+\label{sec:orgheadline42}
 \begin{enumerate}
 \item Write new cover letter explaining changes. Mention that we re-did all analysis to include 2015 election returns (previously unavailable), and also adding back secciones that were split in the period due to overpopulation. These had been dropped to save time. These units are relatively unimportant in sheer numbers (175 overpopulated secciones were split into 5034 new units in the period). But they are concentrated in suburban areas with fast demographic growth since the 1990s. Estimates for 2003--2012 have changed, but they tell the same general story.
 \label{sec:orgheadline32}
@@ -251,7 +251,7 @@ Best,
 \label{sec:orgheadline34}
 \item {\bfseries\sffamily DONE} Re-do bias estimate plots with 2015 in for paper
 \label{sec:orgheadline35}
-\item Decide if we call it the 2013 map or the 2015 map
+\item {\bfseries\sffamily DROPPED} Decide if we call it the 2013 map or the 2015 map.
 \label{sec:orgheadline36}
 \item Make sure census gap mentioned in the text: I mention it in the appendix without introduction
 \label{sec:orgheadline37}
@@ -263,26 +263,28 @@ Best,
 \item Need more context for non-Mexico scholars
 \label{sec:orgheadline39}
 \end{enumerate}
-\end{enumerate}
 
+\item Conclusion needs to be adapted to the methodological framing---present version seems to emphasize too much the substantive findings.
+\label{sec:orgheadline41}
+\end{enumerate}
 \section{ToDo list if we get publication}
-\label{sec:orgheadline46}
+\label{sec:orgheadline47}
 \begin{enumerate}
 \item Remove circularities btw red.r and analizaEscenarios.r
-\label{sec:orgheadline42}
-\item {\bfseries\sffamily DONE} verify that error in king's denominator in red.r is innocuous
 \label{sec:orgheadline43}
-\item Drop above from spaghetti code (never used for Linzer estimation)
+\item {\bfseries\sffamily DONE} verify that error in king's denominator in red.r is innocuous
 \label{sec:orgheadline44}
+\item Drop above from spaghetti code (never used for Linzer estimation)
+\label{sec:orgheadline45}
 
 \item Turn various code files (red.r, linzerElas.r, analizaEscenarios.r\ldots{}) into single---if longer---script
-\label{sec:orgheadline45}
+\label{sec:orgheadline46}
 \end{enumerate}
 \section{{\bfseries\sffamily NO\_ACTION\_NEEDED} Other mails sent}
-\label{sec:orgheadline49}
+\label{sec:orgheadline50}
 \begin{enumerate}
 \item {\bfseries\sffamily DONE} Mail on kml maps
-\label{sec:orgheadline47}
+\label{sec:orgheadline48}
 Dear Dr. Halvard Buhaug, 
 My co-authors and I are working towards the revision of our manuscript. We should have it ready soon. I wish to inquire about digital maps that may be appropriate to illustrate the piece. 
 I visited Elsevier's Interactive Map Viewer. Unless I missed something, the example articles feature very simple maps pinpointing the studies' area(s). I have, however, prepared more elaborate kml files showing several features of federal districts --- such as coloring secciones according to recent electoral history, or adding bubbles indicating how many voters are registered --- in selected Mexican states. It should be straightforward to represent key variables in the manuscript (district malapportionment, turnout, and boundaries) in these maps. But Elsevier's verification tool will not show my maps. (One example is \url{http://ericmagar.com/data/maps/distFed/googleEarth/bc.kmz}).
@@ -291,7 +293,7 @@ Thank you for your advise.
 Best,
 
 \item {\bfseries\sffamily DONE} Mail 2 coauthors \textit{<2016-06-10 Fri>}
-\label{sec:orgheadline48}
+\label{sec:orgheadline49}
 Dear co-authors, other than recovering from surgery (fractured shoulder in bike accident---painful indeed! but doing much much better), I have spent the last 6 weeks putting together a response to the Political Geography rNr. I have uploaded three items to our github repository for your consideration: 
 
 (A) the revised manuscript redMexBias09.pdf, 
