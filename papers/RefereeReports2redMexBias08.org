@@ -150,7 +150,7 @@ Best,
 * ToDo list
 ** Write cover letter explaining changes. The above list of issues has all the substance needed for this letter (and me may even choose to just send that list mostly as it is!). Letter should mention that we re-did all analysis to include 2015 election returns (previously unavailable), and also adding back secciones that were split in the period due to overpopulation. These had been dropped to save time. These units are relatively unimportant in sheer numbers (175 overpopulated secciones were split into 5034 new units in the period). But they are concentrated in suburban areas with fast demographic growth since the 1990s. Estimates for 2003--2012 have changed, but they tell the same general story.
 ** Conclusion needs to be adapted to the methodological framing---present version seems to emphasize too much the substantive findings.
-** Ask Micah/Mike: Which repository for data, code, appendix? github? ericmagar.com? dataverse? several?
+** Micah/Mike: Which repository for data, code, appendix? github? ericmagar.com? dataverse? several?
 ** DONE Re-do rri plots with cleaner seccion-to-dostroct aggregations for paper
    CLOSED: [2016-06-07 Tue 04:45]
 ** DONE Re-do bias estimate plots with 2015 in for paper
