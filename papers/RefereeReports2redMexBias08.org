@@ -1,48 +1,26 @@
 #+SEQ_TODO: TO_DO WORK_IN_PROGRESS WAIT | NO_ACTION_NEEDED DONE DROPPED
 #+TITLE: Elements for RnR's cover letter
 
-* NO_ACTION_NEEDED Editor's letter
-  CLOSED: [2016-06-10 Fri 16:36]
-Ref.:  Ms. No. PG-2218
-
-Dear Dr. Eric Magar,
-
-Three expert reviewers have now commented on your manuscript. Thank you for waiting. Based on these reviews and my own reading, I invite you to resubmit a revised manuscript. You will see from the review reports appended below that all reviewers see considerable merit in your paper, although they also offer constructive advice on how to make the contribution clearer.
-
-Please let me know within the next couple of weeks whether you will proceed to revise and resubmit this manuscript for Political Geography. The revision should be accompanied with a brief anonymous response letter to the referees. Explain what you did to meet their feedback (or did not do, and why). This response must be anonymous (that is, do not sign the letter).
-
-We need the revision back within the next three months. It will then go back to the same referees for another look. The resubmission must stay below 11,000 words (inclusive) to be acceptable for further processing.
-
-To submit a revision, go to http://ees.elsevier.com/jpgq/ and log in as an Author.  You will find your submission record under the menu item 'Submission Needing Revision'.
-
-Your username is: emagar@itam.mx
-
-If you need to retrieve password details, please go to:
-http://ees.elsevier.com/jpgq/automail_query.asp
-
-PLEASE NOTE: The journal would like to enrich online articles by visualising and providing geographical details described in Political Geography articles. For this purpose, corresponding KML (GoogleMaps) files can be uploaded in our online submission system. Submitted KML files will be published with your online article on ScienceDirect. Elsevier will generate maps from the KML files and include them in the online article.
-
-Political Geography features the Interactive Map Viewer, http://www.elsevier.com/googlemaps. Interactive Maps visualize geospatial data provided by the author in a GoogleMap. To include one with your article, please submit a .kml or .kmz file and test it online at http://elsevier-apps.sciverse.com/GoogleMaps/verification before uploading it with your submission.
-
-Please let me know if you have any questions or concerns.
-
-Yours sincerely
-
+* Cover letter for RnR
 Halvard Buhaug, PhD
 Associate Editor
 Political Geography
 
+Dear Dr. Buhaug: My co-authors and I have revised our manuscript and are re-submitting it for your consideration and for a second review. 
 
+We addressed all concerns by reviewers, either in the text or in a new on-line appendix. This letter explains how we have done it. 
 
+We accepted all but three points raised by the reviewers, correcting or clarifying the text and analysis or elaborating based on critiques and recommendations. We quote below the points raised by the reviewers requiring our attention, following each with what we did and where, or did not do and why. 
 
+In addition to reviewers' feedback, we re-did all analysis to include 2015 election returns (data was still unavailable when we prepared the original manuscript) and fixed secciones that were split in the period of observation due to overpopulation. These secciones had been dropped from the original analysis to save time (recovering them required a good deal of effort). These units are relatively unimportant in sheer numbers (175 overpopulated secciones were split into 5034 new units in the period, out of a total of 66 thousand). But they are concentrated in suburban areas with fast demographic growth since the 1990s. Estimates for 2003--2012 have somewhat changed, but they tell the same general story.
 
-Additional Comments:
+The new on-line appendix offers detail of our estimation procedure, with a step-by-step explanation of how to prepare data, invoke hypothetical election generation, and specify the Bugs model. This appendix should make replication with the data and code that will be also posted much easier.
 
-* DONE Response to editor accepting to do Rnr
-  CLOSED: [2016-04-15 Fri 11:29]
-Dear Dr. Buhaug, 
-It is with great pleasure that I read the good news about our submission. The reviews are constructive, offering substantive advise, and arrived rather fast! I am sure that they will help us improve the manuscript in the hope that it is acceptable for publication in Political Geography. My co-authors and I will gladly proceed with the revise and resubmit. We will send you a revised manuscript within two months. 
-Best,
+We are confident that the review process has allowed us to improve our manuscript, and hope that the revised version will be acceptable for publication.
+
+Yours sincerely,
+
+Eric Magar
 
 * DONE Reviewer #2
   CLOSED: [2016-06-14 Tue 19:21]
@@ -78,7 +56,7 @@ Best,
 - Comment for co-authors: pls evaluate if the new paragraph is justified, and if the tangential treatment is enough to address the referee's concern. Should we expand the discussion in the paragraph, take a different approach to address the concern, or do nothing more?
 ** DONE Considering PRI-Green as an alliance and assigning all wins to PRI seems to be a major assumption (which the authors are open about). Now, even if the substantive results for Mexico is downplayed, it would also be interesting from a general point of view to know by how much such assumptions alter the results and conclusions. What happens to the results if PRI-Green is measured as one entity, for example (as suggested on top p.16)?
    CLOSED: [2016-06-10 Fri 11:36]
-- EM action: conceded.
+- EM action: retained specification showing how alternatives affect the results.
 - Elements for our response: We have kept the manipulation described in the original manuscript in the text. We have also added a section in the on-line appendix devoted to elaborating two other approaches to handle partial coalitions: (1) one where the Green is summed to the PRI across the board, (2) another where the PRI-Green is treated as one entity. We re-estimated the 2015 election using these approaches, and compared them to reported results. We conclude that results change in predictable ways when coalitions are handled differently. We also underscore that partial coalitions are a Mexico specific feature that should pose no obstacle to estimation in other multi-party compatitions cases.
 ** DONE The rationale for studying partisan bias for each election separately is well explained. However, what if one wants to generalize and test for a systematic bias (or even particular systematic such sources) for/against a party within a system that lasted for a specific period of time? I understand that creeping malapportionment and turnout will change by the election, but if researchers want to make such generalizations, how could they apply/alter your framework to produce (at least rough) tests of this. It's interesting to come up with exact numbers for a particular election, but sometimes the question is whether this is an inherent/more systematic feature of the system, and as the authors show some sources of bias show substantial changes between elections, favoring a party in one and disfavoring it in the next. If the authors could devise a strategy for conducting such a test, this would greatly enhance their contribution, I think.
    CLOSED: [2016-06-14 Tue 19:19]
@@ -170,6 +148,43 @@ Best,
 ** Drop above from spaghetti code (never used for Linzer estimation)
 
 ** Turn various code files (red.r, linzerElas.r, analizaEscenarios.r...) into single---if longer---script
+* NO_ACTION_NEEDED Editor's letter
+  CLOSED: [2016-06-10 Fri 16:36]
+Ref.:  Ms. No. PG-2218
+
+Dear Dr. Eric Magar,
+
+Three expert reviewers have now commented on your manuscript. Thank you for waiting. Based on these reviews and my own reading, I invite you to resubmit a revised manuscript. You will see from the review reports appended below that all reviewers see considerable merit in your paper, although they also offer constructive advice on how to make the contribution clearer.
+
+Please let me know within the next couple of weeks whether you will proceed to revise and resubmit this manuscript for Political Geography. The revision should be accompanied with a brief anonymous response letter to the referees. Explain what you did to meet their feedback (or did not do, and why). This response must be anonymous (that is, do not sign the letter).
+
+We need the revision back within the next three months. It will then go back to the same referees for another look. The resubmission must stay below 11,000 words (inclusive) to be acceptable for further processing.
+
+To submit a revision, go to http://ees.elsevier.com/jpgq/ and log in as an Author.  You will find your submission record under the menu item 'Submission Needing Revision'.
+
+Your username is: emagar@itam.mx
+
+If you need to retrieve password details, please go to:
+http://ees.elsevier.com/jpgq/automail_query.asp
+
+PLEASE NOTE: The journal would like to enrich online articles by visualising and providing geographical details described in Political Geography articles. For this purpose, corresponding KML (GoogleMaps) files can be uploaded in our online submission system. Submitted KML files will be published with your online article on ScienceDirect. Elsevier will generate maps from the KML files and include them in the online article.
+
+Political Geography features the Interactive Map Viewer, http://www.elsevier.com/googlemaps. Interactive Maps visualize geospatial data provided by the author in a GoogleMap. To include one with your article, please submit a .kml or .kmz file and test it online at http://elsevier-apps.sciverse.com/GoogleMaps/verification before uploading it with your submission.
+
+Please let me know if you have any questions or concerns.
+
+Yours sincerely
+
+Halvard Buhaug, PhD
+Associate Editor
+Political Geography
+
+* DONE Response to editor accepting to do Rnr
+  CLOSED: [2016-04-15 Fri 11:29]
+Dear Dr. Buhaug, 
+It is with great pleasure that I read the good news about our submission. The reviews are constructive, offering substantive advise, and arrived rather fast! I am sure that they will help us improve the manuscript in the hope that it is acceptable for publication in Political Geography. My co-authors and I will gladly proceed with the revise and resubmit. We will send you a revised manuscript within two months. 
+Best,
+
 * NO_ACTION_NEEDED Other mails sent
 ** DONE Mail on kml maps
    CLOSED: [2016-06-10 Fri 16:46]
