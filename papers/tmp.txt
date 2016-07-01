@@ -1,0 +1,19 @@
+;; This buffer is for notes you don't want to save, and for Lisp evaluation.
+;; If you want to create a file, visit that file with C-x C-f,
+;; then enter the text in that file's own buffer.
+
+Trelles
+
+1) the placement of Figure 2 in the text (I think it is a bit distracting for the reader) should be a couple of paragraphs ahead of where it is.
+
+2) part of our discussion of the PRI-Green coalition that is directly in the text can be moved as the first paragraph of footnote 10. I know this is a response to a reviewer's concern, but it can be a bit distracting for the non-Mexican specialist. 
+
+Micah
+
+Three fine tuning suggestions:
+
+- In item 5, rather than starting the reply by defending the approach, can we frame it as a miscommunication about the scope of the analysis, and add a couple of lines to "clarify", before moving to the defensive text... 
+- In item 10 of the response, we end with: "We could alternatively report 95-percent CIs around predicted seat shares: these would require more ex- planation than standard SEs, so we prefer the latter. We have added a section in the on-line appendix elaborating this point." Would it be possible to simpler to say we've included  the CI's in the online appendix, rather than explaining why we don't?
+- We could name the repository in which the data will be shared. Dataverse is a reasonable place and I have a dataverse instance set up here we can use, if you like:
+http://informatics.mit.edu/data-2
+
