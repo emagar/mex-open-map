@@ -1,4 +1,4 @@
-% Created 2016-06-29 Wed 10:05
+% Created 2016-07-01 Fri 10:04
 \documentclass[article,letterpaper,times,12pt,listings-bw,microtype]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -183,9 +183,9 @@ Eric Magar
 \label{sec:orgheadline24}
 \begin{itemize}
 \item EM action: defend our approach, mild concession.
-\item Elements for our response: If the vote threshold to win another seat can be anticipated, strategic coordination is the attempt to pool votes (or remove opportunities to spread votes thin) in order to reach that threshold. Other things constant, the threshold should be lower for bias-favored parties than for other parties, and partisan bias should therefore remove incentives for bias-favored parties to coordinate strategically with others. If that were so, however, bias-unfavored parties have incentives to coordinate, joining forces in an attempt to overcome their disadvantage by accruing the large-party bonus associated with parameter rho. These simple statements suggest one obstacle to a theory of what partisan bias means under strategic coordination: it is unlikely that other things remain constant. In particular, gauging the relation between partisan bias and strategic coordination is contingent also on parameter rho. A formal exposition of this is Cox and Katz's (2002, chapter 3) model of the value to parties of redistricting plans, where utility is a function of both lambda and rho. Since our paper is focused in lambdas only, we do not undertake such a theory.
-\item More elements for our response: Regarding multipartism, Calvo and Micozzi show that increasing party competition pulls the votes-seats curve leftward (fig. 1-c). This is precisely what partisan bias achieves---but for a favored party only: a more efficient votes to seats conversion. Bias produces a rightward shift for unfavored parties: a less efficient votes to seats conversion. So whereas the effect of multipartism remains symmetric, partisan bias does not. We have added a footnote at the end of section 1 to cover this.
-\item Questions for co-authors: Should we keep the new foonote, or drop this? Can it be clarified?
+\item Clarification: The original manuscript was somewhat vague in this respect, miscommunicating the scope of our analysis. Reviewer \#4 rightly points to the theoretical potential of strategic elite and voter coordination and the resulting number of parties for our argument. In working this recommendation, however, we soon encountered difficulties, that we attempt to describe next. We therefore believe that the connection between electoral coordination and partisan bias is intricate and demands a paper in itself. We do elaborate on some of this in a new footnote.
+\item Elements for our response: If the vote threshold to win another seat can be anticipated, strategic coordination is the attempt to pool votes (or remove opportunities to spread votes thin) in order to reach that threshold. This process occurs at the district level (Cox 1997), but affects the nation-level phenomena that we observe. Other things constant, the threshold should be lower for bias-favored parties than for other parties, and partisan bias should therefore remove incentives for bias-favored parties to coordinate strategically with others. In such context, bias-unfavored parties have incentives to coordinate, joining forces in an attempt to overcome their disadvantage by accruing the large-party bonus associated with parameter rho. These simple statements suggest one obstacle to a theory of what partisan bias means under strategic coordination: it is unlikely that other things remain constant. In particular, gauging the relation between partisan bias (lambda parameters) and strategic coordination is contingent also on parameter rho. A formal exposition of this interrelation is Cox and Katz's (2002, chapter 3) model of how parties value different redistricting plans, where utility is a function of both lambda and rho. Since our paper is focused in lambdas only, we do not undertake such a theory.
+\item More elements for our response: Regarding multipartism, Calvo and Micozzi show that increasing party competition pulls the votes-seats curve leftward (fig. 1-c). This is precisely what partisan bias achieves---for a favored party only: a more efficient votes to seats conversion. Bias produces a \emph{rightward} shift for unfavored parties: a \emph{less} efficient votes to seats conversion. So whereas the effect of multipartism remains symmetric (absent bias, all parties get a seat bonus by reaching much less than 50 percent), partisan bias remains asymmetric. We have added a footnote at the end of section 1 to elaborate this.
 \end{itemize}
 \item {\bfseries\sffamily DONE} Section 3 is titled 'Measurement via Monte Carlo simulation'. I guess, the authors mean 'estimation'. The one-page section is not very instructive --- it provides no detailed insights to the applied procedure. The description of the modeling approach is not precise enough. (Some details are provided in footnote 14 in the results section).  More details of the formal setup (including the electoral system) are necessary. The derivation from, and the combination of the existing approaches should be precise and transparent.
 \label{sec:orgheadline25}
@@ -217,8 +217,8 @@ Eric Magar
 \label{sec:orgheadline29}
 \begin{itemize}
 \item EM action: explain that, in fact, it does.
-\item Elements for our response: Linzer (p. 408) suggests using OLS regressions as an alternative for deriving swing ratios ("Although equation (4) requires no parametric assumptions about the functional relationship between [party p's vote share and the p's expected simulated seat share], the relationship between simulated seat shares \ldots{} and simulated vote shares \ldots{} around [p's mean vote share] will be roughly oftentimes approximately linear. In that event, the slope of a linear regression of [p's simulated seat shares] on [p's simulated vote shares] will be roughly equivalent to the swing ratio estimate"). Linzer simulations represent the plausibility of various national-level election outcomes---both vote shares and seat shares---given the observed district-level conditions of that election. The uncertainty (a, say, 95-percent confidence interval) of the swing ratio estimate is obtained sorting simulated seat shares for a given vote share (typically the mean simulated vote share), and taking the 2.5 and 97.5 percentiles. Our regresions report coefficient standard errors instead: since standard errors are derived from the very same simulations, they account for pretty much the same uncertainty as the confidence interval. We could alternatively report 95-percent CIs around predicted seat shares: these would require more explanation than standard SEs, so we prefer the latter. We have added a section in the on-line appendix elaborating this point.
-\item Co-authors: does this make sense?
+\item Elements for our response: It does. Linzer (p. 408) suggests using OLS regressions as an alternative for deriving swing ratios ("Although equation (4) requires no parametric assumptions about the functional relationship between [party p's vote share and p's expected simulated seat share], the relationship between simulated seat shares \ldots{} and simulated vote shares \ldots{} around [p's mean vote share] will be roughly oftentimes approximately linear. In that event, the slope of a linear regression of [p's simulated seat shares] on [p's simulated vote shares] will be roughly equivalent to the swing ratio estimate"). Linzer simulations represent the plausibility of various national-level election outcomes given the observed district-level conditions of a given election. The uncertainty of the swing ratio estimate is captured by the variance in simulated outcomes (the spread of the cloud in our Figure 2). The standard errors of our regression coefficients are derived from the very same simulations, thus accounting for uncertainty. The on-line appendix reports an alternative (but related) measure: plots of 95-percent confidence intervals around predicted seat shares.
+\item Old version: The uncertainty (a, say, 95-percent confidence interval) of the swing ratio estimate is obtained sorting simulated seat shares for a given vote share (typically the mean simulated vote share), and taking the 2.5 and 97.5 percentiles. Our regresions report coefficient standard errors instead: since standard errors are derived from the very same simulations, they account for pretty much the same uncertainty as the confidence interval. We could alternatively report 95-percent CIs around predicted seat shares: these would require more explanation than standard SEs, so we prefer the latter. We have added a section in the on-line appendix elaborating this point.
 \end{itemize}
 \end{enumerate}
 \section{ToDo list}
@@ -260,5 +260,76 @@ Eric Magar
 
 \item Turn various code files (red.r, linzerElas.r, analizaEscenarios.r\ldots{}) into single---if longer---script
 \label{sec:orgheadline45}
+\end{enumerate}
+\section{{\bfseries\sffamily NO\_ACTION\_NEEDED} Editor's letter}
+\label{sec:orgheadline47}
+Ref.:  Ms. No. PG-2218
+
+Dear Dr. Eric Magar,
+
+Three expert reviewers have now commented on your manuscript. Thank you for waiting. Based on these reviews and my own reading, I invite you to resubmit a revised manuscript. You will see from the review reports appended below that all reviewers see considerable merit in your paper, although they also offer constructive advice on how to make the contribution clearer.
+
+Please let me know within the next couple of weeks whether you will proceed to revise and resubmit this manuscript for Political Geography. The revision should be accompanied with a brief anonymous response letter to the referees. Explain what you did to meet their feedback (or did not do, and why). This response must be anonymous (that is, do not sign the letter).
+
+We need the revision back within the next three months. It will then go back to the same referees for another look. The resubmission must stay below 11,000 words (inclusive) to be acceptable for further processing.
+
+To submit a revision, go to \url{http://ees.elsevier.com/jpgq/} and log in as an Author.  You will find your submission record under the menu item 'Submission Needing Revision'.
+
+Your username is: emagar@itam.mx
+
+If you need to retrieve password details, please go to:
+\url{http://ees.elsevier.com/jpgq/automail_query.asp}
+
+PLEASE NOTE: The journal would like to enrich online articles by visualising and providing geographical details described in Political Geography articles. For this purpose, corresponding KML (GoogleMaps) files can be uploaded in our online submission system. Submitted KML files will be published with your online article on ScienceDirect. Elsevier will generate maps from the KML files and include them in the online article.
+
+Political Geography features the Interactive Map Viewer, \url{http://www.elsevier.com/googlemaps}. Interactive Maps visualize geospatial data provided by the author in a GoogleMap. To include one with your article, please submit a .kml or .kmz file and test it online at \url{http://elsevier-apps.sciverse.com/GoogleMaps/verification} before uploading it with your submission.
+
+Please let me know if you have any questions or concerns.
+
+Yours sincerely
+
+Halvard Buhaug, PhD
+Associate Editor
+Political Geography
+
+\section{{\bfseries\sffamily DONE} Response to editor accepting to do Rnr}
+\label{sec:orgheadline48}
+Dear Dr. Buhaug, 
+It is with great pleasure that I read the good news about our submission. The reviews are constructive, offering substantive advise, and arrived rather fast! I am sure that they will help us improve the manuscript in the hope that it is acceptable for publication in Political Geography. My co-authors and I will gladly proceed with the revise and resubmit. We will send you a revised manuscript within two months. 
+Best,
+
+\section{{\bfseries\sffamily NO\_ACTION\_NEEDED} Other mails sent}
+\label{sec:orgheadline51}
+\begin{enumerate}
+\item {\bfseries\sffamily DONE} Mail on kml maps
+\label{sec:orgheadline49}
+Dear Dr. Halvard Buhaug, 
+My co-authors and I are working towards the revision of our manuscript. We should have it ready soon. I wish to inquire about digital maps that may be appropriate to illustrate the piece. 
+I visited Elsevier's Interactive Map Viewer. Unless I missed something, the example articles feature very simple maps pinpointing the studies' area(s). I have, however, prepared more elaborate kml files showing several features of federal districts --- such as coloring secciones according to recent electoral history, or adding bubbles indicating how many voters are registered --- in selected Mexican states. It should be straightforward to represent key variables in the manuscript (district malapportionment, turnout, and boundaries) in these maps. But Elsevier's verification tool will not show my maps. (One example is \url{http://ericmagar.com/data/maps/distFed/googleEarth/bc.kmz}).
+Two questions come to mind. How could I gauge how much of the problem is due to my inexperience with map-making or to the system's capacity? Would it be suitable to refer readers in a footnote to the repository where my kml files can be downloaded?
+Thank you for your advise.
+Best,
+
+\item {\bfseries\sffamily DONE} Mail 2 coauthors \textit{<2016-06-10 Fri>}
+\label{sec:orgheadline50}
+Dear co-authors, other than recovering from surgery (fractured shoulder in bike accident---painful indeed! but doing much much better), I have spent the last 6 weeks putting together a response to the Political Geography rNr. I have uploaded three items to our github repository for your consideration: 
+
+(A) the revised manuscript redMexBias09.pdf, 
+(B) a draft on an on-line appendix redMexBias09appendix.pdf, and 
+(C) all elements to write up a cover letter to the editor and referees RefereeReports2redMexBias08.pdf.  
+
+There are still a few revisions that need to be done to address all the referee's comments, but most is ready --- especially the time-consuming re-analysis. 
+
+I am asking you to please make time to have a good look at the three items so that we can to be ready to resubmit the manuscript. I haven't checked the calendar, but the three-month deadline must be a few weeks away. 
+
+Item C includes all the referee's comments broken into bite-size portions. Below each portion, the action I took in the revised manuscript is mentioned, and also a sketch of paragraph or two with a response, when needed, to the referees. These will be the substance for a cover letter. Please comment/critique/revise what I have done. 
+
+When we have agreement on the revisions/rebutals, the manuscript will need a final proof-read and edits to ensure that the English remains correct.
+
+I will finish polishing the on-line appendix when and if the article is accepted for publication. I will also clean my spaghetti code to make replication \textbf{much} easier. 
+
+Finally, if the article is accepted, we will need to decide where we want to store the appendix, data and code for replication. 
+
+Hope all is well, I look forward to reading your reactions.
 \end{enumerate}
 \end{document}
