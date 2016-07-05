@@ -1,5 +1,5 @@
 (TeX-add-style-hook
- "redMexBias09"
+ "redMexBias10"
  (lambda ()
    (TeX-add-to-alist 'LaTeX-provided-class-options
                      '(("article" "letter" "12pt")))
@@ -57,6 +57,8 @@
     "S:results"
     "F:posterior_s0s3"
     "T:GKBbreakdown"
-    "T:swRatios"))
+    "T:swRatios")
+   (LaTeX-add-bibliographies
+    "../bib/redMex"))
  :latex)
 

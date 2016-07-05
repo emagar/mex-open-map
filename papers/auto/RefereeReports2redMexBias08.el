@@ -1,8 +1,10 @@
 (TeX-add-style-hook
  "RefereeReports2redMexBias08"
  (lambda ()
+   (TeX-add-to-alist 'LaTeX-provided-class-options
+                     '(("article" "article" "letterpaper" "times" "12pt" "listings-bw" "microtype")))
    (TeX-add-to-alist 'LaTeX-provided-package-options
-                     '(("inputenc" "utf8") ("fontenc" "T1") ("ulem" "normalem")))
+                     '(("inputenc" "utf8") ("fontenc" "T1") ("ulem" "normalem") ("geometry" "margin=0.5in")))
    (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperref")
    (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperimage")
    (add-to-list 'LaTeX-verbatim-macros-with-braces-local "hyperbaseurl")
@@ -14,7 +16,7 @@
    (TeX-run-style-hooks
     "latex2e"
     "article"
-    "art10"
+    "art12"
     "inputenc"
     "fontenc"
     "fixltx2e"
@@ -28,7 +30,8 @@
     "textcomp"
     "amssymb"
     "capt-of"
-    "hyperref")
+    "hyperref"
+    "geometry")
    (LaTeX-add-labels
     "sec:orgheadline1"
     "sec:orgheadline15"
@@ -59,27 +62,6 @@
     "sec:orgheadline26"
     "sec:orgheadline27"
     "sec:orgheadline28"
-    "sec:orgheadline29"
-    "sec:orgheadline41"
-    "sec:orgheadline31"
-    "sec:orgheadline32"
-    "sec:orgheadline33"
-    "sec:orgheadline34"
-    "sec:orgheadline35"
-    "sec:orgheadline36"
-    "sec:orgheadline37"
-    "sec:orgheadline40"
-    "sec:orgheadline38"
-    "sec:orgheadline39"
-    "sec:orgheadline46"
-    "sec:orgheadline42"
-    "sec:orgheadline43"
-    "sec:orgheadline44"
-    "sec:orgheadline45"
-    "sec:orgheadline47"
-    "sec:orgheadline48"
-    "sec:orgheadline51"
-    "sec:orgheadline49"
-    "sec:orgheadline50"))
+    "sec:orgheadline29"))
  :latex)
 

@@ -1,5 +1,5 @@
 (TeX-add-style-hook
- "redMexBias09appendix"
+ "redMexBias10appendix"
  (lambda ()
    (TeX-add-to-alist 'LaTeX-provided-class-options
                      '(("article" "letter" "12pt")))
