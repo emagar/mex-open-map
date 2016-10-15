@@ -1,0 +1,85 @@
+IN ORIGINAL SUBMISSION (08)
+
+We examine, in isolation, the elections held in the single-
+member plurality-win districts. We do so because all voting and most campaigning take
+place in the plurality tier. 5
+
+Some might argue that bias distortions in mixed-member systems are of little, if any,
+consequence. The proportional representation tier is, after all, specifically designed to
+compensate for imbalances ensuing from plurality races. Indeed, the PR tier provides con-
+ditions for small parties to win seats where they may otherwise be unable to win in single-
+member districts alone, thus reasonably providing electoral conditions conducive to more
+than two parties. Yet, bias still has the potential to substantially distort representation in
+Mexico’s mixed-member system. Cox (1997) shows how in single-member districts, elec-
+tion contests tend to devolve into competition between the two leading party’s candidates
+in each district. If systematic partisan bias exists, trailing parties that do not field one of the
+top two candidates will find themselves disadvantaged in the PR tier as their voters aban-
+don their candidates to select one of the top two candidates most likely to win the district
+13election. Alternatively, bias may arise when a party systematically finds its supporters are
+concentrated in oversized, electorally uncompetitive, low turnout districts. 6
+
+5 Each
+voter casts a unique, non-exclusive, pooling vote to choose among candidates
+in 300 single-member districts with seats allocated by plurality. Votes then transfer to
+the party to which the candidate originally voted belongs, in order to allocate seats in five
+28second-tier districts of magnitude 40, by closed-list Hare PR, using a 2% threshold (Weldon
+2001).
+6 Compensating parties bears relation to, but is not the same as, compensating citizens of
+over-populated districts. Keeping these compensations distinct is important. Much of the
+evidence presented here, as in the scholarly literature, deals with party votes to seats ratios.
+From the normative standpoint, however, it is the ‘one person, one vote’ principle—one
+of Dahl’s (1972) preconditions of democratic government—that malapportionment antag-
+onizes, and party compensation is not designed to redress this imbalance. The exception
+would be a system with perfectly district-based parties, where measures to achieve party
+proportionality are, in fact, compensations for the district citizenry only. Shifts away from
+fully local parties, towards party nationalization, and party compensation stop accruing to
+citizens of the underrepresented districts only.
+
+---------------------
+
+in v10
+
+We examine, in isolation, the elections held in the single-member plurality-win
+districts. We thus single out, for analysis, the tier where the potential for distortion of the
+votes-to-seats conversion is at its fullest—fertile ground to see our procedure at work.
+
+Even if the mixed system, in the end, will attenuate votes-seats distorsions in the overall
+composition of the Cámara, the plurality tier partisan bias we analyze retains potential to
+mess up representation. Some inter-party distorsion may carry to the PR tier. Cox (1997)
+shows how in SMDs, election contests tend to devolve into competition between the two
+leading party’s candidates in each district. If systematic partisan bias further depresses seat-
+winning opportunities of trailing parties, these parties will find themselves disadvantaged
+in the PR tier as their voters abandon their candidates to select one of the top two candidates
+most likely to win the district election. Compensation is not free of intra-party distributive
+consequences. A party with a plurality seat deficit vis-à-vis its votes will receive extra
+Diputados from the national lists. Unlike district candidates, who are often nominated by
+the local party, PR lists are overwhelmingly decided by the national party leadership (Poiré
+2002). Evidence of systematic differences in how plurality and list Deputies behave in
+the Cámara (Kerevell 2015) suggests they do indeed represent different sets of interests.
+Partisan bias in the plurality tier therefore deprives local parties of some influence. 8
+
+8 Partisan
+bias in the plurality tier has normative consequences too. Compensating par-
+ties bears relation to, but is not the same as, compensating citizens of oversized, electorally
+uncompetitive, low turnout districts. Keeping these compensations distinct is important.
+Much of the evidence presented here, as in the scholarly literature, deals with party votes
+to seats ratios. From the normative standpoint, however, it is the ‘one person, one vote’
+principle—one of Dahl’s (1972) preconditions of democratic government—that bias an-
+tagonizes, and party compensation is not designed to redress this imbalance.
+
+
+----------------------------------
+
+NEW VERSION
+
+We demonstrate our procedure by analysis of recent Mexican lower chamber of Congress elections. The C\'amara de Diputados has been elected with a mixed-member electoral system for decades. Systems of this nature give voters a direct role in the election of representatives from single-member plurality-win districts, while additionally using some form of PR to mitigate votes-seats distortions that arise in plurality systems \citep{shugart.wattenbergIntro2001}.\footnote{Each voter casts a unique, non-exclusive, pooling vote to choose among candidates in 300 single-member districts with seats allocated by plurality. Votes then transfer to the party to which the candidate originally voted belongs, in order to allocate seats in five second-tier districts of magnitude 40, by closed-list Hare PR, using a 2\% threshold (3\% since 2015). Compensation tops over-representation at 8\% or less. See \citet{weldonMixedMemberSys2001}.} We examine, in isolation, the elections held in the single-member districts, where diputado campaigning takes place. 
+
+It is easy to lose sight of partisan bias' potential to mess up representation in mixed systems.\footnote{We acknowledge one anonymous referee for pushing us to justify this part of our research design.} Partisan bias originating in plurality districts retains distributive effects even after the mixed systems took care of attenuating disproportionality. Some are experienced by the local leaders losing ground relative to national leaders. A plurality seat deficit vis-\`a-vis its votes earns a party extra Diputados from the PR list. Unlike district candidates, often nominated by the state party, PR lists are decided by the national party \citep{poire.phd.2002}. Evidence of systematic differences in how plurality and list members behave in the Cámara \citep{kerevelPork2015} suggests they do indeed represent different sets of interests. By triggering bigger list allocations for some parties, more plurality partisan bias inevitably arrests local influence in the legislative party. Consider that disproportionality \citep{gallagherDisproportionality1991} in the period averaged 15 points in the plurality tier and 7 points overall---a drop partly obtained by electing 15 to 30 PAN Diputados (the party with the most deficits) representing national party interets with votes won by many (unelected) candidates from the local party. Plurality partisan bias in a mixed system has normative consequences too. Compensating \emph{parties} bears relation to, but is not the same as, compensating \emph{citizens} of oversized, electorally uncompetitive, low turnout districts. Much of the evidence presented here, as in the scholarly literature, deals with party votes:seats ratios. From the normative standpoint, however, it is the `one person, one vote' principle---one of Dahl's \citeyearpar{dahl.1972} preconditions of democratic government---that bias antagonizes, and party compensation is not designed to redress this imbalance. And, as the averages reported suggest, compensation brings a substantive drop in disproportionality, but by no means a vanquish. 
+
+
+
+
+
+
+
+ 
