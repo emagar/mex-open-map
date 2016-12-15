@@ -1,0 +1,389 @@
+\documentclass[xcolor=dvipsnames]{beamer}  % ALLOWS CHANGE IN COLOR
+\usepackage{beamerthemesplit}
+
+%% commenting the above and uncommenting below prints handout (use 4 on 1 or 8 on 1)
+% \documentclass[handout,xcolor=dvipsnames]{beamer}     % TO PRINT PRESENTATION HANDOUT
+% \usepackage{pgfpages}
+% \pgfpagesuselayout{8 on 1}[letter, border shrink=5mm]
+
+\usepackage{url}
+\usepackage{ae} % or {zefonts}
+\usepackage[T1]{fontenc}
+\usepackage[ansinew]{inputenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+
+\usepackage{amsmath}
+
+\usepackage{graphicx}
+%\graphicspath{"../../graphs/"}
+\usepackage{color}
+%\usepackage[colorlinks]{hyperref} % beamer loads this by default, needed only to change default behavior? 
+\usepackage{tikz} % Easier syntax to draw pgf files (invokes pgf automatically)
+\usetikzlibrary{arrows,shapes.geometric}
+
+\usepackage{tabulary} % automatic column length in tables with long text string
+%% use LRJC for auto, and lrjc for normal column width
+\setlength\tymin{10pt}       %% change behavior, see p. 254 LaTeX companion
+\setlength\tymax{\maxdimen}  %% change behavior, see p. 254 LaTeX companion
+
+\usepackage{multirow} %allows multiple rows in tables
+
+%\usecolortheme{crane}     %Color yellow
+%\usetheme{Warsaw}
+\usecolortheme[named=Gray]{structure}
+
+\useoutertheme[footline=empty]{}  % PUTS COLORED LINE AT FOOT WITH TITLE, AUTHOR, PAGE, etc
+%\usetheme{Berkeley}
+\usetheme[height=7mm]{Rochester}
+%\setbeamertemplate{items}[ball]   % ITEMS IN 3D BALLS (alt CIRCLES)
+\setbeamertemplate{navigation symbols}{}  % DROPS NAVIGATION ICONS
+\setbeamertemplate{blocks}[rounded][shadow=true]
+
+%\setbeamertemplate{footline} {
+%    \begin{beamercolorbox}{section in head/foot}
+%    \insertsectionnavigationhorizontal{\paperwidth}{}{plus1filll
+%    \insertframenumber}
+%    \end{beamercolorbox}
+%}
+
+%\setbeamertemplate{navigation symbols}{\insertslidenavigationsymbol,
+%\insertdocnavigationsymbol} \setbeamertemplate{footline} {
+%    \begin{beamercolorbox}{section in head/foot}
+%    \insertsectionnavigationhorizontal{\paperwidth}{}{plus1filll
+%    \insertframenumber}
+%    \end{beamercolorbox}
+%}
+
+\setbeamercovered{transparent}
+\setbeamertemplate{caption}{\insertcaption}
+\setbeamertemplate{footline}[frame number] % adds slide number, overrides split footer with authors/title that the theme uses
+
+\tikzstyle{nodo} = [circle, draw=black, fill=white, text=black]
+\tikzstyle{end} = [circle, minimum width=3pt,fill, inner sep=0pt]
+
+% \AtBeginSection[] {
+%    \begin{frame}
+%        \frametitle{Road map}
+%        \tableofcontents[currentsection]
+%    \end{frame}
+% }
+
+\title[Automatización]{Redistritación automatizada en México: \\ retos y oportunidades}
+%\subtitle{Party bias and responsiveness in Mexico}
+%\author[Trelles, Altman, Magar, McDonald]{A. Trelles\inst{1} \and M. Altman\inst{2} \and E. Magar\inst{3}  \and M.P. McDonald\inst{4}}
+\author[Magar]{Eric Magar\inst{1}}
+\institute[ITAM]{\inst{1} ITAM}
+%\address{}
+\date[12dic16]{TEPJF, 12/12/2016}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\frame[plain]{\titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}                      % SLIDE
+
+    \frametitle{Motivación}
+
+Reto: \alert{mejorar} como dibujamos los distritos en México
+
+\pause
+
+\bigskip
+
+Redistritación por \textbf{comisión independiente} \emph{vs} por \textbf{legisladores}
+
+\begin{enumerate}
+\item ¿Se garantiza un resultado \emph{justo} cuando los políticos no eligen a sus votantes?
+\item ¿Los partidos pueden influir en el trazo de fronteras distritales? ¿Cómo?
+\item ¿Es posible transparentar el proceso? ¿Hacerlo más participativo?
+\end{enumerate}
+
+% \bigskip
+
+% Describiremos como se redistrita en México y sugeriremos algunas áreas donde puede mejorarse \\ perspectiva TEPJF
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \frame {                      % SLIDE
+%     \frametitle{Road map}
+% \tableofcontents%[section=1]
+% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Redistricting in Mexico}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{frame}                      % SLIDE
+
+%     \frametitle{Background on Mexico}
+
+% \begin{itemize}
+
+% \item 32 states
+% \item Democratic since 1997
+% \item Lower chamber of Congress elected every 3 years
+% \item Mixed system: 300 SMD + 200 PR seats
+% \item Single-term limits removed in 2018
+% \item Independent board (IFE) organizes elections and redistricting
+
+% \end{itemize}
+
+% \end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+    \frametitle{Redistritación en México}
+
+Hemos inaugurado mapas federales
+\begin{itemize}
+\item en 1997
+\item en 2006
+\item en 2015 se dibujó pero no se adoptó
+\item en 2018?
+\end{itemize}
+
+\bigskip
+
+El IFE/INE ha estado a cargo, usa un proceso automatizado
+
+\bigskip
+
+INE también traza los distritos locales
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+    \frametitle{Redistritación automatizada}
+\begin{enumerate}
+\item<1> \textbf{Distribución} de 300 distritos entre los estados
+\item<1-3> La \textbf{computadora} hace una propuesta para cada estado
+\item<1-3> Los \textbf{partidos} proponen cambios
+\item<1> Repita 2 y 3
+\item<1> El \textbf{Consejo General} aprueba el mapa
+\item<1-3> El \textbf{Tribunal} vela por los derechos 
+\end{enumerate}
+
+\pause
+\pause
+
+\begin{multline*}
+\texttt{Costo} = .4 \times \texttt{EquilPoblación} + .3 \times \texttt{IntegridadMunicipal} \\
++ .2 \times \texttt{TiemposTraslado} + .1 \times \texttt{Compacidad}
+\end{multline*}
+
+%\pause
+
+%$\pm15\%$ imbalance considered legal (!)
+
+}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% \begin{frame}                      % SLIDE
+%     \frametitle{The redistricting process}
+% \begin{center}
+%    \includegraphics[width=8cm, angle=-90]{../../graphs/mexRedisProcessFlowchart.pdf}
+% \end{center}
+
+% \end{frame}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% \begin{frame}                      % SLIDE
+%     \frametitle{Apportionment}
+
+
+% Hamilton method used:
+
+% \begin{itemize}
+% \item The quota (or price of a seat) is $Q = \frac{\text{nation's population}}{300}$
+
+% \item First allocation is $\frac{\text{state's population}}{Q}$, rounded down
+
+% \item Every state gets 2 seats min
+
+% \item Unallocated seats, if any, awarded to states with largest fractional remainders
+% \end{itemize}
+
+% \bigskip
+
+% %\pause
+
+% Most recent decennial census must be used 
+
+% \begin{itemize}
+% \item ... but no obligation to redistrict as soon as available
+% \item 7-year lag on average: 199\textbf{7}, 200\textbf{6}, 201\textbf{8}
+% %\item and IFE considers $\pm15\%$ imbalance normal (!)
+% \end{itemize}
+
+% \bigskip
+
+% Bureaucratic leeway: $\pm15\%$ tolerance
+
+% \end{frame}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% \begin{frame}                      % SLIDE
+%     \frametitle{Optimization algorithm}
+
+% Simulated annealing = probabilistic meta-heuristic for optimization \\ locates a good approximation to the global optimum of the cost function in a large search space
+
+% \bigskip
+
+% Thousands of iterations using electoral \emph{secciones} 
+
+% \bigskip
+
+% Combinatorial optimization algorithm used to generate 
+% the first scenario in each state
+
+
+% \begin{center}
+%    \includegraphics[width=5cm]{../../graphs/sim.pdf}
+% \end{center}
+
+% Board claims that this is a public process, but the \\ operation and procedures are done \alert{behind closed doors}
+
+% \end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+     \frametitle{El humano aún puede batir a la máquina}
+
+\begin{center}
+   \tiny{\emph{Moore's Law}}\\
+   \includegraphics[width=4cm]{mooresLaw.png}
+\end{center}
+
+\begin{itemize}
+\item Fácil mejorar el mapa (``bajar el costo'') \\a pesar del enorme poder de la informática
+\item Los partidos lo han hecho al proponer cambios al mapa
+\item No hay análisis sistemático del proceso de revisión
+\end{itemize}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+    \frametitle{Un ejemplo ilustrativo}
+\begin{center}
+   \includegraphics[width=11cm]{pueRev2a.pdf}
+\end{center}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+    \frametitle{Un ejemplo ilustrativo}
+\begin{center}
+   \includegraphics[width=11cm]{pueRev2b.pdf}
+\end{center}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\begin{frame}                                       % SLIDE
+
+    \frametitle{Mejoras en la mitad de los estados}
+\begin{center}
+   \includegraphics[width=8cm]{../../graphs/propsAndCost.pdf}
+\end{center}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+    \frametitle{La caja negra}
+
+\begin{itemize}
+\item Partidos introdujeron 500+ revisiones al mapa de 2013
+\item Difícil que un observador externo discierna efectos
+\item Automatizar no elimina el potencial de manipulación, la mitiga
+\item ¿Cómo influyen los partidos? ¿Los expertos?
+\end{itemize}
+
+\bigskip
+
+Abrir la caja negra es \alert{fundamental} para garantizar la constitucionalidad del mapa
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+    \frametitle{La caja negra}
+Tres elementos conspiran
+\begin{enumerate}
+\item Complejidad del problema
+\item Transparencia \emph{de jure} pero opacidad \emph{de facto}
+\item Participación muy acotada
+\end{enumerate}
+
+\bigskip
+
+Las cortes de EE.UU. a menudo recurren a especialistas externos
+
+\bigskip
+
+Deseable invitar a más actores de la sociedad al proceso para generar información adicional al INE
+}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% \begin{frame}
+%     \frametitle{Parties protect strongholds?}
+
+% District similarity index = share common population \\ (Cox\&Katz 2002)
+
+% \bigskip
+
+% \begin{center}
+% \begin{footnotesize}
+%   \begin{tabular}{lrrrrr}
+%   Similarity between          &   min  &  25\%  & median &  75\% &  max \\ \hline
+%   initial proposal and SQ     & 0.128  & 0.419  & 0.584  & 0.755 &  1   \\
+%   final proposal and SQ       & 0.125  & 0.437  & 0.643  & 0.805 &  1   \\
+%   final and initial proposals & 0.174  & 0.705  & 0.967  & 1     &  1   \\
+%   \end{tabular}
+% \end{footnotesize}
+% \end{center}
+% \end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+     \frametitle{Ejemplo: el distrito IV de Sonora}
+\begin{center}
+   \includegraphics[width=11cm]{mapa-E32-gps-mexico-hermosillo-sonora.jpg}
+\end{center}
+\begin{flushright} \footnotesize{Fuente: http://cartografiagps.com} \end{flushright}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+     \frametitle{Ejemplo: el distrito IV de Sonora}
+\begin{center}
+   \includegraphics[width=6cm]{Sonora_Municipios_IV_Distrito_Electoral_Federal.png}
+\end{center}
+\begin{flushright} \footnotesize{Fuente: http://wikipedia.org} \end{flushright}
+
+Actores locales habrían detectado dificultades del terreno
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame{
+     \frametitle{Ejemplo: derechos de los pueblos indígenas}
+
+\begin{itemize}
+\item Art.\ 2 obliga a tomarlos en cuenta
+\item INE lo ha hecho detectando municipios con muchos hablantes de lengua indígena
+\item Sentencia reciente: obligación de consultar a la comunidad --- encuesta
+\item Se puede/debe hacer mejor, ¿cómo?
+\end{itemize}
+
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+\frame {                      % SLIDE
+
+    \frametitle{En resumen}
+
+\begin{itemize}
+\item Automatización no elimina el potencial de manipulación (partidista u otra) del mapa, lo mitiga
+\item Con la reelección, más actores se involucrarán en el proceso
+\item Nada fácil para el Tribunal evaluar la constitucionalidad de un mapa
+\item Deseable: transparencia \emph{de facto}, más y mejor información  
+  % \begin{enumerate}
+  % \item Explicit rules violated
+  % \item Ad-hoc operationalization
+  % \item Parties acting as if implicit rules operational
+  % \end{enumerate}
+\end{itemize}
+\pause
+
+\bigskip
+
+\begin{center}
+\textbf{¡Gracias!}
+\end{center}
+}
+\end{document}
+

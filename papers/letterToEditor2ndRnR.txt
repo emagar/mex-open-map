@@ -1,0 +1,102 @@
+Ref.:  Ms. No. PG-2218R1
+Components of Partisan Bias Originating from Single-Member Districts in Multi-Party Systems: An Application to Mexico
+Political Geography
+
+Dear Dr. Eric Magar,
+
+One of the original reviewers has commented on your revised manuscript. Thank you for waiting. Based on this review and my own reading, I am extending an invitation to resubmit another version of your manuscript for final decision. As you will see, R4 is still critical of aspects of your study and questions the applicability of Mexico as an illustrative case for your method. I expect you to consider the issues raised by R4 and more explicitly address the reviewer's concern about possible noise introduced by dynamics of strategic behavior. Secondly, while I agree with R4 that the manuscript is improved and in several ways more coherent, the increasing methodological focus also has made it somewhat less interesting to the average reader of Political Geography. Hence, I encourage you to go through the manuscript with a view to increasing clarity and, where feasible, reduce technical jargon. Also, it would increase the study's general appeal if you could end by reflecting a bit
+on the extent to which the uncovered countervailing forces of the different biases are likely to exist in multi-party systems beyond Mexico.
+
+Because these problems are relatively minor, I anticipate that I will be able to accept the next version of your paper without having to send it out for re-review. In addition, because they are relatively minor, I am hoping that you can submit your revisions within the next few weeks. The resubmission must stay below 11,000 words (inclusive).
+
+
+
+Yours sincerely
+
+Halvard Buhaug, PhD
+Associate Editor
+Political Geography
+
+----
+
+R4
+
+The author(s) have made efforts in revising their manuscript. It has improved. However I am still not
+convinced about/by the main message of this paper. In my view, the problem of the paper boils
+down to the question whether one should publish a paper saying roughly and more or less implicitly
+that the Mexican case is actually not appropriate for this kind of method. The answer to my question
+whether and how the PR component and strategic coordination between parties and voters at
+different levels have an impact on the correct identification of partisan bias actually relies on
+referring to another referee’s recommendation to frame the paper as a purely methodical one. This
+implies that the authors mechanistically apply that method to the district level (as they explicitly and
+frankly wrote in the first submission).
+The second point, why I am still skeptical is the missing theoretical foundation of this application
+(which in is directly linked to my first point).
+Nevertheless, the authors draw far-reaching conclusions from their analysis:
+„ Our application reveals how the plurality component of Mexico’s mixed electoral system gives
+persistent advantage to some parties in recent congressional elections. Relative to the PAN, there is
+evidence of small, but systematic partisan bias in favor of the PRI in the votes-to-seats conversion,
+and of a larger, if more volatile, bias favorable to the PRD throughout the period“
+In my view these are not covered by the underlying processes. We know from recent developments
+in electoral-research in the last 10 years that there are multidirectional interferences between tiers
+of electoral systems, and there are interdependencies between different components of electoral
+systems shaping parties’ strategies.
+
+
+--
+
+Strategy
+If the vote threshold to win another seat can be anticipated, strategic coordination is the attempt to pool votes (or remove opportunities to spread votes thin) in order to reach that threshold. This process occurs at the district level (Cox 1997), but affects the nation-level phenomena that we observe. Other things constant, the threshold should be lower for bias-favored parties than for other parties, and partisan bias should therefore remove incentives for bias-favored parties to coordinate strategically with others. In such context, bias-unfavored parties have incentives to coordinate, joining forces in an attempt to overcome their disadvantage by accruing the large-party bonus associated with parameter rho. These simple statements suggest one obstacle to a theory of what partisan bias means under strategic coordination: it is unlikely that other things remain constant. In particular, gauging the relation between partisan bias (lambda parameters) and strategic coordination is contingent also on parameter rho. A formal exposition of this interrelation is Cox and Katz's (2002, chapter 3) model of how parties value different redistricting plans, where utility is a function of both lambda and rho. Since our paper is focused in lambdas only, we do not undertake such a theory.
+
+
+---
+
+Dear Dr. Buhaug,
+
+I am re-submitting our revised manuscript. Thank you for your patience (coordinating with co-authors at this stage of our academic terms took longer than I had anticipated!) 
+
+We have addressed, in the second paragraph of section 4, the main concern raised by R4. The point we try to convey is that PR compensation does, in fact, mostly redress inter-party imbalances in votes-seats ratios stemming from plurality races---as R4 notes. But distributive effects of plurality bias remain, and can even worsen after compensation. To illustrate, we focus in intra-party distributions of votes and seats. A party with a votes-seats deficit in plurality districts in mostly western states will, if PR lists are overwhelmingly populated with eastern state party members, end up with a worse east-west imbalance after the mixed system operates, than in plurality races only. (We highlight the national-local imbalance in the text, more relevant to Mexican politcs.) So plurality election bias can carry over in mixed systems, and merits inspection in isolation. A corollary is that Mexican plurality elections are appropriate for the method.
+
+R4's second concern is with how the PR tier affects what parties do in the plurality tier, possibly invalidating analysis of the latter in isolation. We have expanded footnote 8 in order to recognize this possibility, while arguing that the distortions affect small parties, not the larger three that we focus our analysis on.
+
+Finally, we also thoroughly revised the text to remove technical jargon and increase readability for Political Geography's large audience. The conclusion mentions the method's applicability to some other electoral systems. 
+
+The revised manuscript is 9,825 words long, inclusive (checked with http://app.uio.no/ifi/texcount/online.php). 
+File: redMexBias10.tex
+Words in text: 7152
+Words in headers: 43
+Words outside text (captions, etc.): 1385
+Number of headers: 9
+Number of floats/tables/figures: 7
+Number of math inlines: 88
+Number of math displayed: 5
+Words in bibliography: 1,136
+
+I hope that you find the revised manuscript acceptable.
+
+Best regards,
+
+Eric Magar
+
+---
+
+Ref.:  Ms. No. PG-2218R1
+Components of Partisan Bias Originating from Single-Member Districts in Multi-Party Systems: An Application to Mexico
+Political Geography
+
+Dear Dr. Buhaug and anonymous referees,
+
+I am re-submitting our revised manuscript. Thank you for your patience (coordinating with co-authors at this stage of our academic terms took longer than I had anticipated!) 
+
+We have addressed, in the second paragraph of section 4, the main concern raised by R4. The point we try to convey is that PR compensation does, in fact, mostly redress inter-party imbalances in votes-seats ratios stemming from plurality races---as R4 notes. But distributive effects of plurality bias remain, and can even worsen after compensation. To illustrate, we focus in intra-party distributions of votes and seats. A party with a votes-seats deficit in plurality districts in mostly western states will, if PR lists are overwhelmingly populated with eastern state party members, end up with a worse east-west imbalance after the mixed system operates, than in plurality races only. (We highlight the national-local imbalance in the text, more relevant to Mexican politcs.) So plurality election bias can carry over in mixed systems, and merits inspection in isolation. A corollary is that Mexican plurality elections are appropriate for the method.
+
+R4's second concern is with how the PR tier affects what parties do in the plurality tier, possibly invalidating analysis of the latter in isolation. We have expanded footnote 8 in order to recognize this possibility, while arguing that the distortions affect small parties, not the larger three that we focus our analysis on.
+
+Finally, we also thoroughly revised the text to remove technical jargon and increase readability for Political Geography's large audience. The conclusion mentions the method's applicability to some other electoral systems. 
+
+I hope that you find the revised manuscript acceptable.
+
+Best regards,
+
+The Authors
+
