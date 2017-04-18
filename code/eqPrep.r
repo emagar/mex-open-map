@@ -10,9 +10,10 @@
 # where equivalencias are saved
 eqd <- "~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/ifeRedist2013/equivSecc/"
 #
-# read equivalencia secciones districts 1994--2013
+# read secciones-to-districts relations 1994--2013
 #eq <- read.csv(file = paste(eqd, "tablaEquivalenciasSeccionales1994-2010.2013.csv", sep = ""), header = TRUE)
-eq <- read.csv(file = paste(eqd, "tablaEquivalenciasSeccionales1994-2014.csv", sep = ""), header = TRUE, stringsAsFactors = FALSE)
+#eq <- read.csv(file = paste(eqd, "tablaEquivalenciasSeccionales1994-2014.csv", sep = ""), header = TRUE, stringsAsFactors = FALSE)
+eq <- read.csv(file = paste(eqd, "tablaEquivalenciasSeccionalesDesde1994.csv", sep = ""), header = TRUE, stringsAsFactors = FALSE)
 eq <- eq[, -grep("loc|nac", colnames(eq))] # drop party amendments, useful for another project
 eq[, grep(x = colnames(eq), pattern = "dis")][is.na(eq[,grep(x = colnames(eq), pattern = "dis")])==TRUE] <- 0 # replace NAs with zero in district columns
 #eq <- eq[-which(eq$dis2013.1==0 & eq$dis2015>0), ] #drop new secciones created after 2013 redistricting --- commented to add 2015 votes

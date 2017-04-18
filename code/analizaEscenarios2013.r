@@ -6,8 +6,8 @@
 ############################################################################
 
 # NOTE:
-# Maps are named after the first congressional election they were used: the 1979, 1997, 2006 maps and the 2015 proposal (never adopted).
-# Short names for objects in the analysis of the 2015 proposals are d0 (the 2006 map or status quo), d1 (first IFE proposal) and d3 (third and final proposal, with party feedback). 
+# Maps are named after the first congressional election they were used: the 1979, 1997, and 2006 maps; the 2013 proposal that was never adopted for 2015 election is the 2013 map.
+# Short names for objects in the analysis of the 2013 proposals are d0 (the 2006 map or status quo), d1 (initial IFE proposal), d2 (second proposal, with party feedback), and d3 (third and final proposal, with more party feedback). 
 
 options(width = 140) # emacs screen size
 rm(list=ls())
@@ -18,7 +18,8 @@ setwd(wd)
 #
 #
 ######################################################################################################################
-## IMPORTS OBJECT eq TO MAP SECCIONES TO 1979, 1997, 2006 DISTRICTS AND TO TWO 2015 REDISTRICTING PROPOSALS.        ##
+## *Bloc 1*:                                                                                                          ##
+## IMPORTS OBJECT eq TO MAP SECCIONES TO 1979, 1997, 2006 DISTRICTS AND TO TWO 2013 REDISTRICTING PROPOSALS.        ##
 ## SCRIPT eqPrep.r MANIPULATES equivalencias FILE, WHICH HAS MISSING SECCIONES AND CAN BE UPDATED WHEN INFO ARRIVES ##
 ## ** This takes a minute or so to complete **                                                                      ##
 ######################################################################################################################
@@ -27,10 +28,12 @@ source(file = paste(cd, "eqPrep.r", sep = ""), echo = TRUE)
 rm(cd)
 #
 #
-#
-##################################
-## READ SECCION-LEVEL ELEC DATA ##
-##################################
+##########################################################################################
+## *Bloc 2*:                                                                            ##
+## READ SECCION-LEVEL ELECTION DATA AND COMPUTE DISTRICT-LEVEL RETURNS                  ##
+## d1 and d3 stand for 1st and 3rd scenarios of 2013 map, d0 for 2006 map (null change) ##
+## s1, s3, and s0 are state-level aggregates                                            ##
+##########################################################################################
 #
 ##################################
 ## pegué este bloque el 11may16 ##
@@ -67,10 +70,10 @@ dis2013 <-       eq[,c("edon","dis2015","munn","seccion","dis2013.3","dis2013.1"
 colnames(dis2013) <- c("edon","disn","munn","seccion","dis3er13","dis1er13")
 #
 # unassigned secciones need to be removed (these remain unassigned even after eqPrep's work
-## sel <- which(dis2013$disn==0 & dis2013$dis1er13==0); sel
+sel <- which(dis2013$disn==0 & dis2013$dis1er13==0); sel
 ## dis2013[sel,]
 dis2013 <- dis2013[-which(dis2013$disn==0 | dis2013$dis1er13==0 | dis2013$dis3er13==0),]
-## THESE WERE DROPPED IN EXCEL: dis2013 <- dis2013[-which(dis2013$seccion>8000),] # two secciones in puebla have disconnected seccion nums and blank municipality... ife anticipates but awaits court ruling?
+## THESE WERE DROPPED IN EXCEL: dis2013 <- dis2013[-which(dis2013$seccion>8000),] # two secciones in puebla have disconnected seccion nums and blank municipality... ife anticipates while awaiting court ruling?
 #
 # maybe unnecessary (IFE's municipal codes slightly differ from census)
 dis2013$ife <- dis2013$edon*1000 + dis2013$munn
@@ -270,7 +273,7 @@ df2015d3$pt[df2015d3$shSecCoalPrd>=.5] <- 0
 rm(shrPri,shrPrd)
 df2015d1[df2015d1$edon==9,]
 #
-## winner (different method than used in 2012 and earlier)
+## winner (more compact method than used in 2012 and earlier)
 # handy function to sort one data frame by order of another, matching data frame
 sortBy <- function(target, By){
     t <- target; b <- By;
@@ -351,9 +354,9 @@ df2015d3$winmg <- (tmpv[,1] - tmpv[,2])/df2015d3$efec
 rm(tmp,tmpl,tmpv)
 #
 # debug
-df2015d0[df2015d0$edon==6,]
-df2015d1[df2015d1$edon==24,]
-df2015d3[df2015d3$edon==24,]
+df2015d0[df2015d0$edon==6,]  # colima
+df2015d1[df2015d1$edon==24,] # sinaloa
+df2015d3[df2015d3$edon==24,] # sinaloa
 #
 # state aggregates statistics
 df2015s0 <- df2015d0
@@ -552,7 +555,9 @@ df2015s3$indepw   <- df2015s3$indepw/df2015s3$ndis
 head(df2015s3)
 ## hasta aquí 11may16 ##
 #
-#
+##############
+# 2012 votes #
+##############
 tmp <- read.csv( paste(dd, "dfSeccion2012.csv", sep=""), header=TRUE)
 tmp <- tmp[order(tmp$edon, tmp$disn, tmp$seccion),]
 # compute effective vote (without void ballots)
@@ -560,7 +565,7 @@ tmp$efec <- tmp$pan + tmp$pri + tmp$prd + tmp$pvem + tmp$pt + tmp$mc + tmp$panal
 head(tmp[tmp$edon==1,])
 # aggregates coalition votes where needed
 tmp$prdc <- tmp$prd+tmp$pt+tmp$mc+tmp$prdptmc+tmp$prdpt+tmp$prdmc+tmp$ptmc
-tmp$prd <- tmp$pt <- tmp$mc <- tmp$prdptmc <- tmp$prdpt <- tmp$prdmc <- tmp$ptmc <- NULL # UNLIKE PRI AND PVEM PARTIAL COALITIONS, THESE ARE REDUNDANT
+tmp$prd <- tmp$pt <- tmp$mc <- tmp$prdptmc <- tmp$prdpt <- tmp$prdmc <- tmp$ptmc <- NULL # UNLIKE PRI's AND PVEM's PARTIAL COALITIONS, PRD HAD NATIONAL COALITION AND THESE ARE REDUNDANT
 #
 tmp$dcoalpri <- rep(0, times=nrow(tmp))
 tmp$dcoalpri[tmp$pripvem>0] <- 1 # misses sections with coalition but no joint pri-pvem vote... next lines fix this
@@ -581,7 +586,7 @@ colnames(tmp)[which(colnames(tmp)=="dis1er13")] <- "dis13.1"
 colnames(tmp)[which(colnames(tmp)=="dis3er13")] <- "dis13.3"
 rm(tmp1)
 #
-# OJO: some secciones used in 2012 do not appear listed in IFE's 2013 redistricting scenarios. List of such secciones follows.
+# OJO: some secciones used in 2012 do not appear listed in IFE's 2013 redistricting scenarios. List of such secciones follows
 # 11may16: fixed
 select <- which(dis2013$dis1er13>0 & dis2013$dis3er13==0)
 data.frame(edon=dis2013$edon[select], seccion=dis2013$seccion[select])
@@ -885,7 +890,9 @@ df2012s3$panalw <- df2012s3$panalw/df2012s3$ndis
 #df2012s3$shDisCoalPri <-  df2012s3$shDisCoalPri/df2012s3$ndis
 head(df2012s3)
 #
-# 2009 data
+##############
+# 2009 votes #
+##############
 # READ ELEC DATA
 tmp <- read.csv( paste(dd, "dfSeccion2009.csv", sep=""), header=TRUE)
 tmp <- tmp[order(tmp$edon, tmp$disn, tmp$seccion),]
@@ -1215,7 +1222,9 @@ df2009s3$ptcw  <- df2009s3$ptcw/df2009s3$ndis
 #CoalPri <-  df2009s3$shDisCoalPri/df2009s3$ndis
 head(df2009s3)
 #
-# 2006 data
+##############
+# 2006 votes #
+##############
 # READ ELEC DATA
 tmp <- read.csv( paste(dd, "dfSeccion2006.csv", sep=""), header=TRUE)
 tmp <- tmp[order(tmp$edon, tmp$disn, tmp$seccion),]
@@ -1567,11 +1576,11 @@ tmpl <- sortBy(target=tmpl, By=tmpv)
 #tmpv <- t(apply(tmpv, 1, function(x) sort(x, decreasing = TRUE)))
 df2003d97$win <- tmpl[,1]
 
-###############################
-###############################
-##   describe seat changes   ##
-###############################
-###############################
+
+###############################################
+## *Bloc 3*:                                 ##
+## describe seat changes with different maps ##
+###############################################
 edo <- c("ags", "bc", "bcs", "cam", "coa", "col", "cps", "cua", "df", "dgo", "gua", "gue", "hgo", "jal", "mex", "mic", "mor", "nay", "nl", "oax", "pue", "que", "qui", "san", "sin", "son", "tab", "tam", "tla", "ver", "yuc", "zac")
 estados <- c("aguascalientes", "baja california", "baja california sur", "campeche", "coahuila", "colima", "chiapas", "chihuahua", "distrito federal", "durango", "guanajuato", "guerrero", "hidalgo", "jalisco", "mexico", "michoacan", "morelos", "nayarit", "nuevo leon", "oaxaca", "puebla", "queretaro", "quintana roo", "san luis potosi", "sinaloa", "sonora", "tabasco", "tamaulipas", "tlaxcala", "veracruz", "yucatan", "zacatecas")
 ##
@@ -1796,10 +1805,13 @@ data.frame(edo=c(edo, "tot"),
            prdc0=tmp40, prdc1=tmp41, prdc3=tmp43,
            oth0=tmp50, oth1=tmp51, oth3=tmp53)
 #
-rm( list = ls()[grep("tmp", ls())] )
+rm( list = ls()[grep("tmp", ls())] ) # clean
 
-## change s0/s1/s3 and years from here on to graph/estimate different data subsets
-## 3-year symmetric vote share matrix
+##################################
+## What does this bloc achieve? ##
+##################################
+# change s0/s1/s3 and years from here on to graph/estimate different data subsets
+# 3-year symmetric vote share matrix
 obj4 <- df2015s0
 obj1 <- df2012s0
 obj2 <- df2009s0
@@ -1994,13 +2006,16 @@ tmp <- tmp[tmp$votes>0,]
 ## tau.c ~ dgamma(.0001,.0001)
 ## }
 
-
+############################################################################################################
+## *Bloc 4*:                                                                                              ##
+## READ DISTRICT-LEVEL POPULATION DATA (LINEAR PROJECTIONS OF CENSUS FIGURES) AND MERGE WITH VOTE OBJECTS ##
+############################################################################################################
 # READ DISTRICT-LEVEL DATA PREPARED WITH red.r THAT CONTAINS POPULATION STATISTICS; MERGE POP STATS TO VOTE OBJECTS
-# 17may2016: volví a red.r para intentar interpolar exponencialmente las poblaciones --- circa línea 800 inter alia. No pinta bien, mejor lneal
-# 17may2016: some circularity, perhaps: this gets files prep with red.r; red.r may get elements created here... check
-# possible solution: export df objects here instead of after this block; invoke red.r which, in turn, prepares and exports objects with pop stats; import them here, on go on...
+# 17may2016: volví a red.r para intentar interpolar exponencialmente las poblaciones --- circa línea 800 inter alia. No pinta bien, mejor lineal
+# 17may2016: some circularity: this gets files prepared with red.r; red.r may get elements created here... check
+# possible solution: export df objects here instead of after this block; invoke red.r which, in turn, prepares and exports objects with pop stats; import them here, and move on...
 load(paste(dd, "votPobDis0018.RData", sep = ""))
-summary(votPobDis0018)
+summary(votPobDis0018) # this object wrongly calls 2013 map "2015 map"
 colnames(votPobDis0018$pob.distMap1997)
 colnames(votPobDis0018$pob.distMap2006)
 # simplify objects with relevant year only
@@ -2251,10 +2266,14 @@ elec0315 <-
          df2015s0=df2015s0,
 #         df2015s1=df2015s1,
          df2015s3=df2015s3)
-save(elec0315, file = paste(dd, "elec0315.RData", sep=""))
+## No need to save unless vote returns or population figures have changed
+#save(elec0315, file = paste(dd, "elec0315.RData", sep=""))
 rm(elec0315)
 
-## REGRESS VOTE SHARE ON RAW TOTAL VOTE
+##########################################
+## *Bloc 5*:                            ##
+## REGRESS VOTE SHARE ON RAW TOTAL VOTE ##
+##########################################
 tmp <- rep(NA,5)
 tmp1 <- data.frame(pancf=tmp, panp=tmp, pricf=tmp, prip=tmp, prdcf=tmp, prdp=tmp, morenacf=tmp, morenap=tmp); rownames(tmp1) <- seq(2003, 2015, 3)
 # 2003
@@ -2323,6 +2342,15 @@ tmp1[4,3] <- mean(tmp$winmg[tmp$prdcw==1 | tmp$prdw==1])
 tmp1[4,4] <- mean(tmp$winmg[tmp$morenaw==1])
 round(tmp1,2)
 
+######################################################################################################################
+## *Bloc 6*:                                                                                                        ##
+## IMPORT SIMULATED NATIONAL SEATS-VOTES DATA PRODUCED WITH LINZER METHOD                                           ##
+## Important:                                                                                                       ##
+## If you wish to re-produce Linzer draws and have not done so, you must do so by running script linzerElas.r now.  ##
+## Otherwise the simulated data in the distribution will be used. You will lose all unsaved data from the current   ##
+## session. You can choose to save the image now, or re-run all the above commands once linzerElas.r has finished.  ##
+######################################################################################################################
+#
 ## plot natl true and Linzer-simulated votes and seats
 load(paste(dd, "swingRatios9715.RData", sep = ""))
 #pdf(file = paste(wd, "graphs/vs2003.pdf", sep = ""), width = 6, height = 6)
@@ -2366,8 +2394,11 @@ text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 #dev.off()
 
-
-
+##########################################################################################################
+## *Bloc 7*:                                                                                            ##
+## BAYESIAN ESTIMATION OF KING MODEL USING JAGS                                                         ##
+## See http://mcmc-jags.sourceforge.net for details on how to downolad and install JAGS in your machine ##
+##########################################################################################################
 ### Packages for JAGS
 library(R2jags)
 ### JAGS/BUGS models
@@ -2537,6 +2568,7 @@ lambda.rho.7 <- function() {
     rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
 }
 
+summary(swRats)
 summary(swRats$df2015d0gree$seat)
 
 ######################################################
@@ -2629,7 +2661,6 @@ tmpRes <- my.jags(which.elec = 2015,
 
 res2015d0w.bar <- tmpRes; #rm(tmpRes)
 
-
 # inspect results
 quantile(tmpRes$BUGSoutput$sims.list$lambda[,1])
 #
@@ -2642,8 +2673,9 @@ quantile(res2015d0v$BUGSoutput$sims.list$lambda[,1])     - quantile(res2015d0w.b
 biasRespOnLinzerSimsRPM <- lapply(ls(pattern = "res[0-9]"), get);
 names(biasRespOnLinzerSimsRPM) <- ls(pattern = "res[0-9]")
 summary(biasRespOnLinzerSimsRPM)
-save(biasRespOnLinzerSimsRPM,
-     file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep =""))
+## # uncomment and change file name to avoid overwriting distributed results
+## save(biasRespOnLinzerSimsRPM,
+##      file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep =""))
 
 tmp$win <- NULL
 tmp <- df2015d0; round(colSums(tmp) / sum(tmp$efec), 2)

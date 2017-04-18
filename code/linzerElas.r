@@ -1,9 +1,9 @@
 rm(list = ls())
 options(width = 140) # emacs screen size
 #
-wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
-dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
-gd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/graphs/") # graph data directory
+wd <- c("/home/eric/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")        # save and retrieve objects
+dd <- c("/home/eric/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/")   # raw data directory
+gd <- c("/home/eric/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/graphs/") # graph data directory
 setwd(wd)
 
 # electoral data preprared in analizaEscenarios.r is read here
@@ -11,13 +11,22 @@ setwd(wd)
 #load(file = paste(dd, "elec0312.RData", sep = ""))
 load(file = paste(dd, "elec0315.RData", sep = ""))
 summary(elec0315)
-colnames(elec0315$df2006d0)
+colnames(elec0315$df2012d0)
+# notation: 
+# d3 are district returns with 2013 proposed map (3rd and final scenario), d0 are same with 2006 map, d97 with 1997 map 
+# pan, pri, etc = raw votes 
+# pric, prdc, etc = coalition votes
+# efec = total valid (effective) votes to compute vote shares
+# nr = votes for write-in candidates (invalid under electoral law) 
+# nul = void ballots 
+# lisnom = registered voters
+# shSecCoalPri = in counterfactual district aggregates, share of secciones with a coalition candidate 
+# panw etc = dummy equal 1 if party won district
+# winmg = winning margin
+# ptot = total district population
+# rris = Ansolabehere, Gerber, and Snyder (2002) representation index, district relative to statewide population
+# rrin = Ansolabehere, Gerber, and Snyder (2002) representation index, district relative to nationwide population
 
-## notations: df20..d0 in dataset are diputados federales returns for year 20.. aggregated into map "d0" (ie, 2006 map); use "d3" for 2013 map and "d97" for 1997 map
-##            efec refers to effective vote (votes cast - voided votes - votes for parties/candidates dropped from analysis)
-##            ptot is total population
-
-#
 ## ## use to extract all objects from list elec060912 if so wished
 ## for(i in 1:length(elec060912)){
 ##     ##first extract the object value
@@ -1677,7 +1686,5 @@ for (i in 2:4) {
         text(-0.023,60,"Liberals increase\n vote share by 1%",cex=1.4)
     }
 }
-
-
 
 

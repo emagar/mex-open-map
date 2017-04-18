@@ -1,3 +1,9 @@
+###########################################################################
+## Code is invoked from other scripts                                    ##
+## Script prepares 2013 escenario 1 and 3 districts                      ##
+## ** Invoking eqPrep.r has made this script obsolete **                 ##
+###########################################################################
+
 rm(list=ls())
 
 wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/")
