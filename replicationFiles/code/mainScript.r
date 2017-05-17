@@ -9,21 +9,21 @@
 options(width = 140) # emacs screen size
 rm(list=ls())
 #
+if(length(grep('mainScript.r',dir(),fixed=TRUE))!=1) stop ("Please set R's working directory to the base directory on the location of the unzipped directories from replicationFiles.zip")
 
-wd <- c("/home/eric/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/replicationFiles/code/") # set your working directory here --- should point to location where code files for replication are stored 
-setwd(wd)
+wd <- getwd()
 dd <- c("../data/") # data directory
 #
 #
 ###################################################################################
 ## *Bloc 1*:                                                                     ##
-IMPORTS OBJECT eq TO MAP SECCIONES TO 1979, 1997, 2006 DISTRICTS AND TO TWO 2013 ##
-REDISTRICTING PROPOSALS.                                                         ##
-SCRIPT eqPrep.r MANIPULATES equivalencias FILE, ORIGINALLY DISTRIBUTED BY IFE,   ##
-WHICH HAS BEEN UPDATED TO INCLUDE MORE MAPS AND DEAL WITH MOST SECCION CHANGES   ##
-("RESECCIONAMIENTO"). MISSING SECCIONES REMAIN, WITH SMALL POPULATIONS, MOSTLY   ##
-DUE TO RARE AND MINOR COURT-ORDERED DELIMITATION CHANGES BETWEEN MUNICIPALITIES; ##
-FIXING THEM IS METICULOUS AND WOULD RESULT IN NEGLIGIBLE VOTE/POPULATION CHANGES.##
+##IMPORTS OBJECT eq TO MAP SECCIONES TO 1979, 1997, 2006 DISTRICTS AND TO TWO 2013 ##
+##REDISTRICTING PROPOSALS.                                                         ##
+##SCRIPT eqPrep.r MANIPULATES equivalencias FILE, ORIGINALLY DISTRIBUTED BY IFE,   ##
+##WHICH HAS BEEN UPDATED TO INCLUDE MORE MAPS AND DEAL WITH MOST SECCION CHANGES   ##
+##("RESECCIONAMIENTO"). MISSING SECCIONES REMAIN, WITH SMALL POPULATIONS, MOSTLY   ##
+##DUE TO RARE AND MINOR COURT-ORDERED DELIMITATION CHANGES BETWEEN MUNICIPALITIES; ##
+##FIXING THEM IS METICULOUS AND WOULD RESULT IN NEGLIGIBLE VOTE/POPULATION CHANGES.##
 ###################################################################################
 source(file = "eqPrep.r", echo = TRUE)
 
@@ -85,7 +85,7 @@ rm(tmp1)
 colnames(tmp)
 ## Aggregates 2015 results by district
 df2015d0 <- tmp[order(tmp$edon, tmp$disn),] # resultados con distritos reales (adoptados en 2005)
-# así se hace en R un by yr mo: egen tmp=sum(invested) de stata
+# as? se hace en R un by yr mo: egen tmp=sum(invested) de stata
 df2015d0$pan <- ave(df2015d0$pan, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
 df2015d0$pri <- ave(df2015d0$pri, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
 df2015d0$pric <- ave(df2015d0$pric, as.factor(df2015d0$edon*100+df2015d0$disn), FUN=sum, na.rm=TRUE)
@@ -132,7 +132,7 @@ df2015d0$pt[df2015d0$shSecCoalPrd==1] <- 0
 df2015d0[df2015d0$edon==9,]
 #
 # VOTES WITH DISTRICTS PROPOSED IN 2013 (scen. 1)
-df2015d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2015d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
 df2015d1$pan <- ave(df2015d1$pan, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
 df2015d1$pri <- ave(df2015d1$pri, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
 df2015d1$pric <- ave(df2015d1$pric, as.factor(df2015d1$edon*100+df2015d1$dis13.1), FUN=sum, na.rm=TRUE)
@@ -166,7 +166,7 @@ df2015d1 <- df2015d1[duplicated(df2015d1$edon*100+df2015d1$dis13.1)==FALSE,]
 df2015d1$shSecCoalPri[df2015d1$edon==9] ## debug: should have some districts with incomplete coalition...
 #
 # VOTES WITH DISTRICTS PROPOSED IN 2013 (scen. 3)
-df2015d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2015d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
 df2015d3 <- df2015d3[order(df2015d3$edon, df2015d3$dis13.3),]
 df2015d3$pan <- ave(df2015d3$pan, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
 df2015d3$pri <- ave(df2015d3$pri, as.factor(df2015d3$edon*100+df2015d3$dis13.3), FUN=sum, na.rm=TRUE)
@@ -526,7 +526,7 @@ df2015s3$indepw   <- df2015s3$indepw/df2015s3$ndis
 #df2015s3$shDisCoalPri <-  df2015s3$shDisCoalPri/df2015s3$ndis
 #df2015s3$shDisCoalPrd <-  df2015s3$shDisCoalPrd/df2015s3$ndis
 head(df2015s3)
-## hasta aquí 11may16 ##
+## hasta aqu? 11may16 ##
 #
 ##############
 # 2012 votes #
@@ -596,7 +596,7 @@ df2012d0$pvem[df2012d0$shSecCoalPri==1] <- 0
 df2012d0[df2012d0$edon==24,]
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 1)
-df2012d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2012d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
 df2012d1 <- df2012d1[order(df2012d1$edon, df2012d1$dis13.1),]
 df2012d1$pan <- ave(df2012d1$pan, as.factor(df2012d1$edon*100+df2012d1$dis13.1), FUN=sum, na.rm=TRUE)
 df2012d1$pri <- ave(df2012d1$pri, as.factor(df2012d1$edon*100+df2012d1$dis13.1), FUN=sum, na.rm=TRUE)
@@ -621,7 +621,7 @@ df2012d1 <- df2012d1[duplicated(df2012d1$edon*100+df2012d1$dis13.1)==FALSE,]
 df2012d1$shSecCoalPri[df2012d1$edon==24] ## debug: should have some districts with incomplete coalition...
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 3)
-df2012d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2012d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
 df2012d3 <- df2012d3[order(df2012d3$edon, df2012d3$dis13.3),]
 df2012d3$pan <- ave(df2012d3$pan, as.factor(df2012d3$edon*100+df2012d3$dis13.3), FUN=sum, na.rm=TRUE)
 df2012d3$pri <- ave(df2012d3$pri, as.factor(df2012d3$edon*100+df2012d3$dis13.3), FUN=sum, na.rm=TRUE)
@@ -908,7 +908,7 @@ dim(df2009d0)
 df2009d0[df2009d0$edon==20,]
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 1)
-df2009d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2009d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
 df2009d1 <- df2009d1[order(df2009d1$edon, df2009d1$dis13.1),]
 #
 df2009d1$pan <- ave(df2009d1$pan, as.factor(df2009d1$edon*100+df2009d1$dis13.1), FUN=sum, na.rm=TRUE)
@@ -933,7 +933,7 @@ df2009d1 <- df2009d1[duplicated(df2009d1$edon*100+df2009d1$dis13.1)==FALSE,]
 dim(df2009d1)
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 3)
-df2009d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2009d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
 df2009d3 <- df2009d3[order(df2009d3$edon, df2009d3$dis13.3),]
 #
 df2009d3$pan <- ave(df2009d3$pan, as.factor(df2009d3$edon*100+df2009d3$dis13.3), FUN=sum, na.rm=TRUE)
@@ -1203,7 +1203,7 @@ df2006d0 <- df2006d0[duplicated(df2006d0$edon*100+df2006d0$disn)==FALSE,]
 dim(df2006d0)
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 1)
-df2006d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2006d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
 df2006d1 <- df2006d1[order(df2006d1$edon, df2006d1$dis13.1),]
 #
 df2006d1$pan <- ave(df2006d1$pan, as.factor(df2006d1$edon*100+df2006d1$dis13.1), FUN=sum, na.rm=TRUE)
@@ -1218,7 +1218,7 @@ df2006d1 <- df2006d1[duplicated(df2006d1$edon*100+df2006d1$dis13.1)==FALSE,]
 dim(df2006d1)
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 3)
-df2006d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habrá que recuperarlas)
+df2006d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
 df2006d3 <- df2006d3[order(df2006d3$edon, df2006d3$dis13.3),]
 #
 df2006d3$pan <- ave(df2006d3$pan, as.factor(df2006d3$edon*100+df2006d3$dis13.3), FUN=sum, na.rm=TRUE)
@@ -2186,7 +2186,7 @@ sum(tmp$mc)/sum(tmp$efec)
 sum(tmp$morenaw)/300
 colnames(tmp)
 
-# summarize central tendency of party bias à la Grofman et al
+# summarize central tendency of party bias ? la Grofman et al
 tmp <- biasRespOnLinzerSimsRPM
 #tmp <- biasResp0612oldNewDistrictsRPM
 tmp1 <- data.frame(panpri=rep(NA,4), prdpri=rep(NA,4), minorpri=rep(NA,4)); rownames(tmp1) <- c("raw","dist","turn","malap")
@@ -2250,7 +2250,7 @@ tmp12d3
 tmp15d0
 tmp15d3
 
-# summarize errors of party bias à la Grofman
+# summarize errors of party bias ? la Grofman
 nOppoSign <- function(x){
     sh <- round( sum(x>0) / length(x), 2)
     if (median(x)<=0) {
@@ -2535,7 +2535,7 @@ for (i in 1:3){#ncol(v)){
 
 
 
-# predict seats from pan=.33, pri=.33, prd=.33, rest=.01 (Márquez's unlikely but illustrative scenario).
+# predict seats from pan=.33, pri=.33, prd=.33, rest=.01 (M?rquez's unlikely but illustrative scenario).
 seats <- function(pan.sh=.3, pri.sh=.35, prd.sh=.25){
     rest <- 1-pan.sh-pri.sh-prd.sh;
     denom <- exp(res$BUGSoutput$sims.list$lambda[,1]) * pan.sh^res$BUGSoutput$sims.list$rho +
@@ -2590,7 +2590,7 @@ file <- "rhoExample"
 ##       #bg = "transparent")
 #
 plot(c(0,1),c(0,1), type = "n",
-#     xlab = "% votos", ylab = "% escaños", axes = FALSE,
+#     xlab = "% votos", ylab = "% esca?os", axes = FALSE,
      xlab = "vote share", ylab = "seat share", axes = FALSE,
      main = title)
 #axis(1, at = seq(0,1,.2), labels = seq(0,100,20))
@@ -2662,7 +2662,7 @@ color1.minus.pri <- c( "blue", "gold", "green", "cyan", "orange", "violet" )
 res <- tmp$res2003d0v; shift.v <- .35
 plot( c( -2.5, 2.5), -c(.5,5-.35),
      type="n", axes = FALSE, ylab = "", xlab = "bias relative to PRI")#, main = "Party bias")#"Bias: 2015 map (hypothetical)")
-#     type="n", axes = FALSE, ylab = "", xlab = "sesgo en relación al PRI", main = "Distritos propuestos")#"Distritos en vigor")
+#     type="n", axes = FALSE, ylab = "", xlab = "sesgo en relaci?n al PRI", main = "Distritos propuestos")#"Distritos en vigor")
 axis( side = 1, at = seq(from = -2.25, to = 2.25, by = .25), labels = FALSE)
 axis( side = 1, at = seq(from = -2, to = 2, by = 1), labels = c("-2","-1","0","+1","+2"))
 abline(v=seq(-2,2,.5), col= "gray70")
@@ -2888,7 +2888,7 @@ seat.hat <- function(party.vote=NA, lambdas=lambda.hat){ # analizes vote increme
     d5 <- exp( lambdas[5] ) * equis[,5]^rho.hat;
     d6 <- exp( lambdas[6] ) * equis[,6]^rho.hat;
     d7 <- exp( lambdas[7] ) * equis[,7]^rho.hat;
-    return(exp( lambdas[party.vote] ) *  equis[,party.vote]^rho.hat  / (d1+d2+d3+d4+d5+d6+d7)) # voto party crece linealmente, demás según peso relativo
+    return(exp( lambdas[party.vote] ) *  equis[,party.vote]^rho.hat  / (d1+d2+d3+d4+d5+d6+d7)) # voto party crece linealmente, dem?s seg?n peso relativo
 }
 
 tmp.l <- c(.06,0,-.02,0,0,0,0)
@@ -2939,7 +2939,7 @@ library(Cairo)
 title <- "State aggregates"
 #title <- "Federal deputies by state 2006-2012"
 #title <- "DipFed por estado 2006-2012, distritos en vigor" #propuestos"
-#title <- "Diputados Federales de mayoría 2006-2012"
+#title <- "Diputados Federales de mayor?a 2006-2012"
 type <- "pdf"
 #file <- paste("biasResp2006s3.", type, sep="")
 #file <- paste("resXedo20062012.", type, sep="")
@@ -2956,7 +2956,7 @@ plot(c(0,1),c(0,1), type="n",
      main=title,
      xlab = "vote share", ylab = "seat share", axes = FALSE)
 #     xlab = "% votes won in state", ylab = "% plurality seats won in state", axes = FALSE)
-#     xlab = "% votos en el estado", ylab = "% escaños en el estado", axes = FALSE)
+#     xlab = "% votos en el estado", ylab = "% esca?os en el estado", axes = FALSE)
 axis(1, at=seq(0,1,.2), lab=seq(0,1,.2))
 axis(2, at=seq(0,1,.2), lab=seq(0,1,.2))
 abline(a=0, b=1, lty=2)
@@ -2983,7 +2983,7 @@ setwd(wd)
 ## ## graph different bias resp combos in 2-pty setting
 ## equis <- seq(0,.99,.01)
 ## #logit(ye) <-  0 + 1 * logit(equis)
-## plot(c(0,1), c(0,1), type = "n", xlab = "%voto", ylab = "%escaños de mayoría", axes = FALSE)
+## plot(c(0,1), c(0,1), type = "n", xlab = "%voto", ylab = "%esca?os de mayor?a", axes = FALSE)
 ## abline(0,1,lty=2)
 ## axis(1, at = seq(0,1,.25), labels = seq(0,100,25))
 ## axis(2, at = seq(0,1,.25), labels = seq(0,100,25))
@@ -3019,7 +3019,7 @@ Cairo(file=paste("lisnom.dis.2012.", type, sep=""),
       dpi = 96)
 plot(ln2012$rel, ylab = "sobre-/sub-objetivo (%)", xlab = "distritos",
      ylim = c(min(ln2012$rel), max(ln2012$rel)+25),
-     type="n", main = "Lista nominal 2012 vs. tamaño ideal", axes = FALSE)
+     type="n", main = "Lista nominal 2012 vs. tama?o ideal", axes = FALSE)
 axis(1, at = c(1, seq(from = 50, to = 300, by = 50)))
 axis(2, at = seq(from = -40, to = 80, by = 20))
 polygon(x = c(-10,310,310,-10), y = c(-15,-15,15,15), lty = 0, col = "grey80")
