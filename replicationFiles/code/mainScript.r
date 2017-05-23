@@ -65,14 +65,14 @@ tmp$prdc <- tmp$prd+tmp$pt+tmp$prd_pt
 dis2013 <-       eq[,c("edon","dis2015","munn","seccion","dis2013.3","dis2013.1")]
 colnames(dis2013) <- c("edon","disn","munn","seccion","dis3er13","dis1er13")
 #
-# unassigned secciones need to be removed (these remain unassigned even after eqPrep's work
+# unassigned secciones need to be removed: these remain unassigned even after eqPrep's work
 sel <- which(dis2013$disn==0 & dis2013$dis1er13==0); sel
 ## dis2013[sel,]
 dis2013 <- dis2013[-which(dis2013$disn==0 | dis2013$dis1er13==0 | dis2013$dis3er13==0),]
 #
-# maybe unnecessary (IFE's municipal codes slightly differ from census)
+# maybe unnecessary (IFE's municipal codes slightly differ from census codes)
 dis2013$ife <- dis2013$edon*1000 + dis2013$munn
-dis2013 <- dis2013[,c("edon","disn","munn","seccion","ife","dis3er13","dis1er13")]
+dis2013 <- dis2013[,c("edon","disn","munn","seccion","ife","dis3er13","dis1er13")] # subset data columns
 #
 tmp$edon.secn <- tmp$edon*10000 + tmp$seccion
 dis2013$edon.secn <- dis2013$edon*10000 + dis2013$seccion
@@ -2250,7 +2250,7 @@ tmp12d3
 tmp15d0
 tmp15d3
 
-# summarize errors of party bias ? la Grofman
+# summarize errors of party bias a la Grofman
 nOppoSign <- function(x){
     sh <- round( sum(x>0) / length(x), 2)
     if (median(x)<=0) {
@@ -2378,14 +2378,14 @@ tmp15d0
 tmp15d3
 
 
-# summarize responsiveness parameters (90% and median estimated with R vote)
+# summarize responsiveness parameters (90% and median estimated with raw vote --- R in GKB's terminology)
 tmp <- biasRespOnLinzerSimsRPM
-round( quantile(tmp$res2003d97R$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-round( quantile(tmp$res2006d0R$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-round( quantile(tmp$res2009d0R$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-round( quantile(tmp$res2012d0R$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-round( quantile(tmp$res2015d0R$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-#round( quantile(tmp$res0612d0R$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
+round( quantile(tmp$res2003d97v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
+round( quantile(tmp$res2006d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
+round( quantile(tmp$res2009d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
+round( quantile(tmp$res2012d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
+round( quantile(tmp$res2015d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
+#round( quantile(tmp$res0612d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
 
 
 ###########################################################################
@@ -2471,7 +2471,7 @@ v <- tmp$vmat
 v.bar <- tmp$v.barmat
 w.bar <- tmp$w.barmat
 colnames(s) <- colnames(v)
-res <- head(v, n=6); res[] <- NA; rownames(res) <- c("swR","se","p","lo95","hi95","r2")
+res <- head(v, n=6); res[] <- NA; rownames(res) <- c("swR","se","p","lo95","hi95","r2") # generate empty matrix with proper col/row names
     #
     for (i in 1:ncol(v)){
 #    i <- 1 # debug
@@ -2533,9 +2533,8 @@ for (i in 1:3){#ncol(v)){
     ## res["hi95",i] <- res["swR",i] + 2 * res["se",i]
 }
 
-
-
-# predict seats from pan=.33, pri=.33, prd=.33, rest=.01 (M?rquez's unlikely but illustrative scenario).
+# predict seats from pan=.33, pri=.33, prd=.33, rest=.01 (Marquez's unlikely but illustrative scenario).
+res <- biasRespOnLinzerSimsRPM$res2012d0v;
 seats <- function(pan.sh=.3, pri.sh=.35, prd.sh=.25){
     rest <- 1-pan.sh-pri.sh-prd.sh;
     denom <- exp(res$BUGSoutput$sims.list$lambda[,1]) * pan.sh^res$BUGSoutput$sims.list$rho +
@@ -2563,7 +2562,7 @@ rho.hat <- res$BUGSoutput$median$rho
 lambda.hat <- c(lambda.hat[1], 0, lambda.hat[2:6])
 #
 
-## ESTO HACE UNA VERSION VISUAL DE LOS PARAMETROS DEL MODELO
+## PERFORMS A VISUAL INSPECTION OF MODEL PARAMETERS
 #save.dir <- "~/Dropbox/mydocs/op-edsEtc/blog/graphs/" # donde guardar
 save.dir <- paste(wd, "graphs/", sep = "")
 logit <- function(X){ log( X / (1-X) ) }
