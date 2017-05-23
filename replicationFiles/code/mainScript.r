@@ -2185,6 +2185,8 @@ tmp <- eval(parse(text=paste("biasRespOnLinzerSimsRPM$res", which.elec, which.ma
 #summary(tmp)
 pdf(paste(gd2, "traceplot", which.elec, which.map, which.v, ".pdf", sep = ""))
 traceplot(tmp, ask = FALSE)
+
+
 dev.off()
 rm(gd2, which.elec, which.map, which.v, tmp)
 
