@@ -13,6 +13,13 @@ if(length(grep('mainScript.r',dir(),fixed=TRUE))!=1) stop ("Please set R's worki
 
 wd <- getwd()
 dd <- c("../data/") # data directory
+
+
+library(R2jags)
+library(Cairo)
+library(tikzDevice)
+
+
 #
 #
 ###################################################################################
@@ -2127,6 +2134,8 @@ tmpRes <- my.jags(which.elec = 2015,        # options are: 2003, 2006, 2009, 201
 )
 
 res2015d0w.bar <- tmpRes; #rm(tmpRes)
+res2015d0v<-tmp$res2015d0v # ERIC is this right?
+res2015d0v.bar<-tmp$res2015d0v.bar
 
 # inspect results
 quantile(tmpRes$BUGSoutput$sims.list$lambda[,1])
@@ -2391,8 +2400,8 @@ round( quantile(tmp$res2015d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)
 ###########################################################################
 ## REPORT EFFECTS OF SPECIFYING PRI-GREEN PARTIAL COALITIONS DIFFERENTLY ##
 ###########################################################################
-wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
-dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
+#wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
+#dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
 load(file=paste(dd, "biasRespOnLinzerSims3components2015altCoalSpecs.RData", sep ="")) # 2015 results w alternative partial coalition handling
 #
 biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$party.labels
@@ -2460,8 +2469,8 @@ rm(tmp)
 ##########################################################
 # compute swing ratios with regressions from Linzer sims #
 ##########################################################
-wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
-dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
+#wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
+#dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
 load(paste(dd, "swingRatios9715.RData", sep = ""))
 
 # single-map version
@@ -2547,6 +2556,8 @@ seats <- function(pan.sh=.3, pri.sh=.35, prd.sh=.25){
     prd.seats <- (exp(res$BUGSoutput$sims.list$lambda[,2]) * prd.sh^res$BUGSoutput$sims.list$rho) / denom;
     return(list(pan.seats=pan.seats, pri.seats=pri.seats, prd.seats=prd.seats))
 }
+
+#ERIC Fails here... 
 seat.sh <- seats(pan.sh = .33, pri.sh = .33, prd.sh = .33)
 quantile(x = seat.sh$pan.seats * 300, probs = c(.025,.975))
 quantile(x = seat.sh$pri.seats * 300, probs = c(.025,.975))
@@ -2720,6 +2731,7 @@ for (i in 1:3){ # some parties absent
 #
 # 2015
 res <- tmp$res2015d0v; shift.v <- -.35 # use nation estimates
+
 for (i in 1:4){ # some parties absent (Morena treated separately bec y shift
     # if party color desired, this does the trick: col = color1.minus.pri[i]
     #points(res$BUGSoutput$sims.list$lambda[,i], -i+shift.v+jitter, cex=.1, col = "gray70");
