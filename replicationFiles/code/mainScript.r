@@ -2134,7 +2134,7 @@ tmpRes <- my.jags(which.elec = 2015,        # options are: 2003, 2006, 2009, 201
 )
 
 res2015d0w.bar <- tmpRes; #rm(tmpRes)
-res2015d0v<-tmp$res2015d0v # ERIC is this right?
+res2015d0v<-tmp$res2015d0v # 
 res2015d0v.bar<-tmp$res2015d0v.bar
 
 # inspect results
@@ -2154,7 +2154,10 @@ summary(biasRespOnLinzerSimsRPM)
 ##      file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep =""))
 
 tmp$win <- NULL
-tmp <- df2015d0; round(colSums(tmp) / sum(tmp$efec), 2)
+tmp <- df2015d0; 
+
+#ERIC -- This second clause both crashes, but doesn't affect later calculations results
+#round(colSums(tmp) / sum(tmp$efec), 2) 
 
 ################################
 ################################
@@ -2559,7 +2562,6 @@ seats <- function(pan.sh=.3, pri.sh=.35, prd.sh=.25){
     return(list(pan.seats=pan.seats, pri.seats=pri.seats, prd.seats=prd.seats))
 }
 
-#ERIC Fails here... 
 seat.sh <- seats(pan.sh = .33, pri.sh = .33, prd.sh = .33)
 quantile(x = seat.sh$pan.seats * 300, probs = c(.025,.975))
 quantile(x = seat.sh$pri.seats * 300, probs = c(.025,.975))
@@ -2768,6 +2770,7 @@ text(x = rep(-2.1,5), y = -c(1:4,5-.35), labels = c("PAN", "PRD", "Green", "MC",
 setwd(wd)
 
 ### plot rho for s0 and s3
+#ERIC -- the next fails because biasResp0612oldNewDistrictsRPM is missing
 tmp <- biasResp0612oldNewDistrictsRPM # compact name
 myQ <- function(Q){ # function to extract quantiles from posterior sample for plot: Q is desired quantile
     return(quantile(x= res$BUGSoutput$sims.list$rho, probs = Q, names=FALSE))
@@ -2798,12 +2801,14 @@ axis(1, at = seq(1.75,7.5,.25), labels = FALSE)
 axis(1, at = seq(2,7,1))
 #
 res <- tmp$res06s0R; shift.v <- .3
+#ERIC: Next line "Fails with Error in xy.coords(x, y) : 'x' and 'y' lengths differ" --$rho appears to be NULL
 points( res$BUGSoutput$sims.list$rho, 2.25+shift.v+jitter, cex = .1, col = "gray70" )
 lines(x = c(myQ(.05),myQ(.95)), y = c(2.25+shift.v,2.25+shift.v), lwd = 2)
 lines(x = c(myQ(.25),myQ(.75)), y = c(2.25+shift.v,2.25+shift.v), lwd = 6)
 points( myQ(.5), 2.25+shift.v, pch = 19, col="white")
 points( myQ(.5), 2.25+shift.v, pch = 19, cex = .5)
 res <- tmp$res09s0R; shift.v <- .1
+#ERIC: Next line Fails with Error in xy.coords(x, y) : 'x' and 'y' lengths differ
 points( res$BUGSoutput$sims.list$rho, 2.25+shift.v+jitter, cex = .1, col = "gray70" )
 lines(x = c(myQ(.05),myQ(.95)), y = c(2.25+shift.v,2.25+shift.v), lwd = 2)
 lines(x = c(myQ(.25),myQ(.75)), y = c(2.25+shift.v,2.25+shift.v), lwd = 6)
@@ -2818,6 +2823,8 @@ points( myQ(.5), 2.25+shift.v, pch = 19, cex = .5)
 #res <- tmp$res0612s0R; shift.v <- -.3
 res <- tmp$res0612n0R; shift.v <- -.3 # use nation estimates
 #points( res$BUGSoutput$sims.list$rho, 2.25+shift.v+jitter, cex = .1, col = "gray70" )
+
+#ERIC: this fails because of null rho
 points( sample(res$BUGSoutput$sims.list$rho, size=300), 2.25+shift.v+jitter, cex = .1, col = "gray70" ) # sample to get 300 points
 lines(x = c(myQ(.05),myQ(.95)), y = c(2.25+shift.v,2.25+shift.v), lwd = 2)
 lines(x = c(myQ(.25),myQ(.75)), y = c(2.25+shift.v,2.25+shift.v), lwd = 6)
@@ -3007,11 +3014,11 @@ setwd(wd)
 
 dim(tmp)
 
-
-cmn-2006-12-s0 # calvo-micozzi with N
-cm-2006-12-s0 # calvo-micozzi without N
-k7-2006-12-s0 # king with all parties
-k6-2006-12-s0 # king with pri omitted as reference
+# ERIC: The following lines yield errors, but do not affect later calculations
+#cmn-2006-12-s0 # calvo-micozzi with N
+#cm-2006-12-s0 # calvo-micozzi without N
+#k7-2006-12-s0 # king with all parties
+#k6-2006-12-s0 # king with pri omitted as reference
 
 
 
@@ -3022,7 +3029,7 @@ edos <- c("ags", "bcn", "bcs", "cam", "coa", "col", "cps", "cua", "df", "dgo", "
 
 library(Cairo)
 
-setwd(paste(wd, "/graphs/", sep=""))
+setwd(paste("../codegraphs/", sep=""))
 types <- c("pdf", "png", "svg"); type <- types[2] # select type here
 Cairo(file=paste("lisnom.dis.2012.", type, sep=""),
       type=type,
@@ -3030,6 +3037,9 @@ Cairo(file=paste("lisnom.dis.2012.", type, sep=""),
       width=10,
       height=6,
       dpi = 96)
+
+#ERIC: Fails here because ln2012 doesn't exist
+
 plot(ln2012$rel, ylab = "sobre-/sub-objetivo (%)", xlab = "distritos",
      ylim = c(min(ln2012$rel), max(ln2012$rel)+25),
      type="n", main = "Lista nominal 2012 vs. tama?o ideal", axes = FALSE)
