@@ -40,5 +40,5 @@ File mainScript.r invokes the other two.
 
 File eqPrep.r has all the details to aggregate secciones into district boundaries according to different maps.
 
-File linzerElas.r tweaks Linzer (2012) code, adapting his method it to separate the components of partisan bias.
+File linzerElas.r tweaks Linzer (2012) code, extending the method to separate the components of partisan bias.
 

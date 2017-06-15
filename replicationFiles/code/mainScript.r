@@ -11,8 +11,10 @@ rm(list=ls())
 #
 if(length(grep('mainScript.r',dir(),fixed=TRUE))!=1) stop ("Please set R's working directory to the base directory on the location of the unzipped directories from replicationFiles.zip")
 
+setwd("/home/eric/Desktop/mex-open-map/replicationFiles/code")
 wd <- getwd()
-dd <- c("../data/") # data directory
+dd <- c("../data/")   # data directory
+gd <- c("../graphs/") # graph directory
 
 
 library(R2jags)
@@ -1832,40 +1834,40 @@ round(tmp1,2)
 #
 ## plot natl true and Linzer-simulated votes and seats
 load(paste(dd, "swingRatios9715.RData", sep = ""))
-#pdf(file = paste(wd, "graphs/vs2003.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(wd, "graphs/vs2003.png", sep = ""))
+#pdf(file = paste(gd, "vs2003.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(gd, "vs2003.png", sep = ""))
 dat <- swRats$df2003d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2003)
 abline(a=0, b=1, lty=2)
 text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 #dev.off()
-#pdf(file = paste(wd, "graphs/vs2006.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(wd, "graphs/vs2006.png", sep = ""))
+#pdf(file = paste(gd, "vs2006.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(gd, "vs2006.png", sep = ""))
 dat <- swRats$df2006d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2006)
 abline(a=0, b=1, lty=2)
 text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 #dev.off()
-#pdf(file = paste(wd, "graphs/vs2009.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(wd, "graphs/vs2009.png", sep = ""))
+#pdf(file = paste(gd, "vs2009.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(gd, "vs2009.png", sep = ""))
 dat <- swRats$df2009d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2009)
 abline(a=0, b=1, lty=2)
 text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 #dev.off()
-#pdf(file = paste(wd, "graphs/vs2012.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(wd, "graphs/vs2012.png", sep = ""))
+#pdf(file = paste(gd, "vs2012.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(gd, "vs2012.png", sep = ""))
 dat <- swRats$df2012d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2012)
 abline(a=0, b=1, lty=2)
 text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 #dev.off()
-#pdf(file = paste(wd, "graphs/vs2015.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(wd, "graphs/vs2015.png", sep = ""))
+#pdf(file = paste(gd, "vs2015.pdf", sep = ""), width = 6, height = 6)
+#png(file = paste(gd, "vs2015.png", sep = ""))
 dat <- swRats$df2015d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2015)
 abline(a=0, b=1, lty=2)
@@ -2126,6 +2128,7 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
     return(tmpRes)
 }
 
+# This will test that jags works, estimation should end fast with no error message
 tmpRes <- my.jags(which.elec = 2015,        # options are: 2003, 2006, 2009, 2012, 2015            
                   which.map  = "d0",        #              "d0", "d1", "d3"                        
                   which.measure = "w.bar",  #              "v" for R, "v.bar" for P, "w.bar" for M (RPM are Grofman et al's notation)
@@ -2133,19 +2136,59 @@ tmpRes <- my.jags(which.elec = 2015,        # options are: 2003, 2006, 2009, 201
                   test.ride=TRUE            # if TRUE, overrides n.chains, n.iter, n.thin          
 )
 
-res2015d0w.bar <- tmpRes; #rm(tmpRes)
-res2015d0v<-tmp$res2015d0v # 
-res2015d0v.bar<-tmp$res2015d0v.bar
 
-# inspect results
-quantile(tmpRes$BUGSoutput$sims.list$lambda[,1])
+#############################################################
+#############################################################
+###   LOAD SAVED PARTISAN BIAS AND COMPONENTS ESTIMATES   ###
+#############################################################
+#############################################################
+load(file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep ="")) # results reported in publication
+summary(biasRespOnLinzerSimsRPM)
+# inspect results (choose other maps/years)
+quantile(biasRespOnLinzerSimsRPM$res2015d0v$BUGSoutput$sims.list$lambda[,1])                                                                                        # raw partisan bias
+quantile(biasRespOnLinzerSimsRPM$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1])                                                                                    # distributive
+quantile(biasRespOnLinzerSimsRPM$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) - quantile(biasRespOnLinzerSimsRPM$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1]) # malapportionment
+quantile(biasRespOnLinzerSimsRPM$res2015d0v$BUGSoutput$sims.list$lambda[,1])     - quantile(biasRespOnLinzerSimsRPM$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) # turnout
 #
-quantile(res2015d0v$BUGSoutput$sims.list$lambda[,1])                                                                # raw
-quantile(res2015d0v.bar$BUGSoutput$sims.list$lambda[,1])                                                            # dist
-quantile(res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) - quantile(res2015d0v.bar$BUGSoutput$sims.list$lambda[,1]) # malapp
-quantile(res2015d0v$BUGSoutput$sims.list$lambda[,1])     - quantile(res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) # turnout
+## ## extracts all objects from the estimates list, if so wished
+## theList <- biasRespOnLinzerSimsRPM
+## summary(theList)
+## for(i in 1:length(theList)){
+##   ##first extract the object value
+##   tempobj=theList[[i]]
+##   ##now create a new variable with the original name of the list item
+##   eval(parse(text=paste(names(theList)[[i]],"= tempobj")))
+## }
+## rm(theList)
 
-# create a list with all results in, save it
+
+#########################################################
+#########################################################
+## JAGS ESTIMATION OF PARTISAN BIAS AND ITS COMPONENTS ##
+#########################################################
+#########################################################
+# Important note:
+# Use the next command if you wish to re-estimate the components of partisan bias.
+# You need to select - a year (2003, 2006, 2009, 2012, or 2015)
+#                    - a map ("d97" for 1997 map, "d0" for 2006 map, "d3" for 2013 map) 
+#                    - a measure ("v" for R, "v.bar" for P, "w.bar" for M).
+# When the estimation ends, rename the output to be recognizable later in the script. 
+# For full analysis, the following objects need to be estimated and renamed accordingly:
+# res2003d0v, res2003d0v.bar, res2003d0w.bar, res2003d97v, res2003d97v.bar, res2003d97w.bar,
+# res2006d0v, res2006d0v.bar, res2006d0w.bar, res2009d0v, res2009d0v.bar, res2009d0w.bar,
+# res2012d0v, res2012d0v.bar, res2012d0w.bar, res2012d3v, res2012d3v.bar, res2012d3w.bar,
+# res2015d0v, res2015d0v.bar, res2015d0w.bar, res2015d3v, res2015d3v.bar, and res2015d3w.bar.
+#  
+# -> Skipping the next bloc lets the script proceed with the distributed estimates.
+tmpRes <- my.jags(which.elec = 2015,
+                  which.map  = "d0",
+                  which.measure = "w.bar",
+                  model.file=lambda.rho.5,
+                  test.ride=FALSE
+)
+res2015d0w.bar <- tmpRes; rm(tmpRes)
+#
+# create a list with all results in, save it (assumes you have estimated all year/map/measure combinations in the paper)
 biasRespOnLinzerSimsRPM <- lapply(ls(pattern = "res[0-9]"), get);
 names(biasRespOnLinzerSimsRPM) <- ls(pattern = "res[0-9]")
 summary(biasRespOnLinzerSimsRPM)
@@ -2153,34 +2196,12 @@ summary(biasRespOnLinzerSimsRPM)
 ## save(biasRespOnLinzerSimsRPM,
 ##      file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep =""))
 
-tmp$win <- NULL
-tmp <- df2015d0; 
+#ERIC -- This second clause both crashes, but doesn't affect later calculations results 
+#Micah [EM 15jun2017]: I believe I have fixed the problem here, explaining with more detail (lines 2169:2181) how to proceed by either (a) re-estimating or (b) loading our distributed estimates. Pls verify that all runs smoothly and that my instructions are clear. 
 
-#ERIC -- This second clause both crashes, but doesn't affect later calculations results
-#round(colSums(tmp) / sum(tmp$efec), 2) 
 
-################################
-################################
-###   LOAD SAVED ESTIMATES   ###
-################################
-################################
-## run all above except jags estimations to proceed with saved data
-load(file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep ="")) # results reported in publication
-summary(biasRespOnLinzerSimsRPM)
-
-## ## useful to extract all objects from a list
-## laLista <- biasRespOnLinzerSimsRPM
-## summary(laLista)
-## for(i in 1:length(laLista)){
-##   ##first extract the object value
-##   tempobj=laLista[[i]]
-##   ##now create a new variable with the original name of the list item
-##   eval(parse(text=paste(names(laLista)[[i]],"= tempobj")))
-## }
-## rm(laLista)
-
-# export pdf traceplots
-gd2 <- paste(wd, "graphs/traceplots/", sep = "")
+# commands to export pdf traceplots to verify parameter convergence (will produce a large number of new plots)
+gd2 <- paste(gd, "traceplots/", sep = "")
 which.elec <- 2015
 which.map <- "d3"
 which.v <- "w.bar"
@@ -2188,21 +2209,11 @@ tmp <- eval(parse(text=paste("biasRespOnLinzerSimsRPM$res", which.elec, which.ma
 #summary(tmp)
 pdf(paste(gd2, "traceplot", which.elec, which.map, which.v, ".pdf", sep = ""))
 traceplot(tmp, ask = FALSE)
-
-
 dev.off()
-rm(gd2, which.elec, which.map, which.v, tmp)
+rm(gd2, which.elec, which.map, which.v, tmp) # clean
 
-tmp <- df2003d97
-head(tmp)
-table(tmp$ps>0)
-sum(tmp$mc)/sum(tmp$efec)
-sum(tmp$morenaw)/300
-colnames(tmp)
-
-# summarize central tendency of party bias ? la Grofman et al
+# summarize central tendency of party bias a la Grofman et al
 tmp <- biasRespOnLinzerSimsRPM
-#tmp <- biasResp0612oldNewDistrictsRPM
 tmp1 <- data.frame(panpri=rep(NA,4), prdpri=rep(NA,4), minorpri=rep(NA,4)); rownames(tmp1) <- c("raw","dist","turn","malap")
 tmp15d3 <- tmp15d0 <- tmp12d3 <- tmp12d0 <- tmp09d0 <- tmp06d0 <- tmp03d97 <- tmp03d0 <- tmp1
 #
@@ -2399,14 +2410,11 @@ round( quantile(tmp$res2006d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)
 round( quantile(tmp$res2009d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
 round( quantile(tmp$res2012d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
 round( quantile(tmp$res2015d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-#round( quantile(tmp$res0612d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
 
 
 ###########################################################################
 ## REPORT EFFECTS OF SPECIFYING PRI-GREEN PARTIAL COALITIONS DIFFERENTLY ##
 ###########################################################################
-#wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
-#dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
 load(file=paste(dd, "biasRespOnLinzerSims3components2015altCoalSpecs.RData", sep ="")) # 2015 results w alternative partial coalition handling
 #
 biasRespOnLinzerSimsRPMaltCoalSpecs$res2015d0TWSv$party.labels
@@ -2474,8 +2482,6 @@ rm(tmp)
 ##########################################################
 # compute swing ratios with regressions from Linzer sims #
 ##########################################################
-#wd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/")  # where to save and retrieve objects
-#dd <- c("~/Dropbox/data/elecs/MXelsCalendGovt/redistrict/git-repo/mex-open-map/data/") # raw data directory
 load(paste(dd, "swingRatios9715.RData", sep = ""))
 
 # single-map version
@@ -2488,10 +2494,7 @@ colnames(s) <- colnames(v)
 res <- head(v, n=6); res[] <- NA; rownames(res) <- c("swR","se","p","lo95","hi95","r2") # generate empty matrix with proper col/row names
     #
     for (i in 1:ncol(v)){
-#    i <- 1 # debug
         vreg <- lm(s[,i] ~ v[,i])
-#    v.barreg <- lm(s[,i] ~ v.bar[,i])
-#    w.barreg <- lm(s[,i] ~ w.bar[,i])
         res["swR",i] <- vreg$coefficients[2]
         res["se",i]  <- summary(vreg)$sigma
         res["r2",i]  <- summary(vreg)$r.squared
@@ -2532,13 +2535,12 @@ dmap <- c(dmap, tmp5)
 dmapxv <- v*dmap
     #
 for (i in 1:3){#ncol(v)){
-                                        #    i <- 2 # debug
     vreg  <- lm(s[,i] ~ v[,i])
     vreg2 <- lm(s[,i] ~ v[,i] + dmap + dmapxv[,i])
     print( colnames(v)[i])
     print(round(summary(vreg2)$coefficients[c(2,4),1:2], 2))
-                                        #    v.barreg <- lm(s[,i] ~ v.bar[,i])
-                                        #    w.barreg <- lm(s[,i] ~ w.bar[,i])
+    #    v.barreg <- lm(s[,i] ~ v.bar[,i])
+    #    w.barreg <- lm(s[,i] ~ w.bar[,i])
     ## res["swR",i] <- vreg$coefficients[2]
     ## res["se",i]  <- summary(vreg)$sigma
     ## res["r2",i]  <- summary(vreg)$r.squared
@@ -2578,8 +2580,6 @@ lambda.hat <- c(lambda.hat[1], 0, lambda.hat[2:6])
 #
 
 ## PERFORMS A VISUAL INSPECTION OF MODEL PARAMETERS
-#save.dir <- "~/Dropbox/mydocs/op-edsEtc/blog/graphs/" # donde guardar
-save.dir <- paste(wd, "graphs/", sep = "")
 logit <- function(X){ log( X / (1-X) ) }
 antilogit <- function(X){ exp(X) / (exp(X)+1) }
 v.tmp <- (1:999)/1000
@@ -2589,9 +2589,9 @@ library(tikzDevice)
 #title <- expression(paste("District responsiveness ", rho, " (and partisan bias ", lambda, ">0 in grey)"))
 title <- ""
 file <- "rhoExample"
-#tikz(file = paste(save.dir, file, ".tex", sep=""), width = 4, height = 4)
-#pdf (file = paste(save.dir, file, ".pdf", sep=""), width = 6,   height = 6)
-#png (file = paste(save.dir, file, ".png", sep=""), width = 6,   height = 6)
+#tikz(file = paste(gd, file, ".tex", sep=""), width = 4, height = 4)
+#pdf (file = paste(gd, file, ".pdf", sep=""), width = 6,   height = 6)
+#png (file = paste(gd, file, ".png", sep=""), width = 6,   height = 6)
 ##library(Cairo)
 ## type <-  "pdf" 
 ## Cairo(file=file,
@@ -2648,17 +2648,14 @@ tmp <- biasRespOnLinzerSimsRPM
 myQ <- function(Q,i){ # function to extract quantiles from posterior sample for plot: Q is desired quantile, i desired index number
     return(quantile(x= res$BUGSoutput$sims.list$lambda[,i], probs = Q, names=FALSE))
 }
-#save.dir <- "~/Dropbox/mydocs/op-edsEtc/blog/graphs/" # donde guardar
-save.dir <- paste(wd, "graphs", sep = "")
 logit <- function(X){ log( X / (1-X) ) }
 antilogit <- function(X){ exp(X) / (exp(X)+1) }
 v.tmp <- (1:999)/1000
 #
 library(Cairo)
 type <-  "pdf" 
-## #file <- paste("bias200612d0R.", type, sep="")
-## file <- paste("bias200615d0v.", type, sep="")
-## setwd(save.dir)
+## #file <- paste(gd, "bias200612d0R.", type, sep="")
+## file <- paste(gd, "bias200615d0v.", type, sep="")
 ## Cairo(file=file,
 ##       type = type,
 ##       width = 7,
@@ -2771,287 +2768,13 @@ setwd(wd)
 
 ### plot rho for s0 and s3
 #ERIC -- the next fails because biasResp0612oldNewDistrictsRPM is missing
-tmp <- biasResp0612oldNewDistrictsRPM # compact name
-myQ <- function(Q){ # function to extract quantiles from posterior sample for plot: Q is desired quantile
-    return(quantile(x= res$BUGSoutput$sims.list$rho, probs = Q, names=FALSE))
-}
-#save.dir <- "~/Dropbox/mydocs/op-edsEtc/blog/graphs/" # donde guardar
-save.dir <- paste(wd, "graphs", sep = "")
-logit <- function(X){ log( X / (1-X) ) }
-antilogit <- function(X){ exp(X) / (exp(X)+1) }
-v.tmp <- (1:999)/1000
-#
-library(Cairo)
-type <-  "pdf" 
-file <- paste("resp200612s0s3R.", type, sep="")
-setwd(save.dir)
-## Cairo(file=file,
-##       type = type,
-##       width = 6,
-##       height = 6,
-##       units = "in",
-##       dpi = 72,
-##       bg = "transparent")
-#
-jitter <- rnorm(n = 300, sd = .02)
-plot(c(1.75,7.5), c(0.5,2.75), type = "n", axes = FALSE, xlab = expression(hat(rho)), ylab = "",
-#     main = "Responsividad de los distritos en tres elecciones")
-     main = "Responsiveness")
-axis(1, at = seq(1.75,7.5,.25), labels = FALSE)
-axis(1, at = seq(2,7,1))
-#
-res <- tmp$res06s0R; shift.v <- .3
-#ERIC: Next line "Fails with Error in xy.coords(x, y) : 'x' and 'y' lengths differ" --$rho appears to be NULL
-points( res$BUGSoutput$sims.list$rho, 2.25+shift.v+jitter, cex = .1, col = "gray70" )
-lines(x = c(myQ(.05),myQ(.95)), y = c(2.25+shift.v,2.25+shift.v), lwd = 2)
-lines(x = c(myQ(.25),myQ(.75)), y = c(2.25+shift.v,2.25+shift.v), lwd = 6)
-points( myQ(.5), 2.25+shift.v, pch = 19, col="white")
-points( myQ(.5), 2.25+shift.v, pch = 19, cex = .5)
-res <- tmp$res09s0R; shift.v <- .1
-#ERIC: Next line Fails with Error in xy.coords(x, y) : 'x' and 'y' lengths differ
-points( res$BUGSoutput$sims.list$rho, 2.25+shift.v+jitter, cex = .1, col = "gray70" )
-lines(x = c(myQ(.05),myQ(.95)), y = c(2.25+shift.v,2.25+shift.v), lwd = 2)
-lines(x = c(myQ(.25),myQ(.75)), y = c(2.25+shift.v,2.25+shift.v), lwd = 6)
-points( myQ(.5), 2.25+shift.v, pch = 19, col="white")
-points( myQ(.5), 2.25+shift.v, pch = 19, cex = .5)
-res <- tmp$res12s0R; shift.v <- -.1
-points( res$BUGSoutput$sims.list$rho, 2.25+shift.v+jitter, cex = .1, col = "gray70" )
-lines(x = c(myQ(.05),myQ(.95)), y = c(2.25+shift.v,2.25+shift.v), lwd = 2)
-lines(x = c(myQ(.25),myQ(.75)), y = c(2.25+shift.v,2.25+shift.v), lwd = 6)
-points( myQ(.5), 2.25+shift.v, pch = 19, col="white")
-points( myQ(.5), 2.25+shift.v, pch = 19, cex = .5)
-#res <- tmp$res0612s0R; shift.v <- -.3
-res <- tmp$res0612n0R; shift.v <- -.3 # use nation estimates
-#points( res$BUGSoutput$sims.list$rho, 2.25+shift.v+jitter, cex = .1, col = "gray70" )
+#Micah [EM 15jun2017]: all the commands involved in the remainder errors appeared to be redundant (they belong to an earlier incarnation of the paper, when we analyzed 32 state aggregates instead of Linzer national simulations. I have dropped the whole bloc, along with numerous errors in it. 
 
-#ERIC: this fails because of null rho
-points( sample(res$BUGSoutput$sims.list$rho, size=300), 2.25+shift.v+jitter, cex = .1, col = "gray70" ) # sample to get 300 points
-lines(x = c(myQ(.05),myQ(.95)), y = c(2.25+shift.v,2.25+shift.v), lwd = 2)
-lines(x = c(myQ(.25),myQ(.75)), y = c(2.25+shift.v,2.25+shift.v), lwd = 6)
-points( myQ(.5), 2.25+shift.v, pch = 19, col="white")
-points( myQ(.5), 2.25+shift.v, pch = 19, cex = .5)
-#
-res <- tmp$res06s3R; shift.v <- .3
-#points( res$BUGSoutput$sims.list$rho, 1+shift.v+jitter, cex = .1, col = "darkgrey" )
-#points( res$BUGSoutput$median$rho, 1+shift.v )
-points( res$BUGSoutput$sims.list$rho, 1+shift.v+jitter, cex = .1, col = "gray70" )
-lines(x = c(myQ(.05),myQ(.95)), y = c(1+shift.v,1+shift.v), lwd = 2)
-lines(x = c(myQ(.25),myQ(.75)), y = c(1+shift.v,1+shift.v), lwd = 6)
-points( myQ(.5), 1+shift.v, pch = 19, col="white")
-points( myQ(.5), 1+shift.v, pch = 19, cex = .5)
-res <- tmp$res09s3R; shift.v <- .1
-points( res$BUGSoutput$sims.list$rho, 1+shift.v+jitter, cex = .1, col = "gray70" )
-lines(x = c(myQ(.05),myQ(.95)), y = c(1+shift.v,1+shift.v), lwd = 2)
-lines(x = c(myQ(.25),myQ(.75)), y = c(1+shift.v,1+shift.v), lwd = 6)
-points( myQ(.5), 1+shift.v, pch = 19, col="white")
-points( myQ(.5), 1+shift.v, pch = 19, cex = .5)
-res <- tmp$res12s3R; shift.v <- -.1
-points( res$BUGSoutput$sims.list$rho, 1+shift.v+jitter, cex = .1, col = "gray70" )
-lines(x = c(myQ(.05),myQ(.95)), y = c(1+shift.v,1+shift.v), lwd = 2)
-lines(x = c(myQ(.25),myQ(.75)), y = c(1+shift.v,1+shift.v), lwd = 6)
-points( myQ(.5), 1+shift.v, pch = 19, col="white")
-points( myQ(.5), 1+shift.v, pch = 19, cex = .5)
-#res <- tmp$res0612s3R; shift.v <- -.3
-res <- tmp$res0612n3R; shift.v <- -.3 # use nation estimates
-#points( res$BUGSoutput$sims.list$rho, 1+shift.v+jitter, cex = .1, col = "gray70" )
-points( sample(res$BUGSoutput$sims.list$rho, size=300), 1+shift.v+jitter, cex = .1, col = "gray70" ) # sample to get 300 points
-lines(x = c(myQ(.05),myQ(.95)), y = c(1+shift.v,1+shift.v), lwd = 2)
-lines(x = c(myQ(.25),myQ(.75)), y = c(1+shift.v,1+shift.v), lwd = 6)
-points( myQ(.5), 1+shift.v, pch = 19, col="white")
-points( myQ(.5), 1+shift.v, pch = 19, cex = .5)
-## text(x= 5.5, y = 2.75, labels = "Distritos en vigor")
-## text(x= 5.5, y = 1.5, labels = "Distritos propuestos")
-text(x= 4.75, y = 2.75, labels = "2006 map")
-text(x= 4.75, y = 1.5, labels = "2015 map (hypothetical)")
-text(x = rep(7.25,2), y = c(2.25,1)+.3, labels = rep("2006 (states)", 2), cex = .65)
-text(x = rep(7.25,2), y = c(2.25,1)+.1, labels = rep("2009 (states)", 2), cex = .65)
-text(x = rep(7.25,2), y = c(2.25,1)-.1, labels = rep("2012 (states)", 2), cex = .65)
-text(x = rep(7.25,2), y = c(2.25,1)-.3, labels = rep("all (nation)", 2), cex = .65)
-## dev.off()
-## setwd(wd)
+#[big bloc of code deleted from here by EM 15jun2017]
 
-## over- vs under-represented by party
-table(S$pan/D - v$pan > 0)
-table(S$pri/D - v$pri > 0)
-table(S$prd/D - v$prd > 0)
-
-## ### FOR CALVO-MICOZZI VERSION
-logit <- function(X){ log( X / (1-X) ) }
-antilogit <- function(X){ exp(X) / (exp(X)+1) }
-## #mean.N <- mean(tmp$N[tmp$pty==1]) ## pan ran in all elections
-## equis <- seq(0,1,by=.01)
-## p <- 1; s.hat.pan <- antilogit(lambda.hat[p] + rho.hat * logit(equis))
-## p <- 2; s.hat.pri <- antilogit(lambda.hat[p] + rho.hat * logit(equis))
-## p <- 3; s.hat.prd <- antilogit(lambda.hat[p] + rho.hat * logit(equis))
-
-### FOR KING VERSION
-#
-party.vote <- 2 # for debug
-seat.hat <- function(party.vote=NA, lambdas=lambda.hat){ # analizes vote increments for party.vote using lambda.hat bias
-    mean.v <- apply(v, 2, mean) / sum(apply(v, 2, mean)); # compute parties' mean vote across elections and normalize to sum 1
-#    mean.v <- c(.3, .3, .3, .04, .04, .01, .01) # or fix vote distribution
-    share.mean <- data.frame(matrix(0, nrow=7, ncol=7)); # when analizing party i, produces share of vote without i won by rest of parties
-    for (i in 1:7){ 
-        for (j in setdiff(1:7,i)){
-            share.mean[i,j] <- mean.v[j] / (1-mean.v[i])
-        }
-    }
-    equis <- matrix(NA, nrow=101, ncol=7); # 0-1 vote increments for party, rest split by other parties according to mean vote
-    equis[,party.vote] <- seq(from = 0, to = 1, by = .01);
-    for (j in setdiff(1:7,party.vote)){
-        equis[,j] <- (1-equis[,party.vote])*share.mean[party.vote,j]
-    }
-    d1 <- exp( lambdas[1] ) * equis[,1]^rho.hat;
-    d2 <- exp( lambdas[2] ) * equis[,2]^rho.hat;
-    d3 <- exp( lambdas[3] ) * equis[,3]^rho.hat;
-    d4 <- exp( lambdas[4] ) * equis[,4]^rho.hat;
-    d5 <- exp( lambdas[5] ) * equis[,5]^rho.hat;
-    d6 <- exp( lambdas[6] ) * equis[,6]^rho.hat;
-    d7 <- exp( lambdas[7] ) * equis[,7]^rho.hat;
-    return(exp( lambdas[party.vote] ) *  equis[,party.vote]^rho.hat  / (d1+d2+d3+d4+d5+d6+d7)) # voto party crece linealmente, dem?s seg?n peso relativo
-}
-
-tmp.l <- c(.06,0,-.02,0,0,0,0)
-#
-s.hat.pan   <- seat.hat(party.vote = 1)#, lambdas = tmp.l) 
-s.hat.pri   <- seat.hat(party.vote = 2)#, lambdas = tmp.l) 
-s.hat.prd   <- seat.hat(party.vote = 3)#, lambdas = tmp.l)
-s.hat.pvem  <- seat.hat(party.vote = 4)#, lambdas = tmp.l)
-s.hat.panal <- seat.hat(party.vote = 5)#, lambdas = tmp.l)
-s.hat.ptc   <- seat.hat(party.vote = 6)#, lambdas = tmp.l)
-s.hat.pasdc <- seat.hat(party.vote = 7)#, lambdas = tmp.l)
-#
-equis <- seq(0,1,.01)
-
-
-## Plot party-by-state-votes-to-seats 2006--2012 with regression line
-#save.dir <- "~/Dropbox/mydocs/op-edsEtc/blog/graphs/" # donde guardar
-#
-## tmp is the object to graph (adds pri+pric and prd+prdc) <---SEARCH FOR THIS IN THE CODE ABOVE TO PREPARE TMP FOR STATE GRAPH
-#
-## # nat aggregates for plot
-## tmpv <- apply(df2006d0[,c("pan","pric","prdc","panal","asdc")], 2, sum)
-## tmpv <- tmpv/sum(tmpv)
-## tmps <- apply(df2006d0[,c("panw","pricw","prdcw","panalw","asdcw")], 2, sum) / 300
-## tmp <- data.frame(votes=tmpv, seats=tmps)
-## tmpv <- df2009d0[,c("pan","pri","pric","prd","pvem","panal","ptc")]
-## tmpv$pri <- tmpv$pri + tmpv$pric; tmpv$pric <- NULL
-## tmpv <- apply(tmpv, 2, sum)
-## tmpv <- tmpv/sum(tmpv)
-## tmps <- df2009d0[,c("panw","priw","pricw","prdw","pvemw","panalw","ptcw")]
-## tmps$priw <- tmps$priw + tmps$pricw; tmps$pricw <- NULL
-## tmps <- apply(tmps, 2, sum) / 300
-## tmp <- rbind(tmp, data.frame(votes=tmpv, seats=tmps))
-## tmpv <- df2012d0[,c("pan","pri","pric","prdc","pvem","panal")]
-## tmpv$pri <- tmpv$pri + tmpv$pric; tmpv$pric <- NULL
-## tmpv <- apply(tmpv, 2, sum)
-## tmpv <- tmpv/sum(tmpv)
-## tmps <- df2012d0[,c("panw","priw","pricw","prdcw","pvemw","panalw")]
-## tmps$priw <- tmps$priw + tmps$pricw; tmps$pricw <- NULL
-## tmps <- apply(tmps, 2, sum) / 300
-## tmp <- rbind(tmp, data.frame(votes=tmpv, seats=tmps))
-## rm(tmpv, tmps)
-#
-save.dir <- paste(wd, "graphs", sep = "")
-setwd(save.dir)
-#setwd(paste(wd, "graphs", sep=""))
-library(Cairo)
-title <- "State aggregates"
-#title <- "Federal deputies by state 2006-2012"
-#title <- "DipFed por estado 2006-2012, distritos en vigor" #propuestos"
-#title <- "Diputados Federales de mayor?a 2006-2012"
-type <- "pdf"
-#file <- paste("biasResp2006s3.", type, sep="")
-#file <- paste("resXedo20062012.", type, sep="")
-file <- paste("resXedo20062012sh.", type, sep="")
-## Cairo(file=file,
-##       type = type,
-##       width = 6,
-##       height = 6,
-##       units = "in",
-##       dpi = 72,
-##       bg = "transparent")
-#
-plot(c(0,1),c(0,1), type="n",
-     main=title,
-     xlab = "vote share", ylab = "seat share", axes = FALSE)
-#     xlab = "% votes won in state", ylab = "% plurality seats won in state", axes = FALSE)
-#     xlab = "% votos en el estado", ylab = "% esca?os en el estado", axes = FALSE)
-axis(1, at=seq(0,1,.2), lab=seq(0,1,.2))
-axis(2, at=seq(0,1,.2), lab=seq(0,1,.2))
-abline(a=0, b=1, lty=2)
-#reg <- lm(tmp$seats ~ tmp$votes)
-#reg <- lm(tmp$seats ~ poly(tmp$votes, 2, raw=TRUE))
-points(tmp$votes, tmp$seats/tmp$ndis, pch=19, cex=.5)#, col=color)
-## lines(equis, s.hat.pan, col = color[tmp$pty==1][1])
-## lines(equis, s.hat.pri, col = color[tmp$pty==2][1])
-## lines(equis, s.hat.prd, col = color[tmp$pty==3][1])
-#abline(reg)
-#text(.85,.3,  paste("Responsividad=", round(rho.hat, digits=2)))
-#text(.85,.25, "Sesgo relativo al PRI:")
-## text(.85,.2,  paste("PAN=", round( exp(lambda.hat[1]) / (exp(lambda.hat[1]) + 1) - .5 , digits=2)))
-## text(.85,.15, paste("PRI=", round( exp(lambda.hat[2]) / (exp(lambda.hat[2]) + 1) - .5 , digits=2)))
-## text(.85,.1,  paste("PRD=", round( exp(lambda.hat[3]) / (exp(lambda.hat[3]) + 1) - .5 , digits=2)))
-#text(.85,.2,  paste("PAN=", round( lambda.hat[1]-lambda.hat[2], digits=2)))
-## text(.85,.15, paste("PRI=", round( lambda.hat[2]-lambda.hat[2], digits=2)))
-#text(.85,.15,  paste("PRD=", round( lambda.hat[3]-lambda.hat[2], digits=2)))
-#text(.85,.1,  paste("PANAL=", round( lambda.hat[6]-lambda.hat[2], digits=2)))
-#
-## dev.off()
-setwd(wd)
-
-## ## graph different bias resp combos in 2-pty setting
-## equis <- seq(0,.99,.01)
-## #logit(ye) <-  0 + 1 * logit(equis)
-## plot(c(0,1), c(0,1), type = "n", xlab = "%voto", ylab = "%esca?os de mayor?a", axes = FALSE)
-## abline(0,1,lty=2)
-## axis(1, at = seq(0,1,.25), labels = seq(0,100,25))
-## axis(2, at = seq(0,1,.25), labels = seq(0,100,25))
-## ye <- antilogit ( 0 + 6 * logit(equis) )
-## lines(equis, ye, col = "red")
-## ye <- antilogit ( 1 + 6 * logit(equis) )
-## lines(equis, ye, col = "blue")
-
-dim(tmp)
-
-# ERIC: The following lines yield errors, but do not affect later calculations
+#ERIC: The following lines yield errors, but do not affect later calculations
 #cmn-2006-12-s0 # calvo-micozzi with N
 #cm-2006-12-s0 # calvo-micozzi without N
 #k7-2006-12-s0 # king with all parties
 #k6-2006-12-s0 # king with pri omitted as reference
-
-
-
-
-
-edos <- c("ags", "bcn", "bcs", "cam", "coa", "col", "cps", "cua", "df", "dgo", "gua", "gue", "hgo", "jal", "mex", "mic", "mor", "nay", "nl", "oax", "pue", "que", "qui", "san", "sin", "son", "tab", "tam", "tla", "ver", "yuc", "zac")
-
-
-library(Cairo)
-
-setwd(paste("../codegraphs/", sep=""))
-types <- c("pdf", "png", "svg"); type <- types[2] # select type here
-Cairo(file=paste("lisnom.dis.2012.", type, sep=""),
-      type=type,
-      units="in",
-      width=10,
-      height=6,
-      dpi = 96)
-
-#ERIC: Fails here because ln2012 doesn't exist
-
-plot(ln2012$rel, ylab = "sobre-/sub-objetivo (%)", xlab = "distritos",
-     ylim = c(min(ln2012$rel), max(ln2012$rel)+25),
-     type="n", main = "Lista nominal 2012 vs. tama?o ideal", axes = FALSE)
-axis(1, at = c(1, seq(from = 50, to = 300, by = 50)))
-axis(2, at = seq(from = -40, to = 80, by = 20))
-polygon(x = c(-10,310,310,-10), y = c(-15,-15,15,15), lty = 0, col = "grey80")
-abline(h=0, lty=2)
-abline(h=c(-2,2,4,6,8)*10, col="grey")
-points(ln2012$rel,
-     col = clr.300, pch=20)
-text(ln2012$rel, labels=ln2012$disn, cex = .25, col="white")
-text(nom.pos, rep( c(max(ln2012$rel)+24, max(ln2012$rel)+20, max(ln2012$rel)+16, max(ln2012$rel)+11), times=8), labels = edos, cex = .75, col=clr.32)
-dev.off()
-setwd(wd)
 
