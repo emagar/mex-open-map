@@ -70,9 +70,9 @@ dis2013 <-       eq[,c("edon","dis2015","munn","seccion","dis2013.3","dis2013.1"
 colnames(dis2013) <- c("edon","disn","munn","seccion","dis3er13","dis1er13")
 #
 # unassigned secciones need to be removed (these remain unassigned even after eqPrep's work
-sel <- which(dis2013$disn==0 & dis2013$dis1er13==0); sel
+sel <- which(dis2013$disn==0 | dis2013$dis3er13==0); print("These obs have unassigned secciones:"); sel
 ## dis2013[sel,]
-dis2013 <- dis2013[-which(dis2013$disn==0 | dis2013$dis1er13==0 | dis2013$dis3er13==0),]
+dis2013 <- dis2013[-which(dis2013$disn==0 | dis2013$dis3er13==0),]
 ## THESE WERE DROPPED IN EXCEL: dis2013 <- dis2013[-which(dis2013$seccion>8000),] # two secciones in puebla have disconnected seccion nums and blank municipality... ife anticipates while awaiting court ruling?
 #
 # maybe unnecessary (IFE's municipal codes slightly differ from census)

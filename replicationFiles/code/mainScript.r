@@ -11,15 +11,13 @@ rm(list=ls())
 #
 if(length(grep('mainScript.r',dir(),fixed=TRUE))!=1) stop ("Please set R's working directory to the base directory on the location of the unzipped directories from replicationFiles.zip")
 
-setwd("/home/eric/Desktop/mex-open-map/replicationFiles/code")
+# setwd("/home/eric/Desktop/mex-open-map/replicationFiles/code")
 wd <- getwd()
 dd <- c("../data/")   # data directory
 gd <- c("../graphs/") # graph directory
 
 
 library(R2jags)
-library(Cairo)
-library(tikzDevice)
 
 
 #
@@ -75,9 +73,9 @@ dis2013 <-       eq[,c("edon","dis2015","munn","seccion","dis2013.3","dis2013.1"
 colnames(dis2013) <- c("edon","disn","munn","seccion","dis3er13","dis1er13")
 #
 # unassigned secciones need to be removed: these remain unassigned even after eqPrep's work
-sel <- which(dis2013$disn==0 & dis2013$dis1er13==0); sel
+sel <- which(dis2013$disn==0 | dis2013$dis3er13==0); print("These obs have unassigned secciones in one or both maps:"); sel
 ## dis2013[sel,]
-dis2013 <- dis2013[-which(dis2013$disn==0 | dis2013$dis1er13==0 | dis2013$dis3er13==0),]
+dis2013 <- dis2013[-which(dis2013$disn==0 | dis2013$dis3er13==0),]
 #
 # maybe unnecessary (IFE's municipal codes slightly differ from census codes)
 dis2013$ife <- dis2013$edon*1000 + dis2013$munn
@@ -91,7 +89,6 @@ colnames(tmp)[which(colnames(tmp)=="dis1er13")] <- "dis13.1"
 colnames(tmp)[which(colnames(tmp)=="dis3er13")] <- "dis13.3"
 rm(tmp1)
 #
-colnames(tmp)
 ## Aggregates 2015 results by district
 df2015d0 <- tmp[order(tmp$edon, tmp$disn),] # resultados con distritos reales (adoptados en 2005)
 # as? se hace en R un by yr mo: egen tmp=sum(invested) de stata
@@ -125,20 +122,15 @@ df2015d0$dcoalprd <- df2015d0$dcoalprd/df2015d0$tmp # share of secciones with pr
 colnames(df2015d0)[which(colnames(df2015d0)=="dcoalprd")] <- "shSecCoalPrd"
 df2015d0$tmp <- NULL
 df2015d0 <- df2015d0[duplicated(df2015d0$edon*100+df2015d0$disn)==FALSE,]
-## table(df2015d0$shSecCoalPri) ## debug: should now be 0 or 1 after fix used above
-## table(df2015d0$shSecCoalPrd) ## debug: should now be 0 or 1 after fix used above
-df2015d0$pri_pvem[df2015d0$shSecCoalPri==0] # debug: no need to assign, all == 0
 df2015d0$pric[df2015d0$shSecCoalPri==0] <- 0
 df2015d0$pri[df2015d0$shSecCoalPri==1] <- 0
 df2015d0$pvem[df2015d0$shSecCoalPri==1] <- 0
 #df2015d0$pri_pvem <- NULL
 #
-df2015d0$prd_pt[df2015d0$shSecCoalPrd==0] # debug: no need to assign, all == 0
 df2015d0$prdc[df2015d0$shSecCoalPrd==0] <- 0
 df2015d0$prd[df2015d0$shSecCoalPrd==1] <- 0
 df2015d0$pt[df2015d0$shSecCoalPrd==1] <- 0
 #df2015d0$prd_pt <- NULL
-df2015d0[df2015d0$edon==9,]
 #
 # VOTES WITH DISTRICTS PROPOSED IN 2013 (scen. 1)
 df2015d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
@@ -172,7 +164,7 @@ df2015d1$dcoalprd <- df2015d1$dcoalprd/df2015d1$tmp # share of secciones with pr
 colnames(df2015d1)[which(colnames(df2015d1)=="dcoalprd")] <- "shSecCoalPrd"
 df2015d1$tmp <- NULL
 df2015d1 <- df2015d1[duplicated(df2015d1$edon*100+df2015d1$dis13.1)==FALSE,]
-df2015d1$shSecCoalPri[df2015d1$edon==9] ## debug: should have some districts with incomplete coalition...
+
 #
 # VOTES WITH DISTRICTS PROPOSED IN 2013 (scen. 3)
 df2015d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
@@ -207,7 +199,6 @@ df2015d3$dcoalprd <- df2015d3$dcoalprd/df2015d3$tmp # share of secciones with pr
 colnames(df2015d3)[which(colnames(df2015d3)=="dcoalprd")] <- "shSecCoalPrd"
 df2015d3$tmp <- NULL
 df2015d3 <- df2015d3[duplicated(df2015d3$edon*100+df2015d3$dis13.3)==FALSE,]
-df2015d3$shSecCoalPri[df2015d3$edon==9] ## debug: should have some districts with incomplete coalition...
 #
 # removes redundant columns
 df2015d0 <- df2015d0[,c("edon","disn"   ,"pan","pri","pric","prd","prdc","pt","pvem","mc","panal","morena","ph","ps","pri_pvem","prd_pt","indep1","indep2","efec","nr","nul","lisnom","shSecCoalPri","shSecCoalPrd")]
@@ -216,14 +207,8 @@ df2015d3 <- df2015d3[,c("edon","dis13.3","pan","pri","pric","prd","prdc","pt","p
 #
 colnames(df2015d0)[2] <- colnames(df2015d1)[2] <- colnames(df2015d3)[2] <- "disn"
 #
-dim(df2015d0)
-dim(df2015d1)
-dim(df2015d3)
-head(df2015d0[df2015d0$edon==6,])
-head(df2015d1)
-head(df2015d3)
 #
-# agrega votos de coalicion pri donde las hubo con base en la proporcion de secciones con coalicion en el nuevo distrito
+# agregagates pri coalition votes where needed, based on the relative proportion of secciones with such coalition in the new district
 ## df2015d0$pric[df2015d0$shSecCoalPri<.5] <- 0
 df2015d0$pri_pvem <- NULL
 df2015d0$prd_pt <- NULL
@@ -263,7 +248,6 @@ df2015d3$prd_pt <- NULL
 df2015d3$prd[df2015d3$shSecCoalPrd>=.5] <- 0
 df2015d3$pt[df2015d3$shSecCoalPrd>=.5] <- 0
 rm(shrPri,shrPrd)
-df2015d1[df2015d1$edon==9,]
 #
 ## winner (more compact method than used in 2012 and earlier)
 # handy function to sort one data frame by order of another, matching data frame
@@ -288,7 +272,6 @@ tmpl <- matrix(rep(tmp,300), byrow=TRUE, nrow=300)
 tmpl <- sortBy(target=tmpl, By=tmpv)
 tmpv <- t(apply(tmpv, 1, function(x) sort(x, decreasing = TRUE)))
 df2015d0$win <- tmpl[,1]
-#table(tmpl[,1])
 df2015d0$panw <- df2015d0$priw <- df2015d0$pricw <- df2015d0$prdw <- df2015d0$prdcw <- df2015d0$morenaw <- df2015d0$mcw <- df2015d0$panalw <- df2015d0$indepw <- rep(0, times=300)
 df2015d0$panw[df2015d0$win=="pan"] <- 1
 df2015d0$priw[df2015d0$win=="pri"] <- 1
@@ -302,14 +285,12 @@ df2015d0$indepw[df2015d0$win=="indep1"] <- 1
 ## winner's margin
 df2015d0$winmg <- (tmpv[,1] - tmpv[,2])/df2015d0$efec
 #
-colnames(df2015d1)
 tmp <- c("pan", "pri", "pric", "prd", "prdc", "pt", "pvem", "mc", "panal", "morena", "ph", "ps","indep1","indep2")
 tmpv <- df2015d1[,tmp]
 tmpl <- matrix(rep(tmp,300), byrow=TRUE, nrow=300)
 tmpl <- sortBy(target=tmpl, By=tmpv)
 tmpv <- t(apply(tmpv, 1, function(x) sort(x, decreasing = TRUE)))
 df2015d1$win <- tmpl[,1]
-#table(tmpl[,1])
 df2015d1$panw <- df2015d1$priw <- df2015d1$pricw <- df2015d1$prdw <- df2015d1$prdcw <- df2015d1$morenaw <- df2015d1$mcw <- df2015d1$panalw <- df2015d1$indepw <- rep(0, times=300)
 df2015d1$panw[df2015d1$win=="pan"] <- 1
 df2015d1$priw[df2015d1$win=="pri"] <- 1
@@ -329,7 +310,6 @@ tmpl <- matrix(rep(tmp,300), byrow=TRUE, nrow=300)
 tmpl <- sortBy(target=tmpl, By=tmpv)
 tmpv <- t(apply(tmpv, 1, function(x) sort(x, decreasing = TRUE)))
 df2015d3$win <- tmpl[,1]
-#table(tmpl[,1])
 df2015d3$panw <- df2015d3$priw <- df2015d3$pricw <- df2015d3$prdw <- df2015d3$prdcw <- df2015d3$morenaw <- df2015d3$mcw <- df2015d3$panalw <- df2015d3$indepw <- rep(0, times=300)
 df2015d3$panw[df2015d3$win=="pan"] <- 1
 df2015d3$priw[df2015d3$win=="pri"] <- 1
@@ -344,11 +324,6 @@ df2015d3$indepw[df2015d3$win=="indep1"] <- 1
 df2015d3$winmg <- (tmpv[,1] - tmpv[,2])/df2015d3$efec
 #
 rm(tmp,tmpl,tmpv)
-#
-# debug
-df2015d0[df2015d0$edon==6,]  # colima
-df2015d1[df2015d1$edon==24,] # sinaloa
-df2015d3[df2015d3$edon==24,] # sinaloa
 #
 # state aggregates statistics
 df2015s0 <- df2015d0
@@ -409,7 +384,6 @@ df2015s0$morenaw   <- df2015s0$morenaw/df2015s0$ndis
 df2015s0$indepw   <- df2015s0$indepw/df2015s0$ndis
 #df2015s0$shDisCoalPri <-  df2015s0$shDisCoalPri/df2015s0$ndis
 #df2015s0$shDisCoalPrd <-  df2015s0$shDisCoalPrd/df2015s0$ndis
-head(df2015s0)
 #
 df2015s1 <- df2015d1
 df2015s1 <- df2015s1[order(df2015s1$edon),]
@@ -474,7 +448,6 @@ df2015s1$morenaw   <- df2015s1$morenaw/df2015s1$ndis
 df2015s1$indepw   <- df2015s1$indepw/df2015s1$ndis
 #df2015s1$shDisCoalPri <-  df2015s1$shDisCoalPri/df2015s1$ndis
 #df2015s1$shDisCoalPrd <-  df2015s1$shDisCoalPrd/df2015s1$ndis
-head(df2015s1)
 #
 df2015s3 <- df2015d3
 df2015s3 <- df2015s3[order(df2015s3$edon),]
@@ -534,8 +507,6 @@ df2015s3$morenaw   <- df2015s3$morenaw/df2015s3$ndis
 df2015s3$indepw   <- df2015s3$indepw/df2015s3$ndis
 #df2015s3$shDisCoalPri <-  df2015s3$shDisCoalPri/df2015s3$ndis
 #df2015s3$shDisCoalPrd <-  df2015s3$shDisCoalPrd/df2015s3$ndis
-head(df2015s3)
-## hasta aqu? 11may16 ##
 #
 ##############
 # 2012 votes #
@@ -544,7 +515,6 @@ tmp <- read.csv( paste(dd, "dfSeccion2012.csv", sep=""), header=TRUE)
 tmp <- tmp[order(tmp$edon, tmp$disn, tmp$seccion),]
 # compute effective vote (without void ballots)
 tmp$efec <- tmp$pan + tmp$pri + tmp$prd + tmp$pvem + tmp$pt + tmp$mc + tmp$panal + tmp$pripvem + tmp$prdptmc + tmp$prdpt + tmp$prdmc + tmp$ptmc
-head(tmp[tmp$edon==1,])
 # aggregates coalition votes where needed
 tmp$prdc <- tmp$prd+tmp$pt+tmp$mc+tmp$prdptmc+tmp$prdpt+tmp$prdmc+tmp$ptmc
 tmp$prd <- tmp$pt <- tmp$mc <- tmp$prdptmc <- tmp$prdpt <- tmp$prdmc <- tmp$ptmc <- NULL # UNLIKE PRI's AND PVEM's PARTIAL COALITIONS, PRD HAD NATIONAL COALITION AND THESE ARE REDUNDANT
@@ -568,14 +538,6 @@ colnames(tmp)[which(colnames(tmp)=="dis1er13")] <- "dis13.1"
 colnames(tmp)[which(colnames(tmp)=="dis3er13")] <- "dis13.3"
 rm(tmp1)
 #
-# OJO: some secciones used in 2012 do not appear listed in IFE's 2013 redistricting scenarios. List of such secciones follows
-# 11may16: fixed
-select <- which(dis2013$dis1er13>0 & dis2013$dis3er13==0)
-data.frame(edon=dis2013$edon[select], seccion=dis2013$seccion[select])
-#data.frame(edon=dis2013$edon[is.na(dis2013$dis3er13)==TRUE], seccion=dis2013$seccion[is.na(dis2013$dis3er13)==TRUE])
-dim(tmp); dim(dis2013)
-#
-colnames(tmp)
 ## Aggregates 2012 results by district
 df2012d0 <- tmp[order(tmp$edon, tmp$disn),] # resultados con distritos reales (2006 map)
 df2012d0$pan <- ave(df2012d0$pan, as.factor(df2012d0$edon*100+df2012d0$disn), FUN=sum, na.rm=TRUE)
@@ -597,12 +559,10 @@ colnames(df2012d0)[which(colnames(df2012d0)=="dcoalpri")] <- "shSecCoalPri"
 df2012d0$tmp <- NULL
 df2012d0 <- df2012d0[duplicated(df2012d0$edon*100+df2012d0$disn)==FALSE,]
 # df2012d0$shSecCoalPri ## debug: should now be 0 or 1 after fix used above
-df2012d0$pripvem[df2012d0$shSecCoalPri==0] # debug: no need to assign, all == 0
 df2012d0$pric[df2012d0$shSecCoalPri==0] <- 0
 df2012d0$pri[df2012d0$shSecCoalPri==1] <- 0
 df2012d0$pvem[df2012d0$shSecCoalPri==1] <- 0
 #df2012d0$pripvem <- NULL
-df2012d0[df2012d0$edon==24,]
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 1)
 df2012d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
@@ -627,7 +587,6 @@ df2012d1$dcoalpri <- df2012d1$dcoalpri/df2012d1$tmp # share of secciones with pr
 colnames(df2012d1)[which(colnames(df2012d1)=="dcoalpri")] <- "shSecCoalPri"
 df2012d1$tmp <- NULL
 df2012d1 <- df2012d1[duplicated(df2012d1$edon*100+df2012d1$dis13.1)==FALSE,]
-df2012d1$shSecCoalPri[df2012d1$edon==24] ## debug: should have some districts with incomplete coalition...
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 3)
 df2012d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
@@ -647,17 +606,9 @@ df2012d3$tmp <- rep(1, times = nrow(df2012d3))
 df2012d3$tmp <- ave(df2012d3$tmp, as.factor(df2012d3$edon*100+df2012d3$dis13.3), FUN=sum, na.rm=TRUE)
 df2012d3$dcoalpri <- ave(df2012d3$dcoalpri, as.factor(df2012d3$edon*100+df2012d3$dis13.3), FUN=sum, na.rm=TRUE)
 df2012d3$dcoalpri <- df2012d3$dcoalpri/df2012d3$tmp # share of secciones with pri coalition in district
-df2012d3$dcoalpri[df2012d3$edon==24]
-# debug
-## data.frame(a=df2012d3$disn[df2012d3$edon==24], b=df2012d3$dis13.1[df2012d3$edon==24], c=df2012d3$dis13.3[df2012d3$edon==24], d=df2012d3$dcoalpri[df2012d3$edon==24])
-## table(df2012d3$disn[df2012d3$edon==24], df2012d3$dcoalpri[df2012d3$edon==24])
-## table(df2012d3$dis13.1[df2012d3$edon==24], df2012d3$dcoalpri[df2012d3$edon==24])
-## table(df2012d3$dis13.3[df2012d3$edon==24], df2012d3$dcoalpri[df2012d3$edon==24])
 colnames(df2012d3)[which(colnames(df2012d3)=="dcoalpri")] <- "shSecCoalPri"
 df2012d3$tmp <- NULL
 df2012d3 <- df2012d3[duplicated(df2012d3$edon*100+df2012d3$dis13.3)==FALSE,]
-df2012d3$shSecCoalPri ## debug: should have some districts with incomplete coalition...
-df2012d3[df2012d3$edon==24,] # debug
 #
 # removes redundant columns
 df2012d0 <- df2012d0[,c("edon","disn"   ,"pan","pri","pric","prdc","pvem","panal","pripvem","efec","nr","nul","lisnom","shSecCoalPri")]
@@ -665,13 +616,6 @@ df2012d1 <- df2012d1[,c("edon","dis13.1","pan","pri","pric","prdc","pvem","panal
 df2012d3 <- df2012d3[,c("edon","dis13.3","pan","pri","pric","prdc","pvem","panal","pripvem","efec","nr","nul","lisnom","shSecCoalPri")]
 #
 colnames(df2012d0)[2] <- colnames(df2012d1)[2] <- colnames(df2012d3)[2] <- "disn"
-#
-dim(df2012d0)
-dim(df2012d1)
-dim(df2012d3)
-head(df2012d0[df2012d0$edon==6,])
-head(df2012d1)
-head(df2012d3)
 #
 # agrega votos de coalicion pri donde las hubo con base en la proporcion de secciones con coalicion en el nuevo distrito
 ## df2012d0$pric[df2012d0$shSecCoalPri<.5] <- 0
@@ -696,7 +640,6 @@ df2012d3$pripvem <- NULL
 df2012d3$pri[df2012d3$shSecCoalPri>=.5] <- 0
 df2012d3$pvem[df2012d3$shSecCoalPri>=.5] <- 0
 rm(shrPri)
-df2012d3[df2012d3$edon==24,]
 #
 ## winner
 tmp <- rep(0, times=300)
@@ -740,11 +683,6 @@ df2012d3$panalw[df2012d3$panal==tmp] <- 1
 tmp <- apply( df2012d3[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, max) - apply( df2012d3[,c("pan", "pri", "pric", "prdc", "pvem", "panal")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
 df2012d3$winmg <- tmp/df2012d3$efec
 #
-# debug
-df2012d0[df2012d0$edon==6,]
-df2012d1[df2012d1$edon==24,]
-df2012d3[df2012d3$edon==24,]
-#
 # state aggregates statistics
 df2012s0 <- df2012d0
 df2012s0 <- df2012s0[order(df2012s0$edon),]
@@ -786,7 +724,6 @@ df2012s0$prdcw  <- df2012s0$prdcw/df2012s0$ndis
 df2012s0$pvemw  <- df2012s0$pvemw/df2012s0$ndis
 df2012s0$panalw <- df2012s0$panalw/df2012s0$ndis
 #df2012s0$shDisCoalPri <-  df2012s0$shDisCoalPri/df2012s0$ndis
-head(df2012s0)
 df2012s1 <- df2012d1
 df2012s1 <- df2012s1[order(df2012s1$edon),]
 df2012s1$pan <- ave(df2012s1$pan, as.factor(df2012s1$edon), FUN=sum, na.rm=TRUE)
@@ -822,7 +759,6 @@ df2012s1$prdcw  <- df2012s1$prdcw/df2012s1$ndis
 df2012s1$pvemw  <- df2012s1$pvemw/df2012s1$ndis
 df2012s1$panalw <- df2012s1$panalw/df2012s1$ndis
 #df2012s1$shDisCoalPri <-  df2012s1$shDisCoalPri/df2012s1$ndis
-head(df2012s1)
 #
 df2012s3 <- df2012d3
 df2012s3 <- df2012s3[order(df2012s3$edon),]
@@ -859,7 +795,6 @@ df2012s3$prdcw  <- df2012s3$prdcw/df2012s3$ndis
 df2012s3$pvemw  <- df2012s3$pvemw/df2012s3$ndis
 df2012s3$panalw <- df2012s3$panalw/df2012s3$ndis
 #df2012s3$shDisCoalPri <-  df2012s3$shDisCoalPri/df2012s3$ndis
-head(df2012s3)
 #
 ##############
 # 2009 votes #
@@ -876,7 +811,6 @@ tmp$pt  <- tmp$conve <- tmp$ptconve <- NULL # NO SON NECESARIOS COMO LOS DE PRI 
 #
 tmp$dcoalpri <- rep(0, times=nrow(tmp))
 tmp$dcoalpri[tmp$pripvem>0] <- 1 # misses sections with coalition but no joint pri-pvem vote... next lines fix this
-table(tmp$dcoalpri) # debug
 tmp1 <- ave(tmp$dcoalpri, as.factor(tmp$edon*100+tmp$disn), FUN=sum, na.rm=TRUE)
 tmp2 <- ave(rep(1,length(tmp$dcoalpri)), as.factor(tmp$edon*100+tmp$disn), FUN=sum, na.rm=TRUE)
 tmp3 <- tmp1/tmp2
@@ -913,8 +847,6 @@ df2009d0$dcoalpri <- ave(df2009d0$dcoalpri, as.factor(df2009d0$edon*100+df2009d0
 df2009d0$dcoalpri <- df2009d0$dcoalpri/df2009d0$tmp # share of secciones with pri coalition in district
 df2009d0$tmp <- NULL
 df2009d0 <- df2009d0[duplicated(df2009d0$edon*100+df2009d0$disn)==FALSE,]
-dim(df2009d0)
-df2009d0[df2009d0$edon==20,]
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 1)
 df2009d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
@@ -939,7 +871,6 @@ df2009d1$dcoalpri <- ave(df2009d1$dcoalpri, as.factor(df2009d1$edon*100+df2009d1
 df2009d1$dcoalpri <- df2009d1$dcoalpri/df2009d1$tmp # share of secciones with pri coalition in district
 df2009d1$tmp <- NULL
 df2009d1 <- df2009d1[duplicated(df2009d1$edon*100+df2009d1$dis13.1)==FALSE,]
-dim(df2009d1)
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 3)
 df2009d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
@@ -964,7 +895,6 @@ df2009d3$dcoalpri <- ave(df2009d3$dcoalpri, as.factor(df2009d3$edon*100+df2009d3
 df2009d3$dcoalpri <- df2009d3$dcoalpri/df2009d3$tmp # share of secciones with pri coalition in district
 df2009d3$tmp <- NULL
 df2009d3 <- df2009d3[duplicated(df2009d3$edon*100+df2009d3$dis13.3)==FALSE,]
-dim(df2009d3)
 ## df2009d3 <- df2009d3[-which(df2009d3$dis13.3==0),]  # drops unassigned sections in 3rd plan (thisinfo should arrive later)
 #
 # removes redundant columns
@@ -973,10 +903,6 @@ df2009d1 <- df2009d1[,c("edon","dis13.1","pan","pri","pric","prd","pvem","panal"
 df2009d3 <- df2009d3[,c("edon","dis13.3","pan","pri","pric","prd","pvem","panal","pripvem","ptc","nr","nul","tot","lisnom","dcoalpri")]
 #
 colnames(df2009d0) <- colnames(df2009d1) <- colnames(df2009d3) <- c("edon","disn","pan","pri","pric","prd","pvem","panal","pripvem","ptc","nr","nul","tot","lisnom","shSecCoalPri")
-#
-dim(df2009d0)
-dim(df2009d1)
-dim(df2009d3)
 #
 # suma votacion efectiva
 df2009d0$efec <- df2009d0$pan+df2009d0$pri+df2009d0$prd+df2009d0$pvem+df2009d0$panal+df2009d0$pripvem+df2009d0$ptc
@@ -1006,7 +932,6 @@ df2009d3$pripvem <- NULL
 df2009d3$pri[df2009d3$shSecCoalPri>=.5] <- 0
 df2009d3$pvem[df2009d3$shSecCoalPri>=.5] <- 0
 rm(shrPri)
-df2009d1[df2009d1$edon==24,]
 #
 ## winner
 tmp <- rep(0, times=300)
@@ -1047,7 +972,6 @@ df2009d3$prdw[df2009d3$prd==tmp] <- 1
 df2009d3$pvemw[df2009d3$pvem==tmp] <- 1
 df2009d3$panalw[df2009d3$panal==tmp] <- 1
 df2009d3$ptcw[df2009d3$ptc==tmp] <- 1
-df2009d0[df2009d0$edon==20,]
 ## winner's margin
 tmp <- apply( df2009d3[,c("pan", "pri", "pric", "prd", "pvem", "panal", "ptc")], MARGIN = 1, max) - apply( df2009d3[,c("pan", "pri", "pric", "prd", "pvem", "panal", "ptc")], MARGIN = 1, function(x) sort(x,partial=length(x)-1)[length(x)-1])
 df2009d3$winmg <- tmp/df2009d3$efec
@@ -1092,7 +1016,6 @@ df2009s0$pvemw  <- df2009s0$pvemw/df2009s0$ndis
 df2009s0$panalw <- df2009s0$panalw/df2009s0$ndis
 df2009s0$ptcw  <- df2009s0$ptcw/df2009s0$ndis
 #df2009s0$shDisCoalPri <-  df2009s0$shDisCoalPri/df2009s0$ndis
-head(df2009s0)
 #
 df2009s1 <- df2009d1
 df2009s1 <- df2009s1[order(df2009s1$edon),]
@@ -1119,7 +1042,6 @@ df2009s1$pvemw <- ave(df2009s1$pvemw, as.factor(df2009s1$edon), FUN=sum, na.rm=T
 df2009s1$panalw <- ave(df2009s1$panalw, as.factor(df2009s1$edon), FUN=sum, na.rm=TRUE)
 df2009s1$ptcw <- ave(df2009s1$ptcw, as.factor(df2009s1$edon), FUN=sum, na.rm=TRUE)
 df2009s1 <- df2009s1[duplicated(df2009s1$edon)==FALSE,]
-df2009s1[df2009s1$edon==9,]
 tmp <- df2009s1; tmp[, grep("disn|win|shSec", colnames(tmp))] <- NULL; df2009s1 <- tmp # drop useless columns
 #
 # shares
@@ -1139,7 +1061,6 @@ df2009s1$pvemw  <- df2009s1$pvemw/df2009s1$ndis
 df2009s1$panalw <- df2009s1$panalw/df2009s1$ndis
 df2009s1$ptcw  <- df2009s1$ptcw/df2009s1$ndis
 #CoalPri <-  df2009s1$shDisCoalPri/df2009s1$ndis
-head(df2009s1)
 #
 df2009s3 <- df2009d3
 df2009s3 <- df2009s3[order(df2009s3$edon),]
@@ -1180,7 +1101,6 @@ df2009s3$pvemw  <- df2009s3$pvemw/df2009s3$ndis
 df2009s3$panalw <- df2009s3$panalw/df2009s3$ndis
 df2009s3$ptcw  <- df2009s3$ptcw/df2009s3$ndis
 #CoalPri <-  df2009s3$shDisCoalPri/df2009s3$ndis
-head(df2009s3)
 #
 ##############
 # 2006 votes #
@@ -1209,7 +1129,6 @@ df2006d0$nr <- ave(df2006d0$nr, as.factor(df2006d0$edon*100+df2006d0$disn), FUN=
 df2006d0$nul <- ave(df2006d0$nul, as.factor(df2006d0$edon*100+df2006d0$disn), FUN=sum, na.rm=TRUE)
 df2006d0$efec <- ave(df2006d0$efec, as.factor(df2006d0$edon*100+df2006d0$disn), FUN=sum, na.rm=TRUE)
 df2006d0 <- df2006d0[duplicated(df2006d0$edon*100+df2006d0$disn)==FALSE,]
-dim(df2006d0)
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 1)
 df2006d1 <- tmp[is.na(tmp$dis13.1)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
@@ -1224,7 +1143,6 @@ df2006d1$nr <- ave(df2006d1$nr, as.factor(df2006d1$edon*100+df2006d1$dis13.1), F
 df2006d1$nul <- ave(df2006d1$nul, as.factor(df2006d1$edon*100+df2006d1$dis13.1), FUN=sum, na.rm=TRUE)
 df2006d1$efec <- ave(df2006d1$efec, as.factor(df2006d1$edon*100+df2006d1$dis13.1), FUN=sum, na.rm=TRUE)
 df2006d1 <- df2006d1[duplicated(df2006d1$edon*100+df2006d1$dis13.1)==FALSE,]
-dim(df2006d1)
 #
 # RESULTADOS CON LOS DISTRITOS PROPUESTOS EN 2013 (escen. 3)
 df2006d3 <- tmp[is.na(tmp$dis13.3)==FALSE,] # elimina las secciones no asignadas a distrito (posiblemente por reseccionamiento, habr? que recuperarlas)
@@ -1239,9 +1157,7 @@ df2006d3$nr <- ave(df2006d3$nr, as.factor(df2006d3$edon*100+df2006d3$dis13.3), F
 df2006d3$nul <- ave(df2006d3$nul, as.factor(df2006d3$edon*100+df2006d3$dis13.3), FUN=sum, na.rm=TRUE)
 df2006d3$efec <- ave(df2006d3$efec, as.factor(df2006d3$edon*100+df2006d3$dis13.3), FUN=sum, na.rm=TRUE)
 df2006d3 <- df2006d3[duplicated(df2006d3$edon*100+df2006d3$dis13.3)==FALSE,]
-head(df2006d3)
 ## df2006d3 <- df2006d3[-which(df2006d3$dis13.3==0),]  # drops unassigned sections in 3rd plan (thisinfo should arrive later)
-dim(df2006d3)
 #
 # removes redundant columns
 df2006d0 <- df2006d0[,c("edon","disn"   ,"pan","pric","prdc","panal","asdc","efec","nr","nul")]
@@ -1318,7 +1234,6 @@ df2006s0$pricw  <- df2006s0$pricw/df2006s0$ndis
 df2006s0$prdcw  <- df2006s0$prdcw/df2006s0$ndis
 df2006s0$panalw <- df2006s0$panalw/df2006s0$ndis
 df2006s0$asdcw  <- df2006s0$asdcw/df2006s0$ndis
-head(df2006s0)
 #
 df2006s1 <- df2006d1
 df2006s1 <- df2006s1[order(df2006s1$edon),]
@@ -1350,7 +1265,6 @@ df2006s1$pricw  <- df2006s1$pricw/df2006s1$ndis
 df2006s1$prdcw  <- df2006s1$prdcw/df2006s1$ndis
 df2006s1$panalw <- df2006s1$panalw/df2006s1$ndis
 df2006s1$asdcw  <- df2006s1$asdcw/df2006s1$ndis
-head(df2006s1)
 #
 df2006s3 <- df2006d3
 df2006s3 <- df2006s3[order(df2006s3$edon),]
@@ -1467,7 +1381,6 @@ dis2003$edon.secn <- dis2003$edon*10000 + dis2003$seccion
 tmp1 <- dis2003[,c("edon.secn","dis2006")]
 tmp <- merge(x = tmp, y = tmp1, by = "edon.secn", all.x = TRUE)
 #
-colnames(tmp)
 sel <- 6:21  # it is these cols that have substantive data
 ## Aggregates 2003 results by district
 df2003d97 <- tmp[order(tmp$edon, tmp$disn),] # resultados con distritos reales (adoptados en 1996)
@@ -1491,7 +1404,6 @@ df2003d97$dis2006 <- df2003d97$edon.secn <- df2003d97$seccion <- NULL
 # RESULTADOS CON MAPA 2006
 df2003d0 <- tmp[order(tmp$edon, tmp$dis2006),]
 df2003d0$disn <- df2003d0$dis2006; df2003d0$dis2006 <- NULL # change district info
-head(df2003d0)
 for (i in sel){
     df2003d0[,i] <- ave(df2003d0[,i]     , as.factor(df2003d0$edon*100+df2003d0$disn), FUN=sum, na.rm=TRUE)
 }
@@ -1516,11 +1428,11 @@ df2003d0$edon.secn <- df2003d0$seccion <- NULL
 df2003d97 <- df2003d97[,c("edon", "disn", "pan", "pri", "prd", "pt", "pvem", "conve", "psn", "pas", "mp", "plm", "fc", "pric", "nr", "nul", "efec", "shSecCoalPri")]
 df2003d0 <-  df2003d0 [,c("edon", "disn", "pan", "pri", "prd", "pt", "pvem", "conve", "psn", "pas", "mp", "plm", "fc", "pric", "nr", "nul", "efec", "shSecCoalPri")]
 #
-dim(df2003d97) # <- OJO: two full districts missing: 506 and 1605
+print("Two districts missing in 2003") # <- OJO: two full districts missing: 506 and 1605
+dim(df2003d97) 
 dim(df2003d0)
 
-# adds winner, somehow not added for 2003 here
-#colnames(df2003d97)
+# adds winner
 tmp <- c("pan", "pri", "prd", "pt", "pvem", "conve", "psn", "pas", "mp", "plm","fc","pric")
 tmpv <- df2003d97[,tmp]
 tmpl <- matrix(rep(tmp,298), byrow=TRUE, nrow=298) # OJO two districts missing from vote data
@@ -1534,9 +1446,8 @@ df2003d97$win <- tmpl[,1]
 ## READ DISTRICT-LEVEL POPULATION DATA (LINEAR PROJECTIONS OF CENSUS FIGURES) AND MERGE WITH VOTE OBJECTS ##
 ############################################################################################################
 load(paste(dd, "votPobDis0018.RData", sep = ""))
-summary(votPobDis0018) # this object wrongly calls 2013 map "2015 map"
-colnames(votPobDis0018$pob.distMap1997)
-colnames(votPobDis0018$pob.distMap2006)
+print("This object calls 2013 map '2015 map', as does the published article")
+summary(votPobDis0018) 
 # simplify objects with relevant year only
 tmp <- votPobDis0018$pob.distMap1997
 tmp <- tmp[,c("edon","disn","ptot2003","rris2003","rrin2003")]
@@ -1593,7 +1504,7 @@ tmpFrom <- votPobDis0018$pob.df2003d97; tmpTo <- df2003d97                      
 tmpTo <- rbind(tmpTo, c(5,6,rep(NA,ncol(tmpTo))), c(16,5,rep(NA,ncol(tmpTo))))              # adds missing districts for square matrix
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
 tmpTo <- tmpTo[order(tmpTo$edon, tmpTo$disn),]                                              # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 tmpTo <- tmpTo[-which((tmpTo$edon==5 & tmpTo$disn==6) | tmpTo$edon==16 & tmpTo$disn==5),]   # drop missing districts
@@ -1601,63 +1512,63 @@ df2003d97 <- tmpTo
 #
 tmpFrom <- votPobDis0018$pob.df2003d0; tmpTo <- df2003d0                                    # select one year and map
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 df2003d0 <- tmpTo
 #
 tmpFrom <- votPobDis0018$pob.df2006d0; tmpTo <- df2006d0                                    # select one year and map
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 df2006d0 <- tmpTo
 #
 tmpFrom <- votPobDis0018$pob.df2006d3; tmpTo <- df2006d3                                    # select one year and map
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 df2006d3 <- tmpTo
 #
 tmpFrom <- votPobDis0018$pob.df2009d0; tmpTo <- df2009d0                                    # select one year and map
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 df2009d0 <- tmpTo
 #
 tmpFrom <- votPobDis0018$pob.df2009d3; tmpTo <- df2009d3                                    # select one year and map
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 df2009d3 <- tmpTo
 #
 tmpFrom <- votPobDis0018$pob.df2012d0; tmpTo <- df2012d0                                        # select one year and map
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 df2012d0 <- tmpTo
 #
 tmpFrom <- votPobDis0018$pob.df2012d3; tmpTo <- df2012d3                                        # select one year and map
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 df2012d3 <- tmpTo
 #
 tmpFrom <- votPobDis0018$pob.df2015d0; tmpTo <- df2015d0                                    # select one year and map
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 df2015d0 <- tmpTo
 #
 tmpFrom <- votPobDis0018$pob.df2015d3; tmpTo <- df2015d3                                    # select one year and map
 tmpFrom <- tmpFrom[order(tmpFrom$edon, tmpFrom$disn),]                                      # sort
-table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
+#table(paste(tmpFrom$edon, tmpFrom$disn, sep=".")==paste(tmpTo$edon, tmpTo$disn, sep = ".")) # verify districts match in both objects (300 TRUEs)
 tmpFrom <- tmpFrom[, c("ptot","rris","rrin")]                                               # keep population data only
 tmpTo <- cbind(tmpTo, tmpFrom)                                                              # merge
 df2015d3 <- tmpTo
@@ -1667,7 +1578,7 @@ rm(tmpFrom, tmpTo, votPobDis0018)
 tmpFrom <- df2006d0; tmpTo <- df2006s0
 tmpFrom$ptot <- ave(tmpFrom$ptot, as.factor(tmpFrom$edon), FUN=sum, na.rm=TRUE)
 tmpFrom <- tmpFrom[duplicated(tmpFrom$edon)==FALSE,]
-table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
+#table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
 tmpTo$ptot <- tmpFrom$ptot
 df2006s0 <- tmpTo
 #
@@ -1681,14 +1592,14 @@ df2006s0 <- tmpTo
 tmpFrom <- df2006d3; tmpTo <- df2006s3
 tmpFrom$ptot <- ave(tmpFrom$ptot, as.factor(tmpFrom$edon), FUN=sum, na.rm=TRUE)
 tmpFrom <- tmpFrom[duplicated(tmpFrom$edon)==FALSE,]
-table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
+#table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
 tmpTo$ptot <- tmpFrom$ptot
 df2006s3 <- tmpTo
 #
 tmpFrom <- df2009d0; tmpTo <- df2009s0
 tmpFrom$ptot <- ave(tmpFrom$ptot, as.factor(tmpFrom$edon), FUN=sum, na.rm=TRUE)
 tmpFrom <- tmpFrom[duplicated(tmpFrom$edon)==FALSE,]
-table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
+#table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
 tmpTo$ptot <- tmpFrom$ptot
 df2009s0 <- tmpTo
 #
@@ -1702,14 +1613,14 @@ df2009s0 <- tmpTo
 tmpFrom <- df2009d3; tmpTo <- df2009s3
 tmpFrom$ptot <- ave(tmpFrom$ptot, as.factor(tmpFrom$edon), FUN=sum, na.rm=TRUE)
 tmpFrom <- tmpFrom[duplicated(tmpFrom$edon)==FALSE,]
-table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
+#table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
 tmpTo$ptot <- tmpFrom$ptot
 df2009s3 <- tmpTo
 #
 tmpFrom <- df2012d0; tmpTo <- df2012s0
 tmpFrom$ptot <- ave(tmpFrom$ptot, as.factor(tmpFrom$edon), FUN=sum, na.rm=TRUE)
 tmpFrom <- tmpFrom[duplicated(tmpFrom$edon)==FALSE,]
-table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
+#table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
 tmpTo$ptot <- tmpFrom$ptot
 df2012s0 <- tmpTo
 #
@@ -1723,14 +1634,14 @@ df2012s0 <- tmpTo
 tmpFrom <- df2012d3; tmpTo <- df2012s3
 tmpFrom$ptot <- ave(tmpFrom$ptot, as.factor(tmpFrom$edon), FUN=sum, na.rm=TRUE)
 tmpFrom <- tmpFrom[duplicated(tmpFrom$edon)==FALSE,]
-table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
+#table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
 tmpTo$ptot <- tmpFrom$ptot
 df2012s3 <- tmpTo
 #
 tmpFrom <- df2015d0; tmpTo <- df2015s0
 tmpFrom$ptot <- ave(tmpFrom$ptot, as.factor(tmpFrom$edon), FUN=sum, na.rm=TRUE)
 tmpFrom <- tmpFrom[duplicated(tmpFrom$edon)==FALSE,]
-table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
+#table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
 tmpTo$ptot <- tmpFrom$ptot
 df2015s0 <- tmpTo
 #
@@ -1744,7 +1655,7 @@ df2015s0 <- tmpTo
 tmpFrom <- df2015d3; tmpTo <- df2015s3
 tmpFrom$ptot <- ave(tmpFrom$ptot, as.factor(tmpFrom$edon), FUN=sum, na.rm=TRUE)
 tmpFrom <- tmpFrom[duplicated(tmpFrom$edon)==FALSE,]
-table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
+#table(tmpFrom$edon==tmpTo$edon) # verify districts match in both objects (32 TRUEs)
 tmpTo$ptot <- tmpFrom$ptot
 df2015s3 <- tmpTo
 #
@@ -1832,10 +1743,9 @@ round(tmp1,2)
 ## session. You can choose to save the image now, or re-run all the above commands once linzerElas.r has finished.  ##
 ######################################################################################################################
 #
-## plot natl true and Linzer-simulated votes and seats
+## plot natl true and Linzer-simulated votes and seats <-- Fig. 2 in the published article
 load(paste(dd, "swingRatios9715.RData", sep = ""))
 #pdf(file = paste(gd, "vs2003.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(gd, "vs2003.png", sep = ""))
 dat <- swRats$df2003d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2003)
 abline(a=0, b=1, lty=2)
@@ -1843,7 +1753,6 @@ text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 #dev.off()
 #pdf(file = paste(gd, "vs2006.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(gd, "vs2006.png", sep = ""))
 dat <- swRats$df2006d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2006)
 abline(a=0, b=1, lty=2)
@@ -1851,7 +1760,6 @@ text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 #dev.off()
 #pdf(file = paste(gd, "vs2009.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(gd, "vs2009.png", sep = ""))
 dat <- swRats$df2009d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2009)
 abline(a=0, b=1, lty=2)
@@ -1859,7 +1767,6 @@ text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 #dev.off()
 #pdf(file = paste(gd, "vs2012.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(gd, "vs2012.png", sep = ""))
 dat <- swRats$df2012d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2012)
 abline(a=0, b=1, lty=2)
@@ -1867,7 +1774,6 @@ text(t(dat$vmat), t(dat$seatmat), labels=colnames(dat$vmat), col="gray")
 text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 #dev.off()
 #pdf(file = paste(gd, "vs2015.pdf", sep = ""), width = 6, height = 6)
-#png(file = paste(gd, "vs2015.png", sep = ""))
 dat <- swRats$df2015d0
 plot(dat$vmat, dat$seatmat, type="n", xlim=0:1, ylim=0:1, ylab = "seat share", xlab = "vote share", main = 2015)
 abline(a=0, b=1, lty=2)
@@ -1878,7 +1784,7 @@ text(dat$truevote, dat$trueseat, labels=colnames(dat$vmat))
 ##########################################################################################################
 ## *Bloc 6*:                                                                                            ##
 ## BAYESIAN ESTIMATION OF KING MODEL USING JAGS                                                         ##
-## See http://mcmc-jags.sourceforge.net for details on how to downolad and install JAGS in your machine ##
+## See http://mcmc-jags.sourceforge.net for details on how to download and install JAGS in your machine ##
 ##########################################################################################################
 ### Packages for JAGS
 library(R2jags)
@@ -2044,9 +1950,6 @@ lambda.rho.7 <- function() {
     rho ~ dexp(.75) # this has positive range, median close to 1, mean 1.25, max 4.5
 }
 
-summary(swRats)
-summary(swRats$df2015d0gree$seat)
-
 ######################################################
 # wrap data prep and jags estimation in one function #
 ######################################################
@@ -2128,7 +2031,7 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
     return(tmpRes)
 }
 
-# This will test that jags works, estimation should end fast with no error message
+# This will test that jags routine works. Estimation should end fast with no error message
 tmpRes <- my.jags(which.elec = 2015,        # options are: 2003, 2006, 2009, 2012, 2015            
                   which.map  = "d0",        #              "d0", "d1", "d3"                        
                   which.measure = "w.bar",  #              "v" for R, "v.bar" for P, "w.bar" for M (RPM are Grofman et al's notation)
@@ -2143,12 +2046,15 @@ tmpRes <- my.jags(which.elec = 2015,        # options are: 2003, 2006, 2009, 201
 #############################################################
 #############################################################
 load(file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep ="")) # results reported in publication
+print("Results reported in publication")
 summary(biasRespOnLinzerSimsRPM)
-# inspect results (choose other maps/years)
-quantile(biasRespOnLinzerSimsRPM$res2015d0v$BUGSoutput$sims.list$lambda[,1])                                                                                        # raw partisan bias
-quantile(biasRespOnLinzerSimsRPM$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1])                                                                                    # distributive
-quantile(biasRespOnLinzerSimsRPM$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) - quantile(biasRespOnLinzerSimsRPM$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1]) # malapportionment
-quantile(biasRespOnLinzerSimsRPM$res2015d0v$BUGSoutput$sims.list$lambda[,1])     - quantile(biasRespOnLinzerSimsRPM$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) # turnout
+#
+print("Inspect partisan bias estimates thus (choose other maps/years)")
+tmp <- biasRespOnLinzerSimsRPM # shorten name
+quantile(tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1])                                                                    # raw partisan bias
+quantile(tmp$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1])                                                                # distributive
+quantile(tmp$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) - quantile(tmp$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1]) # malapportionment
+quantile(tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1])     - quantile(tmp$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) # turnout
 #
 ## ## extracts all objects from the estimates list, if so wished
 ## theList <- biasRespOnLinzerSimsRPM
@@ -2179,7 +2085,7 @@ quantile(biasRespOnLinzerSimsRPM$res2015d0v$BUGSoutput$sims.list$lambda[,1])    
 # res2012d0v, res2012d0v.bar, res2012d0w.bar, res2012d3v, res2012d3v.bar, res2012d3w.bar,
 # res2015d0v, res2015d0v.bar, res2015d0w.bar, res2015d3v, res2015d3v.bar, and res2015d3w.bar.
 #  
-# -> Skipping the next bloc lets the script proceed with the distributed estimates.
+# -> By skipping the following bloc, the script proceeds with the distributed estimates.
 tmpRes <- my.jags(which.elec = 2015,
                   which.map  = "d0",
                   which.measure = "w.bar",
@@ -2196,11 +2102,8 @@ summary(biasRespOnLinzerSimsRPM)
 ## save(biasRespOnLinzerSimsRPM,
 ##      file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep =""))
 
-#ERIC -- This second clause both crashes, but doesn't affect later calculations results 
-#Micah [EM 15jun2017]: I believe I have fixed the problem here, explaining with more detail (lines 2169:2181) how to proceed by either (a) re-estimating or (b) loading our distributed estimates. Pls verify that all runs smoothly and that my instructions are clear. 
-
-
-# commands to export pdf traceplots to verify parameter convergence (will produce a large number of new plots)
+# DIAGNOSIS
+# commands to export pdf traceplots to verify parameter convergence (will produce a pdf file with a large number of plots)
 gd2 <- paste(gd, "traceplots/", sep = "")
 which.elec <- 2015
 which.map <- "d3"
@@ -2212,7 +2115,54 @@ traceplot(tmp, ask = FALSE)
 dev.off()
 rm(gd2, which.elec, which.map, which.v, tmp) # clean
 
-# summarize central tendency of party bias a la Grofman et al
+# summarize responsiveness parameter (90% range and median estimated with raw vote --- R in GKB's terminology)
+tmp <- biasRespOnLinzerSimsRPM
+tmp1 <- data.frame(q05=rep(NA,5), q50=rep(NA,5), q95=rep(NA,5)); rownames(tmp1) <- paste("y", seq(2003, 2015, by=3), sep="")
+tmp1[1,] <- round(quantile(tmp$res2003d97v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
+tmp1[2,] <- round(quantile(tmp$res2006d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
+tmp1[3,] <- round(quantile(tmp$res2009d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
+tmp1[4,] <- round(quantile(tmp$res2012d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
+tmp1[5,] <- round(quantile(tmp$res2015d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
+     #################################################
+tmp1 # <-- reported in p. 8 of the published article #
+     #################################################
+#MICAH: the ranges reported are slightly different from these. Rho is a parameter of secondary importance in our argument, which is probably why failed to update numbers from an earlier verion of the analysis. What is the etiquette here to acknowledge the mistake?
+
+####################################################
+# Rhat reported in fn. 13 of the published article #
+####################################################
+tmp$res2003d97v$BUGSoutput$summary
+tmp$res2003d97v.bar$BUGSoutput$summary
+tmp$res2003d97w.bar$BUGSoutput$summary
+tmp$res2006d0v$BUGSoutput$summary
+tmp$res2006d0v.bar$BUGSoutput$summary
+tmp$res2006d0w.bar$BUGSoutput$summary
+tmp$res2009d0v$BUGSoutput$summary
+tmp$res2009d0v.bar$BUGSoutput$summary
+tmp$res2009d0w.bar$BUGSoutput$summary
+tmp$res2012d0v$BUGSoutput$summary
+tmp$res2012d0v.bar$BUGSoutput$summary
+tmp$res2012d0w.bar$BUGSoutput$summary
+tmp$res2015d0v$BUGSoutput$summary
+tmp$res2015d0v.bar$BUGSoutput$summary
+tmp$res2015d0w.bar$BUGSoutput$summary
+
+# PRD congressional vote reported in p. 9 in published article
+print("Mean PRD diputado vote, presidential election years")
+round(mean(c(
+    sum(df2006d0$prdc)*100/sum(df2006d0$efec),
+    sum(df2012d0$prdc)*100/sum(df2012d0$efec)
+    )
+))
+print("Mean PRD diputado vote, midterms")
+round(mean(c(
+    sum(df2003d97$prd)*100/sum(df2003d97$efec),
+    sum(df2009d0$prd)*100/sum(df2009d0$efec),
+    sum(df2015d0$prd+df2015d0$prdc)*100/sum(df2015d0$efec)
+    )
+))
+
+# summarize central tendency of party bias a la Grofman et al -- Estimates reported in Table 2, p. 9 in published article
 tmp <- biasRespOnLinzerSimsRPM
 tmp1 <- data.frame(panpri=rep(NA,4), prdpri=rep(NA,4), minorpri=rep(NA,4)); rownames(tmp1) <- c("raw","dist","turn","malap")
 tmp15d3 <- tmp15d0 <- tmp12d3 <- tmp12d0 <- tmp09d0 <- tmp06d0 <- tmp03d97 <- tmp03d0 <- tmp1
@@ -2265,15 +2215,15 @@ tmp15d3[3,] <- round(tmp$res2015d3v$BUGSoutput$median$lambda[1:3] - tmp$res2015d
 tmp15d3[4,] <- round(tmp$res2015d3w.bar$BUGSoutput$median$lambda[1:3] - tmp$res2015d3v.bar$BUGSoutput$median$lambda[1:3], 2) #  MAL
 #tmp12d3[,3] <- tmp12d3[,1] - tmp12d3[,2]
 #
-#
-tmp03d97
-tmp03d0
-tmp06d0
-tmp09d0
-tmp12d0
-tmp12d3
-tmp15d0
-tmp15d3
+# Estimates reported in Table 2, p. 9 in published article
+tmp03d97 # actual
+tmp03d0  # hypothetical
+tmp06d0  # actual
+tmp09d0  # actual
+tmp12d0  # actual
+tmp12d3  # hypothetical
+tmp15d0  # actual
+tmp15d3  # hypothetical
 
 # summarize errors of party bias a la Grofman
 nOppoSign <- function(x){
@@ -2291,125 +2241,473 @@ tmp15d3 <- tmp15d0 <- tmp12d3 <- tmp12d0 <- tmp09d0 <- tmp06d0 <- tmp03d97 <- tm
 #
 tmp1 <- tmp$res2003d97v$BUGSoutput$sims.list$lambda[,1:3] #  RAW
 tmp03d97[1,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp03d97[1,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd         
 tmp1 <- tmp$res2003d97v.bar$BUGSoutput$sims.list$lambda[,1:3] #  DIST
 tmp03d97[2,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp03d97[2,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2003d97v$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2003d97w.bar$BUGSoutput$sims.list$lambda[1:3] #  TURN
 tmp03d97[3,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp03d97[3,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2003d97w.bar$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2003d97v.bar$BUGSoutput$sims.list$lambda[1:3] #  MALAP
 tmp03d97[4,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp03d97[4,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 #                                        #
 tmp1 <- tmp$res2003d0v$BUGSoutput$sims.list$lambda[,1:3] #  RAW
 tmp03d0[1,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp03d0[1,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2003d0v.bar$BUGSoutput$sims.list$lambda[,1:3] #  DIST
 tmp03d0[2,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp03d0[2,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2003d0v$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2003d0w.bar$BUGSoutput$sims.list$lambda[1:3] #  TURN
 tmp03d0[3,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp03d0[3,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2003d0w.bar$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2003d0v.bar$BUGSoutput$sims.list$lambda[1:3] # MALAP
 tmp03d0[4,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp03d0[4,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 #                                        #
 tmp1 <- tmp$res2006d0v$BUGSoutput$sims.list$lambda[,1:3] #  RAW
 tmp06d0[1,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=panalpri
-#tmp06d0[1,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2006d0v.bar$BUGSoutput$sims.list$lambda[,1:3] #  DIST
 tmp06d0[2,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=panalpri
-#tmp06d0[2,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2006d0v$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2006d0w.bar$BUGSoutput$sims.list$lambda[1:3] #  TURN
 tmp06d0[3,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=panalpri
-#tmp06d0[3,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2006d0w.bar$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2006d0v.bar$BUGSoutput$sims.list$lambda[1:3] # MALAP
 tmp06d0[4,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=panalpri
-#tmp06d0[4,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
                                         #
 tmp1 <- tmp$res2009d0v$BUGSoutput$sims.list$lambda[,1:3] #  RAW
 tmp09d0[1,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp09d0[1,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2009d0v.bar$BUGSoutput$sims.list$lambda[,1:3] #  DIST
 tmp09d0[2,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp09d0[2,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2009d0v$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2009d0w.bar$BUGSoutput$sims.list$lambda[1:3] #  TURN
 tmp09d0[3,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp09d0[3,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2009d0w.bar$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2009d0v.bar$BUGSoutput$sims.list$lambda[1:3] # MALAP
 tmp09d0[4,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp09d0[4,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
                                         #
 tmp1 <- tmp$res2012d0v$BUGSoutput$sims.list$lambda[,1:3] #  RAW
 tmp12d0[1,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp12d0[1,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2012d0v.bar$BUGSoutput$sims.list$lambda[,1:3] #  DIST
 tmp12d0[2,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp12d0[2,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2012d0v$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2012d0w.bar$BUGSoutput$sims.list$lambda[1:3] #  TURN
 tmp12d0[3,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp12d0[3,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2012d0w.bar$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2012d0v.bar$BUGSoutput$sims.list$lambda[1:3] # MALAP
 tmp12d0[4,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp12d0[4,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 #
 tmp1 <- tmp$res2012d3v$BUGSoutput$sims.list$lambda[,1:3] #  RAW
 tmp12d3[1,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp12d3[1,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2012d3v.bar$BUGSoutput$sims.list$lambda[,1:3] #  DIST
 tmp12d3[2,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp12d3[2,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2012d3v$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2012d3w.bar$BUGSoutput$sims.list$lambda[1:3] #  TURN
 tmp12d3[3,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp12d3[3,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2012d3w.bar$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2012d3v.bar$BUGSoutput$sims.list$lambda[1:3] # MALAP
 tmp12d3[4,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp12d3[4,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd
 #
 tmp1 <- tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1:3] #  RAW
 tmp15d0[1,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp15d0[1,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1:3] #  DIST
 tmp15d0[2,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp15d0[2,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2015d0w.bar$BUGSoutput$sims.list$lambda[1:3] #  TURN
 tmp15d0[3,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp15d0[3,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2015d0v.bar$BUGSoutput$sims.list$lambda[1:3] # MALAP
 tmp15d0[4,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp15d0[4,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 #
 tmp1 <- tmp$res2015d3v$BUGSoutput$sims.list$lambda[,1:3] #  RAW
 tmp15d3[1,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp15d3[1,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2015d3v.bar$BUGSoutput$sims.list$lambda[,1:3] #  DIST
 tmp15d3[2,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp15d3[2,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2015d3v$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2015d3w.bar$BUGSoutput$sims.list$lambda[1:3] #  TURN
 tmp15d3[3,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp15d3[3,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 tmp1 <- tmp$res2015d3w.bar$BUGSoutput$sims.list$lambda[,1:3] - tmp$res2015d3v.bar$BUGSoutput$sims.list$lambda[1:3] # MALAP
 tmp15d3[4,] <- apply(tmp1, 2, FUN=nOppoSign) # 1=panpri 2=prdpri 3=pvempri
-#tmp15d3[4,3]   <- nOppoSign(tmp1[,1] - tmp1[,2]) # 3=panprd        
 #
+# Share of posterior sample with sign opposite to point estimate's, reported in Table 2, p. 9 in published article
+print("2003, actual map")
 tmp03d97
+print("2003, hypothetical map")
 tmp03d0
+print("2006, actual map")
 tmp06d0
+print("2009, actual map")
 tmp09d0
+print("2012, actual map")
 tmp12d0
+print("2012, hypothetical map")
 tmp12d3
+print("2015, actual map")
 tmp15d0
+print("2015, hypothetical map")
 tmp15d3
 
+##########################################################
+# compute swing ratios with regressions from Linzer sims #
+# reported in Table 3, p. 10 or publised article         #
+##########################################################
+load(paste(dd, "swingRatios9715.RData", sep = ""))
+# two maps pooled version
+# 2006
+tmp <- swRats$df2006d0
+tmp1 <- tmp$seatmat
+tmp2 <- tmp$vmat
+tmp3 <- tmp$v.barmat
+tmp4 <- tmp$w.barmat
+colnames(tmp1) <- colnames(tmp2)
+tmp5 <- rep(0, nrow(tmp1))
+s <- tmp1
+v <- tmp2
+v.bar <- tmp3
+w.bar <- tmp4
+dmap <- tmp5
+#
+tmp <- swRats$df2006d3
+tmp1 <- tmp$seatmat
+tmp2 <- tmp$vmat
+tmp3 <- tmp$v.barmat
+tmp4 <- tmp$w.barmat
+colnames(tmp1) <- colnames(tmp2)
+tmp5 <- rep(1, nrow(tmp1))
+s <- rbind(s, tmp1)
+v <- rbind(v, tmp2)
+v.bar <- rbind(v.bar, tmp3)
+w.bar <- rbind(w.bar, tmp4)
+dmap <- c(dmap, tmp5)
+#
+dmapxv <- v*dmap
+    #
+print("year 2006")
+for (i in c(2,1,3)){
+    vreg  <- lm(s[,i] ~ v[,i])
+    vreg2 <- lm(s[,i] ~ v[,i] + dmap + dmapxv[,i])
+    print( colnames(v)[i])
+    print(round(summary(vreg2)$coefficients[c(2,4),1:2], 2))
+}
+#
+# 2009
+tmp <- swRats$df2009d0
+tmp1 <- tmp$seatmat
+tmp2 <- tmp$vmat
+tmp3 <- tmp$v.barmat
+tmp4 <- tmp$w.barmat
+colnames(tmp1) <- colnames(tmp2)
+tmp5 <- rep(0, nrow(tmp1))
+s <- tmp1
+v <- tmp2
+v.bar <- tmp3
+w.bar <- tmp4
+dmap <- tmp5
+#
+tmp <- swRats$df2009d3
+tmp1 <- tmp$seatmat
+tmp2 <- tmp$vmat
+tmp3 <- tmp$v.barmat
+tmp4 <- tmp$w.barmat
+colnames(tmp1) <- colnames(tmp2)
+tmp5 <- rep(1, nrow(tmp1))
+s <- rbind(s, tmp1)
+v <- rbind(v, tmp2)
+v.bar <- rbind(v.bar, tmp3)
+w.bar <- rbind(w.bar, tmp4)
+dmap <- c(dmap, tmp5)
+#
+dmapxv <- v*dmap
+    #
+print("year 2009")
+for (i in c(2,1,3)){
+    vreg  <- lm(s[,i] ~ v[,i])
+    vreg2 <- lm(s[,i] ~ v[,i] + dmap + dmapxv[,i])
+    print( colnames(v)[i])
+    print(round(summary(vreg2)$coefficients[c(2,4),1:2], 2))
+}
+#
+# 2012
+tmp <- swRats$df2012d0
+tmp1 <- tmp$seatmat
+tmp2 <- tmp$vmat
+tmp3 <- tmp$v.barmat
+tmp4 <- tmp$w.barmat
+colnames(tmp1) <- colnames(tmp2)
+tmp5 <- rep(0, nrow(tmp1))
+s <- tmp1
+v <- tmp2
+v.bar <- tmp3
+w.bar <- tmp4
+dmap <- tmp5
+#
+tmp <- swRats$df2012d3
+tmp1 <- tmp$seatmat
+tmp2 <- tmp$vmat
+tmp3 <- tmp$v.barmat
+tmp4 <- tmp$w.barmat
+colnames(tmp1) <- colnames(tmp2)
+tmp5 <- rep(1, nrow(tmp1))
+s <- rbind(s, tmp1)
+v <- rbind(v, tmp2)
+v.bar <- rbind(v.bar, tmp3)
+w.bar <- rbind(w.bar, tmp4)
+dmap <- c(dmap, tmp5)
+#
+dmapxv <- v*dmap
+    #
+print("year 2012")
+for (i in c(2,1,3)){
+    vreg  <- lm(s[,i] ~ v[,i])
+    vreg2 <- lm(s[,i] ~ v[,i] + dmap + dmapxv[,i])
+    print( colnames(v)[i])
+    print(round(summary(vreg2)$coefficients[c(2,4),1:2], 2))
+}
+#
+# 2015
+tmp <- swRats$df2015d0
+tmp1 <- tmp$seatmat
+tmp2 <- tmp$vmat
+tmp3 <- tmp$v.barmat
+tmp4 <- tmp$w.barmat
+colnames(tmp1) <- colnames(tmp2)
+tmp5 <- rep(0, nrow(tmp1))
+s <- tmp1
+v <- tmp2
+v.bar <- tmp3
+w.bar <- tmp4
+dmap <- tmp5
+#
+tmp <- swRats$df2015d3
+tmp1 <- tmp$seatmat
+tmp2 <- tmp$vmat
+tmp3 <- tmp$v.barmat
+tmp4 <- tmp$w.barmat
+colnames(tmp1) <- colnames(tmp2)
+tmp5 <- rep(1, nrow(tmp1))
+s <- rbind(s, tmp1)
+v <- rbind(v, tmp2)
+v.bar <- rbind(v.bar, tmp3)
+w.bar <- rbind(w.bar, tmp4)
+dmap <- c(dmap, tmp5)
+#
+dmapxv <- v*dmap
+    #
+print("year 2015")
+for (i in c(2,1,3)){
+    vreg  <- lm(s[,i] ~ v[,i])
+    vreg2 <- lm(s[,i] ~ v[,i] + dmap + dmapxv[,i])
+    print( colnames(v)[i])
+    print(round(summary(vreg2)$coefficients[c(2,4),1:2], 2))
+}
+#
 
-# summarize responsiveness parameters (90% and median estimated with raw vote --- R in GKB's terminology)
+# Figure 1 in published paper
+logit <- function(X){ log( X / (1-X) ) }
+antilogit <- function(X){ exp(X) / (exp(X)+1) }
+v.tmp <- (1:999)/1000
+title <- ""
+file <- "rhoExample"
+#pdf (file = paste(gd, file, ".pdf", sep=""), width = 6,   height = 6)
+plot(c(0,1),c(0,1), type = "n",
+     xlab = "vote share", ylab = "seat share", axes = FALSE,
+     main = title)
+axis(1, at = seq(0,1,.2), labels = seq(0,1,.2))
+axis(2, at = seq(0,1,.2), labels = seq(0,1,.2))
+#
+# versiones con sesgo en grises
+s.tmp <- antilogit( 1.5 + 1 * logit( v.tmp ) )
+lines(v.tmp, s.tmp, lty = 2, col="grey")
+s.tmp <- antilogit ( 1.5 + 3 * logit( v.tmp ) ) 
+lines(v.tmp, s.tmp, col = "grey", lty = 3) 
+s.tmp <- antilogit ( 1.5 + 15 * logit( v.tmp ) ) # ESTO HACE LO DEBIDO: SESGO DE .25 EN FAVOR
+lines(v.tmp, s.tmp, col = "grey")
+#
+s.tmp <- antilogit( 1 * logit( v.tmp ) )
+lines(v.tmp, s.tmp, col = "black", lty = 2)
+text(v.tmp[660], s.tmp[660], labels = expression(paste(rho, "=1")), pos=4)
+s.tmp <- antilogit ( 3 * logit( v.tmp ) ) 
+lines(v.tmp, s.tmp, col = "black", lty = 3) 
+text(v.tmp[600], s.tmp[600], labels = expression(paste(rho, "=3")), pos=4)
+s.tmp <- antilogit ( 15 * logit( v.tmp ) ) # ESTO HACE LO DEBIDO: SESGO DE .25 EN FAVOR
+lines(v.tmp, s.tmp, col = "black")
+text(v.tmp[440], s.tmp[440], labels = expression(rho %->% infinity), pos=4)
+#dev.off()
+
+# Figure 4, p. 8 in published article
+#### Plot Posterior lambda Samples For d0 And d3
 tmp <- biasRespOnLinzerSimsRPM
-round( quantile(tmp$res2003d97v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-round( quantile(tmp$res2006d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-round( quantile(tmp$res2009d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-round( quantile(tmp$res2012d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
-round( quantile(tmp$res2015d0v$BUGSoutput$sims.list$rho, probs = c(.05, .5, .95)), 2)
+myQ <- function(Q,i){ # function to extract quantiles from posterior sample for plot: Q is desired quantile, i desired index number
+    return(quantile(x= res$BUGSoutput$sims.list$lambda[,i], probs = Q, names=FALSE))
+}
+logit <- function(X){ log( X / (1-X) ) }
+antilogit <- function(X){ exp(X) / (exp(X)+1) }
+v.tmp <- (1:999)/1000
+#
+## pdf(file=paste(gd, "bias200615d0v.pdf", sep="")
+par(mar=c(5,2,2,2)+0.1) # drop space for title and left labels
+jitter <- rnorm(n = 300, sd = .03)
+color1.minus.pri <- c( "blue", "gold", "green", "cyan", "orange", "violet" )
+#
+# 2003
+res <- tmp$res2003d0v; shift.v <- .35
+plot( c( -2.5, 2.5), -c(.5,5-.35),
+     type="n", axes = FALSE, ylab = "", xlab = "bias relative to PRI")#, main = "Party bias")#"Bias: 2015 map (hypothetical)")
+axis( side = 1, at = seq(from = -2.25, to = 2.25, by = .25), labels = FALSE)
+axis( side = 1, at = seq(from = -2, to = 2, by = 1), labels = c("-2","-1","0","+1","+2"))
+abline(v=seq(-2,2,.5), col= "gray70")
+abline(v=0, lty=2)
+abline(h=seq(-4.5,-1.5,1), lty=3, col= "gray70")
+for (i in c(1:4)){ # some parties absent or dropped
+    # if party color desired, this does the trick: col = color1.minus.pri[i]
+    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70");
+    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
+    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
+    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
+    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
+    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
+}
+#
+# 2006
+res <- tmp$res2006d0v; shift.v <- .175
+for (i in c(1:2)){ # some parties absent or dropped
+    # if party color desired, this does the trick: col = color1.minus.pri[i]
+    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70");
+    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
+    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
+    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
+    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
+    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
+}
+#
+# 2009
+res <- tmp$res2009d0v; shift.v <- 0
+for (i in 1:4){ # some parties absent or dropped
+    # if party color desired, this does the trick: col = color1.minus.pri[i]
+    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70");
+    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
+    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
+    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
+    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
+    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
+}
+#
+# 2012
+res <- tmp$res2012d0v; shift.v <- -.175 # use nation estimates
+for (i in 1:3){ # some parties absent
+    # if party color desired, this does the trick: col = color1.minus.pri[i]
+    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70"); # sample to get 300 points
+    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
+    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
+    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
+    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
+    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
+}
+#
+# 2015
+res <- tmp$res2015d0v; shift.v <- -.35 # use nation estimates
+for (i in 1:4){ # some parties absent (Morena treated separately bec y shift
+    # if party color desired, this does the trick: col = color1.minus.pri[i]
+    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70"); # sample to get 300 points
+    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
+    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
+    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
+    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
+    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
+}
+# morena 2015 separate bec y shift dift
+i <- 5
+shift.v <- .35
+points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70"); # sample to get 300 points
+lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
+lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
+points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
+#points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
+points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
+#
+text(x =     2.1   , y =  -1   +.55,   labels =     "Election", cex = .65)
+text(x = rep(2.1,4), y = -c(1:4)+.35,  labels = rep("2003", 4), cex = .65)
+text(x = rep(2.1,2), y = -c(1:2)+.175, labels = rep("2006", 2), cex = .65)
+text(x = rep(2.1,4), y = -(1:4),       labels = rep("2009", 4), cex = .65)
+text(x = rep(2.1,3), y = -(1:3)-.175,  labels = rep("2012", 3), cex = .65)
+text(x = rep(2.1,4), y = -(1:4)-.35,   labels = rep("2015", 5), cex = .65)
+text(x =     2.1   , y = -5     +.35,  labels =     "2015"    , cex = .65) # morena separate bec y shift dift
+#
+text(x = rep(-2.1,5), y = -c(1:4,5-.35), labels = c("PAN", "PRD", "Green", "MC", "Morena"))
+## dev.off()
+
+## This bloc, taken from red.r, generates Fig. 3 in published article
+### with d0
+m <- min(c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)); M <- max(c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin, df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)); # min and max for two graphs
+tmp <- c(df2006d0$rrin, df2009d0$rrin, df2012d0$rrin, df2015d0$rrin)
+rrin <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300)), rri=tmp)
+jitter <- rnorm(n = 300, sd = .05)
+shift = .5 # useful if rris were also included in same plot
+## pdf(file = paste(gd, "rrin0615d0.pdf", sep=""),
+##       width = 7,
+##       height = 3.5)
+plot(x = c(m-.25,m,M), y = c(1,1,5), type = "n", ylab = "", xlab = "district relative representation index (RRI)", main = "2006 map (drawn with 2000 census)", axes = FALSE)
+axis(1, at = seq(.3,2.1,.1), labels = FALSE, lwd.ticks = .5)
+axis(1, at = seq(.5,2,.5))
+abline(v = c(0.5,1.5,2), col = "gray70")
+abline(v = 1, lty = 2)
+abline(v = c(.85,1.15), col = "gray70", lty = 2)
+text(x = rep(m-.2, 4), y = seq(1.5,4.5,1), labels = paste("in", seq(2015, 2006, -3)))
+#text(x = rep(M+.35, 4),  y = (1:4)+shift, labels = rep("nation", 4), cex = .8)
+#text(x = rep(M+.75, 8),  y = c(1.3,1.7, 2.3,2.7, 3.3,3.7, 4.3,4.7), labels = rep(c("state","nation"), 4), cex = .65)
+for (i in seq(4,1,-1)){
+    obj <- rrin$rri[rrin$yr==seq(2015,2006,-3)[i]] # subset one year
+    points(x = obj, y = rep(i+shift, 300)+jitter, cex=.5, col = "gray70")
+    select <- which(obj < quantile(obj, probs = .05) | obj > quantile(obj, probs = .95))
+    points(x = obj[select], y = rep(i+shift, 300)[select]+jitter[select], cex=.5, col = "gray30")
+    lines(x = c(quantile(obj, probs = .05), quantile(obj, probs = .95)), y = c(i+shift,i+shift), lwd = 2)
+    lines(x = c(quantile(obj, probs = .25), quantile(obj, probs = .75)), y = c(i+shift,i+shift), lwd = 6)
+    points(quantile(obj, probs = .5), i+shift, pch = 19, col="white")
+    points(quantile(obj, probs = .5), i+shift, pch = 19, cex = .5)
+}
+## dev.off()
+#
+### for d3
+jitter <- rnorm(n = 300, sd = .05)
+shift = .5 # useful if rris were also included in same plot
+tmp <- c(df2006d3$rrin, df2009d3$rrin, df2012d3$rrin, df2015d3$rrin)
+rrin <- data.frame(yr = c(rep(2006,300), rep(2009,300), rep(2012,300), rep(2015,300)), rri=tmp)
+## pdf(file = paste(gd, "rrin0615d3.pdf", sep=""),
+##       width = 7,
+##       height = 3.5)
+plot(x = c(m-.25,m,M), y = c(1,1,5), type = "n", ylab = "", xlab = "district relative representation index (RRI)", main = "2015 map (drawn with 2010 census)", axes = FALSE)
+axis(1, at = seq(.3,2.1,.1), labels = FALSE, lwd.ticks = .5)
+axis(1, at = seq(.5,2,.5))
+abline(v = c(0.5,1.5,2), col = "gray70")
+abline(v = 1, lty = 2)
+abline(v = c(.85,1.15), col = "gray70", lty = 2)
+text(x = rep(m-.2, 4), y = seq(1.5,4.5,1), labels = paste("in", seq(2015, 2006, -3)))
+#text(x = rep(M+.35, 4),  y = (1:4)+shift, labels = rep("nation", 4), cex = .8)
+#text(x = rep(M+.75, 8),  y = c(1.3,1.7, 2.3,2.7, 3.3,3.7, 4.3,4.7), labels = rep(c("state","nation"), 4), cex = .65)
+for (i in seq(4,1,-1)){
+    obj <- rrin$rri[rrin$yr==seq(2015,2006,-3)[i]] # subset one year
+    points(x = obj, y = rep(i+shift, 300)+jitter, cex=.5, col = "gray70")
+    select <- which(obj < quantile(obj, probs = .05) | obj > quantile(obj, probs = .95))
+    points(x = obj[select], y = rep(i+shift, 300)[select]+jitter[select], cex=.5, col = "gray30")
+    lines(x = c(quantile(obj, probs = .05), quantile(obj, probs = .95)), y = c(i+shift,i+shift), lwd = 2)
+    lines(x = c(quantile(obj, probs = .25), quantile(obj, probs = .75)), y = c(i+shift,i+shift), lwd = 6)
+    points(quantile(obj, probs = .5), i+shift, pch = 19, col="white")
+    points(quantile(obj, probs = .5), i+shift, pch = 19, cex = .5)
+}
+## dev.off()
+#
+# what percentile does rris<.85 and rris>1.15 correspond to? reported in p. 7 of published article
+length(df2006d0$rris[df2006d0$rris<.85])*100/300
+length(df2009d0$rris[df2009d0$rris<.85])*100/300
+length(df2012d0$rris[df2012d0$rris<.85])*100/300
+length(df2015d0$rris[df2015d0$rris<.85])*100/300
+#
+length(df2006d0$rris[df2006d0$rris>1.15])*100/300
+length(df2009d0$rris[df2009d0$rris>1.15])*100/300
+length(df2012d0$rris[df2012d0$rris>1.15])*100/300
+length(df2015d0$rris[df2015d0$rris>1.15])*100/300
+#
+# which are the districts at the edges in 2015d0, reported in p. 8 of published article
+obj <- df2015d0$rrin
+select <- which(obj < quantile(obj, probs = .05))
+tmp <- df2015d0[select, c("edon","disn","cab","rrin","rris")]
+tmp[order(tmp$rrin),]
+select <- which(obj > quantile(obj, probs = .95))
+tmp <- df2015d0[select, c("edon","disn","cab","rrin","rris")]
+tmp[order(-tmp$rrin),]
+#
+# summarize rris --- reported in p. 8 of published article
+round(quantile(df2006d0$rrin, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2009d0$rrin, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2012d0$rrin, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2015d0$rrin, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+#
+round(quantile(df2006d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2009d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2012d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
+round(quantile(df2015d0$rris, probs = c(0, .05, .25, .5, .75, .95, 1)), 2)
 
 
 ###########################################################################
@@ -2479,302 +2777,5 @@ table(tmp[,1]>0)/1500
 table(tmp[,2]>0)/1500
 rm(tmp)
 
-##########################################################
-# compute swing ratios with regressions from Linzer sims #
-##########################################################
-load(paste(dd, "swingRatios9715.RData", sep = ""))
 
-# single-map version
-tmp <- swRats$df2012d0
-s <- tmp$seatmat
-v <- tmp$vmat
-v.bar <- tmp$v.barmat
-w.bar <- tmp$w.barmat
-colnames(s) <- colnames(v)
-res <- head(v, n=6); res[] <- NA; rownames(res) <- c("swR","se","p","lo95","hi95","r2") # generate empty matrix with proper col/row names
-    #
-    for (i in 1:ncol(v)){
-        vreg <- lm(s[,i] ~ v[,i])
-        res["swR",i] <- vreg$coefficients[2]
-        res["se",i]  <- summary(vreg)$sigma
-        res["r2",i]  <- summary(vreg)$r.squared
-        res["p",i] <- round(summary(vreg)$coefficients[2,"Pr(>|t|)"], 3)
-        res["lo95",i] <- res["swR",i] - 2 * res["se",i]
-        res["hi95",i] <- res["swR",i] + 2 * res["se",i]
-    }
-res <- round(res,2)
-res[1:2,]
-
-# two maps pooled version
-tmp <- swRats$df2006d0
-tmp1 <- tmp$seatmat
-tmp2 <- tmp$vmat
-tmp3 <- tmp$v.barmat
-tmp4 <- tmp$w.barmat
-colnames(tmp1) <- colnames(tmp2)
-tmp5 <- rep(0, nrow(tmp1))
-s <- tmp1
-v <- tmp2
-v.bar <- tmp3
-w.bar <- tmp4
-dmap <- tmp5
-#
-tmp <- swRats$df2006d3
-tmp1 <- tmp$seatmat
-tmp2 <- tmp$vmat
-tmp3 <- tmp$v.barmat
-tmp4 <- tmp$w.barmat
-colnames(tmp1) <- colnames(tmp2)
-tmp5 <- rep(1, nrow(tmp1))
-s <- rbind(s, tmp1)
-v <- rbind(v, tmp2)
-v.bar <- rbind(v.bar, tmp3)
-w.bar <- rbind(w.bar, tmp4)
-dmap <- c(dmap, tmp5)
-#
-dmapxv <- v*dmap
-    #
-for (i in 1:3){#ncol(v)){
-    vreg  <- lm(s[,i] ~ v[,i])
-    vreg2 <- lm(s[,i] ~ v[,i] + dmap + dmapxv[,i])
-    print( colnames(v)[i])
-    print(round(summary(vreg2)$coefficients[c(2,4),1:2], 2))
-    #    v.barreg <- lm(s[,i] ~ v.bar[,i])
-    #    w.barreg <- lm(s[,i] ~ w.bar[,i])
-    ## res["swR",i] <- vreg$coefficients[2]
-    ## res["se",i]  <- summary(vreg)$sigma
-    ## res["r2",i]  <- summary(vreg)$r.squared
-    ## res["p",i] <- round(summary(vreg)$coefficients[2,"Pr(>|t|)"], 3)
-    ## res["lo95",i] <- res["swR",i] - 2 * res["se",i]
-    ## res["hi95",i] <- res["swR",i] + 2 * res["se",i]
-}
-
-# predict seats from pan=.33, pri=.33, prd=.33, rest=.01 (Marquez's unlikely but illustrative scenario).
-res <- biasRespOnLinzerSimsRPM$res2012d0v;
-seats <- function(pan.sh=.3, pri.sh=.35, prd.sh=.25){
-    rest <- 1-pan.sh-pri.sh-prd.sh;
-    denom <- exp(res$BUGSoutput$sims.list$lambda[,1]) * pan.sh^res$BUGSoutput$sims.list$rho +
-                                                        pri.sh^res$BUGSoutput$sims.list$rho +
-             exp(res$BUGSoutput$sims.list$lambda[,2]) * prd.sh^res$BUGSoutput$sims.list$rho +
-             exp(res$BUGSoutput$sims.list$lambda[,3]) * (rest/2)^res$BUGSoutput$sims.list$rho +
-             exp(res$BUGSoutput$sims.list$lambda[,4]) * (rest/2)^res$BUGSoutput$sims.list$rho # drops ptc & asdc
-    pan.seats <- (exp(res$BUGSoutput$sims.list$lambda[,1]) * pan.sh^res$BUGSoutput$sims.list$rho) / denom;
-    pri.seats <-                                             pri.sh^res$BUGSoutput$sims.list$rho  / denom;
-    prd.seats <- (exp(res$BUGSoutput$sims.list$lambda[,2]) * prd.sh^res$BUGSoutput$sims.list$rho) / denom;
-    return(list(pan.seats=pan.seats, pri.seats=pri.seats, prd.seats=prd.seats))
-}
-
-seat.sh <- seats(pan.sh = .33, pri.sh = .33, prd.sh = .33)
-quantile(x = seat.sh$pan.seats * 300, probs = c(.025,.975))
-quantile(x = seat.sh$pri.seats * 300, probs = c(.025,.975))
-quantile(x = seat.sh$prd.seats * 300, probs = c(.025,.975))
-# would be preferable to model S[i,j] with multinomial in jags model above and then report the actual posterior simulations
-
-#c.hat <- res$BUGSoutput$median$c
-lambda.hat <- res$BUGSoutput$median$lambda
-rho.hat <- res$BUGSoutput$median$rho
-#
-### Uncomment if using reference party (model lambda.rho.6)
-## PRI is the reference party with lambda=0
-lambda.hat <- c(lambda.hat[1], 0, lambda.hat[2:6])
-#
-
-## PERFORMS A VISUAL INSPECTION OF MODEL PARAMETERS
-logit <- function(X){ log( X / (1-X) ) }
-antilogit <- function(X){ exp(X) / (exp(X)+1) }
-v.tmp <- (1:999)/1000
-#
-library(tikzDevice)
-#title <- expression(paste("La responsividad ", rho, " y sesgo ", lambda, " de los distritos")) 
-#title <- expression(paste("District responsiveness ", rho, " (and partisan bias ", lambda, ">0 in grey)"))
-title <- ""
-file <- "rhoExample"
-#tikz(file = paste(gd, file, ".tex", sep=""), width = 4, height = 4)
-#pdf (file = paste(gd, file, ".pdf", sep=""), width = 6,   height = 6)
-#png (file = paste(gd, file, ".png", sep=""), width = 6,   height = 6)
-##library(Cairo)
-## type <-  "pdf" 
-## Cairo(file=file,
-##       type = type,
-##       width = 6,
-##       height = 6,
-##       units = "in",
-##       dpi = 72,
-##       bg = "white")
-##       #bg = "transparent")
-#
-plot(c(0,1),c(0,1), type = "n",
-#     xlab = "% votos", ylab = "% esca?os", axes = FALSE,
-     xlab = "vote share", ylab = "seat share", axes = FALSE,
-     main = title)
-#axis(1, at = seq(0,1,.2), labels = seq(0,100,20))
-#axis(2, at = seq(0,1,.2), labels = seq(0,100,20))
-axis(1, at = seq(0,1,.2), labels = seq(0,1,.2))
-axis(2, at = seq(0,1,.2), labels = seq(0,1,.2))
-#
-# versiones con sesgo en grises
-s.tmp <- antilogit( 1.5 + 1 * logit( v.tmp ) )
-lines(v.tmp, s.tmp, lty = 2, col="grey")
-s.tmp <- antilogit ( 1.5 + 3 * logit( v.tmp ) ) 
-#lines(v.tmp, s.tmp, col = "grey") 
-lines(v.tmp, s.tmp, col = "grey", lty = 3) 
-s.tmp <- antilogit ( 1.5 + 15 * logit( v.tmp ) ) # ESTO HACE LO DEBIDO: SESGO DE .25 EN FAVOR
-lines(v.tmp, s.tmp, col = "grey")
-#
-s.tmp <- antilogit( 1 * logit( v.tmp ) )
-#lines(v.tmp, s.tmp, col = "darkgreen", lty = 2)
-lines(v.tmp, s.tmp, col = "black", lty = 2)
-text(v.tmp[660], s.tmp[660], labels = expression(paste(rho, "=1")), pos=4)
-#text(v.tmp[660], s.tmp[660], labels = "$\\rho=1$", pos=4)
-s.tmp <- antilogit ( 3 * logit( v.tmp ) ) 
-#lines(v.tmp, s.tmp, col = "red") 
-lines(v.tmp, s.tmp, col = "black", lty = 3) 
-text(v.tmp[600], s.tmp[600], labels = expression(paste(rho, "=3")), pos=4)
-#text(v.tmp[600], s.tmp[600], labels = "$\\rho=3$", pos=4)
-s.tmp <- antilogit ( 15 * logit( v.tmp ) ) # ESTO HACE LO DEBIDO: SESGO DE .25 EN FAVOR
-#lines(v.tmp, s.tmp, col = "blue")
-lines(v.tmp, s.tmp, col = "black")
-text(v.tmp[440], s.tmp[440], labels = expression(rho %->% infinity), pos=4)
-#text(v.tmp[420], s.tmp[420], labels = "$\\rho=6$", pos=4)
-#mtext(text = "Preparado por Eric Magar con resultados oficiales del IFE", side = 1, line = 4, col = "grey", cex = .75)
-#mtext(text = "Prepared by Eric Magar with official IFE returns", side = 1, line = 4, col = "grey", cex = .75)
-#
-#dev.off()
-
-
-#### Plot Posterior lambda Samples For d0 And d3
-#tmp <- biasResp0612oldNewDistrictsRPM # compact name
-tmp <- biasRespOnLinzerSimsRPM
-myQ <- function(Q,i){ # function to extract quantiles from posterior sample for plot: Q is desired quantile, i desired index number
-    return(quantile(x= res$BUGSoutput$sims.list$lambda[,i], probs = Q, names=FALSE))
-}
-logit <- function(X){ log( X / (1-X) ) }
-antilogit <- function(X){ exp(X) / (exp(X)+1) }
-v.tmp <- (1:999)/1000
-#
-library(Cairo)
-type <-  "pdf" 
-## #file <- paste(gd, "bias200612d0R.", type, sep="")
-## file <- paste(gd, "bias200615d0v.", type, sep="")
-## Cairo(file=file,
-##       type = type,
-##       width = 7,
-##       height = 7,
-##       units = "in",
-##       dpi = 72,
-##       bg = "transparent")
-#
-par(mar=c(5,2,2,2)+0.1) # drop space for title and left labels
-#jitter <- runif(n = 300, min=-.1, max=.1)
-jitter <- rnorm(n = 300, sd = .03)
-color1.minus.pri <- c( "blue", "gold", "green", "cyan", "orange", "violet" )
-#
-# 2003
-res <- tmp$res2003d0v; shift.v <- .35
-plot( c( -2.5, 2.5), -c(.5,5-.35),
-     type="n", axes = FALSE, ylab = "", xlab = "bias relative to PRI")#, main = "Party bias")#"Bias: 2015 map (hypothetical)")
-#     type="n", axes = FALSE, ylab = "", xlab = "sesgo en relaci?n al PRI", main = "Distritos propuestos")#"Distritos en vigor")
-axis( side = 1, at = seq(from = -2.25, to = 2.25, by = .25), labels = FALSE)
-axis( side = 1, at = seq(from = -2, to = 2, by = 1), labels = c("-2","-1","0","+1","+2"))
-abline(v=seq(-2,2,.5), col= "gray70")
-abline(v=0, lty=2)
-abline(h=seq(-4.5,-1.5,1), lty=3, col= "gray70")
-#for (i in 1:6){
-for (i in c(1:4)){ # some parties absent or dropped
-    # if party color desired, this does the trick: col = color1.minus.pri[i]
-    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70");
-    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
-    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
-    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
-    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
-    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
-}
-#
-# 2006
-res <- tmp$res2006d0v; shift.v <- .175
-#res$BUGSoutput$sims.list$lambda[,4] <- res$BUGSoutput$sims.list$lambda[,3] # move panal to 4th (3rd will be ignored)
-#for (i in 1:6){
-for (i in c(1:2)){ # some parties absent or dropped
-    # if party color desired, this does the trick: col = color1.minus.pri[i]
-    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70");
-    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
-    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
-    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
-    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
-    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
-}
-#
-# 2009
-res <- tmp$res2009d0v; shift.v <- 0
-for (i in 1:4){ # some parties absent or dropped
-    # if party color desired, this does the trick: col = color1.minus.pri[i]
-    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70");
-    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
-    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
-    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
-    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
-    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
-}
-#
-# 2012
-#res <- tmp$res0612s0R; shift.v <- -.3
-res <- tmp$res2012d0v; shift.v <- -.175 # use nation estimates
-for (i in 1:3){ # some parties absent
-    # if party color desired, this does the trick: col = color1.minus.pri[i]
-    #points(res$BUGSoutput$sims.list$lambda[,i], -i+shift.v+jitter, cex=.1, col = "gray70");
-    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70"); # sample to get 300 points
-    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
-    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
-    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
-    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
-    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
-}
-#
-# 2015
-res <- tmp$res2015d0v; shift.v <- -.35 # use nation estimates
-
-for (i in 1:4){ # some parties absent (Morena treated separately bec y shift
-    # if party color desired, this does the trick: col = color1.minus.pri[i]
-    #points(res$BUGSoutput$sims.list$lambda[,i], -i+shift.v+jitter, cex=.1, col = "gray70");
-    points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70"); # sample to get 300 points
-    lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
-    lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
-    points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
-    #points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
-    points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
-}
-# morena 2015 separate bec y shift dift
-i <- 5
-shift.v <- .35
-points(sample(res$BUGSoutput$sims.list$lambda[,i], 300), -i+shift.v+jitter, cex=.1, col = "gray70"); # sample to get 300 points
-lines(x = c(myQ(.05,i),myQ(.95,i)), y = c(-i+shift.v,-i+shift.v), lwd = 2)
-lines(x = c(myQ(.25,i),myQ(.75,i)), y = c(-i+shift.v,-i+shift.v), lwd = 6)
-points(myQ(.5,i), -i+shift.v, pch = 19, col="white")
-#points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5, col=color1.minus.pri[i])
-points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
-#
-text(x =     2.1   , y =  -1   +.55,   labels =     "Election", cex = .65)
-text(x = rep(2.1,4), y = -c(1:4)+.35,  labels = rep("2003", 4), cex = .65)
-text(x = rep(2.1,2), y = -c(1:2)+.175, labels = rep("2006", 2), cex = .65)
-text(x = rep(2.1,4), y = -(1:4),       labels = rep("2009", 4), cex = .65)
-text(x = rep(2.1,3), y = -(1:3)-.175,  labels = rep("2012", 3), cex = .65)
-text(x = rep(2.1,4), y = -(1:4)-.35,   labels = rep("2015", 5), cex = .65)
-text(x =     2.1   , y = -5     +.35,  labels =     "2015"    , cex = .65) # morena separate bec y shift dift
-#text(x = rep(2.1,4), y = -(1:4)-.3,    labels = rep("todos", 5), cex = .65)
-#
-text(x = rep(-2.1,5), y = -c(1:4,5-.35), labels = c("PAN", "PRD", "Green", "MC", "Morena"))
-## dev.off()
-setwd(wd)
-
-### plot rho for s0 and s3
-#ERIC -- the next fails because biasResp0612oldNewDistrictsRPM is missing
-#Micah [EM 15jun2017]: all the commands involved in the remainder errors appeared to be redundant (they belong to an earlier incarnation of the paper, when we analyzed 32 state aggregates instead of Linzer national simulations. I have dropped the whole bloc, along with numerous errors in it. 
-
-#[big bloc of code deleted from here by EM 15jun2017]
-
-#ERIC: The following lines yield errors, but do not affect later calculations
-#cmn-2006-12-s0 # calvo-micozzi with N
-#cm-2006-12-s0 # calvo-micozzi without N
-#k7-2006-12-s0 # king with all parties
-#k6-2006-12-s0 # king with pri omitted as reference
-
+#Micah [EM 15jun2017]: I believe I have fixed the problem that yielded error messages. I explain with more detail (lines 2164:2176) how to proceed by either (a) re-estimating or (b) loading our distributed estimates. Pls verify that all runs smoothly and that my instructions are clear. 
