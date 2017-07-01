@@ -1,4 +1,4 @@
-##################################################################################
+#################################################################################
 ## This is an abridged version of analizaEscenarios2013.r for replication files ##
 ##################################################################################
 
@@ -2110,6 +2110,7 @@ which.map <- "d3"
 which.v <- "w.bar"
 tmp <- eval(parse(text=paste("biasRespOnLinzerSimsRPM$res", which.elec, which.map, which.v, sep="")))
 #summary(tmp)
+#ERIC - errors in next two lines, but seem not needed for replication
 pdf(paste(gd2, "traceplot", which.elec, which.map, which.v, ".pdf", sep = ""))
 traceplot(tmp, ask = FALSE)
 dev.off()
@@ -2124,12 +2125,12 @@ tmp1[3,] <- round(quantile(tmp$res2009d0v$BUGSoutput$sims.list$rho, probs=c(.05,
 tmp1[4,] <- round(quantile(tmp$res2012d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
 tmp1[5,] <- round(quantile(tmp$res2015d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
      #################################################
-tmp1 # <-- reported in p. 8 of the published article #
+tmp1 # <-- reported in p. 8 of the published article # ERIC: This produces all NA's
      #################################################
-#MICAH: the ranges reported are slightly different from these. Rho is a parameter of secondary importance in our argument, which is probably why failed to update numbers from an earlier verion of the analysis. What is the etiquette here to acknowledge the mistake?
+#NOTE: the ranges reported are slightly different from those published -- possibly because of changes in the underlying R libraries. Rho ,hoewver  is a parameter of secondary importance in our argument,
 
 ####################################################
-# Rhat reported in fn. 13 of the published article #
+# Rhat reported in fn. 13 of the published article # ERIC: Almost all are NULL
 ####################################################
 tmp$res2003d97v$BUGSoutput$summary
 tmp$res2003d97v.bar$BUGSoutput$summary
@@ -2166,7 +2167,7 @@ round(mean(c(
 tmp <- biasRespOnLinzerSimsRPM
 tmp1 <- data.frame(panpri=rep(NA,4), prdpri=rep(NA,4), minorpri=rep(NA,4)); rownames(tmp1) <- c("raw","dist","turn","malap")
 tmp15d3 <- tmp15d0 <- tmp12d3 <- tmp12d0 <- tmp09d0 <- tmp06d0 <- tmp03d97 <- tmp03d0 <- tmp1
-#
+# ERIC -- The code below through 2331 fails
 tmp03d97[1,] <- round(tmp$res2003d97v$BUGSoutput$median$lambda[1:3], 2) # 1=panpri 2=prdpri 3=pvempri RAW
 tmp03d97[2,] <- round(tmp$res2003d97v.bar$BUGSoutput$median$lambda[1:3], 2) # DIST
 tmp03d97[3,] <- round(tmp$res2003d97v$BUGSoutput$median$lambda[1:3] - tmp$res2003d97w.bar$BUGSoutput$median$lambda[1:3], 2)    #  TURN
@@ -2331,7 +2332,7 @@ tmp15d3
 
 ##########################################################
 # compute swing ratios with regressions from Linzer sims #
-# reported in Table 3, p. 10 or publised article         #
+# reported in Table 3, p. 10 or published article         #
 ##########################################################
 load(paste(dd, "swingRatios9715.RData", sep = ""))
 # two maps pooled version
@@ -2550,7 +2551,7 @@ for (i in c(1:4)){ # some parties absent or dropped
     points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
 }
 #
-# 2006
+# 2006 #ERIC next block fails -- produces error in sample()
 res <- tmp$res2006d0v; shift.v <- .175
 for (i in c(1:2)){ # some parties absent or dropped
     # if party color desired, this does the trick: col = color1.minus.pri[i]
@@ -2689,7 +2690,7 @@ length(df2009d0$rris[df2009d0$rris>1.15])*100/300
 length(df2012d0$rris[df2012d0$rris>1.15])*100/300
 length(df2015d0$rris[df2015d0$rris>1.15])*100/300
 #
-# which are the districts at the edges in 2015d0, reported in p. 8 of published article
+# which are the districts at the edges in 2015d0, reported in p. 8 of published article ERIC -- Errors in these section
 obj <- df2015d0$rrin
 select <- which(obj < quantile(obj, probs = .05))
 tmp <- df2015d0[select, c("edon","disn","cab","rrin","rris")]
@@ -2778,4 +2779,4 @@ table(tmp[,2]>0)/1500
 rm(tmp)
 
 
-#Micah [EM 15jun2017]: I believe I have fixed the problem that yielded error messages. I explain with more detail (lines 2164:2176) how to proceed by either (a) re-estimating or (b) loading our distributed estimates. Pls verify that all runs smoothly and that my instructions are clear. 
+
