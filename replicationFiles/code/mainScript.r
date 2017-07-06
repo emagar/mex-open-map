@@ -1659,7 +1659,7 @@ tmpFrom <- tmpFrom[duplicated(tmpFrom$edon)==FALSE,]
 tmpTo$ptot <- tmpFrom$ptot
 df2015s3 <- tmpTo
 #
-rm(tmp, tmpFrom, tmpTo, select)
+rm(tmp, tmpFrom, tmpTo)
 
 ########################################################################################
 ## *Bloc 4*:                                                                          ##
@@ -2051,10 +2051,15 @@ summary(biasRespOnLinzerSimsRPM)
 #
 print("Inspect partisan bias estimates thus (choose other maps/years)")
 tmp <- biasRespOnLinzerSimsRPM # shorten name
-quantile(tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1])                                                                    # raw partisan bias
-quantile(tmp$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1])                                                                # distributive
-quantile(tmp$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) - quantile(tmp$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1]) # malapportionment
-quantile(tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1])     - quantile(tmp$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) # turnout
+tmp$res2015d0v$party.labels    # 1 in lambda is for pan relative to pri
+print("This is raw partisan bias")
+quantile(tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1])                                                                    
+print("This is the distributive component")
+quantile(tmp$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1])                                                                
+print("This is the malapportionment component")
+quantile(tmp$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) - quantile(tmp$res2015d0v.bar$BUGSoutput$sims.list$lambda[,1]) 
+print("This is the turnout component")
+quantile(tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1])     - quantile(tmp$res2015d0w.bar$BUGSoutput$sims.list$lambda[,1]) 
 #
 ## ## extracts all objects from the estimates list, if so wished
 ## theList <- biasRespOnLinzerSimsRPM
@@ -2085,19 +2090,19 @@ quantile(tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1])     - quantile(tmp$res2
 # res2012d0v, res2012d0v.bar, res2012d0w.bar, res2012d3v, res2012d3v.bar, res2012d3w.bar,
 # res2015d0v, res2015d0v.bar, res2015d0w.bar, res2015d3v, res2015d3v.bar, and res2015d3w.bar.
 #  
-# -> By skipping the following bloc, the script proceeds with the distributed estimates.
-tmpRes <- my.jags(which.elec = 2015,
-                  which.map  = "d0",
-                  which.measure = "w.bar",
-                  model.file=lambda.rho.5,
-                  test.ride=FALSE
-)
-res2015d0w.bar <- tmpRes; rm(tmpRes)
-#
-# create a list with all results in, save it (assumes you have estimated all year/map/measure combinations in the paper)
-biasRespOnLinzerSimsRPM <- lapply(ls(pattern = "res[0-9]"), get);
-names(biasRespOnLinzerSimsRPM) <- ls(pattern = "res[0-9]")
-summary(biasRespOnLinzerSimsRPM)
+# -> Running the following bloc reestimates the model. Otherwise, the script proceeds with the distributed estimates.
+## tmpRes <- my.jags(which.elec = 2015,
+##                   which.map  = "d0",
+##                   which.measure = "w.bar",
+##                   model.file=lambda.rho.5,
+##                   test.ride=FALSE
+## )
+## res2015d0w.bar <- tmpRes; rm(tmpRes)
+## #
+## # create a list with all results in, save it (assumes you have estimated all year/map/measure combinations in the paper)
+## biasRespOnLinzerSimsRPM <- lapply(ls(pattern = "res[0-9]"), get);
+## names(biasRespOnLinzerSimsRPM) <- ls(pattern = "res[0-9]")
+## summary(biasRespOnLinzerSimsRPM)
 ## # uncomment and change file name to avoid overwriting distributed results
 ## save(biasRespOnLinzerSimsRPM,
 ##      file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep =""))
@@ -2111,6 +2116,7 @@ which.v <- "w.bar"
 tmp <- eval(parse(text=paste("biasRespOnLinzerSimsRPM$res", which.elec, which.map, which.v, sep="")))
 #summary(tmp)
 #ERIC - errors in next two lines, but seem not needed for replication
+   ### EM fixed 7/6/2017: problem was missing traceplots subdirectory
 pdf(paste(gd2, "traceplot", which.elec, which.map, which.v, ".pdf", sep = ""))
 traceplot(tmp, ask = FALSE)
 dev.off()
