@@ -1,4 +1,4 @@
-#################################################################################
+################################################################################
 ## This is an abridged version of analizaEscenarios2013.r for replication files ##
 ##################################################################################
 
@@ -2040,17 +2040,26 @@ tmpRes <- my.jags(which.elec = 2015,        # options are: 2003, 2006, 2009, 201
 )
 
 
-#############################################################
-#############################################################
-###   LOAD SAVED PARTISAN BIAS AND COMPONENTS ESTIMATES   ###
-#############################################################
-#############################################################
-load(file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep ="")) # results reported in publication
-print("Results reported in publication")
-summary(biasRespOnLinzerSimsRPM)
-#
+###########################################################################
+###########################################################################
+## CHOOSE WHETHER TO RE-ESTIMATE PARTISAN BIAS AND ITS COMPONENTS (SLOW) ##
+## OR PROCEED WITH DISTRIBUTED RESULTS (DEFAULT)                         ##
+###########################################################################
+###########################################################################
+urChoice <- menu(c("Re-estimate---SLOW!", "Load distributed estimates"), title="Do you wish to re-estimate partisan bias or load distributed estimates?")
+
+if (urChoice==1){
+    cat("Re-estimating");
+        source(file="mcmcEstimation.r")
+    } else {
+        load(file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep =""));
+        cat("Bias estimates reported in publication loaded\n");
+    }
+rm(urChoice)
+
 print("Inspect partisan bias estimates thus (choose other maps/years)")
 tmp <- biasRespOnLinzerSimsRPM # shorten name
+summary(tmp)
 tmp$res2015d0v$party.labels    # 1 in lambda is for pan relative to pri
 print("This is raw partisan bias")
 quantile(tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1])                                                                    
@@ -2072,41 +2081,6 @@ quantile(tmp$res2015d0v$BUGSoutput$sims.list$lambda[,1])     - quantile(tmp$res2
 ## }
 ## rm(theList)
 
-
-#########################################################
-#########################################################
-## JAGS ESTIMATION OF PARTISAN BIAS AND ITS COMPONENTS ##
-#########################################################
-#########################################################
-# Important note:
-# Use the next command if you wish to re-estimate the components of partisan bias.
-# You need to select - a year (2003, 2006, 2009, 2012, or 2015)
-#                    - a map ("d97" for 1997 map, "d0" for 2006 map, "d3" for 2013 map) 
-#                    - a measure ("v" for R, "v.bar" for P, "w.bar" for M).
-# When the estimation ends, rename the output to be recognizable later in the script. 
-# For full analysis, the following objects need to be estimated and renamed accordingly:
-# res2003d0v, res2003d0v.bar, res2003d0w.bar, res2003d97v, res2003d97v.bar, res2003d97w.bar,
-# res2006d0v, res2006d0v.bar, res2006d0w.bar, res2009d0v, res2009d0v.bar, res2009d0w.bar,
-# res2012d0v, res2012d0v.bar, res2012d0w.bar, res2012d3v, res2012d3v.bar, res2012d3w.bar,
-# res2015d0v, res2015d0v.bar, res2015d0w.bar, res2015d3v, res2015d3v.bar, and res2015d3w.bar.
-#  
-# -> Running the following bloc reestimates the model. Otherwise, the script proceeds with the distributed estimates.
-## tmpRes <- my.jags(which.elec = 2015,
-##                   which.map  = "d0",
-##                   which.measure = "w.bar",
-##                   model.file=lambda.rho.5,
-##                   test.ride=FALSE
-## )
-## res2015d0w.bar <- tmpRes; rm(tmpRes)
-## #
-## # create a list with all results in, save it (assumes you have estimated all year/map/measure combinations in the paper)
-## biasRespOnLinzerSimsRPM <- lapply(ls(pattern = "res[0-9]"), get);
-## names(biasRespOnLinzerSimsRPM) <- ls(pattern = "res[0-9]")
-## summary(biasRespOnLinzerSimsRPM)
-## # uncomment and change file name to avoid overwriting distributed results
-## save(biasRespOnLinzerSimsRPM,
-##      file=paste(dd, "biasRespOnLinzerSims3components0315.RData", sep =""))
-
 # DIAGNOSIS
 # commands to export pdf traceplots to verify parameter convergence (will produce a pdf file with a large number of plots)
 gd2 <- paste(gd, "traceplots/", sep = "")
@@ -2115,15 +2089,13 @@ which.map <- "d3"
 which.v <- "w.bar"
 tmp <- eval(parse(text=paste("biasRespOnLinzerSimsRPM$res", which.elec, which.map, which.v, sep="")))
 #summary(tmp)
-#ERIC - errors in next two lines, but seem not needed for replication
-   ### EM fixed 7/6/2017: problem was missing traceplots subdirectory
 pdf(paste(gd2, "traceplot", which.elec, which.map, which.v, ".pdf", sep = ""))
 traceplot(tmp, ask = FALSE)
 dev.off()
 rm(gd2, which.elec, which.map, which.v, tmp) # clean
 
 # summarize responsiveness parameter (90% range and median estimated with raw vote --- R in GKB's terminology)
-tmp <- biasRespOnLinzerSimsRPM
+tmp <- biasRespOnLinzerSimsRPM # shorten name
 tmp1 <- data.frame(q05=rep(NA,5), q50=rep(NA,5), q95=rep(NA,5)); rownames(tmp1) <- paste("y", seq(2003, 2015, by=3), sep="")
 tmp1[1,] <- round(quantile(tmp$res2003d97v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
 tmp1[2,] <- round(quantile(tmp$res2006d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
@@ -2131,12 +2103,12 @@ tmp1[3,] <- round(quantile(tmp$res2009d0v$BUGSoutput$sims.list$rho, probs=c(.05,
 tmp1[4,] <- round(quantile(tmp$res2012d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
 tmp1[5,] <- round(quantile(tmp$res2015d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
      #################################################
-tmp1 # <-- reported in p. 8 of the published article # ERIC: This produces all NA's
+tmp1 # <-- reported in p. 8 of the published article # 
      #################################################
-#NOTE: the ranges reported are slightly different from those published -- possibly because of changes in the underlying R libraries. Rho ,hoewver  is a parameter of secondary importance in our argument,
+#NOTE TO MICAH: the ranges reported are slightly different from those published -- possibly because of changes in the underlying R libraries. Rho , however  is a parameter of secondary importance in our argument. How should we report this erratum?
 
 ####################################################
-# Rhat reported in fn. 13 of the published article # ERIC: Almost all are NULL
+# Rhat reported in fn. 13 of the published article #
 ####################################################
 tmp$res2003d97v$BUGSoutput$summary
 tmp$res2003d97v.bar$BUGSoutput$summary
@@ -2173,7 +2145,7 @@ round(mean(c(
 tmp <- biasRespOnLinzerSimsRPM
 tmp1 <- data.frame(panpri=rep(NA,4), prdpri=rep(NA,4), minorpri=rep(NA,4)); rownames(tmp1) <- c("raw","dist","turn","malap")
 tmp15d3 <- tmp15d0 <- tmp12d3 <- tmp12d0 <- tmp09d0 <- tmp06d0 <- tmp03d97 <- tmp03d0 <- tmp1
-# ERIC -- The code below through 2331 fails
+#
 tmp03d97[1,] <- round(tmp$res2003d97v$BUGSoutput$median$lambda[1:3], 2) # 1=panpri 2=prdpri 3=pvempri RAW
 tmp03d97[2,] <- round(tmp$res2003d97v.bar$BUGSoutput$median$lambda[1:3], 2) # DIST
 tmp03d97[3,] <- round(tmp$res2003d97v$BUGSoutput$median$lambda[1:3] - tmp$res2003d97w.bar$BUGSoutput$median$lambda[1:3], 2)    #  TURN
@@ -2220,7 +2192,7 @@ tmp15d3[1,] <- round(tmp$res2015d3v$BUGSoutput$median$lambda[1:3], 2) # 1=panpri
 tmp15d3[2,] <- round(tmp$res2015d3v.bar$BUGSoutput$median$lambda[1:3], 2) #  DIST
 tmp15d3[3,] <- round(tmp$res2015d3v$BUGSoutput$median$lambda[1:3] - tmp$res2015d3w.bar$BUGSoutput$median$lambda[1:3], 2)    #  TURN
 tmp15d3[4,] <- round(tmp$res2015d3w.bar$BUGSoutput$median$lambda[1:3] - tmp$res2015d3v.bar$BUGSoutput$median$lambda[1:3], 2) #  MAL
-#tmp12d3[,3] <- tmp12d3[,1] - tmp12d3[,2]
+#tmp15d3[,3] <- tmp15d3[,1] - tmp15d3[,2]
 #
 # Estimates reported in Table 2, p. 9 in published article
 tmp03d97 # actual
@@ -2520,6 +2492,7 @@ lines(v.tmp, s.tmp, col = "black", lty = 3)
 text(v.tmp[600], s.tmp[600], labels = expression(paste(rho, "=3")), pos=4)
 s.tmp <- antilogit ( 15 * logit( v.tmp ) ) # ESTO HACE LO DEBIDO: SESGO DE .25 EN FAVOR
 lines(v.tmp, s.tmp, col = "black")
+
 text(v.tmp[440], s.tmp[440], labels = expression(rho %->% infinity), pos=4)
 #dev.off()
 
@@ -2557,7 +2530,7 @@ for (i in c(1:4)){ # some parties absent or dropped
     points(myQ(.5,i), -i+shift.v, pch = 19, cex = .5)
 }
 #
-# 2006 #ERIC next block fails -- produces error in sample()
+# 2006 
 res <- tmp$res2006d0v; shift.v <- .175
 for (i in c(1:2)){ # some parties absent or dropped
     # if party color desired, this does the trick: col = color1.minus.pri[i]
@@ -2696,7 +2669,7 @@ length(df2009d0$rris[df2009d0$rris>1.15])*100/300
 length(df2012d0$rris[df2012d0$rris>1.15])*100/300
 length(df2015d0$rris[df2015d0$rris>1.15])*100/300
 #
-# which are the districts at the edges in 2015d0, reported in p. 8 of published article ERIC -- Errors in these section
+# which are the districts at the edges in 2015d0, reported in p. 8 of published article
 obj <- df2015d0$rrin
 select <- which(obj < quantile(obj, probs = .05))
 tmp <- df2015d0[select, c("edon","disn","cab","rrin","rris")]
