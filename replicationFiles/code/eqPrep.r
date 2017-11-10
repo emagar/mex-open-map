@@ -12,7 +12,8 @@
 eqd <- "../data/"
 #
 # read secciones-to-districts relations 1994--2013
-eq <- read.csv(file = paste(eqd, "tablaEquivalenciasSeccionalesDesde1994.csv", sep = ""), header = TRUE, stringsAsFactors = FALSE)
+eq <- read.csv(file = paste(eqd, "tablaEquivalenciasSeccionalesDesde1994PaperVersion.csv", sep = ""), header = TRUE, stringsAsFactors = FALSE)
+## colnames(eq)
 eq <- eq[, -grep("loc|nac", colnames(eq))] # drop party amendments, useful for another project
 eq[, grep(x = colnames(eq), pattern = "dis")][is.na(eq[,grep(x = colnames(eq), pattern = "dis")])==TRUE] <- 0 # replace NAs with zero in district columns
 #eq <- eq[-which(eq$dis2013.1==0 & eq$dis2015>0), ] #drop new secciones created after 2013 redistricting --- commented to add 2015 votes
@@ -23,6 +24,7 @@ tmp <- eq[select,]
 tmp$orig.dest <- as.numeric(as.character(tmp$orig.dest))
 tmp$pick.from <- NA
 for (i in 1:nrow(tmp)){
+    message(sprintf("Record %s of %s", i, nrow(tmp)))
     tmp$pick.from[i] <- which(eq$edon==tmp$edon[i] & eq$seccion==tmp$orig.dest[i])
 }
 tmp$when <- as.numeric(as.character(tmp$when))

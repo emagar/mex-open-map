@@ -8,19 +8,21 @@ res2003d97v <- my.jags(which.elec = 2003,
                   which.map  = "d97",
                   which.measure = "v",
                   model.file=lambda.rho.5,
-                  test.ride=FALSE
+                  test.ride=FALSE,
+                  D=298 # two districts missing from 1997 data
 )
 res2003d97v.bar <- my.jags(which.elec = 2003,
                   which.map  = "d97",
                   which.measure = "v.bar",
                   model.file=lambda.rho.5,
-                  test.ride=FALSE
+                  test.ride=FALSE,
+                  D=298 # two districts missing from 1997 data
 )
 res2003d97w.bar <- my.jags(which.elec = 2003,
                   which.map  = "d97",
                   which.measure = "w.bar",
-                  model.file=lambda.rho.5,
-                  test.ride=FALSE
+                  test.ride=FALSE,
+                  D=298 # two districts missing from 1997 data
 )
 res2003d0v <- my.jags(which.elec = 2003,
                   which.map  = "d0",

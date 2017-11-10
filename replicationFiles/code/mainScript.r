@@ -1,17 +1,18 @@
-################################################################################
-## This is an abridged version of analizaEscenarios2013.r for replication files ##
-##################################################################################
+#####################################################################################
+## This is an abridged version of analizaEscenarios2013.r for replication purposes ##
+#####################################################################################
 
 # NOTE:
 # Maps are named after the first congressional election they were used: the 1979, 1997, and 2006 maps; the 2013 proposal that was never adopted for 2015 election is the 2013 map.
 # Short names for objects in the analysis of the 2013 proposals are d0 (the 2006 map or status quo), d1 (initial IFE proposal), d2 (second proposal, with party feedback), and d3 (third and final proposal, with more party feedback). 
 
-options(width = 140) # emacs screen size
+options(width = 130) # emacs screen size
 rm(list=ls())
 #
-if(length(grep('mainScript.r',dir(),fixed=TRUE))!=1) stop ("Please set R's working directory to the base directory on the location of the unzipped directories from replicationFiles.zip")
+if(length(grep('mainScript.r',dir(),fixed=TRUE))==0) stop ("Please set R's working directory to the base directory on the location of the unzipped directories from replicationFiles.zip")
 
-# setwd("/home/eric/Desktop/mex-open-map/replicationFiles/code")
+#wd <- "~/Desktop/mex-open-map/replicationFiles/code/"
+#setwd(wd)
 wd <- getwd()
 dd <- c("../data/")   # data directory
 gd <- c("../graphs/") # graph directory
@@ -74,8 +75,8 @@ colnames(dis2013) <- c("edon","disn","munn","seccion","dis3er13","dis1er13")
 #
 # unassigned secciones need to be removed: these remain unassigned even after eqPrep's work
 sel <- which(dis2013$disn==0 | dis2013$dis3er13==0); print("These obs have unassigned secciones in one or both maps:"); sel
-## dis2013[sel,]
-dis2013 <- dis2013[-which(dis2013$disn==0 | dis2013$dis3er13==0),]
+## dis2013[sel,] # inspect them
+dis2013 <- dis2013[-sel,] # drop them
 #
 # maybe unnecessary (IFE's municipal codes slightly differ from census codes)
 dis2013$ife <- dis2013$edon*1000 + dis2013$munn
@@ -1428,7 +1429,7 @@ df2003d0$edon.secn <- df2003d0$seccion <- NULL
 df2003d97 <- df2003d97[,c("edon", "disn", "pan", "pri", "prd", "pt", "pvem", "conve", "psn", "pas", "mp", "plm", "fc", "pric", "nr", "nul", "efec", "shSecCoalPri")]
 df2003d0 <-  df2003d0 [,c("edon", "disn", "pan", "pri", "prd", "pt", "pvem", "conve", "psn", "pas", "mp", "plm", "fc", "pric", "nr", "nul", "efec", "shSecCoalPri")]
 #
-print("Two districts missing in 2003") # <- OJO: two full districts missing: 506 and 1605
+print("Two districts missing in 2003") # <- NOTE: two full districts missing: 506 and 1605
 dim(df2003d97) 
 dim(df2003d0)
 
@@ -1710,7 +1711,7 @@ tmp1[5,5:6] <- summary(lm((tmp$prd+tmp$prdc)/tmp$efec ~ tmp2))$coefficients[2,c(
 tmp1[5,7:8] <- summary(lm(tmp$morena/tmp$efec ~ tmp2))$coefficients[2,c(1,4)]
 #
 #tmp1 <- tmp1/10000
-round(tmp1,3)
+round(tmp1,3) # reports regression coefficients (cf) and p values (p)
 
 ## mean winning margin
 tmp <- rep(NA,4)
@@ -1738,7 +1739,7 @@ round(tmp1,2)
 ## *Bloc 5*:                                                                                                        ##
 ## IMPORT SIMULATED NATIONAL SEATS-VOTES DATA PRODUCED WITH LINZER METHOD                                           ##
 ## Important:                                                                                                       ##
-## If you wish to re-produce Linzer draws and have not done so, you must do so by running script linzerElas.r now.  ##
+## If you wish to re-produce Linzer draws and have yt not done so, you must run script linzerElas.r now.            ##
 ## Otherwise the simulated data in the distribution will be used. You will lose all unsaved data from the current   ##
 ## session. You can choose to save the image now, or re-run all the above commands once linzerElas.r has finished.  ##
 ######################################################################################################################
@@ -1962,7 +1963,8 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
                     test.ride=TRUE,           # if TRUE, overrides n.chains, n.iter, n.thin 
                     n.chains=3,               # jags parameters
                     n.iter=50000,
-                    n.thin=50
+                    n.thin=50,
+                    D=300                     # needs to be 298 for 1997 estimation, 300 for other years
                     ){
     ####################################################################################################
     ### Data prep for national-agg King with Linzer-simulated data (data matrix with 6 party columns ###
@@ -1991,7 +1993,7 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
     v <- v[, ordered]
     S <- S[, ordered]
     #
-    D <- 300 # OJO: 298 for df2003d97!
+    D <- D; # OJO: 298 for df2003d97!
     S <- S*D # turn share into number of seats won 
     #
     I <- nrow(S)
@@ -2104,8 +2106,10 @@ tmp1[4,] <- round(quantile(tmp$res2012d0v$BUGSoutput$sims.list$rho, probs=c(.05,
 tmp1[5,] <- round(quantile(tmp$res2015d0v$BUGSoutput$sims.list$rho, probs=c(.05,.5,.95)),1)
      #################################################
 tmp1 # <-- reported in p. 8 of the published article # 
+     # NOTE: the ranges reported are slightly different from those published -- possibly 
+     # due to changes in the underlying R libraries. Rho , however is a parameter of 
+     # secondary importance in our argument. 
      #################################################
-#NOTE TO MICAH: the ranges reported are slightly different from those published -- possibly because of changes in the underlying R libraries. Rho , however  is a parameter of secondary importance in our argument. How should we report this erratum?
 
 ####################################################
 # Rhat reported in fn. 13 of the published article #
