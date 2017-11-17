@@ -1739,7 +1739,7 @@ round(tmp1,2)
 ## *Bloc 5*:                                                                                                        ##
 ## IMPORT SIMULATED NATIONAL SEATS-VOTES DATA PRODUCED WITH LINZER METHOD                                           ##
 ## Important:                                                                                                       ##
-## If you wish to re-produce Linzer draws and have yt not done so, you must run script linzerElas.r now.            ##
+## If you wish to re-produce Linzer draws and have not yet done so, you must run script linzerElas.r now.           ##
 ## Otherwise the simulated data in the distribution will be used. You will lose all unsaved data from the current   ##
 ## session. You can choose to save the image now, or re-run all the above commands once linzerElas.r has finished.  ##
 ######################################################################################################################
@@ -1899,7 +1899,6 @@ lambda.rho.5 <- function() {
         numerator[i,1] <- dummy[i,1] * exp( lambda[1] + rho * log(v[i,1]) )
         numerator[i,2] <- dummy[i,2] * exp(             rho * log(v[i,2]) )
         for (j in 3:J){
-#            numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] + rho * log(v[i,j]) )
             numerator[i,j] <- dummy[i,j] * exp( lambda[j-1] ) * v[i,j]^rho
         }
         for (j in 1:J){ # loop over parties (dummy selects those who ran that year) 
@@ -1913,7 +1912,7 @@ lambda.rho.5 <- function() {
         }
     }
     ### priors
-    for (p in 1:4){ # there are 6 party labels in the 3-election data, PRI is reference
+    for (p in 1:4){ # there are 5 party labels in the 3-election data, PRI is reference
         lambda[p] ~ dnorm( 0, tau.lambda )
     }
     tau.lambda <- pow(.25, -2)
@@ -1964,7 +1963,7 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
                     n.chains=3,               # jags parameters
                     n.iter=50000,
                     n.thin=50,
-                    D=300                     # needs to be 298 for 1997 estimation, 300 for other years
+                    D=300                     # needs to be 298 for 1997-map estimations, 300 for other maps
                     ){
     ####################################################################################################
     ### Data prep for national-agg King with Linzer-simulated data (data matrix with 6 party columns ###
@@ -2029,17 +2028,38 @@ my.jags <- function(which.elec=2006,          # options are: 2003, 2006, 2009, 2
                     n.thin=n.thin
                     )
     tmpRes$party.labels <- party.labels # add object to interpret bias parameters: relative to pri=2
-    summary(tmpRes)
+    #summary(tmpRes)
     return(tmpRes)
 }
 
 # This will test that jags routine works. Estimation should end fast with no error message
+# Combinations:  which.elec    which.map          scenario
+#                      2003          d97           factual
+#                      2003           d0   counter-factual
+#                      2006           d0           factual
+#                      2006           d3   counter-factual
+#                      2009           d0           factual
+#                      2009           d3   counter-factual
+#                      2012           d0           factual
+#                      2012           d3   counter-factual
+#                      2015           d0           factual
+#                      2015           d3   counter-factual
+# 
 tmpRes <- my.jags(which.elec = 2015,        # options are: 2003, 2006, 2009, 2012, 2015            
-                  which.map  = "d0",        #              "d0", "d1", "d3"                        
+                  which.map  = "d0",        #              "d0", "d3" (or "d97" for 2003)
                   which.measure = "w.bar",  #              "v" for R, "v.bar" for P, "w.bar" for M (RPM are Grofman et al's notation)
                   model.file=lambda.rho.5,  #                                                       
-                  test.ride=TRUE            # if TRUE, overrides n.chains, n.iter, n.thin          
+                  test.ride=TRUE,           # if TRUE, overrides n.chains, n.iter, n.thin
+                  D=300                     # set to D=298 when using d97 map, D=300 otherwise
 )
+tmpRes <- my.jags(which.elec = 2003,        # options are: 2003, 2006, 2009, 2012, 2015            
+                  which.map  = "d97",       #              "d0", "d3" (or "d97" for 2003)
+                  which.measure = "w.bar",  #              "v" for R, "v.bar" for P, "w.bar" for M (RPM are Grofman et al's notation)
+                  model.file=lambda.rho.5,  #                                                       
+                  test.ride=TRUE,           # if TRUE, overrides n.chains, n.iter, n.thin
+                  D=298                     # set to D=298 when using d97 map, D=300 otherwise
+)
+
 
 
 ###########################################################################
