@@ -2,7 +2,35 @@
 title: "2013 Party Action Analysis"
 output: html_notebook
 ---
-Normalize data
+Read cleaned 2013 spreadsheet
 ```{r}
-plot(cars)
+INE2013s1.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 1st Scenario.tsv",stringsAsFactors =FALSE,na.strings="-")
+INE2013s2.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 2nd Scsnario .tsv",stringsAsFactors =FALSE,na.strings="-")
+
 ```
+Normalize 2013 with spread, gather
+```{r}
+# normalize names
+names(INE2013s1.df)[which(names(INE2013s1.df)=="Primer.Escenario")]<-"CNV.Algorithm"
+names(INE2013s1.df)[which(names(INE2013s1.df)=="RECOMENDACION.CT")]<-"CNV.Recomendacion"
+
+# Recommendation is measuread at different leval, and type complicates comparison
+INE2013s1.df<-subset(INE2013s1.df,select=-CNV.Recomendacion)
+
+# gather into key value pairs
+
+tmpdf<-gather(INE2013s1.df,key="key",value="value",-Entidad)
+
+# decompose key
+tmpdf["govlevel"]=sapply(strsplit(tmpdf[["key"]],'.',fixed=TRUE),function(x)x[[1]])
+tmpdf["actor"]<-sapply(strsplit(tmpdf[["key"]],'.',fixed=TRUE),function(x)x[[2]])
+tmpdf["vtype"]<-sapply(strsplit(tmpdf[["key"]],'.',fixed=TRUE),function(x)if(length(x)==3){x[[3]]}else{"VALUE"})
+tmpdf["scenario"]<-1
+tmpdf["year"]<-2013
+tmpdf<-subset(tmpdf,select=-key)
+
+# reassemble
+tmpdf2<-spread(tmpdf,key="vtype",value="value")
+
+```
+
