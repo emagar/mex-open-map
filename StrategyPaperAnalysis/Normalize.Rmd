@@ -31,6 +31,7 @@ tmpdf<-subset(tmpdf,select=-key)
 
 # reassemble
 tmpdf2<-spread(tmpdf,key="vtype",value="value")
+tmpdf2["proposed"]<-!is.na(tmpdf2["VALUE"])
 
 ```
 
