@@ -15,11 +15,10 @@ names(INE2013s1.df)[which(names(INE2013s1.df)=="Primer.Escenario")]<-"CNV.Algori
 names(INE2013s1.df)[which(names(INE2013s1.df)=="RECOMENDACION.CT")]<-"CNV.Recomendacion"
 
 # Recommendation is measuread at different leval, and type complicates comparison
-INE2013s1.df<-subset(INE2013s1.df,select=-CNV.Recomendacion)
-
 # gather into key value pairs
-
-tmpdf<-gather(INE2013s1.df,key="key",value="value",-Entidad)
+library(dplyr)
+library(tidyr)
+tmpdf<-gather(subset(INE2013s1.df,select=-CNV.Recomendacion),key="key",value="value",-Entidad)
 
 # decompose key
 tmpdf["govlevel"]=sapply(strsplit(tmpdf[["key"]],'.',fixed=TRUE),function(x)x[[1]])
@@ -28,10 +27,15 @@ tmpdf["vtype"]<-sapply(strsplit(tmpdf[["key"]],'.',fixed=TRUE),function(x)if(len
 tmpdf["scenario"]<-1
 tmpdf["year"]<-2013
 tmpdf<-subset(tmpdf,select=-key)
-
 # reassemble
 tmpdf2<-spread(tmpdf,key="vtype",value="value")
 tmpdf2["proposed"]<-!is.na(tmpdf2["VALUE"])
+```
 
+Sample analysis crosstab, viz
+```{r}
+results<-xtabs(formula=proposed~actor+govlevel,data=tmpdf2)
+print(results)
+heatmap(results, scale="column", col=gray.colors(max(results)))
 ```
 
