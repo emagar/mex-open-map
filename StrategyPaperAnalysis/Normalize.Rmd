@@ -4,6 +4,10 @@ output: html_notebook
 ---
 Read cleaned 2013 spreadsheet
 ```{r}
+library(dplyr)
+library(tidyr)
+
+
 INE2013s1.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 1st Scenario.tsv",stringsAsFactors =FALSE,na.strings="-")
 INE2013s2.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 2nd Scsnario .tsv",stringsAsFactors =FALSE,na.strings="-")
 
@@ -13,29 +17,52 @@ Normalize 2013 with spread, gather
 # normalize names
 names(INE2013s1.df)[which(names(INE2013s1.df)=="Primer.Escenario")]<-"CNV.Algorithm"
 names(INE2013s1.df)[which(names(INE2013s1.df)=="RECOMENDACION.CT")]<-"CNV.Recomendacion"
+# Recommendation is measured at different leval, and type complicates comparison
+INE2013s1.df<-subset(INE2013s1.df,select=-CNV.Recomendacion)
 
-# Recommendation is measuread at different leval, and type complicates comparison
-# gather into key value pairs
-library(dplyr)
-library(tidyr)
-tmpdf<-gather(subset(INE2013s1.df,select=-CNV.Recomendacion),key="key",value="value",-Entidad)
 
-# decompose key
-tmpdf["govlevel"]=sapply(strsplit(tmpdf[["key"]],'.',fixed=TRUE),function(x)x[[1]])
-tmpdf["actor"]<-sapply(strsplit(tmpdf[["key"]],'.',fixed=TRUE),function(x)x[[2]])
-tmpdf["vtype"]<-sapply(strsplit(tmpdf[["key"]],'.',fixed=TRUE),function(x)if(length(x)==3){x[[3]]}else{"VALUE"})
-tmpdf["scenario"]<-1
-tmpdf["year"]<-2013
-tmpdf<-subset(tmpdf,select=-key)
-# reassemble
-tmpdf2<-spread(tmpdf,key="vtype",value="value")
-tmpdf2["proposed"]<-!is.na(tmpdf2["VALUE"])
+normalizeEvent<-function(input.df) {
+  # gather into key value pairs
+  tmpgather.df<-gather(input.df,key="key",value="value",-Entidad)
+  tmpgather.df["govlevel"]=sapply(strsplit(tmpgather.df[["key"]],'.',fixed=TRUE),function(x)x[[1]])
+  tmpgather.df["actor"]=sapply(strsplit(tmpgather.df[["key"]],'.',fixed=TRUE),function(x)x[[2]])
+  tmpgather.df["vtype"]<-sapply(strsplit(tmpgather.df[["key"]],'.',fixed=TRUE),function(x)if(length(x)==3){x[[3]]}else{"SCORE"})
+  tmpgather.df<-subset(tmpgather.df,select=-key)
+  # reassemble 
+  tmpspread.df<-spread(tmpgather.df,key="vtype",value="value")
+  # standardize dummy variables
+  tmpspread.df["PROPOSED"]<-!is.na(tmpspread.df["SCORE"])
+  tmpspread.df[["INVALID"]]<-as.logical(tmpspread.df[["INVALID"]])
+  tmpspread.df[["PAPER"]]<-as.logical(tmpspread.df[["PAPER"]])
+  return(tmpspread.df) 
+}
+
+tmp2013s1.df<- normalizeEvent(INE2013s1.df)
+tmp2013s1.df["scenario"]<-1
+tmp2013s1.df["year"]<-2013
+
+
 ```
 
-Sample analysis crosstab, viz
+Sample analysis h
 ```{r}
-results<-xtabs(formula=proposed~actor+govlevel,data=tmpdf2)
+results<-xtabs(formula=PROPOSED~actor+govlevel,data=tmp2013s1.df)
 print(results)
 heatmap(results, scale="column", col=gray.colors(max(results)))
+```
+```{r}
+# normalize names
+names(INE2013s2.df)[which(names(INE2013s2.df)=="Primer.Escenario")]<-"CNV.Algorithm"
+names(INE2013s2.df)[which(names(INE2013s2.df)=="Segundo.Escenario")]<-"CNV.Segundo"
+names(INE2013s2.df)[which(names(INE2013s2.df)=="Tercer.Escenario")]<-"CNV.Tercer"
+names(INE2013s2.df)[which(names(INE2013s2.df)=="Junta.Local.Executiva")]<-"CNV.Junta"
+names(INE2013s2.df)[which(names(INE2013s2.df)=="Ganador")]<-"CNV.Ganador"
+INE2013s2.df<-subset(INE2013s2.df,select=-CNV.Ganador)
+
+tmp2013s2.df <- normalizeEvent(INE2013s2.df)
+tmp2013s2.df["scenario"]<-2
+tmp2013s2.df["year"]<-2013
+
+
 ```
 
