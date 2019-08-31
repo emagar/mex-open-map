@@ -81,5 +81,18 @@ tmp2013.df<-rbind(tmp2013s1.df,tmp2013s2.df)
 
 ```{r}
 results<-xtabs(formula=PROPOSED~actor+govlevel+scenario,data=tmp2013.df)
-ftable(results)
+```
+
+
+```{r}
+#Winning scores
+
+winscores <- subset(tmp2013.df,actor=="Tercer", select=c(SCORE,year,Entidad))
+print (winscores)
+```
+
+```{r}
+twin<-tmp2013.df %>% inner_join(winscores)
+ by(twin,twin["Entidad"],function(x)x["actor"])
+
 ```
