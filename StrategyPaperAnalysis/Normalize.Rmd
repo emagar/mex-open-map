@@ -12,15 +12,10 @@ INE2013s1.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 1st Sc
 INE2013s2.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 2nd Scsnario .tsv",stringsAsFactors =FALSE,na.strings="-")
 
 ```
-Normalize 2013 with spread, gather
+
+use scather/gather to normalize data
+
 ```{r}
-# normalize names
-names(INE2013s1.df)[which(names(INE2013s1.df)=="Primer.Escenario")]<-"CNV.Algorithm"
-names(INE2013s1.df)[which(names(INE2013s1.df)=="RECOMENDACION.CT")]<-"CNV.Recomendacion"
-# Recommendation is measured at different leval, and type complicates comparison
-INE2013s1.df<-subset(INE2013s1.df,select=-CNV.Recomendacion)
-
-
 normalizeEvent<-function(input.df) {
   # gather into key value pairs
   tmpgather.df<-gather(input.df,key="key",value="value",-Entidad)
@@ -36,12 +31,18 @@ normalizeEvent<-function(input.df) {
   tmpspread.df[["PAPER"]]<-as.logical(tmpspread.df[["PAPER"]])
   return(tmpspread.df) 
 }
+```
 
+scenario 1
+```{r}
+# standardize names
+names(INE2013s1.df)[which(names(INE2013s1.df)=="Primer.Escenario")]<-"CNV.Algorithm"
+names(INE2013s1.df)[which(names(INE2013s1.df)=="RECOMENDACION.CT")]<-"CNV.Recomendacion"
+# Recommendation is measured at different leval, and type complicates comparison
+INE2013s1.df<-subset(INE2013s1.df,select=-CNV.Recomendacion)
 tmp2013s1.df<- normalizeEvent(INE2013s1.df)
 tmp2013s1.df["scenario"]<-1
 tmp2013s1.df["year"]<-2013
-
-
 ```
 
 Sample analysis h
@@ -51,18 +52,34 @@ print(results)
 heatmap(results, scale="column", col=gray.colors(max(results)))
 ```
 ```{r}
+#Scenario 2
 # normalize names
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Primer.Escenario")]<-"CNV.Algorithm"
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Segundo.Escenario")]<-"CNV.Segundo"
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Tercer.Escenario")]<-"CNV.Tercer"
-names(INE2013s2.df)[which(names(INE2013s2.df)=="Junta.Local.Executiva")]<-"CNV.Junta"
+names(INE2013s2.df)[which(names(INE2013s2.df)=="Junta.Local.Ejecutiva")]<-"CNV.Junta"
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Ganador")]<-"CNV.Ganador"
 INE2013s2.df<-subset(INE2013s2.df,select=-CNV.Ganador)
 
 tmp2013s2.df <- normalizeEvent(INE2013s2.df)
-tmp2013s2.df["scenario"]<-2
 tmp2013s2.df["year"]<-2013
-
+tmp2013s2.df["scenario"]<-2
 
 ```
+Analyze second
+```{r}
+results<-xtabs(formula=PROPOSED~actor+govlevel,data=tmp2013s2.df)
+print(results)
+heatmap(results, scale="column", col=gray.colors(max(results)))
+```
+```
+Merge and analyze
+```
+```{r}
+tmp2013.df<-rbind(tmp2013s1.df,tmp2013s2.df)
+```
 
+```{r}
+results<-xtabs(formula=PROPOSED~actor+govlevel+scenario,data=tmp2013.df)
+ftable(results)
+```
