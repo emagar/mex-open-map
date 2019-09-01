@@ -10,6 +10,10 @@ library(tidyr)
 
 INE2013s1.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 1st Scenario.tsv",stringsAsFactors =FALSE,na.strings="-")
 INE2013s2.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 2nd Scsnario .tsv",stringsAsFactors =FALSE,na.strings="-")
+INE2017s1.df <- read.delim(file="Pre-Normalized Comparative Tables 2017 Federal (APSA 2019) - 1erEsc 2017.tsv",stringsAsFactors =FALSE,na.strings="-")
+INE2017s2.df <- read.delim(file="Pre-Normalized Comparative Tables 2017 Federal (APSA 2019) - 2doEsc+final 2017.tsv",stringsAsFactors =FALSE,na.strings="-")
+
+
 
 ```
 
@@ -27,41 +31,44 @@ normalizeEvent<-function(input.df) {
   tmpspread.df<-spread(tmpgather.df,key="vtype",value="value")
   # standardize dummy variables
   tmpspread.df["PROPOSED"]<-!is.na(tmpspread.df["SCORE"])
+  if (!any(names(tmpspread.df)=="INVALID")) {
+        tmpspread.df["INVALID"]<-NA
+  }
   tmpspread.df[["INVALID"]]<-as.logical(tmpspread.df[["INVALID"]])
+  if (!any(names(tmpspread.df)=="PAPER")) {
+     tmpspread.df["PAPER"]<-NA
+  }
   tmpspread.df[["PAPER"]]<-as.logical(tmpspread.df[["PAPER"]])
   return(tmpspread.df) 
 }
 ```
 
-scenario 1
+2013 scenario 1
 ```{r}
 # standardize names
 names(INE2013s1.df)[which(names(INE2013s1.df)=="Primer.Escenario")]<-"CNV.Algorithm"
 names(INE2013s1.df)[which(names(INE2013s1.df)=="RECOMENDACION.CT")]<-"CNV.Recomendacion"
 # Recommendation is measured at different leval, and type complicates comparison
-INE2013s1.df<-subset(INE2013s1.df,select=-CNV.Recomendacion)
-tmp2013s1.df<- normalizeEvent(INE2013s1.df)
+tmp2013s1.df<- normalizeEvent(subset(INE2013s1.df,select=-CNV.Recomendacion))
 tmp2013s1.df["scenario"]<-1
 tmp2013s1.df["year"]<-2013
 ```
 
-Sample analysis h
+Sample analysis 
 ```{r}
 results<-xtabs(formula=PROPOSED~actor+govlevel,data=tmp2013s1.df)
 print(results)
 heatmap(results, scale="column", col=gray.colors(max(results)))
 ```
 ```{r}
-#Scenario 2
+#2013 Scenario 2
 # normalize names
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Primer.Escenario")]<-"CNV.Algorithm"
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Segundo.Escenario")]<-"CNV.Segundo"
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Tercer.Escenario")]<-"CNV.Tercer"
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Junta.Local.Ejecutiva")]<-"CNV.Junta"
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Ganador")]<-"CNV.Ganador"
-INE2013s2.df<-subset(INE2013s2.df,select=-CNV.Ganador)
-
-tmp2013s2.df <- normalizeEvent(INE2013s2.df)
+tmp2013s2.df <- normalizeEvent(subset(INE2013s2.df,select=-CNV.Ganador))
 tmp2013s2.df["year"]<-2013
 tmp2013s2.df["scenario"]<-2
 
@@ -72,27 +79,66 @@ results<-xtabs(formula=PROPOSED~actor+govlevel,data=tmp2013s2.df)
 print(results)
 heatmap(results, scale="column", col=gray.colors(max(results)))
 ```
+
+2017 scenario 1
+```{r}
+# standardize names
+names(INE2017s1.df)[which(names(INE2013s1.df)=="Primer.Escenario")]<-"CNV.Algorithm"
+# Recommendation is measured at different leval, and type complicates comparison
+tmp2017s1.df<- normalizeEvent(INE2017s1.df)
+tmp2017s1.df["scenario"]<-1
+tmp2017s1.df["year"]<-2017
+```
+
+Sample analysis 
+```{r}
+results<-xtabs(formula=PROPOSED~actor+govlevel,data=tmp2017s1.df)
+print(results)
+heatmap(results, scale="column", col=gray.colors(max(results)))
+```
+
+```{r}
+#2017 Scenario  2
+# normalize names
+names(INE2017s2.df)[which(names(INE2017s2.df)=="Primer.Escenario")]<-"CNV.Algorithm"
+names(INE2017s2.df)[which(names(INE2017s2.df)=="Segundo.Escenario")]<-"CNV.Segundo"
+names(INE2017s2.df)[which(names(INE2017s2.df)=="Tercer.Escenario")]<-"CNV.Tercer"
+tmp2017s2.df <- normalizeEvent(INE2017s2.df)
+tmp2017s2.df["year"]<-2017
+tmp2017s2.df["scenario"]<-2
+
+```
+Analyze second
+```{r}
+results<-xtabs(formula=PROPOSED~actor+govlevel,data=tmp2017s2.df)
+print(results)
+heatmap(results, scale="column", col=gray.colors(max(results)))
+```
+
+
 ```
 Merge and analyze
 ```
 ```{r}
-tmp2013.df<-rbind(tmp2013s1.df,tmp2013s2.df)
+proposals.df<-rbind(tmp2013s1.df ,tmp2013s2.df, tmp2017s1.df, tmp2017s2.df)
 ```
 
 ```{r}
-results<-xtabs(formula=PROPOSED~actor+govlevel+scenario,data=tmp2013.df)
+results<-xtabs(formula=PROPOSED~actor+govlevel+scenario,data=proposals.df)
 ```
 
 
 ```{r}
 #Winning scores
 
-winscores <- subset(tmp2013.df,actor=="Tercer", select=c(SCORE,year,Entidad))
+winscores <- subset(proposals.df,actor=="Tercer", select=c(SCORE,year,Entidad))
 print (winscores)
 ```
 
 ```{r}
-twin<-tmp2013.df %>% inner_join(winscores)
- by(twin,twin["Entidad"],function(x)x["actor"])
+twin<-proposals.df %>% inner_join(winscores)
+
+cat("Which actors won ...")
+ by(twin,c(twin["Entidad"], twin["year"]),function(x)x["actor"],simplify=FALSE)
 
 ```
