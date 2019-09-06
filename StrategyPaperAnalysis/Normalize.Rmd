@@ -50,8 +50,10 @@ names(INE2013s1.df)[which(names(INE2013s1.df)=="Primer.Escenario")]<-"CNV.Algori
 names(INE2013s1.df)[which(names(INE2013s1.df)=="RECOMENDACION.CT")]<-"CNV.Recomendacion"
 # Recommendation is measured at different leval, and type complicates comparison
 tmp2013s1.df<- normalizeEvent(subset(INE2013s1.df,select=-CNV.Recomendacion))
-tmp2013s1.df["scenario"]<-1
+#tmp2013s1.df["scenario"]<-1
 tmp2013s1.df["year"]<-2013
+tmp2013s1.df["stage"]<-2
+tmp2013s1.df[which(tmp2013s1.df["actor"]=="Algorithm"),"stage"] <- 1
 ```
 
 Sample analysis 
@@ -68,9 +70,15 @@ names(INE2013s2.df)[which(names(INE2013s2.df)=="Segundo.Escenario")]<-"CNV.Segun
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Tercer.Escenario")]<-"CNV.Tercer"
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Junta.Local.Ejecutiva")]<-"CNV.Junta"
 names(INE2013s2.df)[which(names(INE2013s2.df)=="Ganador")]<-"CNV.Ganador"
-tmp2013s2.df <- normalizeEvent(subset(INE2013s2.df,select=-CNV.Ganador))
+tmp2013s2.df <- normalizeEvent(subset(INE2013s2.df,select=-c(CNV.Ganador,CNV.Algorithm)))
 tmp2013s2.df["year"]<-2013
-tmp2013s2.df["scenario"]<-2
+#tmp2013s2.df["scenario"]<-2
+tmp2013s2.df["stage"]<- 4
+tmp2013s2.df[which(tmp2013s2.df["actor"]=="Segundo"),"stage"] <- 3
+tmp2013s2.df[which(tmp2013s2.df["actor"]=="Segundo"),"actor"] <- "INE"
+tmp2013s2.df[which(tmp2013s2.df["actor"]=="Tercer"),"stage"] <- 5
+tmp2013s2.df[which(tmp2013s2.df["actor"]=="Tercer"),"actor"] <- "INE"
+
 
 ```
 Analyze second
@@ -86,8 +94,10 @@ heatmap(results, scale="column", col=gray.colors(max(results)))
 names(INE2017s1.df)[which(names(INE2013s1.df)=="Primer.Escenario")]<-"CNV.Algorithm"
 # Recommendation is measured at different leval, and type complicates comparison
 tmp2017s1.df<- normalizeEvent(INE2017s1.df)
-tmp2017s1.df["scenario"]<-1
+#tmp2017s1.df["scenario"]<-1
 tmp2017s1.df["year"]<-2017
+tmp2017s1.df["stage"]<-2
+tmp2017s1.df[which(tmp2013s1.df["actor"]=="Algorithm"),"stage"] <- 1
 ```
 
 Sample analysis 
@@ -105,7 +115,12 @@ names(INE2017s2.df)[which(names(INE2017s2.df)=="Segundo.Escenario")]<-"CNV.Segun
 names(INE2017s2.df)[which(names(INE2017s2.df)=="Tercer.Escenario")]<-"CNV.Tercer"
 tmp2017s2.df <- normalizeEvent(INE2017s2.df)
 tmp2017s2.df["year"]<-2017
-tmp2017s2.df["scenario"]<-2
+#tmp2017s2.df["scenario"]<-2
+tmp2017s2.df["stage"]<- 4
+tmp2017s2.df[which(tmp2017s2.df["actor"]=="Segundo"),"stage"] <- 3
+tmp2017s2.df[which(tmp2017s2.df["actor"]=="Segundo"),"actor"] <- "INE"
+tmp2017s2.df[which(tmp2017s2.df["actor"]=="Tercer"),"stage"] <- 5
+tmp2017s2.df[which(tmp2017s2.df["actor"]=="Tercer"),"actor"] <- "INE"
 
 ```
 Analyze second
@@ -121,17 +136,18 @@ Merge and analyze
 ```
 ```{r}
 proposals.df<-rbind(tmp2013s1.df ,tmp2013s2.df, tmp2017s1.df, tmp2017s2.df)
+
 ```
 
 ```{r}
-results<-xtabs(formula=PROPOSED~actor+govlevel+scenario,data=proposals.df)
+results<-xtabs(formula=PROPOSED~actor+govlevel+stage,data=proposals.df)
 ```
 
 
 ```{r}
 #Winning scores
 
-winscores <- subset(proposals.df,actor=="Tercer", select=c(SCORE,year,Entidad))
+winscores <- subset(proposals.df,stage==5, select=c(SCORE,year,Entidad))
 print (winscores)
 ```
 
@@ -142,3 +158,19 @@ cat("Which actors won ...")
  by(twin,c(twin["Entidad"], twin["year"]),function(x)x["actor"],simplify=FALSE)
 
 ```
+
+
+```{r}
+# Analyze transparency compliance
+
+cat ("Invalidations")
+ftable(xtabs(PROPOSED~INVALID+actor+year+stage, proposals.df))
+
+cat ("Lowest won")
+lowvalid <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=min)
+
+
+tmpBest<- within(merge(lowvalid,winscores, by= c("year","Entidad")), LowestOne<-SCORE.x==SCORE.y)
+xtabs(LowestOne~year,tmpBest)
+```
+
