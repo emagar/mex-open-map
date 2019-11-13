@@ -6,6 +6,8 @@ Read cleaned 2013 spreadsheet
 ```{r}
 library(dplyr)
 library(tidyr)
+library(tibble)
+library(magrittr)
 
 
 INE2013s1.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 1st Scenario.tsv",stringsAsFactors =FALSE,na.strings="-")
@@ -216,6 +218,9 @@ cat("party unanimity in the last round")
 xtabs(~UnanimousLast+year,tmpBest)
 cat("Rules violation (not lowest & not unanimous)")
 xtabs(~RulesViolation+year,tmpBest)
+cat("INE new proposals")
+xtabs(~IneNew+year,tmpBest)
+
 
 ```
 
