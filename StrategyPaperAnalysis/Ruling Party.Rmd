@@ -1,0 +1,439 @@
+---
+title: "Ruling Party"
+output: html_notebook
+---
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Description: This notebook file was created by A. Trelles on 12/3/19 as part of the Strategy Paper. 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+General Description of the Data: The data file "RulingPartyLong" was created by A. Trelles on 12/3/19 and it is available on https://docs.google.com/spreadsheets/d/1oV81og-SVMv8IMtqflahr_ljbK4h_rCdTFTLnlIU7_E/edit?usp=sharing on a wide format. The spreadsheet contains the ruling party (governorship) at the state level for the time period 1990-2019 in five year intervals and includes the year a federal redistricting process took place (1996, 2004, 2013, and 2017). The data source is https://www.worldstatesmen.org/Mexico_states.htm. 
+
+Objectives: i. create a notebook in R studio to read an original data file that has been transformed from wide into a long format using Stata, ii. read the file located in  the data environment for the project StrategyPaperAnalysis, iii. register data manipulation, iv. transorm the data intro a longitudinal/time series format (state, year, and party), v. create different measures of party presence/dominance at the state level, and vi. create some descriptive statistics using the information. 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+The folowwing part of the code focuses on "v. create different measures of party presence/dominance at the state level for the 1990-2019 period. 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+The new variables at the state level are: 
+#Single Party Dominance: Dummy variable (True or False) if a single party consecutively ruled the state
+1990-2019
+2000-2017
+#Alternation in Power (x1): Dummy variable (True or False) if alternation in power took place at least once.
+1990-2019
+2000-2017
+#Alternation in Power (x2): Dummy variable (True or False) if alternation in power took place at least twice.
+1990-2019
+2000-2017
+#Alternation in Power (x3): Dummy variable (True or False) if alternation in power took place more than twice 
+1990-2019
+2000-2017
+#Primary Political Force. The ruling party that has dominated the most number of years. This excludes from the count the redistricting years (1996, 2004, 2013, and 2017). 
+1990, 1995, 2000, 2005, 2010, 2015, 2019. 
+2000, 2005, 2010, 2015. 
+#Secondary Political Force. The second ruling party that has ruled the state for a longer period of time. 
+1990, 1995, 2000, 2005, 2010, 2015, 2019. 
+2000, 2005, 2010, 2015. 
+#Tertiary Political Force. The third ruling party that has ruled the state for a longer period of time (many will be NA).
+1990, 1995, 2000, 2005, 2010, 2015, 2019. 
+2000, 2005, 2010, 2015. 
+#Multiparty Competition. A dummy variable (True or False) identifying if a state has been ruled by three different parties. 
+1990-2019
+2000-2017
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Full code
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+library(haven)
+RulingParty <- read_dta("RulingPartyLong.dta")
+
+#create empty output
+tempout <- data.frame(state=NA, year=NA, party=NA, sameparty=NA, pctsamepty=NA, single_pty_dom_90_19=NA,
+                      single_pty_dom_00_17=NA, alt_power1_90_19 = NA, alt_power1_00_17=NA,
+                      alt_power2_90_19 = NA, alt_power2_00_17=NA,alt_power3_90_19 = NA, alt_power3_00_17=NA,
+                      primary_pol_force_90_19 = NA, primary_pol_force_00_15 = NA, secondary_pol_force_90_19 = NA, 
+                      secondary_pol_force_00_15 = NA, tertiary_pol_force_90_19 = NA, tertiary_pol_force_00_15 = NA,
+                      multi_comp_90_19 = NA, multi_comp_00_17 = NA)
+
+#Run for loop
+for(i in unique(RulingParty$state)){
+  temp <- subset(RulingParty, RulingParty$state == i)
+  temp <- temp[order(temp$year, decreasing=F),]
+  
+  temp$sameparty <- NA
+  
+  #check if same party in power as prior year:
+  for(u in 2:nrow(temp)){
+    temp[u,4] <- ifelse(temp[u,3]==temp[u-1,3], TRUE, FALSE)
+  }
+  
+  #percentage of years in which same party as year b4 ruled
+  temp$pctsamepty <- ifelse(length(unique(temp$sameparty))==2,1,prop.table(table(temp$sameparty))[[2]])
+  
+  #get table of ruling parties
+  tbl <- data.frame(table(temp$party))
+  #get table of number of party switches
+  tbl2 <- data.frame(table(temp$sameparty))
+
+#PARTY DOMINANCE:
+  #1990-2019:
+  #single party dominance (dummy - T/F - if single party ruled)
+  temp$single_pty_dom_90_19 <- ifelse(nrow(tbl)==1, T, F)
+  
+  #IF single party did not dominate period
+  if(temp$single_pty_dom_90_19 == F){
+  #alternation in power x1 (dummy - T/F - if alternation took place 1+ times)
+  temp$alt_power1_90_19 <- ifelse(tbl2[1,2]>=1, T, F)
+  #alternation in power x2 (dummy - T/F - if alternation took place 2+ times)
+  temp$alt_power2_90_19 <- ifelse(tbl2[1,2]>=2, T, F)
+  #alternation in power x3 (dummy - T/F - if alternation took place 3+ times)
+  temp$alt_power3_90_19 <- ifelse(tbl2[1,2]>=3, T, F)
+  
+  #IF single party did dominate period
+  }else{
+    #alternation in power x1 (dummy - T/F - if alternation took place 1+ times)
+    temp$alt_power1_90_19 <- F
+    #alternation in power x2 (dummy - T/F - if alternation took place 2+ times)
+    temp$alt_power2_90_19 <- F
+    #alternation in power x3 (dummy - T/F - if alternation took place 3+ times)
+    temp$alt_power3_90_19 <- F
+  }
+ 
+  #2000-2017:
+  #subset
+  temp2 <- subset(temp, temp$year >= 2000 & temp$year <= 2017)
+  #get table of ruling parties
+  tbl <- data.frame(table(temp2$party))
+  #get table of number of party switches
+  tbl2 <- data.frame(table(temp2$sameparty))
+  
+  #single party dominance (dummy - T/F - if single party ruled)
+  temp$single_pty_dom_00_17 <- ifelse(nrow(tbl)==1, T, F)
+  
+  #IF single party did not dominate period
+  if(temp$single_pty_dom_00_17 == F){
+    #alternation in power x1 (dummy - T/F - if alternation took place 1+ times)
+    temp$alt_power1_00_17 <- ifelse(tbl2[1,2]>=1, T, F)
+    #alternation in power x2 (dummy - T/F - if alternation took place 2+ times)
+    temp$alt_power2_00_17 <- ifelse(tbl2[1,2]>=2, T, F)
+    #alternation in power x3 (dummy - T/F - if alternation took place 3+ times)
+    temp$alt_power3_00_17 <- ifelse(tbl2[1,2]>=3, T, F)
+    
+    #IF single party did dominate period
+  }else{
+    #alternation in power x1 (dummy - T/F - if alternation took place 1+ times)
+    temp$alt_power1_00_17 <- F
+    #alternation in power x2 (dummy - T/F - if alternation took place 2+ times)
+    temp$alt_power2_00_17 <- F
+    #alternation in power x3 (dummy - T/F - if alternation took place 3+ times)
+    temp$alt_power3_00_17 <- F
+  }
+  
+#PRIMARY POLITICAL FORCE
+  #1990-2019
+  temp3 <- subset(temp, !temp$year %in% c(1996,2004,2013,2017))
+  
+  #table of ruling parties
+  ptbl <- data.frame(table(temp3$party))
+  ptbl <- ptbl[order(ptbl$Freq, decreasing=T),]
+  
+  #states with single ruling party:
+  if(nrow(ptbl)==1){
+    temp$primary_pol_force_90_19 <- ptbl[1,1]
+    temp$secondary_pol_force_90_19 <- NA
+    temp$tertiary_pol_force_90_19 <- NA
+  }
+  #states with two parties
+  if(nrow(ptbl)==2){
+    temp$primary_pol_force_90_19 <- ptbl[1,1]
+    temp$secondary_pol_force_90_19 <- ptbl[2,1]
+    temp$tertiary_pol_force_90_19 <- NA
+  }
+  #states with three parties
+  if(nrow(ptbl)>=3){
+    temp$primary_pol_force_90_19 <- ptbl[1,1]
+    temp$secondary_pol_force_90_19 <- ptbl[2,1]
+    temp$tertiary_pol_force_90_19 <- ptbl[3,1]
+  }
+  
+  #2000-2015
+  temp4 <- subset(temp, temp$year >=2000 & temp$year <=2015 & !temp$year %in% c(1996,2004,2013,2017))
+  
+  #table of ruling parties
+  ptbl <- data.frame(table(temp4$party))
+  ptbl <- ptbl[order(ptbl$Freq, decreasing=T),]
+  
+  #states with single ruling party:
+  if(nrow(ptbl)==1){
+    temp$primary_pol_force_00_15 <- ptbl[1,1]
+    temp$secondary_pol_force_00_15 <- NA
+    temp$tertiary_pol_force_00_15 <- NA
+  }
+  #states with two parties
+  if(nrow(ptbl)==2){
+    temp$primary_pol_force_00_15 <- ptbl[1,1]
+    temp$secondary_pol_force_00_15 <- ptbl[2,1]
+    temp$tertiary_pol_force_00_15 <- NA
+  }
+  #states with three parties
+  if(nrow(ptbl)>=3){
+    temp$primary_pol_force_00_15 <- ptbl[1,1]
+    temp$secondary_pol_force_00_15 <- ptbl[2,1]
+    temp$tertiary_pol_force_00_15 <- ptbl[3,1]
+  }
+  
+#multiparty competition?
+  #1990-2019
+  temp$multi_comp_90_19 <- ifelse(is.na(temp$tertiary_pol_force_90_19), F, T)
+  #2000-2015
+  temp$multi_comp_00_17 <- ifelse(is.na(temp$tertiary_pol_force_00_15), F, T)
+  
+#reorder temp column names to match tempout columns names
+  temp <- temp[,c(1:6,10,7,11,8,12,9,13,14,17,15,18,16,19:21)]
+  #table(names(temp)==names(tempout)) #check to make sure they match
+
+  #bind to output
+  tempout <- rbind(temp, tempout)
+}
+
+#remove empty row from original tempout file
+tempout <- subset(tempout, !is.na(tempout$state))
+
+
+#MERGE INTO ORIGINAL DATAFRAME
+RulingParty$id <- paste0(RulingParty$state, RulingParty$year) #create unique identifiers for merge with new data
+tempout$id <- paste0(tempout$state,tempout$year)
+tempout <- tempout[,4:ncol(tempout)] #remove columns that are duplicated in RulingParty before merging
+
+#merge data - by = common id, all.x says keep all the observations in RulingParty, no.dups = don't duplicate ID column
+RulingParty <- merge(RulingParty, tempout, by="id", all.x=T, no.dups = T)
+
+#delete ID variable
+RulingParty <- RulingParty[ , -which(names(RulingParty) %in% c("id"))]
+
+#State level meta data - i.e one row row each state, with data that is consistent across years
+StateDat <- RulingParty[,c(1,5:21)]
+StateDat <- subset(StateDat, !duplicated(StateDat$state))
+view(StateDat)
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+```{r}
+```
+
+#load libraries 
+```{r}
+library(dplyr)
+library(tidyr)
+library(tibble)
+library(magrittr)
+```
+
+Read ruling party file
+```{r}
+library(haven)
+RulingParty <- read_dta("RulingPartyLong.dta")
+View(RulingParty)
+```
+
+
+#create empty output
+```{r}
+tempout <- data.frame(state=NA, year=NA, party=NA, sameparty=NA, pctsamepty=NA, single_pty_dom_90_19=NA,
+                      single_pty_dom_00_17=NA, alt_power1_90_19 = NA, alt_power1_00_17=NA,
+                      alt_power2_90_19 = NA, alt_power2_00_17=NA,alt_power3_90_19 = NA, alt_power3_00_17=NA,
+                      primary_pol_force_90_19 = NA, primary_pol_force_00_15 = NA, secondary_pol_force_90_19 = NA, 
+                      secondary_pol_force_00_15 = NA, tertiary_pol_force_90_19 = NA, tertiary_pol_force_00_15 = NA,
+                      multi_comp_90_19 = NA, multi_comp_00_17 = NA)
+#View(tempout)
+```
+
+#Run for loop
+```{r}
+for(i in unique(RulingParty$state)){
+  temp <- subset(RulingParty, RulingParty$state == i)
+  temp <- temp[order(temp$year, decreasing=F),]
+  
+  temp$sameparty <- NA
+  
+  #check if same party in power as prior year:
+  for(u in 2:nrow(temp)){
+    temp[u,4] <- ifelse(temp[u,3]==temp[u-1,3], TRUE, FALSE)
+  }
+  
+  #percentage of years in which same party as year b4 ruled
+  temp$pctsamepty <- ifelse(length(unique(temp$sameparty))==2,1,prop.table(table(temp$sameparty))[[2]])
+  
+  #get table of ruling parties
+  tbl <- data.frame(table(temp$party))
+  #get table of number of party switches
+  tbl2 <- data.frame(table(temp$sameparty))
+```
+
+#PARTY DOMINANCE:
+
+```{r}
+  #1990-2019:
+  #single party dominance (dummy - T/F - if single party ruled)
+  temp$single_pty_dom_90_19 <- ifelse(nrow(tbl)==1, T, F)
+  
+  #IF single party did not dominate period
+  if(temp$single_pty_dom_90_19 == F){
+  #alternation in power x1 (dummy - T/F - if alternation took place 1+ times)
+  temp$alt_power1_90_19 <- ifelse(tbl2[1,2]>=1, T, F)
+  #alternation in power x2 (dummy - T/F - if alternation took place 2+ times)
+  temp$alt_power2_90_19 <- ifelse(tbl2[1,2]>=2, T, F)
+  #alternation in power x3 (dummy - T/F - if alternation took place 3+ times)
+  temp$alt_power3_90_19 <- ifelse(tbl2[1,2]>=3, T, F)
+  
+  #IF single party did dominate period
+  }else{
+    #alternation in power x1 (dummy - T/F - if alternation took place 1+ times)
+    temp$alt_power1_90_19 <- F
+    #alternation in power x2 (dummy - T/F - if alternation took place 2+ times)
+    temp$alt_power2_90_19 <- F
+    #alternation in power x3 (dummy - T/F - if alternation took place 3+ times)
+    temp$alt_power3_90_19 <- F
+  }
+ 
+  #2000-2017:
+  #subset
+  temp2 <- subset(temp, temp$year >= 2000 & temp$year <= 2017)
+  #get table of ruling parties
+  tbl <- data.frame(table(temp2$party))
+  #get table of number of party switches
+  tbl2 <- data.frame(table(temp2$sameparty))
+  
+  #single party dominance (dummy - T/F - if single party ruled)
+  temp$single_pty_dom_00_17 <- ifelse(nrow(tbl)==1, T, F)
+  
+  #IF single party did not dominate period
+  if(temp$single_pty_dom_00_17 == F){
+    #alternation in power x1 (dummy - T/F - if alternation took place 1+ times)
+    temp$alt_power1_00_17 <- ifelse(tbl2[1,2]>=1, T, F)
+    #alternation in power x2 (dummy - T/F - if alternation took place 2+ times)
+    temp$alt_power2_00_17 <- ifelse(tbl2[1,2]>=2, T, F)
+    #alternation in power x3 (dummy - T/F - if alternation took place 3+ times)
+    temp$alt_power3_00_17 <- ifelse(tbl2[1,2]>=3, T, F)
+    
+    #IF single party did dominate period
+  }else{
+    #alternation in power x1 (dummy - T/F - if alternation took place 1+ times)
+    temp$alt_power1_00_17 <- F
+    #alternation in power x2 (dummy - T/F - if alternation took place 2+ times)
+    temp$alt_power2_00_17 <- F
+    #alternation in power x3 (dummy - T/F - if alternation took place 3+ times)
+    temp$alt_power3_00_17 <- F
+  }
+```
+
+  
+#PRIMARY POLITICAL FORCE
+```{r}
+  #1990-2019
+  temp3 <- subset(temp, !temp$year %in% c(1996,2004,2013,2017))
+  
+  #table of ruling parties
+  ptbl <- data.frame(table(temp3$party))
+  ptbl <- ptbl[order(ptbl$Freq, decreasing=T),]
+  
+  #states with single ruling party:
+  if(nrow(ptbl)==1){
+    temp$primary_pol_force_90_19 <- ptbl[1,1]
+    temp$secondary_pol_force_90_19 <- NA
+    temp$tertiary_pol_force_90_19 <- NA
+  }
+  #states with two parties
+  if(nrow(ptbl)==2){
+    temp$primary_pol_force_90_19 <- ptbl[1,1]
+    temp$secondary_pol_force_90_19 <- ptbl[2,1]
+    temp$tertiary_pol_force_90_19 <- NA
+  }
+  #states with three parties
+  if(nrow(ptbl)>=3){
+    temp$primary_pol_force_90_19 <- ptbl[1,1]
+    temp$secondary_pol_force_90_19 <- ptbl[2,1]
+    temp$tertiary_pol_force_90_19 <- ptbl[3,1]
+  }
+  
+  #2000-2015
+  temp4 <- subset(temp, temp$year >=2000 & temp$year <=2015 & !temp$year %in% c(1996,2004,2013,2017))
+  
+  #table of ruling parties
+  ptbl <- data.frame(table(temp4$party))
+  ptbl <- ptbl[order(ptbl$Freq, decreasing=T),]
+  
+  #states with single ruling party:
+  if(nrow(ptbl)==1){
+    temp$primary_pol_force_00_15 <- ptbl[1,1]
+    temp$secondary_pol_force_00_15 <- NA
+    temp$tertiary_pol_force_00_15 <- NA
+  }
+  #states with two parties
+  if(nrow(ptbl)==2){
+    temp$primary_pol_force_00_15 <- ptbl[1,1]
+    temp$secondary_pol_force_00_15 <- ptbl[2,1]
+    temp$tertiary_pol_force_00_15 <- NA
+  }
+  #states with three parties
+  if(nrow(ptbl)>=3){
+    temp$primary_pol_force_00_15 <- ptbl[1,1]
+    temp$secondary_pol_force_00_15 <- ptbl[2,1]
+    temp$tertiary_pol_force_00_15 <- ptbl[3,1]
+  }
+```
+
+#multiparty competition?
+```{r}
+  #1990-2019
+  temp$multi_comp_90_19 <- ifelse(is.na(temp$tertiary_pol_force_90_19), F, T)
+  #2000-2015
+  temp$multi_comp_00_17 <- ifelse(is.na(temp$tertiary_pol_force_00_15), F, T)
+  
+#reorder temp column names to match tempout columns names
+  temp <- temp[,c(1:6,10,7,11,8,12,9,13,14,17,15,18,16,19:21)]
+  #table(names(temp)==names(tempout)) #check to make sure they match
+
+  #bind to output
+  tempout <- rbind(temp, tempout)
+}
+
+#remove empty row from original tempout file
+tempout <- subset(tempout, !is.na(tempout$state))
+```
+
+
+#MERGE INTO ORIGINAL DATAFRAME
+```{r}
+RulingParty$id <- paste0(RulingParty$state, RulingParty$year) #create unique identifiers for merge with new data
+tempout$id <- paste0(tempout$state,tempout$year)
+tempout <- tempout[,4:ncol(tempout)] #remove columns that are duplicated in RulingParty before merging
+
+#merge data - by = common id, all.x says keep all the observations in RulingParty, no.dups = don't duplicate ID column
+RulingParty <- merge(RulingParty, tempout, by="id", all.x=T, no.dups = T)
+
+#delete ID variable
+RulingParty <- RulingParty[ , -which(names(RulingParty) %in% c("id"))]
+```
+
+
+```{r}
+#State level meta data - i.e one row row each state, with data that is consistent across years
+StateDat <- RulingParty[,c(1,5:21)]
+StateDat <- subset(StateDat, !duplicated(StateDat$state))
+```
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+The folowwing part of the code focuses on "vi. create some descriptive statistics using the information."
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Statistical/Descriptive Analysis 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+```{r}
+results<-subset(RulingParty, !duplicated(RulingParty$state))
+print(results)
+```
+
+#Creating a Contingency Table by party and state
+```{r}
+xtabs(~party+state,RulingParty)
+```
+
