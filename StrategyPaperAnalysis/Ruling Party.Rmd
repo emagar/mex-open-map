@@ -2,6 +2,7 @@
 title: "Ruling Party"
 output: html_notebook
 ---
+<<<<<<< HEAD
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Description: This notebook file was created by A. Trelles on 12/3/19 as part of the Strategy Paper. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -437,3 +438,106 @@ print(results)
 xtabs(~party+state,RulingParty)
 ```
 
+=======
+
+Description: This notebook file was created by A. Trelles on 12/3/19 as part of the Strategy Paper. 
+
+General Description of the Data: The data file "RulingPartyLong.df" was created by A. Trelles on 12/3/19 and it is available on https://docs.google.com/spreadsheets/d/1oV81og-SVMv8IMtqflahr_ljbK4h_rCdTFTLnlIU7_E/edit?usp=sharing on a wide format. The spreadsheet contains the ruling party (governorship) at the state level for the time period 1990-2019 in five year intervals and includes the year a federal redistricting process took place (1996, 2004, 2013, and 2017). The data source is https://www.worldstatesmen.org/Mexico_states.htm. 
+
+Objectives: i. create a notebook in R studio to read an original data file that has been transformed from wide into a long format using Stata, ii. read the file located in  the data environment for the project StrategyPaperAnalysis, iii. register data manipulation, iv. transorm the data intro a longitudinal/time series format (state, year, and party), v. create different measures of party presence/dominance at the state level, and vi. create some descriptive statistics using the information. 
+
+```{r}
+help(package="dplyr")
+```
+
+Read ruling party file
+```{r}
+library(haven)
+RulingParty <- read_dta("RulingPartyLong.dta")
+View(RulingParty)
+```
+
+tempout <- data.frame(state=NA, year=NA, party=NA, sameparty=NA, pctsamepty=NA)
+for(i in unique(RulingParty$state)){
+temp <- subset(RulingParty, RulingParty$state == i)
+temp <- temp[order(temp$year, decreasing=F),]
+
+temp$sameparty <- NA
+
+for(u in 2:nrow(temp)){
+temp[u,4] <- ifelse(temp[u,3]==temp[u-1,3], TRUE, FALSE)
+}
+
+temp$pctsamepty <- ifelse(length(unique(temp$sameparty))==2,1,prop.table(table(temp$sameparty))[[2]])
+
+tempout <- rbind(temp, tempout)
+}
+
+RulingParty$sameparty <- as.character(tempout$sameparty[match(paste0(RulingParty$state, RulingParty$year),paste0(tempout$state,tempout$year))])
+
+RulingParty$pctsamepty <- as.character(tempout$pctsamepty[match(paste0(RulingParty$state, RulingParty$year),paste0(tempout$state,tempout$year))])
+
+Sample analysis 
+```{r}
+results<-subset(RulingParty, !duplicated(RulingParty$state))
+print(results)
+heatmap(results, scale="column", col=gray.colors(max(results)))
+```
+
+
+
+
+
+//////////////////////////////////
+Notes
+//////////////////////////////////
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+```{r}
+plot(cars)
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+```{r}
+
+```
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+//////////////////////////////////
+//////////////////////////////////
+
+*General R Commands*
+
+To execute a command place your cursor inside the *```{r}```* and press *Cmd+Shift+Enter*.
+
+In order to find what directory R is in type getwd()
+e.g., 
+```{r}
+getwd()
+```
+
+Calculator functions
+e.g., 
+
+```{r}
+2+2
+```
+
+Reading data
+
+To read data from Stata, install "foreign" package --> 
+
+```{r}
+library(foreign)
+
+```
+
+//////////////////////////////////
+
+
+>>>>>>> 7d05a0dcb2ac05a8a74cda7749b07a80c623055d
