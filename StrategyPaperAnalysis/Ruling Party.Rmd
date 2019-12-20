@@ -44,9 +44,9 @@ The new variables at the state level are:
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 Full code
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+```{r}
 library(haven)
 RulingParty <- read_dta("RulingPartyLong.dta")
-
 #create empty output
 tempout <- data.frame(state=NA, year=NA, party=NA, sameparty=NA, pctsamepty=NA, single_pty_dom_90_19=NA,
                       single_pty_dom_00_17=NA, alt_power1_90_19 = NA, alt_power1_00_17=NA,
@@ -214,8 +214,9 @@ RulingParty <- RulingParty[ , -which(names(RulingParty) %in% c("id"))]
 #State level meta data - i.e one row row each state, with data that is consistent across years
 StateDat <- RulingParty[,c(1,5:21)]
 StateDat <- subset(StateDat, !duplicated(StateDat$state))
-view(StateDat)
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+```
+
+
 
 ```{r}
 ```
