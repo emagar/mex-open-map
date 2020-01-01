@@ -2,12 +2,16 @@
 title: "2013 Party Action Analysis"
 output: html_notebook
 ---
+This notebook produces the normalized proposals dataframe.
+
+
 Read cleaned 2013 spreadsheet
 ```{r}
 library(dplyr)
 library(tidyr)
 library(tibble)
 library(magrittr)
+library(readr)
 
 
 INE2013s1.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 1st Scenario.tsv",stringsAsFactors =FALSE,na.strings="-")
@@ -138,89 +142,7 @@ Merge and analyze
 ```
 ```{r}
 proposals.df<-rbind(tmp2013s1.df ,tmp2013s2.df, tmp2017s1.df, tmp2017s2.df)
-
-```
-
-```{r}
-results<-xtabs(formula=PROPOSED~actor+govlevel+stage,data=proposals.df)
-```
-
-
-```{r}
-#Winning scores
-
-winscores <- subset(proposals.df,stage==5, select=c(SCORE,year,Entidad))
-names(winscores)[1]<-"Winning.Score"
-print (winscores)
-```
-
-```{r}
-twin<-proposals.df %>% inner_join(winscores)
-
-#cat("Which actors won ...")
-# by(twin,c(twin["Entidad"], twin["year"]),function(x)x["actor"],simplify=FALSE)
-
-```
-
-
-```{r}
-# Analyze transparency compliance
-
-cat ("Invalidations")
-xtabs(PROPOSED~INVALID+year, proposals.df)
-ftable(xtabs(PROPOSED~INVALID+actor+year+stage, proposals.df))
-
-lowvalid <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=min)
-names(lowvalid)[3]<-"Lowestv.Score"
-
-unanimous <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==4& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=function(x)length(unique(x))==1)
-names(unanimous)[3]<-"UnanimousLast"
-
-
-
-tmpBest<- within(merge(lowvalid,winscores, by= c("year","Entidad")), LowestWon<-(Lowestv.Score==Winning.Score))
-tmpBest<-as_tibble(tmpBest)
-xtabs(~LowestWon+year,tmpBest)
-
-tmpBest<-merge(tmpBest,unanimous)
-tmpBest<-within(tmpBest,RulesViolation <- !LowestWon & !UnanimousLast) 
-round1p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==1),FUN=c)
- names(round1p)[3]<-"round1.scores"
-
- round2p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==2& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
- names(round2p)[3]<-"round2.scores"
- round3p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==3& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
-  names(round3p)[3]<-"round3.scores"
-
- round4p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==4& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
-   names(round4p)[3]<-"round4.scores"
-
-round5p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==5& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
-  names(round5p)[3]<-"round5.scores"
-    tmpBest<-merge(tmpBest,round1p,all.x=TRUE)  
-
-  tmpBest<-merge(tmpBest,round2p,all.x=TRUE)  
-  tmpBest<-merge(tmpBest,round3p,all.x=TRUE)
-    tmpBest<-merge(tmpBest,round4p,all.x=TRUE)
-      tmpBest<-merge(tmpBest,round5p,all.x=TRUE)
-
-tmpBest$IneNewRound3<-apply(tmpBest,1,function(x)length(intersect(unlist(x$round3.scores),union(unlist(x["round1.scores"]),unlist(x["round2.scores"]))))==0)
-
-tmpBest$IneNewRound5<-apply(tmpBest,1,function(x)length(intersect(unlist(x$round5.scores),union(unlist(x["round3.scores"]),unlist(x["round4.scores"]))))==0)
-
-tmpBest %<>% mutate(IneNew=IneNewRound3 | IneNewRound5)
-
-
-
-cat("lowest valid proposal winning")
-xtabs(~LowestWon+year,tmpBest)
-cat("party unanimity in the last round")
-xtabs(~UnanimousLast+year,tmpBest)
-cat("Rules violation (not lowest & not unanimous)")
-xtabs(~RulesViolation+year,tmpBest)
-cat("INE new proposals")
-xtabs(~IneNew+year,tmpBest)
-
+write_csv(proposals.df,path="proposals.csv")
 
 ```
 
