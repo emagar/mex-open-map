@@ -17,9 +17,7 @@ controlByWindow<-function(.data,start,end) {
   tmp <- .data %>% filter(year >=start & year < end)  %>% arrange(year) %>% summarise(partylist=list(party)) %>% rowwise()
   tmp %<>%  mutate(partyseq=list(rle(as.character(partylist))),partytab=list(sort(table(as.character(partylist)),decreasing=TRUE)))
   tmp  %<>% mutate( singlecontrol = (length(partytab)==1), primary=names(partytab)[1], percentsingle=partytab[1]/sum(partytab), naltpower=(length(partyseq[["values"]])-1))
-  
-  
-  tmp %<>% ungroup(tmp)
+  tmp %<>% ungroup()
   return(tmp)
 }
 ```
