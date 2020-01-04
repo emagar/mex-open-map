@@ -9,7 +9,6 @@ Read cleaned 2013 spreadsheet
 ```{r}
 library(dplyr)
 library(tidyr)
-library(tibble)
 library(magrittr)
 library(readr)
 
@@ -104,6 +103,7 @@ tmp2017s1.df<- normalizeEvent(INE2017s1.df)
 tmp2017s1.df["year"]<-2017
 tmp2017s1.df["stage"]<-2
 tmp2017s1.df[which(tmp2017s1.df["actor"]=="Algorithm"),"stage"] <- 1
+tmp2017s1.df[which(tmp2017s1.df["Entidad"]=="CDMX"),"Entidad"] <- "Distrito Federal"
 ```
 
 Sample analysis 
@@ -127,6 +127,7 @@ tmp2017s2.df[which(tmp2017s2.df["actor"]=="Segundo"),"stage"] <- 3
 tmp2017s2.df[which(tmp2017s2.df["actor"]=="Segundo"),"actor"] <- "INE"
 tmp2017s2.df[which(tmp2017s2.df["actor"]=="Tercer"),"stage"] <- 5
 tmp2017s2.df[which(tmp2017s2.df["actor"]=="Tercer"),"actor"] <- "INE"
+tmp2017s2.df[which(tmp2017s2.df["Entidad"]=="CDMX"),"Entidad"] <- "Distrito Federal"
 
 ```
 Analyze second
