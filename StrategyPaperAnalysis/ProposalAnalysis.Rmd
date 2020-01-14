@@ -1,19 +1,192 @@
 ---
-title: "R Notebook"
+title: "Proposal Anlysis"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Description: This notebook file was created by A. Trelles on 12/28/19 as part of the Strategy Paper. 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+General Description: This analyisis is used as a reference to write the code for the analysis of partisan counterporposals for the 2013 and 2017 redistricting process in relation with partisan ruling status, its strenght (vote returns), and state level coalition dynamics.  
 
-```{r}
-plot(cars)
-```
+The first part of the ProposalAnalysis.Rmd IS NOT CODE. It describes the general objectives of the analysis based on the hypotheses derived from the paper and the available data we have to test them. In all cases, the DV is related to a party´s decision to formulate a counterporposal. 
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+General Hypotheses H1, H2, and H3 assume the DV is if a party formulated a counterporposal,
+and vary according the ruling party (H1), party strenght/vote returns (H2), and coalitions (H3). 
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+//////////////////////////////////////////////////////////////////////////////////////////
+H1: Ruling Party (Single Party Dominance/Alternation)
+//////////////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////////////////////////
+H1.1: Single Party Dominance (dominant party) --> Comparing dominant parties vs opposition parties in states ruled by a single party
+//////////////////////////////////////////////////////////////////////////////////////////
+Hypothesis:
+# If a state is dominated by a single party prior the redistricting process, the ruling party in that state is more likely to formulate a counterproposal than any other party. 
+
+Variables: 
+#DV: Dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
+
+#IV(1): Dummy variable captruing if a single party ruled that state before redisrticting took place (single_pty_dom_00_17:True or False, by State). 
+
+#IV(2): Categorical variable captruing the degree of alternation in power (six categories from a non-competitive state to a party that has multiparty comptetion and alternation has taken place >3+ times in the 00-17 period): 1) single_pty_dom_00_17:True or False, by State; 2) alt_power1_00_17; 3) alt_power2_00_17; 4) alt_power2_00_17 x multi_comp_00_17; 5) alt_power3_00_17; 6) alt_power3_00_17 x multi_comp_00_17. 
+
+Method:
+#To test H1.1: chi.sq test.
+
+#Comparing parties:If the hypothesis is true, we would expect that the dominating party in states ruled by a single party, is more likely to formulate a counterporposal than opposition parties (this hypothesis can be tested by stage and/or combining both stages 1 and 2).
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H1.2: Alternation in Power (opposition party(ies)) --> Comparing opposition parties in states with alternation vs opposition parties in states ruled by a single party
+//////////////////////////////////////////////////////////////////////////////////////////
+Hypotheses:
+# If a state has gone through alternation in power, the main oppoition party (secondary force) is as likely to formulate a counterporposal as the ruling party.
+
+# If a state has gone through alternation in power, oppoition parties are as likely to formulate a counterporposal as the ruling party.
+
+Variables: 
+#DV: Dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
+
+#IV(1): Dummy variable captruing if a single party ruled that state before redisrticting took place (single_pty_dom_00_17:True or False, by State). 
+
+#IV(2): Categorical variable captruing the degree of alternation in power (six categories from a non-competitive state to a party that has multiparty comptetion and alternation has taken place >3+ times in the 00-17 period): 1) single_pty_dom_00_17:True or False, by State; 2) alt_power1_00_17; 3) alt_power2_00_17; 4) alt_power2_00_17 x multi_comp_00_17; 5) alt_power3_00_17; 6) alt_power3_00_17 x multi_comp_00_17. 
+
+Method: 
+#To test H1.1: chi.sq test.
+
+#Comparing parties: In states that have experienced alternation in power, we expect the main opposition parties to be as likely as the dominating party to formulate a counterproposal. We expect a stronger effect as multiparty competition and alternation in power increase (this hypothesis can be tested by stage and/or combining both stages 1 and 2).
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H1.3: Alternation in Power (alternation and multiparty competition) --> Comparing the total number of counterporposals at the state level as alternation and multiparty competition increase. 
+//////////////////////////////////////////////////////////////////////////////////////////
+Hypothesis:
+# Paries in states with alternetion and multipary competition are more likely to formulate a higher number of counterproposals being formulated than prties in states that are dominated by a single party. 
+
+or 
+
+#As alternation and multipartycompetition incease, more proposals will be formulated.
+
+Variables: 
+#DV: Total number of counterproposals formulated. Based on the dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
+
+#IV(1): Dummy variable captruing if a single party ruled that state before redisrticting took place (single_pty_dom_00_17:True or False, by State). 
+
+#IV(2): Categorical variable captruing the degree of alternation in power (six categories from a non-competitive state to a party that has multiparty comptetion and alternation has taken place >3+ times in the 00-17 period): 1) single_pty_dom_00_17:True or False, by State; 2) alt_power1_00_17; 3) alt_power2_00_17; 4) alt_power2_00_17 x multi_comp_00_17; 5) alt_power3_00_17; 6) alt_power3_00_17 x multi_comp_00_17. 
+
+Method: 
+#To test H1.1: chi.sq test.
+
+# If the hpothesis is true, we would expect to observe more counterporposals in states with more alternation and multiparty competition.
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H2:Party Strenght (Vote Returns) 
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H2.1: Party Strenght (High vs Low vote returns at the seccion level)--> Comparing interaction under different levels of electoral returns 
+//////////////////////////////////////////////////////////////////////////////////////////
+Hypothesis
+# If a party receives a high vote share in a state, it is more likely to formulate a counterproposal than those parties that receive a lower vote share.
+
+Variables: 
+#DV: Dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
+
+#IV(1): Dummy variable captruing if a party has high or low levels of vote returns in a particular state before redisrticting took place (High > 50%, Low <24%). 
+
+#IV(2): Categorical variable capturing the level of vote returns (Five categories: Very High(>75%), High(74%-50%), Medium (49%-25%), Low (24%-15%), Very Low (<14%). 
+
+#IV(3): Continous variable capturing the vote share received by each party at the state level (0-100).
+
+Method:
+#To test H2.1: Chisq and Difference of means.
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H2.2: Party Competion (High vs Low levels of electoral competition)--> Comparing Interaction under different levels of competition 
+//////////////////////////////////////////////////////////////////////////////////////////
+Hypotheses
+# As competitiveness increases at the state level (e.g., ratio of safe vs competitive districts), we can expect to observe a higher number of counterproposals.
+
+and/or 
+
+# As competitiveness increases (e.g., ratio of safe vs competitive districts), opposition parties are as likely to formulate a conterproposal as the ruling party. 
+
+and/or 
+
+# In a safe state, the ruling party is more likely to formulate a counterproposal than any other party.
+
+and/or
+
+# In a safe state, the main opposition party (secondary force) is as likely a formulate a counterproposal than the ruling party.
+
+Variables: 
+#DV: Dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
+
+#IV(1): Dummy variable captruing if a state con be considered competitive or safe (High > 50%, Low <24%). 
+
+#IV(2): Categorical variable capturing the level of district competitiveness at the state level (Five categories: Very High(>75%), High(74%-50%), Medium (49%-25%), Low (24%-15%), Very Low (<14%). 
+
+#IV(3): Continous variable capturing the level of competitiveness in each district at the state level (0-100).
+
+Method:
+#To test H2.2: Chisq and Difference of means.
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H2.3: Party Strongholds --> Comparing Interaction assuming parties want to protect strongholds 
+//////////////////////////////////////////////////////////////////////////////////////////
+Hypothesis
+# ???? (Still working on this one).
+
+Variables: 
+#DV: Dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
+
+#IV(1): Dummy variable captruing if a party has high or low levels in a particular state before redisrticting took place (single_pty_dom_00_17:True or False, by State). 
+
+#IV(2): Categorical variable capturing the level of vote returns (Five categories: Very High(>75%), High(74%-50%), Medium (49%-25%), Low (24%-15%), Very Low (<14%). 
+
+Method:
+#To test H2.3: Difference of means.
+
+#Comparing parties:.
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H3: Coalitions
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H3.1: Coaltions (Stong and Succesful Coaltion)--> Comparing interaction based on the desission to build state level coalitions.  
+//////////////////////////////////////////////////////////////////////////////////////////
+Hypothesis
+#Smaller parties (not PRI, PAN or PRD) that have a strong and successful coalition with a larger party, are more likely  to formulate a similar counterproposal to its larger coalition mate than smaller parties that competed separately. 
+
+Variables: 
+#DV: Dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
+
+#IV(1): Dummy variable captruing if a party competed under a coalition before redisrticting took place. 
+
+#IV(2): Dummy variable captruing if a coalition was strong and successful before redisrticting took place. 
+
+Method:
+#To test H3.1: Chisq test.
+
+#Comparing parties:.
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+STOP READING HERE
+//////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+#Work in Progress 
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+Code
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
