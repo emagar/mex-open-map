@@ -17,19 +17,23 @@ and vary according the ruling party (H1), party strenght/vote returns (H2), and 
 
 // Setup //
 
-Bring in data
+Libraries
 ```{r}
 require(magrittr)
 require(ggplot2)
 require(dplyr)
 require(tidyr)
 require(readr)
-
+require(haven)
+```
+Bring in proposal event database: profull.df
+```{r}
 source("integrateMxdistritos.R")
 ```
-
-
-
+Bring in ruling party db, 
+```{r}
+source("RulingParty_micah.R")
+```
 
 //////////////////////////////////////////////////////////////////////////////////////////
 H1: Ruling Party (Single Party Dominance/Alternation)
@@ -55,21 +59,22 @@ Hypotheses (Entry --> Based on Ruling Party):
 # Evaluate if parties ruling a state that has not experienced alternantion in power, are more likely to formulate a counterproposal than opposition parties. If true, ruling parties in states that have been ruled by a single party, should be more likely to formulate a plan when compared to: a) other parties in that same state and b) in states that have experienced a degree of alternation in power. 
 
 
-```{r}
-propstrue <- function(.data){
-  tmp <- .data %>% group_by(actor, Entidad) %>% summarise(proposal=list(PROPOSED)) %>% rowwise()
-  
-  tmp %>% mutate(prop_list=list(sort(table(as.character(proposal)))), made_prop=if_else("TRUE" %in% names(prop_list),1,0))
-  
-  tmp %>% mutate(state=Entidad) %>% left_join(tmp, mydummies9413.df, by =c("Entidad"="state"))
-}
-
-```
 
 ```{r}
-output <- propstrue(proposals.df)
+ys.proposed <- propfull.df %>% group_by(actor,Entidad,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
+#output <- propstrue(proposals.df)
+ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(Entidad=state, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
 
-chisq.test(output$made_prop, out$single_control)
+ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(Entidad=state, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
+
+
+
+ys.combined <- left_join(ys.proposed,ys.control)
+#ys.combined %>% ggplot(aes(control,proposed))+geom_boxplot()+facet_grid(rows=vars(year)
++ )
+
+
+#chisq.test(output$made_prop, out$single_control)
 ```
 
   #H.1.1.1.a 
