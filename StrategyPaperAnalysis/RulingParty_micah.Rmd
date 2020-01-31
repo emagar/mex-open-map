@@ -16,7 +16,7 @@ grule.df <- as_tibble(RulingParty) %>% group_by(state)
 controlByWindow<-function(.data,start,end) {
   tmp <- .data %>% filter(year >=start & year < end)  %>% arrange(year) %>% summarise(partylist=list(party)) %>% rowwise()
   tmp %<>%  mutate(partyseq=list(rle(as.character(partylist))),partytab=list(sort(table(as.character(partylist)),decreasing=TRUE)))
-  tmp  %<>% mutate( singlecontrol = (length(partytab)==1), primary=names(partytab)[1], percentsingle=partytab[1]/sum(partytab), naltpower=(length(partyseq[["values"]])-1))
+  tmp  %<>% mutate( singlecontrol = (length(partytab)==1), primary=names(partytab)[1],secondary=names(partytab)[2],tertiary=names(partytab)[3], percentsingle=partytab[1]/sum(partytab), naltpower=(length(partyseq[["values"]])-1))
   tmp %<>% ungroup()
   return(tmp)
 }
@@ -27,6 +27,26 @@ controlByWindow<-function(.data,start,end) {
 mydummies9413.df <- grule.df %>%  controlByWindow(1994,2013)
 
 ```
+
+
+```{r}
+propstrue <- function(.data){
+  tmp <- .data %>% group_by(actor, Entidad) %>% summarise(proposal=list(PROPOSED)) %>% rowwise()
+  
+  tmp %>% mutate(prop_list=list(sort(table(as.character(proposal)))), made_prop=if_else("TRUE" %in% names(prop_list),1,0))
+  
+  tmp %>% mutate(state=Entidad) %>% left_join(tmp, mydummies9413.df, by =c("Entidad"="state"))
+}
+
+```
+
+```{r}
+output <- propstrue(proposals.df)
+
+chisq.test(output$made_prop, out$single_control)
+```
+
+
 
 
 
