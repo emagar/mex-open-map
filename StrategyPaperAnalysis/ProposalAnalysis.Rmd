@@ -1,5 +1,5 @@
 ---
-title: "Proposal Anlysis"
+title: "Proposal Analysis"
 output: html_notebook
 ---
 
@@ -13,6 +13,23 @@ The first part of the ProposalAnalysis.Rmd IS NOT CODE. It describes the general
 
 General Hypotheses H1, H2, and H3 assume the DV is if a party formulated a counterporposal,
 and vary according the ruling party (H1), party strenght/vote returns (H2), and coalitions (H3). 
+
+
+// Setup //
+
+Bring in data
+```{r}
+require(magrittr)
+require(ggplot2)
+require(dplyr)
+require(tidyr)
+require(readr)
+
+source("integrateMxdistritos.R")
+```
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 H1: Ruling Party (Single Party Dominance/Alternation)
@@ -36,6 +53,24 @@ Hypotheses (Entry --> Based on Ruling Party):
 
   Method:
 # Evaluate if parties ruling a state that has not experienced alternantion in power, are more likely to formulate a counterproposal than opposition parties. If true, ruling parties in states that have been ruled by a single party, should be more likely to formulate a plan when compared to: a) other parties in that same state and b) in states that have experienced a degree of alternation in power. 
+
+
+```{r}
+propstrue <- function(.data){
+  tmp <- .data %>% group_by(actor, Entidad) %>% summarise(proposal=list(PROPOSED)) %>% rowwise()
+  
+  tmp %>% mutate(prop_list=list(sort(table(as.character(proposal)))), made_prop=if_else("TRUE" %in% names(prop_list),1,0))
+  
+  tmp %>% mutate(state=Entidad) %>% left_join(tmp, mydummies9413.df, by =c("Entidad"="state"))
+}
+
+```
+
+```{r}
+output <- propstrue(proposals.df)
+
+chisq.test(output$made_prop, out$single_control)
+```
 
   #H.1.1.1.a 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in that same state --> Requires  a dummy capturing if the state had single party dominance (single_pty_dom_00_17:True) --> In those states where the condition is met --> the ruling party is more likely to formulate a counterporposal than each opposition party in that same state. 

@@ -1,9 +1,3 @@
----
-title: "R Notebook"
-output: html_notebook
----
-
-```{r}
 library(haven)
 library(tidyr)
 library(readr)
@@ -20,7 +14,6 @@ controlByWindow<-function(.data,start,end) {
   tmp %<>% ungroup()
   return(tmp)
 }
-```
 
 
 

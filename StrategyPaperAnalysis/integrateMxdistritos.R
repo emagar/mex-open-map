@@ -5,6 +5,7 @@
 require(readr)
 require(magrittr)
 require(tidyr)
+require(dplyr)
 
 
 #
@@ -120,7 +121,7 @@ proposalEfecScore <- function(plan,year,edon,seccion.df) {
              
 # now we can use  plan scoring functions to add measure to proposals database
 
-tmp.df <-propfull.df[1:10,]
-tmp.df %<>% rowwise() %>% mutate(score.efec=proposalEfecScore(plan,year,edon,secRaw.df))
+#tmp.df <-propfull.df[1:10,]
+#tmp.df %<>% rowwise() %>% mutate(score.efec=proposalEfecScore(plan,year,edon,secRaw.df))
 
-
+rm(proplans.df, proposals.df,secRaw.df,tmp2013.df,tmp2017.df,mapfiles,extractPlans)
