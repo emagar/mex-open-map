@@ -67,11 +67,9 @@ ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(Entidad=stat
 
 ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(Entidad=state, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
 
-
-
-ys.combined <- left_join(ys.proposed,ys.control)
-#ys.combined %>% ggplot(aes(control,proposed))+geom_boxplot()+facet_grid(rows=vars(year)
-+ )
+ys.proposed %<>% left_join(ys.control)
+rm(ys.control)
+ys.proposed %>% ggplot(aes(control,proposed))+geom_boxplot()+facet_grid(rows=vars(year))
 
 
 #chisq.test(output$made_prop, out$single_control)
