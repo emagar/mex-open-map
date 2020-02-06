@@ -71,8 +71,47 @@ ys.proposed %<>% left_join(ys.control)
 rm(ys.control)
 ys.proposed %>% ggplot(aes(control,proposed))+geom_boxplot()+facet_grid(rows=vars(year))
 
+#H1 Regression
+#add primary in 2013/2017
+ys.proposed$primary <- as.character(grule.df$party[match(paste0(ys.proposed$year, ys.proposed$Entidad), paste0(grule.df$year, grule.df$state))])
+#create variable for whether party ruled at that time
+ys.proposed$ruling_party <- ifelse(ys.proposed$actor == ys.proposed$primary, 1, 0)
+#single rulign during time period?
+ys.proposed$single_ruler <- ifelse(ys.proposed$actor == ys.proposed$control, 1 ,0)
+#year dummy (2013)
+ys.proposed$year_dummy <- ifelse(ys.proposed$year==2013, 1, 0)
 
-#chisq.test(output$made_prop, out$single_control)
+#regression
+reg <- lm(proposed ~ ruling_party + single_ruler + ruling_party*single_ruler + year_dummy, data=ys.proposed)
+summary(reg)
+
+#H1: compare ruling parties in dominant state vs. everyone else
+chs<-chisq.test(ys.proposed$single_ruler, ys.proposed$proposed)
+chs$statistic
+
+#H1B: ruling party single party dominance vs. ruling party alternation
+
+#both 2013 and 2017
+ys_both <- subset(ys.proposed, ys.proposed$actor == ys.proposed$primary)
+
+chisq.test(ys_both$single_ruler,ys_both$proposed)
+
+#2013
+ys2013 <- subset(ys.proposed, ys.proposed$actor == ys.proposed$primary & ys.proposed$year==2013)
+
+chisq.test(ys2013$single_ruler, ys2013$proposed)
+
+#xcompare means by group (single party rule or alternation)
+aggregate(ys2013$proposed ~ ys2013$single_ruler, FUN="mean")
+
+#2017
+ys2017 <- subset(ys.proposed, ys.proposed$actor == ys.proposed$primary & ys.proposed$year==2017)
+
+chisq.test(ys2017$single_ruler, ys2017$proposed)
+
+#xcompare means by group (single party rule or alternation)
+aggregate(ys2017$proposed ~ ys2017$single_ruler, FUN="mean")
+
 ```
 
   #H.1.1.1.a 
