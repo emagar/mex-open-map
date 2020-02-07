@@ -26,9 +26,11 @@ require(tidyr)
 require(readr)
 require(haven)
 ```
-Bring in proposal event database: profull.df
+Bring in proposal event database: propfull.df
 ```{r}
+# reads in Pre-Normalized IFE tables and produces proposals.df data
 source("Normalize.R")
+# integrates in plans from MxDistritos
 source("integrateMxdistritos.R")
 ```
 Bring in ruling party db, 
