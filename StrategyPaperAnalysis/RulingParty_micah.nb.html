@@ -1751,48 +1751,29 @@ summary {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBge3J9XG5cbmBgYCJ9 -->
-<p><code>r</code>{r}</p>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShoYXZlbilcbmxpYnJhcnkodGlkeXIpXG5saWJyYXJ5KHJlYWRyKVxubGlicmFyeShkcGx5cilcbmxpYnJhcnkobWFncml0dHIpXG5cblJ1bGluZ1BhcnR5IDwtIHJlYWRfZHRhKFwiUnVsaW5nUGFydHlMb25nLmR0YVwiKVxuZ3J1bGUuZGYgPC0gYXNfdGliYmxlKFJ1bGluZ1BhcnR5KSAlPiUgZ3JvdXBfYnkoc3RhdGUpXG5cbmNvbnRyb2xCeVdpbmRvdzwtZnVuY3Rpb24oLmRhdGEsc3RhcnQsZW5kKSB7XG4gIHRtcCA8LSAuZGF0YSAlPiUgZmlsdGVyKHllYXIgPj1zdGFydCAmIHllYXIgPCBlbmQpICAlPiUgYXJyYW5nZSh5ZWFyKSAlPiUgc3VtbWFyaXNlKHBhcnR5bGlzdD1saXN0KHBhcnR5KSkgJT4lIHJvd3dpc2UoKVxuICB0bXAgJTw+JSAgbXV0YXRlKHBhcnR5c2VxPWxpc3QocmxlKGFzLmNoYXJhY3RlcihwYXJ0eWxpc3QpKSkscGFydHl0YWI9bGlzdChzb3J0KHRhYmxlKGFzLmNoYXJhY3RlcihwYXJ0eWxpc3QpKSxkZWNyZWFzaW5nPVRSVUUpKSlcbiAgdG1wICAlPD4lIG11dGF0ZSggc2luZ2xlY29udHJvbCA9IChsZW5ndGgocGFydHl0YWIpPT0xKSwgcHJpbWFyeT1uYW1lcyhwYXJ0eXRhYilbMV0sc2Vjb25kYXJ5PW5hbWVzKHBhcnR5dGFiKVsyXSx0ZXJ0aWFyeT1uYW1lcyhwYXJ0eXRhYilbM10sIHBlcmNlbnRzaW5nbGU9cGFydHl0YWJbMV0vc3VtKHBhcnR5dGFiKSwgbmFsdHBvd2VyPShsZW5ndGgocGFydHlzZXFbW1widmFsdWVzXCJdXSktMSkpXG4gIHRtcCAlPD4lIHVuZ3JvdXAoKVxuICByZXR1cm4odG1wKVxufVxuYGBgIn0= -->
+<pre class="r"><code>library(haven)
+library(tidyr)
+library(readr)
+library(dplyr)
+library(magrittr)
 
-&lt;!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IGF0dGVtcHQgdG8gdXNlIHplcm8tbGVuZ3RoIHZhcmlhYmxlIG5hbWVcbiJ9 --&gt;
-</code></pre>
-<p>Error: attempt to use zero-length variable name ```</p>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBge3J9XG5cbmBgYCJ9 -->
-<p><code>r</code>{r}</p>
-<pre><code>
-&lt;!-- rnb-source-end --&gt;
+RulingParty &lt;- read_dta(&quot;RulingPartyLong.dta&quot;)
+grule.df &lt;- as_tibble(RulingParty) %&gt;% group_by(state)
 
-&lt;!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IGF0dGVtcHQgdG8gdXNlIHplcm8tbGVuZ3RoIHZhcmlhYmxlIG5hbWVcbiJ9 --&gt;
-</code></pre>
-<p>Error: attempt to use zero-length variable name ```</p>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxub3V0cHV0IDwtIHByb3BzdHJ1ZShwcm9wb3NhbHMuZGYpXG5cbmBgYCJ9 -->
-<pre class="r"><code>output &lt;- propstrue(proposals.df)
-</code></pre>
+controlByWindow&lt;-function(.data,start,end) {
+  tmp &lt;- .data %&gt;% filter(year &gt;=start &amp; year &lt; end)  %&gt;% arrange(year) %&gt;% summarise(partylist=list(party)) %&gt;% rowwise()
+  tmp %&lt;&gt;%  mutate(partyseq=list(rle(as.character(partylist))),partytab=list(sort(table(as.character(partylist)),decreasing=TRUE)))
+  tmp  %&lt;&gt;% mutate( singlecontrol = (length(partytab)==1), primary=names(partytab)[1],secondary=names(partytab)[2],tertiary=names(partytab)[3], percentsingle=partytab[1]/sum(partytab), naltpower=(length(partyseq[[&quot;values&quot;]])-1))
+  tmp %&lt;&gt;% ungroup()
+  return(tmp)
+}</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3I6IGBieWAgY2FuJ3QgY29udGFpbiBqb2luIGNvbHVtbiBgc3RhdGVgIHdoaWNoIGlzIG1pc3NpbmcgZnJvbSBSSFNcbiJ9 -->
-<pre><code>Error: `by` can't contain join column `state` which is missing from RHS</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkoaGF2ZW4pCmxpYnJhcnkodGlkeXIpCmxpYnJhcnkocmVhZHIpCmxpYnJhcnkoZHBseXIpCmxpYnJhcnkobWFncml0dHIpCgpSdWxpbmdQYXJ0eSA8LSByZWFkX2R0YSgiUnVsaW5nUGFydHlMb25nLmR0YSIpCmdydWxlLmRmIDwtIGFzX3RpYmJsZShSdWxpbmdQYXJ0eSkgJT4lIGdyb3VwX2J5KHN0YXRlKQoKY29udHJvbEJ5V2luZG93PC1mdW5jdGlvbiguZGF0YSxzdGFydCxlbmQpIHsKICB0bXAgPC0gLmRhdGEgJT4lIGZpbHRlcih5ZWFyID49c3RhcnQgJiB5ZWFyIDwgZW5kKSAgJT4lIGFycmFuZ2UoeWVhcikgJT4lIHN1bW1hcmlzZShwYXJ0eWxpc3Q9bGlzdChwYXJ0eSkpICU+JSByb3d3aXNlKCkKICB0bXAgJTw+JSAgbXV0YXRlKHBhcnR5c2VxPWxpc3QocmxlKGFzLmNoYXJhY3RlcihwYXJ0eWxpc3QpKSkscGFydHl0YWI9bGlzdChzb3J0KHRhYmxlKGFzLmNoYXJhY3RlcihwYXJ0eWxpc3QpKSxkZWNyZWFzaW5nPVRSVUUpKSkKICB0bXAgICU8PiUgbXV0YXRlKCBzaW5nbGVjb250cm9sID0gKGxlbmd0aChwYXJ0eXRhYik9PTEpLCBwcmltYXJ5PW5hbWVzKHBhcnR5dGFiKVsxXSxzZWNvbmRhcnk9bmFtZXMocGFydHl0YWIpWzJdLHRlcnRpYXJ5PW5hbWVzKHBhcnR5dGFiKVszXSwgcGVyY2VudHNpbmdsZT1wYXJ0eXRhYlsxXS9zdW0ocGFydHl0YWIpLCBuYWx0cG93ZXI9KGxlbmd0aChwYXJ0eXNlcVtbInZhbHVlcyJdXSktMSkpCiAgdG1wICU8PiUgdW5ncm91cCgpCiAgcmV0dXJuKHRtcCkKfQpgYGAKCgpgYGB7cn0KbXlkdW1taWVzOTQxMy5kZiA8LSBncnVsZS5kZiAlPiUgIGNvbnRyb2xCeVdpbmRvdygxOTk0LDIwMTMpCgpgYGAKCgpgYGB7cn0KcHJvcHN0cnVlIDwtIGZ1bmN0aW9uKC5kYXRhKXsKICB0bXAgPC0gLmRhdGEgJT4lIGdyb3VwX2J5KGFjdG9yLCBFbnRpZGFkKSAlPiUgc3VtbWFyaXNlKHByb3Bvc2FsPWxpc3QoUFJPUE9TRUQpKSAlPiUgcm93d2lzZSgpCiAgCiAgdG1wICU+JSBtdXRhdGUocHJvcF9saXN0PWxpc3Qoc29ydCh0YWJsZShhcy5jaGFyYWN0ZXIocHJvcG9zYWwpKSkpLCBtYWRlX3Byb3A9aWZfZWxzZSgiVFJVRSIgJWluJSBuYW1lcyhwcm9wX2xpc3QpLDEsMCkpCiAgCiAgdG1wICU+JSBtdXRhdGUoc3RhdGU9RW50aWRhZCkgJT4lIGxlZnRfam9pbih0bXAsIG15ZHVtbWllczk0MTMuZGYsIGJ5ID1jKCJFbnRpZGFkIj0ic3RhdGUiKSkKfQoKYGBgCgpgYGB7cn0Kb3V0cHV0IDwtIHByb3BzdHJ1ZShwcm9wb3NhbHMuZGYpCgpjaGlzcS50ZXN0KG91dHB1dCRtYWRlX3Byb3AsIG91dCRzaW5nbGVfY29udHJvbCkKYGBgCgoKCgoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiUiBOb3RlYm9vayIKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKYGBge3J9CmxpYnJhcnkoaGF2ZW4pCmxpYnJhcnkodGlkeXIpCmxpYnJhcnkocmVhZHIpCmxpYnJhcnkoZHBseXIpCmxpYnJhcnkobWFncml0dHIpCgpSdWxpbmdQYXJ0eSA8LSByZWFkX2R0YSgiUnVsaW5nUGFydHlMb25nLmR0YSIpCmdydWxlLmRmIDwtIGFzX3RpYmJsZShSdWxpbmdQYXJ0eSkgJT4lIGdyb3VwX2J5KHN0YXRlKQoKY29udHJvbEJ5V2luZG93PC1mdW5jdGlvbiguZGF0YSxzdGFydCxlbmQpIHsKICB0bXAgPC0gLmRhdGEgJT4lIGZpbHRlcih5ZWFyID49c3RhcnQgJiB5ZWFyIDwgZW5kKSAgJT4lIGFycmFuZ2UoeWVhcikgJT4lIHN1bW1hcmlzZShwYXJ0eWxpc3Q9bGlzdChwYXJ0eSkpICU+JSByb3d3aXNlKCkKICB0bXAgJTw+JSAgbXV0YXRlKHBhcnR5c2VxPWxpc3QocmxlKGFzLmNoYXJhY3RlcihwYXJ0eWxpc3QpKSkscGFydHl0YWI9bGlzdChzb3J0KHRhYmxlKGFzLmNoYXJhY3RlcihwYXJ0eWxpc3QpKSxkZWNyZWFzaW5nPVRSVUUpKSkKICB0bXAgICU8PiUgbXV0YXRlKCBzaW5nbGVjb250cm9sID0gKGxlbmd0aChwYXJ0eXRhYik9PTEpLCBwcmltYXJ5PW5hbWVzKHBhcnR5dGFiKVsxXSxzZWNvbmRhcnk9bmFtZXMocGFydHl0YWIpWzJdLHRlcnRpYXJ5PW5hbWVzKHBhcnR5dGFiKVszXSwgcGVyY2VudHNpbmdsZT1wYXJ0eXRhYlsxXS9zdW0ocGFydHl0YWIpLCBuYWx0cG93ZXI9KGxlbmd0aChwYXJ0eXNlcVtbInZhbHVlcyJdXSktMSkpCiAgdG1wICU8PiUgdW5ncm91cCgpCiAgcmV0dXJuKHRtcCkKfQpgYGAKCgoKCgoKCgoK</div>
 
 
 
