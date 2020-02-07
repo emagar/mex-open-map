@@ -6,6 +6,7 @@ library(magrittr)
 
 RulingParty <- read_dta("RulingPartyLong.dta")
 grule.df <- as_tibble(RulingParty) %>% group_by(state)
+rm(RulingParty)
 
 controlByWindow<-function(.data,start,end) {
   tmp <- .data %>% filter(year >=start & year < end)  %>% arrange(year) %>% summarise(partylist=list(party)) %>% rowwise()
