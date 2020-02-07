@@ -28,6 +28,7 @@ require(haven)
 ```
 Bring in proposal event database: profull.df
 ```{r}
+source("Normalize.R")
 source("integrateMxdistritos.R")
 ```
 Bring in ruling party db, 
