@@ -9,10 +9,10 @@ require(magrittr)
 require(readr)
 
 
-INE2013s1.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 1st Scenario.tsv",stringsAsFactors =FALSE,na.strings="-")
-INE2013s2.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 2nd Scsnario .tsv",stringsAsFactors =FALSE,na.strings="-")
-INE2017s1.df <- read.delim(file="Pre-Normalized Comparative Tables 2017 Federal (APSA 2019) - 1erEsc 2017.tsv",stringsAsFactors =FALSE,na.strings="-")
-INE2017s2.df <- read.delim(file="Pre-Normalized Comparative Tables 2017 Federal (APSA 2019) - 2doEsc+final 2017.tsv",stringsAsFactors =FALSE,na.strings="-")
+INE2013s1.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 1st Scenario.tsv",stringsAsFactors =FALSE,na.strings="-",encoding="UTF-8")
+INE2013s2.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 2nd Scsnario .tsv",stringsAsFactors =FALSE,na.strings="-",encoding="UTF-8")
+INE2017s1.df <- read.delim(file="Pre-Normalized Comparative Tables 2017 Federal (APSA 2019) - 1erEsc 2017.tsv",stringsAsFactors =FALSE,na.strings="-",encoding="UTF-8")
+INE2017s2.df <- read.delim(file="Pre-Normalized Comparative Tables 2017 Federal (APSA 2019) - 2doEsc+final 2017.tsv",stringsAsFactors =FALSE,na.strings="-",encoding="UTF-8")
 
 
 
