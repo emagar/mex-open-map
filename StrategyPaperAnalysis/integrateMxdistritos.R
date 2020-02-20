@@ -101,5 +101,5 @@ mapfiles <- grep("csv",dir("mxDistritos-data/sec2017map/",full.names=TRUE),value
 tmp2017.df <- bind_rows(lapply(mapfiles,function(x)extractPlans(read_csv(x)))) %>% mutate(year=2017)
 proplans.df<- bind_rows(tmp2013.df,tmp2017.df) %>% select(-proposer,-tla)
 propfull.df <- full_join(proposals.df,proplans.df)
-#rm(tmp2013.df,proplans.df,tmp2013.df,mapfiles,extractPlansm,tmp2017.df)
+rm(tmp2013.df,proplans.df,tmp2013.df,mapfiles,tmp2017.df,extractPlans)
 #save(propfull.df,file="proposals.RData")
