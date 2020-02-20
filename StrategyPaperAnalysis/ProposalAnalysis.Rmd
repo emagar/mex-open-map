@@ -78,6 +78,7 @@ ys.proposed %<>% left_join(ys.control)
 ys.proposed %<>% rowwise() %>% mutate(didPropose=(numproposals>0),didControl=(actor==singlecontrolparty))
 
 require(broom)
+require(GGally)
 tabfit <- ys.proposed %>% xtabs(~didPropose+didControl+year,data=.)
 print(tabfit)
 ftable(tabfit)
@@ -85,6 +86,7 @@ ys.proposed %>% ggplot(aes(didControl,didPropose))+geom_col()+facet_grid(rows=va
 glmfit <- ys.proposed %>% glm(didPropose~didControl+year,data=.,family=binomial())
 summary(glmfit)
 augment(glmfit) %>% ggplot(aes(didPropose,.fitted))+geom_jitter()+facet_grid(rows=vars(didControl))
+ggcoef(glmfit)
 
 ```
 
