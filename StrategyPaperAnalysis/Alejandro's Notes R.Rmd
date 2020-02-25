@@ -297,7 +297,86 @@ xtabs(~party+state,RulingParty)
 ```
 
 
+///////////////////////////////////////////////////////////////////////////////////////
+Code Developed with Zach to test Ruling Party Hypothesis in the PartyAnalysis.Rmd
 
+//////////////////////////////////////////////////////////////////////////////////////////
+H1: Ruling Party (Single Party Dominance/Alternation)
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H1.1: Decision of Entry (Party deciides if it plays the game based on Ruling Party at the state level) --> Decision of political parties to participate in redistricting based on degree of alternatioin at the state level.  
+//////////////////////////////////////////////////////////////////////////////////////////
+Hypotheses (Entry --> Based on Ruling Party):
+
+#H.1.1.1 Parties ruling a state under single party dominance, are more likely to participate in redistricting (formulate a counterproposal), than all other opposition parties. 
+
+  Variables: 
+#DV: Dummy variable capturing if party formulated a proposal (proposals.df: PROPOSED: True or False, by Sate, round, level, year) --> **This variable needs to be created --> Proposed Name: ENTRY**.
+
+#IV(1): Dummy variable captruing if a single party ruled that state before redisrticting took place (StateDat: single_pty_dom_00_17:True or False, by State).
+
+#IV(2) Nominal variable capturing which party was the primary political force (StateDat: primary_pol_force_00_15:Party Name (PRI, PAN, PRD), by State)
+
+#IV(3): Categorical variable captruing the degree of alternation in power (six categories from a non-competitive state to a party that has multiparty comptetion and alternation has taken place >3+ times in the 00-17 period): 1) single_pty_dom_00_17:True or False, by State; 2) alt_power1_00_17; 3) alt_power2_00_17; 4) alt_power2_00_17 x multi_comp_00_17; 5) alt_power3_00_17; 6) alt_power3_00_17 x multi_comp_00_17.--> **Need to create this variable from previous categories already created in Statedat --> Proposed Name: ALTERNATION**
+
+  Method:
+# Evaluate if parties ruling a state that has not experienced alternantion in power, are more likely to formulate a counterproposal than opposition parties. If true, ruling parties in states that have been ruled by a single party, should be more likely to formulate a plan when compared to: a) other parties in that same state and b) in states that have experienced a degree of alternation in power. 
+
+
+
+```{r}
+ys.proposed <- propfull.df %>% group_by(actor,Entidad,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
+#output <- propstrue(proposals.df)
+ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(Entidad=state, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
+
+ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(Entidad=state, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
+
+ys.proposed %<>% left_join(ys.control)
+rm(ys.control)
+ys.proposed %>% ggplot(aes(control,proposed))+geom_boxplot()+facet_grid(rows=vars(year))
+
+#H1 Regression
+#add primary in 2013/2017
+ys.proposed$primary <- as.character(grule.df$party[match(paste0(ys.proposed$year, ys.proposed$Entidad), paste0(grule.df$year, grule.df$state))])
+#create variable for whether party ruled at that time
+ys.proposed$ruling_party <- ifelse(ys.proposed$actor == ys.proposed$primary, 1, 0)
+#single rulign during time period?
+ys.proposed$single_ruler <- ifelse(ys.proposed$actor == ys.proposed$control, 1 ,0)
+#year dummy (2013)
+ys.proposed$year_dummy <- ifelse(ys.proposed$year==2013, 1, 0)
+
+#regression
+reg <- lm(proposed ~ ruling_party + single_ruler + ruling_party*single_ruler + year_dummy, data=ys.proposed)
+summary(reg)
+
+#H1: compare ruling parties in dominant state vs. everyone else
+chs<-chisq.test(ys.proposed$single_ruler, ys.proposed$proposed)
+chs$statistic
+
+#H1B: ruling party single party dominance vs. ruling party alternation
+
+#both 2013 and 2017
+ys_both <- subset(ys.proposed, ys.proposed$actor == ys.proposed$primary)
+
+chisq.test(ys_both$single_ruler,ys_both$proposed)
+
+#2013
+ys2013 <- subset(ys.proposed, ys.proposed$actor == ys.proposed$primary & ys.proposed$year==2013)
+
+chisq.test(ys2013$single_ruler, ys2013$proposed)
+
+#xcompare means by group (single party rule or alternation)
+aggregate(ys2013$proposed ~ ys2013$single_ruler, FUN="mean")
+
+#2017
+ys2017 <- subset(ys.proposed, ys.proposed$actor == ys.proposed$primary & ys.proposed$year==2017)
+
+chisq.test(ys2017$single_ruler, ys2017$proposed)
+
+#xcompare means by group (single party rule or alternation)
+aggregate(ys2017$proposed ~ ys2017$single_ruler, FUN="mean")
+///////////////////////////////////////////
 //////////////////////////////////
 Notes
 //////////////////////////////////
