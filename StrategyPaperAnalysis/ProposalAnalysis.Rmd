@@ -71,9 +71,7 @@ Hypotheses (Entry --> Based on Ruling Party in Single Party Rule States):
 
   Descriptive Anslysis
   
-#Visualization-->  1) Tables/graphs summarizing the total number of proposals made by each party during the 2013 and 2017 processes, by stage (firs vs second round), and at the local and national level. 2) Tables/graphs summarizing the total number of proposals made by each party at the state level. 
-
-at the stage and year level--> Parties(actor) for 2013: "PAN PRI PRD PT PVEM MC PNA" Parties for 2017: "PAN PRI PRD PT PVEM MC PNA MORENA ES"
+#Visualization-->  1) Tables/graphs summarizing the total number of proposals made by each party during the 2013 and 2017 processes, by stage (firs vs second round), and at the local and national level. 2) Tables/graphs summarizing the total number of proposals made by each party at the state level; at the stage and year level--> Parties(actor) for 2013: "PAN PRI PRD PT PVEM MC PNA" Parties for 2017: "PAN PRI PRD PT PVEM MC PNA MORENA ES"
 
   
   Propositions/Questions realted to H1 to be Evaluated (Code developed by RA)
