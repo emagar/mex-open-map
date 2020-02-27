@@ -36,6 +36,8 @@ source("integrateMxdistritos.R")
 Bring in ruling party db, 
 ```{r}
 source("RulingParty_micah.R")
+grule.df %<>% left_join(statecodes.df)
+
 ```
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -88,9 +90,9 @@ at the stage and year level--> Parties(actor) for 2013: "PAN PRI PRD PT PVEM MC 
 #Code to create variables needed
 ys.proposed <- propfull.df %>% group_by(actor,Entidad,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
 #output <- propstrue(proposals.df)
-ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(Entidad=state, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
+ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
 
-ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(Entidad=state, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
+ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(edon=edon, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
 
 ys.proposed %<>% left_join(ys.control)
 rm(ys.control)
@@ -104,10 +106,10 @@ ys.proposed %>% ggplot(aes(control,proposed))+geom_boxplot()+facet_grid(rows=var
 
 #Method: Difference of means test: H1: mean of ENTRY for the Ruling Party in a state with single party dominance > mean of ENTRY for each opposition party in that same state; H0: mean of ENTRY for the Ruling Party in a state with single party dominance <= mean of ENTRY for (each) opposition parties in that same state. 
 ```{r}
-ys.proposed <- propfull.df %>% group_by(actor,Entidad,year) %>% summarise(numproposals=sum(PROPOSED,na.rm=TRUE))
-ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(Entidad=state, year=2013,                                 singlecontrolparty=if_else(singlecontrol,primary,"NONE"))
+ys.proposed <- propfull.df %>% group_by(actor,edon,year) %>% summarise(numproposals=sum(PROPOSED,na.rm=TRUE))
+ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute( edon=edon, year=2013,                                 singlecontrolparty=if_else(singlecontrol,primary,"NONE"))
 
-ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(Entidad=state, year=2017,                              singlecontrolparty=if_else(singlecontrol,primary,"NONE")))
+ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(edon=edon, year=2017,                              singlecontrolparty=if_else(singlecontrol,primary,"NONE")))
 
 ys.proposed %<>% left_join(ys.control)
 #rm(ys.control)

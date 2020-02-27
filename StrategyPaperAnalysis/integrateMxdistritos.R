@@ -10,6 +10,28 @@ require(magrittr)
 require(tidyr)
 require(dplyr)
 
+#statecode mapping generated through inspection of filenames
+statecodes.df <- structure(list(tla = c("ags", "bc", "bcs", "cam", "coa", "col", 
+                                        "cps", "cua", "df", "dgo", "gua", "gue", "hgo", "jal", "mex", 
+                                        "mic", "mor", "nay", "nl", "oax", "pue", "que", "qui", "san", 
+                                        "sin", "son", "tab", "tam", "tla", "ver", "yuc", "zac"), Entidad = el <-
+                                  c("Aguascalientes", "Baja California", "Baja California Sur", 
+                                    "Campeche", "Chiapas", "Chihuahua", "Coahuila", "Colima", "Distrito Federal", 
+                                    "Durango", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "México", 
+                                    "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca", "Puebla", 
+                                    "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa", "Sonora", 
+                                    "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas"
+                                  ), edon = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 
+                                              13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 
+                                              29, 30, 31, 32)), class = c("spec_tbl_df", "tbl_df", "tbl", "data.frame"
+                                              ), row.names = c(NA, -32L), spec = structure(list(cols = list(
+                                                tla = structure(list(), class = c("collector_character", 
+                                                                                  "collector")), name = structure(list(), class = c("collector_character", 
+                                                                                                                                    "collector")), edon = structure(list(), class = c("collector_double", 
+                                                                                                                                                                                      "collector"))), default = structure(list(), class = c("collector_guess", 
+                                                                                                                                                                                                                                            "collector")), skip = 1), class = "col_spec"))
+
+
 
 #
 # reshapes a map file in the form of  {Enitidad, Actor, Govlevel, Stage, Proposal}
@@ -48,28 +70,7 @@ extractPlans<-function(.data){
                                                                                                                                                                                                                                                                                                                                                            "collector")), stage = structure(list(), class = c("collector_double", 
                                                                                                                                                                                                                                                                                                                                                                                                               "collector"))), default = structure(list(), class = c("collector_guess", 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "collector")), skip = 1), class = "col_spec"))
-   #statecode mapping generated through inspection of filenames
-  statecodes.df <- structure(list(tla = c("ags", "bc", "bcs", "cam", "coa", "col", 
-                                          "cps", "cua", "df", "dgo", "gua", "gue", "hgo", "jal", "mex", 
-                                          "mic", "mor", "nay", "nl", "oax", "pue", "que", "qui", "san", 
-                                          "sin", "son", "tab", "tam", "tla", "ver", "yuc", "zac"), Entidad = el <-
-                                    c("Aguascalientes", "Baja California", "Baja California Sur", 
-                                      "Campeche", "Chiapas", "Chihuahua", "Coahuila", "Colima", "Distrito Federal", 
-                                      "Durango", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "México", 
-                                      "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca", "Puebla", 
-                                      "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa", "Sonora", 
-                                      "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas"
-                                    ), edon = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 
-                                                                                                                                      13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 
-                                                                                                                                      29, 30, 31, 32)), class = c("spec_tbl_df", "tbl_df", "tbl", "data.frame"
-                                                                                                                                      ), row.names = c(NA, -32L), spec = structure(list(cols = list(
-                                                                                                                                        tla = structure(list(), class = c("collector_character", 
-                                                                                                                                                                          "collector")), name = structure(list(), class = c("collector_character", 
-                                                                                                                                                                                                                            "collector")), edon = structure(list(), class = c("collector_double", 
-                                                                                                                                                                                                                                                                              "collector"))), default = structure(list(), class = c("collector_guess", 
-                                                                                                                                                                                                                                                                                                                                    "collector")), skip = 1), class = "col_spec"))
-  
-  # set file level parameters 
+ # set file level parameters 
   edondef <- unique(as.vector(x.df[["edon"]]))
   if (length(edondef)!=1) {stop("contains multiple different edon values")}
 
@@ -100,6 +101,7 @@ tmp2013.df <- bind_rows(lapply(mapfiles,function(x)extractPlans(read_csv(x)))) %
 mapfiles <- grep("csv",dir("mxDistritos-data/sec2017map/",full.names=TRUE),value = TRUE)
 tmp2017.df <- bind_rows(lapply(mapfiles,function(x)extractPlans(read_csv(x)))) %>% mutate(year=2017)
 proplans.df<- bind_rows(tmp2013.df,tmp2017.df) %>% select(-proposer,-tla)
+proposals.df %<>% left_join(statecodes.df)
 propfull.df <- full_join(proposals.df,proplans.df)
-rm(tmp2013.df,proplans.df,mapfiles,tmp2017.df,extractPlans)
+rm(tmp2013.df,proplans.df,mapfiles,tmp2017.df,extractPlans,proposals.df)
 #save(propfull.df,file="proposals.RData")
