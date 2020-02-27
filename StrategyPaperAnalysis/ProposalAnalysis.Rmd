@@ -36,8 +36,6 @@ source("integrateMxdistritos.R")
 Bring in ruling party db, 
 ```{r}
 source("RulingParty_micah.R")
-grule.df %<>% left_join(statecodes.df)
-
 ```
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -71,9 +69,7 @@ Hypotheses (Entry --> Based on Ruling Party in Single Party Rule States):
 
   Descriptive Anslysis
   
-#Visualization-->  1) Tables/graphs summarizing the total number of proposals made by each party during the 2013 and 2017 processes, by stage (firs vs second round), and at the local and national level. 2) Tables/graphs summarizing the total number of proposals made by each party at the state level. 
-
-at the stage and year level--> Parties(actor) for 2013: "PAN PRI PRD PT PVEM MC PNA" Parties for 2017: "PAN PRI PRD PT PVEM MC PNA MORENA ES"
+#Visualization-->  1) Tables/graphs summarizing the total number of proposals made by each party during the 2013 and 2017 processes, by stage (firs vs second round), and at the local and national level. 2) Tables/graphs summarizing the total number of proposals made by each party at the state level. --> Parties(actor) for 2013: "PAN PRI PRD PT PVEM MC PNA" Parties for 2017: "PAN PRI PRD PT PVEM MC PNA MORENA ES"
 
   
   Propositions/Questions realted to H1 to be Evaluated (Code developed by RA)
@@ -90,9 +86,9 @@ at the stage and year level--> Parties(actor) for 2013: "PAN PRI PRD PT PVEM MC 
 #Code to create variables needed
 ys.proposed <- propfull.df %>% group_by(actor,Entidad,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
 #output <- propstrue(proposals.df)
-ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
+ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(Entidad=state, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
 
-ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(edon=edon, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
+ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(Entidad=state, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
 
 ys.proposed %<>% left_join(ys.control)
 rm(ys.control)
@@ -105,30 +101,7 @@ ys.proposed %>% ggplot(aes(control,proposed))+geom_boxplot()+facet_grid(rows=var
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in that same state --> Requires  a dummy capturing if the state had single party dominance (single_pty_dom_00_17:True) --> In those states where the condition is met --> the ruling party is more likely to formulate a counterporposal than each opposition party in that same state. 
 
 #Method: Difference of means test: H1: mean of ENTRY for the Ruling Party in a state with single party dominance > mean of ENTRY for each opposition party in that same state; H0: mean of ENTRY for the Ruling Party in a state with single party dominance <= mean of ENTRY for (each) opposition parties in that same state. 
-```{r}
-ys.proposed <- propfull.df %>% group_by(actor,edon,year) %>% summarise(numproposals=sum(PROPOSED,na.rm=TRUE))
-ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute( edon=edon, year=2013,                                 singlecontrolparty=if_else(singlecontrol,primary,"NONE"))
-
-ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(edon=edon, year=2017,                              singlecontrolparty=if_else(singlecontrol,primary,"NONE")))
-
-ys.proposed %<>% left_join(ys.control)
-#rm(ys.control)
-
-ys.proposed %<>% rowwise() %>% mutate(didPropose=(numproposals>0),didControl=(actor==singlecontrolparty))
-
-require(broom)
-require(GGally)
-tabfit <- ys.proposed %>% xtabs(~didPropose+didControl+year,data=.)
-print(tabfit)
-ftable(tabfit)
-ys.proposed %>% ggplot(aes(didControl,didPropose))+geom_col()+facet_grid(rows=vars(year))
-glmfit <- ys.proposed %>% glm(didPropose~didControl+year,data=.,family=binomial())
-summary(glmfit)
-augment(glmfit) %>% ggplot(aes(didPropose,.fitted))+geom_jitter()+facet_grid(rows=vars(didControl))
-ggcoef(glmfit)
-
-```
-
+  
   #H.1.1.1.b 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in states that have expereinced alternation in power. --> Requires a categorical variable capturing if degree of ALTERNATION or simply if single_pty_dom_00_17:False. This hypothesis is evaluating if the ruling party is more likely to formulate a counterporposal in states where there is single party rule, than in states where alternation takes place. 
 
