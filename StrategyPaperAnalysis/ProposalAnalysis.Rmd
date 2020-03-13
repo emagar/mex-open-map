@@ -146,6 +146,16 @@ glm.mod.17 <- glm(didPropose~didControl, data=ys.proposed.17, family = binomial(
 summary(glm.mod.17)
 ggcoef(glm.mod.17)
 
+#Trying the linear models.
+lm.mod.b <- lm(numproposals~didControl, data=ys.proposed)
+summary(lm.mod.b)
+
+lm.mod.13.b <- lm(numproposals~didControl, data=ys.proposed.13)
+summary(lm.mod.13.b)
+
+lm.mod.17 <- lm(numproposals~didControl, data=ys.proposed.17)
+summary(lm.mod.17.b)
+
 #How about the number of proposals. Another take on 
 
   #H.1.1.1.b 
