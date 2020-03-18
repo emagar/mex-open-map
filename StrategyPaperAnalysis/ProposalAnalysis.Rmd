@@ -126,37 +126,68 @@ augment(glmfit) %>% ggplot(aes(didPropose,.fitted))+geom_jitter()+facet_grid(row
 ggcoef(glmfit)
 
 ```
-```{r}
-library(questionr)
-#Why "control" for year in the model prior?
-ys.proposed.13 <- ys.proposed%>%
-  filter(year == 2013)
-tabfit.13 <- ys.proposed.13 %>% xtabs(~didPropose+didControl,data=.)
-print(tabfit.13)
-#the data looks unbalanced from the table
-glm.mod.13 <- glm(didPropose~didControl, data=ys.proposed.13, family = binomial())
-summary(glm.mod.13)
-ggcoef(glm.mod.13)
+#Years and number of proposals into factors
+ys.proposed <- fastDummies::dummy_cols(ys.proposed, select_columns = "year")
+ys.proposed <- fastDummies::dummy_cols(ys.proposed, select_columns = "numproposals")
 
-ys.proposed.17 <- ys.proposed%>%
-  filter(year==2017)
-tabfit.17 <- ys.proposed.17 %>% xtabs(~didPropose+didControl,data=.)
-print(tabfit.17)
-glm.mod.17 <- glm(didPropose~didControl, data=ys.proposed.17, family = binomial())
-summary(glm.mod.17)
-ggcoef(glm.mod.17)
+#Data exploration
+tabfit <- ys.proposed %>% xtabs(~didPropose+didControl,data=.)
+print(tabfit)
+ftable(tabfit)
 
-#Trying the linear models.
-lm.mod.b <- lm(numproposals~didControl, data=ys.proposed)
-summary(lm.mod.b)
+#Logistic Model: Controlling for year
 
-lm.mod.13.b <- lm(numproposals~didControl, data=ys.proposed.13)
-summary(lm.mod.13.b)
+glm.mod <- glm(didPropose~didControl+year_2017, data=ys.proposed, family = binomial())
+summary(glm.mod)
 
-lm.mod.17 <- lm(numproposals~didControl, data=ys.proposed.17)
-summary(lm.mod.17.b)
+#Test the difference between coefficients.
+library(car)
 
-#How about the number of proposals. Another take on 
+exp(coef(glm.mod))
+
+#Explaination
+
+#Logistic Model: Interaction, year and didControl
+
+glm.mod.inter <- ys.proposed %>% glm(didPropose~didControl+year_2017+didControl*year_2017, data = ., family = binomial())
+summary(glm.mod.inter)
+
+#The interaction term is not significant by any means. A logistic model may not be the best regression model to descibe the data. This can also be seen by looking at the cross-tabs -- the data is unbalanced. 
+
+#Clustering Model
+
+#Rare Event Model
+library(Zelig)
+re.mod.1 <- ys.proposed %>% zelig(didPropose~didControl+year_2017, data = .,model = "relogit", tau = 29/620, )
+summary(re.mod.1)
+
+#################################################################
+
+#Exploring the data
+tabfit.1 <- ys.proposed %>% xtabs(~numproposals+year,data=.)
+print(tabfit.1)
+ftable(tabfit.1)
+
+#Logistic Model : Proposal in first round (2013)
+glm.mod.b.1 <- glm(numproposals_1~didControl+year_2013, data=ys.proposed, family = binomial())
+summary(glm.mod.b.1)
+
+#Logistic Model:Proposal in second round (2013)
+glm.mod.b.2.a <- glm(numproposals_2~didControl+year_2013, data = ys.proposed, family = binomial())
+summary(glm.mod.b.2.a)
+
+glm.mod.b.2.b <- glm(numproposals_2~didControl+numproposals_1+year_2013, data = ys.proposed, family = binomial())
+summary(glm.mod.b.2.b)
+
+#
+
+#Logistic Model: Proposal in first round (2017)
+
+#Logistic Model: Proposal in second round (2017)
+
+######################################################################
+
+```
 
   #H.1.1.1.b 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in states that have expereinced alternation in power. --> Requires a categorical variable capturing if degree of ALTERNATION or simply if single_pty_dom_00_17:False. This hypothesis is evaluating if the ruling party is more likely to formulate a counterporposal in states where there is single party rule, than in states where alternation takes place. 
