@@ -36,8 +36,6 @@ source("integrateMxdistritos.R")
 Bring in ruling party db, 
 ```{r}
 source("RulingParty_micah.R")
-#grule.df %<>% left_join(statecodes.df)
-
 ```
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -86,7 +84,7 @@ Hypotheses (Entry --> Based on Ruling Party in Single Party Rule States):
 
 ```{r}
 #Code to create variables needed
-ys.proposed <- propfull.df %>% group_by(actor,Entidad,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
+ys.proposed <- propfull.df %>% group_by(actor,edon,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
 #output <- propstrue(proposals.df)
 ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
 
