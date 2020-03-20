@@ -142,7 +142,6 @@ summary(glm.mod)
 
 #Test the difference between coefficients.
 library(car)
-
 exp(coef(glm.mod))
 
 #Explaination
@@ -154,12 +153,13 @@ summary(glm.mod.inter)
 
 #The interaction term is not significant by any means. A logistic model may not be the best regression model to descibe the data. This can also be seen by looking at the cross-tabs -- the data is unbalanced. 
 
-#Clustering Model
+summary(ys.proposed)
 
-#Rare Event Model
 library(Zelig)
-re.mod.1 <- ys.proposed %>% zelig(didPropose~didControl+year_2017, data = .,model = "relogit", tau = 29/620, )
+re.mod.1 <- ys.proposed %>% zelig(didPropose~didControl+year_2017, data = .,model = "relogit", tau = 29/649, case.control = "prior", bias.correct = FALSE)
 summary(re.mod.1)
+
+#The RE model does not provide any further insight into the causal effects of being the party in control on proposing redistricting plans. The data is unbalanced -- this should have taken care of that issue. The data is also "small" which compounds that issue, but makes it harder to solve (tau, in the model, is still large for a RE model).
 
 #################################################################
 
