@@ -218,6 +218,24 @@ WORK IN PROGRESS...
 
 #H.1.1.2 Parties that are secondary or terciary forces at the state level, are more likely to participte in redistricting (formulate a counterproposal), than all other opposition parties. 
 
+```{r}
+#Build models with degree of alternation. 
+
+#Variable that captures the degree of alternation
+
+grule.df %<>% bind_rows(grule.df %>% mutate(alternation = grep("PAN", grule.df$party, value = FALSE, ignore.case = FALSE)), na.rm = TRUE)
+
+alternation
+
+for (i in 1:32){
+  grule.df %<>% bind_rows(grule.df %>% controlByWindow(2000,2013) %>%
+                            transmute(edon=i, alternation = grep("PAN",
+                            grule.df$party, value = FALSE, ignore.case = FALSE),
+                            na.rm=FALSE))
+}
+#Having issues making this work -- ask micah to help understand which functions to use.
+```
+
 #H.1.1.3 As alternation in power/ competition increases at the state level, we expect to observe a higher number of counterporposals.
   #H.1.1.3.a number of proposals by single party control.
   
