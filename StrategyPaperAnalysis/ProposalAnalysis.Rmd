@@ -36,7 +36,7 @@ source("integrateMxdistritos.R")
 Bring in ruling party db, 
 ```{r}
 source("RulingParty_micah.R")
-grule.df %<>% left_join(statecodes.df)
+#grule.df %<>% left_join(statecodes.df)
 
 ```
 
