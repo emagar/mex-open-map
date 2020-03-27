@@ -25,6 +25,7 @@ require(dplyr)
 require(tidyr)
 require(readr)
 require(haven)
+require(fastDummies)
 ```
 Bring in proposal event database: propfull.df
 ```{r}
@@ -113,7 +114,7 @@ ys.proposed %<>% left_join(ys.control)
 ys.proposed %<>% rowwise() %>% mutate(didPropose=(numproposals>0),didControl=(actor==singlecontrolparty))
 
 require(broom)
-require(GGally)
+require(GGally)()
 tabfit <- ys.proposed %>% xtabs(~didPropose+didControl+year,data=.)
 print(tabfit)
 ftable(tabfit)
@@ -124,6 +125,7 @@ augment(glmfit) %>% ggplot(aes(didPropose,.fitted))+geom_jitter()+facet_grid(row
 ggcoef(glmfit)
 
 ```
+```{r}
 #Years and number of proposals into factors
 ys.proposed <- fastDummies::dummy_cols(ys.proposed, select_columns = "year")
 ys.proposed <- fastDummies::dummy_cols(ys.proposed, select_columns = "numproposals")
@@ -265,7 +267,7 @@ Hypotheses (level --> CLV vs Federal):
 
 #H.1.2.2.1 As alternation in power/competition increases at the state level, parties are more likely to formulate a counterproposal at the local level (CLV)
 
-Hypotheses (Porcess --> 2013 vs 2017):
+Hypotheses (Process --> 2013 vs 2017):
 
 #H.1.2.3.1 Parties are more likely to formulate a counterproposal at the local level (CLV) in 2017 than in 2013. 
 
