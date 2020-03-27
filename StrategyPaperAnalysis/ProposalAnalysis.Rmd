@@ -216,22 +216,11 @@ WORK IN PROGRESS...
 
 #H.1.1.2 Parties that are secondary or terciary forces at the state level, are more likely to participte in redistricting (formulate a counterproposal), than all other opposition parties. 
 
-```{r}
-#Build models with degree of alternation. 
-
-#Variable that captures the degree of alternation
-
-grule.df %<>% bind_rows(grule.df %>% mutate(alternation = grep("PAN", grule.df$party, value = FALSE, ignore.case = FALSE)), na.rm = TRUE)
-
-alternation
-
-for (i in 1:32){
-  grule.df %<>% bind_rows(grule.df %>% controlByWindow(2000,2013) %>%
-                            transmute(edon=i, alternation = grep("PAN",
-                            grule.df$party, value = FALSE, ignore.case = FALSE),
-                            na.rm=FALSE))
-}
-#Having issues making this work -- ask micah to help understand which functions to use.
+```{r} 
+#Variables that captures the degree of alternation
+alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
+alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
+ys.proposed %<>% left_join(alternation.df)
 ```
 
 #H.1.1.3 As alternation in power/ competition increases at the state level, we expect to observe a higher number of counterporposals.
@@ -241,15 +230,18 @@ for (i in 1:32){
 lm.mod.h.1.1.3.a <- ys.proposed %>% lm(numproposals~singlecontrolparty+year, data=.)
 summary(lm.mod.h.1.1.3.a)
 
-lm.mod.h.1.1.3.a.13 <- ys.proposed.13 %>% lm(numproposals~singlecontrolparty, data=.)
-summary(lm.mod.h.1.1.3.a.13)
-
-lm.mod.h.1.1.3.a.17 <- ys.proposed.17 %>% lm(numproposals~singlecontrolparty, data=.)
-summary(lm.mod.h.1.1.3.a.17)
-
 #Single party control is not significant in any of the meansures for parties that maintain a level of consistent control. Need to build out a variable that explains the degree to alternation in a state.
 ```
   #H.1.1.3.b number of proposals by degree of alternation
+```{r}
+#Using the degree of alternation to predict likelihood of proposal (didPropose).
+alt.glm.1 <- ys.proposed %>% glm(didPropose~naltpower+percentsingle, data=., family=binomial())
+summary(alt.glm.1)
+
+#Using degree of alternation to predict the number of proposals
+alt.lm.1 <- ys.proposed %>% lm(numproposals~naltpower+percentsingle, data = .,)
+summary(alt.lm.1)
+```
 
 #1.1.1.4 Ruling parties in states with the highest level of alternation in power, are more likely to participte in redistricting (formulate a counterproposal), than all other opposition parties.
 
