@@ -32,7 +32,8 @@ Bring in proposal event database: propfull.df
 # reads in Pre-Normalized IFE tables and produces proposals.df data
 source("Normalize.R")
 # integrates in plans from MxDistritos
-source("integrateMxdistritos.R")
+## capture output because it is noisy and slows down interactive notebook
+out<-capture.output(source("integrateMxdistritos.R"))
 ```
 Bring in ruling party db, 
 ```{r}
@@ -114,7 +115,7 @@ ys.proposed %<>% left_join(ys.control)
 ys.proposed %<>% rowwise() %>% mutate(didPropose=(numproposals>0),didControl=(actor==singlecontrolparty))
 
 require(broom)
-require(GGally)()
+require(GGally)
 tabfit <- ys.proposed %>% xtabs(~didPropose+didControl+year,data=.)
 print(tabfit)
 ftable(tabfit)
