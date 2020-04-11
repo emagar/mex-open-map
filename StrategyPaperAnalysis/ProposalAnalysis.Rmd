@@ -126,10 +126,43 @@ ggcoef(glmfit)
 
 ```
 ```{r}
-#Years and number of proposals into factors
+### Managing the dataset ###
+#Year into factors
+library(fastDummies)
 ys.proposed <- fastDummies::dummy_cols(ys.proposed, select_columns = "year")
-ys.proposed <- fastDummies::dummy_cols(ys.proposed, select_columns = "numproposals")
 
+#Making the alternation data frame and joining it with ys.proposed
+alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
+alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
+ys.proposed %<>% left_join(alternation.df)
+
+ys.proposed <- ys.proposed %>% mutate(numparty = summarise(partytab))
+
+#Count number of parties
+
+#Building the rankings for evaluation of likelihood to propose based on alternation of power + number of 
+#parties operating in a state + if in control of that state in year of redistricting: Strategic Position
+ys.proposed <- ys.proposed %>% mutate(StratPos.1 = ifelse(didControl & singlecontrol, 1, 0)) %>%   mutate(StratPos.2 = ifelse(didControl & !singlecontrol, 1, 0)) %>% mutate(StratPos.3 = ifelse(!didControl & percentsingle>=0.5,1, 0)) %>% mutate(StratPos.4 = ifelse(!didControl & percentsingle < 0.5, 1, 0))
+
+tabfit.1 <- ys.proposed %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4, data=.)
+print(tabfit.1)
+ftable(tabfit.1)
+#Cool the categories are mutaully exlcusive. Still need to filter them more.
+```
+```{r}
+#Test run of the model we broke down on the call.
+H1.model <- ys.proposed %>% glm(didPropose ~ StratPos.2 + StratPos.3 + StratPos.4 + year_2017, data = ., family = binomial)
+summary(H1.model)
+print(accuracy(H1.model))
+
+#Now an ordinal discrete model. Hold up. To estimate this model we need the ordinal variable to be the 
+#response. 
+library(MASS)
+H1.ord.model <- ys.proposed %>% polr(as.factor(Strat.Pos) ~ didPropose + year_2017, data=., Hess = TRUE)
+
+```
+
+```{r}
 #Data exploration
 tabfit <- ys.proposed %>% xtabs(~didPropose+didControl,data=.)
 print(tabfit)
