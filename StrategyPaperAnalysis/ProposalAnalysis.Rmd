@@ -119,26 +119,27 @@ ggcoef(glmfit)
 ```{r}
 ### Managing the dataset ###
 #Year into factors
-library(fastDummies)
-ys.proposed <- fastDummies::dummy_cols(ys.proposed, select_columns = "year")
+ys.proposed <- ys.proposed %>% mutate(year_2017 = ifelse(year == 2017,1, 0))
 
 #Making the alternation data frame and joining it with ys.proposed
 alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
 alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
-ys.proposed %<>% left_join(alternation.df)
-
-ys.proposed <- ys.proposed %>% mutate(numparty = summarise(partytab))
-
-#Count number of parties
+ys.proposed %<>% left_join(alternation.df, by = c("edon", "year"))
 
 #Building the rankings for evaluation of likelihood to propose based on alternation of power + number of 
 #parties operating in a state + if in control of that state in year of redistricting: Strategic Position
-ys.proposed <- ys.proposed %>% mutate(StratPos.1 = ifelse(didControl & singlecontrol, 1, 0)) %>%   mutate(StratPos.2 = ifelse(didControl & !singlecontrol, 1, 0)) %>% mutate(StratPos.3 = ifelse(!didControl & percentsingle>=0.5,1, 0)) %>% mutate(StratPos.4 = ifelse(!didControl & percentsingle < 0.5, 1, 0))
+ys.proposed <- ys.proposed %>% mutate(StratPos.1 = ifelse(didControl & singlecontrol, 1, 0)) %>%
+  mutate(StratPos.2 = ifelse(didControl & !singlecontrol, 1, 0)) %>%
+  mutate(StratPos.3 = ifelse(!didControl & percentsingle>=0.5,1, 0)) %>% 
+  mutate(StratPos.4 = ifelse(!didControl & percentsingle < 0.5 & numparty < 3, 1 ,0))%>%
+  mutate(StratPos.5 = ifelse(!didControl & percentsingle < 0.5 & numparty >= 3, 1, 0))
 
-tabfit.1 <- ys.proposed %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4, data=.)
+tabfit.1 <- ys.proposed %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4 + StratPos.5, data=.)
 print(tabfit.1)
 ftable(tabfit.1)
 #Cool the categories are mutaully exlcusive. Still need to filter them more.
+
+#Make an 
 ```
 
 ```{r}
