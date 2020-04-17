@@ -27,7 +27,7 @@ require(readr)
 require(haven)
 ```
 Bring in proposal event database: propfull.df
-```{r}
+```{r message=FALSE}
 # reads in Pre-Normalized IFE tables and produces proposals.df data
 source("Normalize.R")
 # integrates in plans from MxDistritos
@@ -36,8 +36,6 @@ source("integrateMxdistritos.R")
 Bring in ruling party db, 
 ```{r}
 source("RulingParty_micah.R")
-grule.df %<>% left_join(statecodes.df)
-
 ```
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -86,17 +84,13 @@ Hypotheses (Entry --> Based on Ruling Party in Single Party Rule States):
 
 ```{r}
 #Code to create variables needed
-ys.proposed <- propfull.df %>% group_by(actor,Entidad,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
+ys.proposed <- propfull.df %>% group_by(actor,edon,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
 #output <- propstrue(proposals.df)
-ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
-
+ys.control<- grule.df %>%  controlByWindow(2000,2013)%>% transmute(edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
 ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(edon=edon, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
-
 ys.proposed %<>% left_join(ys.control)
 rm(ys.control)
 ys.proposed %>% ggplot(aes(control,proposed))+geom_boxplot()+facet_grid(rows=vars(year))
-
-
 ```
 
   #H.1.1.1.a 
@@ -105,15 +99,11 @@ ys.proposed %>% ggplot(aes(control,proposed))+geom_boxplot()+facet_grid(rows=var
 #Method: Difference of means test: H1: mean of ENTRY for the Ruling Party in a state with single party dominance > mean of ENTRY for each opposition party in that same state; H0: mean of ENTRY for the Ruling Party in a state with single party dominance <= mean of ENTRY for (each) opposition parties in that same state. 
 ```{r}
 ys.proposed <- propfull.df %>% group_by(actor,edon,year) %>% summarise(numproposals=sum(PROPOSED,na.rm=TRUE))
-ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute( edon=edon, year=2013,                                 singlecontrolparty=if_else(singlecontrol,primary,"NONE"))
-
+ys.control<- grule.df %>%  controlByWindow(2000,2013) %>% transmute(edon=edon, year=2013,                                 singlecontrolparty=if_else(singlecontrol,primary,"NONE"))
 ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(edon=edon, year=2017,                              singlecontrolparty=if_else(singlecontrol,primary,"NONE")))
-
 ys.proposed %<>% left_join(ys.control)
 #rm(ys.control)
-
 ys.proposed %<>% rowwise() %>% mutate(didPropose=(numproposals>0),didControl=(actor==singlecontrolparty))
-
 require(broom)
 require(GGally)
 tabfit <- ys.proposed %>% xtabs(~didPropose+didControl+year,data=.)
@@ -124,21 +114,146 @@ glmfit <- ys.proposed %>% glm(didPropose~didControl+year,data=.,family=binomial(
 summary(glmfit)
 augment(glmfit) %>% ggplot(aes(didPropose,.fitted))+geom_jitter()+facet_grid(rows=vars(didControl))
 ggcoef(glmfit)
+```
+
+```{r}
+### Managing the dataset ###
+#Year into factors
+library(fastDummies)
+ys.proposed <- fastDummies::dummy_cols(ys.proposed, select_columns = "year")
+
+#Making the alternation data frame and joining it with ys.proposed
+alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
+alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
+ys.proposed %<>% left_join(alternation.df)
+
+ys.proposed <- ys.proposed %>% mutate(numparty = summarise(partytab))
+
+#Count number of parties
+
+#Building the rankings for evaluation of likelihood to propose based on alternation of power + number of 
+#parties operating in a state + if in control of that state in year of redistricting: Strategic Position
+ys.proposed <- ys.proposed %>% mutate(StratPos.1 = ifelse(didControl & singlecontrol, 1, 0)) %>%   mutate(StratPos.2 = ifelse(didControl & !singlecontrol, 1, 0)) %>% mutate(StratPos.3 = ifelse(!didControl & percentsingle>=0.5,1, 0)) %>% mutate(StratPos.4 = ifelse(!didControl & percentsingle < 0.5, 1, 0))
+
+tabfit.1 <- ys.proposed %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4, data=.)
+print(tabfit.1)
+ftable(tabfit.1)
+#Cool the categories are mutaully exlcusive. Still need to filter them more.
+```
+
+```{r}
+#Test run of the model we broke down on the call.
+H1.model <- ys.proposed %>% glm(didPropose ~ StratPos.2 + StratPos.3 + StratPos.4 + year_2017, data = ., family = binomial)
+summary(H1.model)
+print(accuracy(H1.model))
+
+#Now an ordinal discrete model. Hold up. To estimate this model we need the ordinal variable to be the 
+#response. 
+library(MASS)
+H1.ord.model <- ys.proposed %>% polr(as.factor(Strat.Pos) ~ didPropose + year_2017, data=., Hess = TRUE)
+
+#Make an ordered vector -- packages will treat it as such in the regression. Orthogonal polynomials"
+#Contigency tables
+#Visualizations
 
 ```
 
+```{r}
+#Data exploration
+tabfit <- ys.proposed %>% xtabs(~didPropose+didControl,data=.)
+print(tabfit)
+ftable(tabfit)
+
+#Logistic Model: Controlling for year
+
+glm.mod <- glm(didPropose~didControl+year_2017, data=ys.proposed, family = binomial())
+summary(glm.mod)
+
+#Explaination
+
+#Logistic Model: Interaction, year and didControl
+
+glm.mod.inter <- ys.proposed %>% glm(didPropose~didControl+year_2017+didControl*year_2017, data = ., family = binomial())
+summary(glm.mod.inter)
+
+#The interaction term is not significant by any means. A logistic model may not be the best regression model to descibe the data. This can also be seen by looking at the cross-tabs -- the data is unbalanced. 
+
+summary(ys.proposed)
+
+library(Zelig)
+re.mod.1 <- ys.proposed %>% zelig(didPropose~didControl+year_2017, data = .,model = "relogit", tau = 29/649, case.control = "prior", bias.correct = FALSE)
+summary(re.mod.1)
+
+#The RE model does not provide any further insight into the causal effects of being the party in control on proposing redistricting plans. The data is unbalanced -- this should have taken care of that issue. The data is also "small" which compounds that issue, but makes it harder to solve (tau, in the model, is still large for a RE model).
+
+#################################################################
+
+#Exploring the data
+tabfit.1 <- ys.proposed %>% xtabs(~numproposals+year,data=.)
+print(tabfit.1)
+ftable(tabfit.1)
+
+#Logistic Model : Proposal in first round (2013)
+glm.mod.b.1 <- glm(numproposals_1~didControl+year_2013, data=ys.proposed, family = binomial())
+summary(glm.mod.b.1)
+
+#Logistic Model:Proposal in second round (2013)
+glm.mod.b.2.a <- glm(numproposals_2~didControl+year_2013, data = ys.proposed, family = binomial())
+summary(glm.mod.b.2.a)
+
+glm.mod.b.2.b <- glm(numproposals_2~didControl+numproposals_1+year_2013, data = ys.proposed, family = binomial())
+summary(glm.mod.b.2.b)
+
+#
+
+#Logistic Model: Proposal in first round (2017)
+
+#Logistic Model: Proposal in second round (2017)
+
+######################################################################
+
+```
   #H.1.1.1.b 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in states that have expereinced alternation in power. --> Requires a categorical variable capturing if degree of ALTERNATION or simply if single_pty_dom_00_17:False. This hypothesis is evaluating if the ruling party is more likely to formulate a counterporposal in states where there is single party rule, than in states where alternation takes place. 
-
 #Method: Difference of means test: H1: mean of ENTRY for the Ruling Party in states with single party dominance > mean of ENTRY for the Ruling Party in states that have experienced alternation; H0: mean of ENTRY for the Ruling Party in states with single party dominance <= mean of ENTRY for the Ruling Party in states that have experienced alternation. 
-
+```{r}
+#Without year splits - why is year significant? Does it represent something that has to deal with the system?
+str(ys.proposed)
+glm.mod.h.1.1.b <- ys.proposed %>% glm(didPropose~singlecontrolparty+year, data=., family=binomial())
+summary(glm.mod.h.1.1.b)
+#The intercept in there models captures the effect of "NONE" or, the effect of having no single party control in that year based on at least a single alternation from the record of prior years.
+#Build models with degree of alternation. 
+```
 //////////////////////////////////////////////////////////////////////////////////////////
 WORK IN PROGRESS...
 //////////////////////////////////////////////////////////////////////////////////////////
 
 #H.1.1.2 Parties that are secondary or terciary forces at the state level, are more likely to participte in redistricting (formulate a counterproposal), than all other opposition parties. 
 
+```{r} 
+#Variables that captures the degree of alternation
+alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
+alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
+ys.proposed %<>% left_join(alternation.df)
+```
+
 #H.1.1.3 As alternation in power/ competition increases at the state level, we expect to observe a higher number of counterporposals.
+  #H.1.1.3.a number of proposals by single party control.
+  
+```{r}
+lm.mod.h.1.1.3.a <- ys.proposed %>% lm(numproposals~singlecontrolparty+year, data=.)
+summary(lm.mod.h.1.1.3.a)
+#Single party control is not significant in any of the meansures for parties that maintain a level of consistent control. Need to build out a variable that explains the degree to alternation in a state.
+```
+  #H.1.1.3.b number of proposals by degree of alternation
+```{r}
+#Using the degree of alternation to predict likelihood of proposal (didPropose).
+alt.glm.1 <- ys.proposed %>% glm(didPropose~naltpower+percentsingle, data=., family=binomial())
+summary(alt.glm.1)
+#Using degree of alternation to predict the number of proposals
+alt.lm.1 <- ys.proposed %>% lm(numproposals~naltpower+percentsingle, data = .,)
+summary(alt.lm.1)
+```
 
 #1.1.1.4 Ruling parties in states with the highest level of alternation in power, are more likely to participte in redistricting (formulate a counterproposal), than all other opposition parties.
 
