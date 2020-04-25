@@ -32,6 +32,7 @@ require(stringr)
 require(purrr)
 require(forcats)
 require(gt)
+require(rlang)
 ```
 Bring in proposal event database: propfull.df
 ```{r}
