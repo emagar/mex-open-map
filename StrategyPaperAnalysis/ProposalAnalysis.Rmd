@@ -26,6 +26,12 @@ require(tidyr)
 require(readr)
 require(haven)
 require(fastDummies)
+require(tidymodels)
+require(tibble)
+require(stringr)
+require(purrr)
+require(forcats)
+require(gt)
 ```
 Bring in proposal event database: propfull.df
 ```{r}
