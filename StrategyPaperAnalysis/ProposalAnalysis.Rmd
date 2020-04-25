@@ -26,18 +26,95 @@ require(tidyr)
 require(readr)
 require(haven)
 require(fastDummies)
+require(tidymodels)
+require(tibble)
+require(stringr)
+require(purrr)
+require(forcats)
+require(gt)
+require(rlang)
 ```
 Bring in proposal event database: propfull.df
 ```{r message=FALSE}
 # reads in Pre-Normalized IFE tables and produces proposals.df data
 source("Normalize.R")
 # integrates in plans from MxDistritos
-source("integrateMxdistritos.R")
+## capture output because it is noisy and slows down interactive notebook
+out<-capture.output(source("integrateMxdistritos.R"))
 ```
 Bring in ruling party db, 
 ```{r}
 source("RulingParty_micah.R")
 ```
+#Transparency Analysis
+##Invalidations
+cat ("Invalidations")
+xtabs(PROPOSED~INVALID+year, propfull.df)
+ftable(xtabs(PROPOSED~INVALID+actor+year+stage, propfull.df))
+```{r}
+xtabs(PROPOSED~INVALID+year, propfull.df)
+ftable(xtabs(PROPOSED~INVALID+edon+year, propfull.df))
+ftable(xtabs(PROPOSED~INVALID+actor+year+stage, propfull.df))
+
+```
+
+
+
+lowvalid <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=min)
+names(lowvalid)[3]<-"Lowestv.Score"
+
+unanimous <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==4& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=function(x)length(unique(x))==1)
+names(unanimous)[3]<-"UnanimousLast"
+
+
+
+tmpBest<- within(merge(lowvalid,winscores, by= c("year","Entidad")), LowestWon<-(Lowestv.Score==Winning.Score))
+tmpBest<-as_tibble(tmpBest)
+xtabs(~LowestWon+year,tmpBest)
+
+tmpBest<-merge(tmpBest,unanimous)
+tmpBest<-within(tmpBest,RulesViolation <- !LowestWon & !UnanimousLast) 
+round1p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==1),FUN=c)
+ names(round1p)[3]<-"round1.scores"
+
+ round2p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==2& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
+ names(round2p)[3]<-"round2.scores"
+ round3p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==3& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
+  names(round3p)[3]<-"round3.scores"
+
+ round4p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==4& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
+   names(round4p)[3]<-"round4.scores"
+
+round5p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==5& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
+  names(round5p)[3]<-"round5.scores"
+    tmpBest<-merge(tmpBest,round1p,all.x=TRUE)  
+
+  tmpBest<-merge(tmpBest,round2p,all.x=TRUE)  
+  tmpBest<-merge(tmpBest,round3p,all.x=TRUE)
+    tmpBest<-merge(tmpBest,round4p,all.x=TRUE)
+      tmpBest<-merge(tmpBest,round5p,all.x=TRUE)
+
+tmpBest$IneNewRound3<-apply(tmpBest,1,function(x)length(intersect(unlist(x$round3.scores),union(unlist(x["round1.scores"]),unlist(x["round2.scores"]))))==0)
+
+tmpBest$IneNewRound5<-apply(tmpBest,1,function(x)length(intersect(unlist(x$round5.scores),union(unlist(x["round3.scores"]),unlist(x["round4.scores"]))))==0)
+
+tmpBest %<>% mutate(IneNew=IneNewRound3 | IneNewRound5)
+
+
+
+cat("lowest valid proposal winning")
+xtabs(~LowestWon+year,tmpBest)
+cat("party unanimity in the last round")
+xtabs(~UnanimousLast+year,tmpBest)
+cat("Rules violation (not lowest & not unanimous)")
+xtabs(~RulesViolation+year,tmpBest)
+cat("INE new proposals")
+xtabs(~IneNew+year,tmpBest)
+
+```{r}
+
+```
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 H1: Ruling Party (Single Party Dominance/Alternation)
