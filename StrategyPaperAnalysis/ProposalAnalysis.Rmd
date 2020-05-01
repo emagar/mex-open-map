@@ -234,12 +234,15 @@ prop.H1.df %<>% replace_na(list(havewon.2 = FALSE, havewon.3 = FALSE, havewon.4 
 prop.H1.df <- prop.H1.df %>%
   mutate(StratPos.1 = ifelse(CONTROL & singlecontrol, 1, 0)) %>%
   mutate(StratPos.2 = ifelse(CONTROL & !singlecontrol, 1, 0)) %>%
-  mutate(StratPos.3 = ifelse(!CONTROL & (primary==actor), 1, 0)) %>%
-  mutate(StratPos.4 = ifelse(!CONTROL & !(primary==actor) & ((secondary==actor) | (tertiary==actor)) & (numparty <= 2), 1, 0)) %>%
-  mutate(StratPos.5 = ifelse(!CONTROL & !(primary==actor) & ((secondary==actor) | (tertiary==actor)) & (numparty >=3), 1, 0)) %>%
-  mutate(StratPos.6 = ifelse(!CONTROL & !(primary==actor) & !(secondary==actor) & !(tertiary==actor) & (numparty <= 2), 1, 0)) %>%
-  mutate(StratPos.7 = ifelse(!CONTROL & !(primary==actor) & !(secondary==actor) & !(tertiary==actor) & (numparty >= 3), 1, 0))
+  mutate(StratPos.3 = ifelse(!CONTROL & !singlecontrol & (primary==actor), 1, 0)) %>%
+  mutate(StratPos.4 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & (secondary==actor), 1, 0)) %>%
+  mutate(StratPos.5 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & !(secondary==actor) & (tertiary==actor), 1, 0)) %>%
+  mutate(StratPos.6 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & !(secondary==actor) & !(tertiary==actor), 1, 0))
 
+#Check the categories
+tab.3 <- prop.H1.df %>% xtabs(~StratPos.4+StratPos.5+StratPos.6, data=.)
+print(tab.3)
+ftable(tab.3)
 #Visualizations by state and year
 
 by.year.17 <- prop.H1.df %>% filter(year == 2017)
