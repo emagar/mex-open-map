@@ -240,7 +240,7 @@ prop.H1.df <- prop.H1.df %>%
   mutate(StratPos.6 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & !(secondary==actor) & !(tertiary==actor), 1, 0))
 
 #Check the categories
-tab.3 <- prop.H1.df %>% xtabs(~StratPos.4+StratPos.5+StratPos.6, data=.)
+tab.3 <- prop.H1.df %>% xtabs(~StratPos.1+StratPos.2+StratPos.3, data=.)
 print(tab.3)
 ftable(tab.3)
 #Visualizations by state and year
