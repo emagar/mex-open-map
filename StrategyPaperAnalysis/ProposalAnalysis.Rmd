@@ -202,7 +202,8 @@ ys.proposed <- ys.proposed %>% mutate(year_2017 = ifelse(year == 2017,1, 0))
 #Making the alternation data frame and joining it with ys.proposed
 alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
 alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
-ys.proposed %<>% left_join(alternation.df, by = c("edon", "year"))
+
+
 
 #Building the rankings for evaluation of likelihood to propose based on alternation of power + number of 
 #parties operating in a state + if in control of that state in year of redistricting: Strategic Position
@@ -223,13 +224,21 @@ ftable(tabfit.1)
 #Use propfull.df as the default data frame
 prop.H1.df <- propfull.df
 prop.H1.df %<>% left_join(alternation.df, by = c("edon", "year"))
-prop.H1.df <- prop.H1.df%>%mutate(didControl=ifelse(actor==primary,1,0)) %>% mutate(havewon=ifelse(actor==(partyseq[["values"]])))
+prop.H1.df %<>% left_join(ys.proposed, by = c("edon", "year", "actor"))
+prop.H1.df %<>% rowwise() %>% mutate(controlParty = (partylist[1]),CONTROL = (actor==controlParty), havewon.1 = (actor==(partyseq[["values"]])[1]), havewon.2 =(actor==(partyseq[["values"]])[2]), havewon.3 = (actor==(partyseq[["values"]])[3]), havewon.4 =(actor==(partyseq[["values"]])[4]))
+prop.H1.df %<>% replace_na(list(havewon.2 = FALSE, havewon.3 = FALSE, havewon.4 = FALSE))
 
-prop.H1.df <- prop.H1.df %>% group_by(edon, actor, year) %>%mutate(StratPos.1 = ifelse(didControl & singlecontrol, 1, 0)) %>%
-  mutate(StratPos.2 = ifelse(didControl & !singlecontrol, 1, 0)) %>%
-  
-  mutate(StratPos.3 = ifelse(!didControl & percentsingle < 0.5 & numparty=3,1, 0)) %>%
-  mutate(StratPos.4 = ifelse(!didControl & percentsingle < 0.5 & numparty=4 3, 1, 0))
+#row.wise, 
+#set comparison - not equality. Wrap that in percent.in + rowwise, split into two mutates
+
+prop.H1.df <- prop.H1.df %>%
+  mutate(StratPos.1 = ifelse(CONTROL & singlecontrol, 1, 0)) %>%
+  mutate(StratPos.2 = ifelse(CONTROL & !singlecontrol, 1, 0)) %>%
+  mutate(StratPos.3 = ifelse(!CONTROL & (primary==actor), 1, 0)) %>%
+  mutate(StratPos.4 = ifelse(!CONTROL & !(primary==actor) & ((secondary==actor) | (tertiary==actor)) & (numparty <= 2), 1, 0)) %>%
+  mutate(StratPos.5 = ifelse(!CONTROL & !(primary==actor) & ((secondary==actor) | (tertiary==actor)) & (numparty >=3), 1, 0)) %>%
+  mutate(StratPos.6 = ifelse(!CONTROL & !(primary==actor) & !(secondary==actor) & !(tertiary==actor) & (numparty <= 2), 1, 0)) %>%
+  mutate(StratPos.7 = ifelse(!CONTROL & !(primary==actor) & !(secondary==actor) & !(tertiary==actor) & (numparty >= 3), 1, 0))
 
 #Visualizations by state and year
 
