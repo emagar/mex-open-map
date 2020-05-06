@@ -111,11 +111,6 @@ xtabs(~RulesViolation+year,tmpBest)
 cat("INE new proposals")
 xtabs(~IneNew+year,tmpBest)
 
-```{r}
-
-```
-
-
 //////////////////////////////////////////////////////////////////////////////////////////
 H1: Ruling Party (Single Party Dominance/Alternation)
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -158,10 +153,25 @@ Hypotheses (Entry --> Based on Ruling Party in Single Party Rule States):
 
 #H.1.3 Parties ruling a state under single party dominance are more likely to participate in redistricting (formulate a counterproposal) than all other opposition parties.
 
-
-
+Categorizing types of parties
+PRD, PAN, PRI are considered major parties, while all other parties are considered "minor."
+CLV and Algorithm are included as actors, still unsure of how to categorize them.
 ```{r}
-#Code to create variables needed
+#Categorize types of parties
+propfull.df <- propfull.df %>% mutate(partytype = 1)
+propfull.df$partytype[propfull.df$actor == "PRI" | propfull.df$actor == "PAN" | propfull.df$actor == "PRD"] <- "major"
+propfull.df$partytype[propfull.df$actor == "PT" | propfull.df$actor == "PVEM" | propfull.df$actor == "ES" | propfull.df$actor == "MORENA" | propfull.df$actor == "MC" | propfull.df$actor == "PNA"] <- "minor"
+propfull.df$partytype[propfull.df$actor == "CLV" | propfull.df$actor == "Algorithm"] <- "other"
+```
+
+Visualization/Summary Statistics by Party Type
+```{r}
+```
+
+
+Generate Variables of Interest and Comprehensive Data Frames
+```{r}
+#Code generating needed variables
 ys.proposed <- propfull.df %>% group_by(actor,edon,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
 #output <- propstrue(proposals.df)
 ys.control<- grule.df %>%  controlByWindow(2000,2013)%>% transmute(edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
@@ -194,65 +204,64 @@ augment(glmfit) %>% ggplot(aes(didPropose,.fitted))+geom_jitter()+facet_grid(row
 ggcoef(glmfit)
 ```
 
+Build Alternation Data Frame
+Variables relate to the "competitiveness" of the state (i.e. more alternation = higher levels of competition)
 ```{r}
 ### Managing the dataset ###
 #Year into factors
-ys.proposed <- ys.proposed %>% mutate(year_2017 = ifelse(year == 2017,1, 0))
+ys.proposed <- ys.proposed %>% mutate(year_2017 = ifelse(year == 2017, 1, 0))
 
 #Making the alternation data frame and joining it with ys.proposed
 alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
 alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
 
-
-
-#Building the rankings for evaluation of likelihood to propose based on alternation of power + number of 
-#parties operating in a state + if in control of that state in year of redistricting: Strategic Position
-ys.proposed <- ys.proposed %>% mutate(StratPos.1 = ifelse(didControl & singlecontrol, 1, 0)) %>%
-  mutate(StratPos.2 = ifelse(didControl & !singlecontrol, 1, 0)) %>%
-  mutate(StratPos.3 = ifelse(!didControl & percentsingle>=0.5,1, 0)) %>%
-  mutate(StratPos.4 = ifelse(!didControl & percentsingle < 0.5 & numparty >= 3, 1, 0))
-
-tabfit.1 <- ys.proposed %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4, data=.)
-print(tabfit.1)
-ftable(tabfit.1)
-#Cool the categories are mutaully exlcusive. Still need to filter them more.
-
-#Make
 ```
+
 
 ```{r}
 #Use propfull.df as the default data frame
 prop.H1.df <- propfull.df
 prop.H1.df %<>% left_join(alternation.df, by = c("edon", "year"))
 prop.H1.df %<>% left_join(ys.proposed, by = c("edon", "year", "actor"))
-prop.H1.df %<>% rowwise() %>% mutate(controlParty = (partylist[1]),CONTROL = (actor==controlParty), havewon.1 = (actor==(partyseq[["values"]])[1]), havewon.2 =(actor==(partyseq[["values"]])[2]), havewon.3 = (actor==(partyseq[["values"]])[3]), havewon.4 =(actor==(partyseq[["values"]])[4]))
-prop.H1.df %<>% replace_na(list(havewon.2 = FALSE, havewon.3 = FALSE, havewon.4 = FALSE, tertiary = "NONE", secondary = "NONE"))
+prop.H1.df %<>% rowwise() %>% mutate(controlParty = (partylist[1]), CONTROL = (actor==controlParty))
+prop.H1.df %<>% replace_na(list( tertiary = "NONE", secondary = "NONE"))
+```
 
-#row.wise, 
-#set comparison - not equality. Wrap that in percent.in + rowwise, split into two mutates
+Strategic Position Categorization
 
-prop.H1.df <- prop.H1.df %>%
-  mutate(StratPos.1 = ifelse(CONTROL & singlecontrol, 1, 0)) %>%
-  mutate(StratPos.2 = ifelse(CONTROL & !singlecontrol, 1, 0)) %>%
-  mutate(StratPos.3 = ifelse(!CONTROL & !singlecontrol & (primary==actor), 1, 0)) %>%
-  mutate(StratPos.4 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & ((secondary==actor) | (tertiary==actor)), 1, 0)) %>%
-  mutate(StratPos.5 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & !((secondary==actor) & !(tertiary==actor)), 1, 0))
+A party in a "strong" position political position in the state, then they are more likely to propose than a party with a less "strong" position.
 
-#mutate(StratPos.6 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & !(secondary==actor) & !(tertiary==actor), 1, 0))
+The decision is a function of several variables such as: party controls the state during the redistricting year, if the party has been the sole ruler over from 1990-2013/17, and if they have ruled a majority of that timer period, if they have ruled at least once during that time period. 
+
+The variables used in the decision tree embody levels of competition in each state. A state controlled by a single party during the period has low levels of political competition, for example. A state with a party which has not won a majority of elections but has won at least once has some degree of power in a competitive state (there are at least two parties competing), as another example. The former has a better "strategic position" than the latter. 
+
+The "Strategic Positions" are defined as follows:
+1. Party a) Controls during redistricting year b) has controlled state in all previous observed periods
+
+2. Party a) Controls during redistricting year b) has NOT controlled state in all previously observed periods
+
+3. Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won a MAJORITY of previous elections in observed time period
+
+4. Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won a MINORITY of previous elections in observed time period
+
+5.  Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won NONE of the previous elections during the time period
+
+6. Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won NONE of the previous elections during the time period d) another party has won ALL previous elections
+```{r}
+
+prop.H1.df <- prop.H1.df %>% mutate(StratPos = 99)
+prop.H1.df$StratPos[prop.H1.df$CONTROL == TRUE & prop.H1.df$singlecontrol ==TRUE] <- 1
+prop.H1.df$StratPos[prop.H1.df$CONTROL & !prop.H1.df$singlecontrol] <- 2
+prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & (prop.H1.df$primary==prop.H1.df$actor)] <- 3
+prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & ((prop.H1.df$secondary==prop.H1.df$actor) | (prop.H1.df$tertiary==prop.H1.df$actor))] <- 4
+prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & (!(prop.H1.df$secondary==prop.H1.df$actor) & !(prop.H1.df$tertiary==prop.H1.df$actor))] <- 5
+prop.H1.df$StratPos[!prop.H1.df$CONTROL & prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & !(prop.H1.df$secondary==prop.H1.df$actor) & !(prop.H1.df$tertiary==prop.H1.df$actor)] <- 6
 
 #Check the categories
-tab.3 <- prop.H1.df %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4+StratPos.5, data=.)
+tab.3 <- prop.H1.df %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4+StratPos.5 + StratPos.6, data=.)
 print(tab.3)
 ftable(tab.3)
-#Visualizations by state and year
-
-by.year.17 <- prop.H1.df %>% filter(year == 2017)
-hist(by.year.17$stage)
-
-tabfit.2 <- prop.H1.df %>% xtabs(~stage+PROPOSED+year+singlecontrol, data=.)
-print(tabfit.2)
-#Here we can see a break down of when proposals occured 
-
+#Exhaustive and mutually exclusive, like we want.
 ```
 
 ```{r}
