@@ -159,9 +159,16 @@ Hypotheses (Entry --> Based on Ruling Party in Single Party Rule States):
 #H.1.3 Parties ruling a state under single party dominance are more likely to participate in redistricting (formulate a counterproposal) than all other opposition parties.
 
 
+```{r}
+#Categorize types of parties
+propfull.df <- propfull.df %>% mutate(partytype = 1)
+propfull.df$partytype[propfull.df$actor == "PRI" | propfull.df$actor == "PAN" | propfull.df$actor == "PRD"] <- "major"
+propfull.df$partytype[propfull.df$actor == "PT" | propfull.df$actor == "PVEM" | propfull.df$actor == "ES" | propfull.df$actor == "MORENA" | propfull.df$actor == "MC" | propfull.df$actor == "PNA"] <- "minor"
+propfull.df$partytype[propfull.df$actor == "CLV" | propfull.df$actor == "Algorithm"] <- "other"
+```
 
 ```{r}
-#Code to create variables needed
+#Code generating needed variables
 ys.proposed <- propfull.df %>% group_by(actor,edon,year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE))
 #output <- propstrue(proposals.df)
 ys.control<- grule.df %>%  controlByWindow(2000,2013)%>% transmute(edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
@@ -203,21 +210,6 @@ ys.proposed <- ys.proposed %>% mutate(year_2017 = ifelse(year == 2017,1, 0))
 alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
 alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
 
-
-
-#Building the rankings for evaluation of likelihood to propose based on alternation of power + number of 
-#parties operating in a state + if in control of that state in year of redistricting: Strategic Position
-ys.proposed <- ys.proposed %>% mutate(StratPos.1 = ifelse(didControl & singlecontrol, 1, 0)) %>%
-  mutate(StratPos.2 = ifelse(didControl & !singlecontrol, 1, 0)) %>%
-  mutate(StratPos.3 = ifelse(!didControl & percentsingle>=0.5,1, 0)) %>%
-  mutate(StratPos.4 = ifelse(!didControl & percentsingle < 0.5 & numparty >= 3, 1, 0))
-
-tabfit.1 <- ys.proposed %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4, data=.)
-print(tabfit.1)
-ftable(tabfit.1)
-#Cool the categories are mutaully exlcusive. Still need to filter them more.
-
-#Make
 ```
 
 ```{r}
@@ -236,23 +228,24 @@ prop.H1.df <- prop.H1.df %>%
   mutate(StratPos.2 = ifelse(CONTROL & !singlecontrol, 1, 0)) %>%
   mutate(StratPos.3 = ifelse(!CONTROL & !singlecontrol & (primary==actor), 1, 0)) %>%
   mutate(StratPos.4 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & ((secondary==actor) | (tertiary==actor)), 1, 0)) %>%
-  mutate(StratPos.5 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & !((secondary==actor) & !(tertiary==actor)), 1, 0))
+  mutate(StratPos.5 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & (!(secondary==actor) & !(tertiary==actor)), 1, 0)) %>%
+  mutate(StratPos.6 = ifelse(!CONTROL & singlecontrol & !(primary==actor) & !((secondary==actor) & !(tertiary==actor)), 1, 0))
+
+prop.H1.df <- prop.H1.df %>% mutate(StratPos = 99)
+prop.H1.df$StratPos[prop.H1.df$CONTROL == TRUE & prop.H1.df$singlecontrol ==TRUE] <- 1
+prop.H1.df$StratPos[prop.H1.df$CONTROL & !prop.H1.df$singlecontrol] <- 2
+prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & (prop.H1.df$primary==prop.H1.df$actor)] <- 3
+prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & ((prop.H1.df$secondary==prop.H1.df$actor) | (prop.H1.df$tertiary==prop.H1.df$actor))] <- 4
+prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & (!(prop.H1.df$secondary==prop.H1.df$actor) & !(prop.H1.df$tertiary==prop.H1.df$actor))] <- 5
+prop.H1.df$StratPos[!prop.H1.df$CONTROL & prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & !(prop.H1.df$secondary==prop.H1.df$actor) & !(prop.H1.df$tertiary==prop.H1.df$actor)] <- 6
 
 #mutate(StratPos.6 = ifelse(!CONTROL & !singlecontrol & !(primary==actor) & !(secondary==actor) & !(tertiary==actor), 1, 0))
 
 #Check the categories
-tab.3 <- prop.H1.df %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4+StratPos.5, data=.)
+tab.3 <- prop.H1.df %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4+StratPos.5 + StratPos.6, data=.)
 print(tab.3)
 ftable(tab.3)
-#Visualizations by state and year
-
-by.year.17 <- prop.H1.df %>% filter(year == 2017)
-hist(by.year.17$stage)
-
-tabfit.2 <- prop.H1.df %>% xtabs(~stage+PROPOSED+year+singlecontrol, data=.)
-print(tabfit.2)
 #Here we can see a break down of when proposals occured 
-
 ```
 
 ```{r}
