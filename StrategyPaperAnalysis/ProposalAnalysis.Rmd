@@ -162,13 +162,16 @@ Other - PRD51
 #Categorize types of parties
 #break out into a separate data frame and save for future use
 
+propfull.df$actor <- gsub("PANAL", "PNA", propfull.df$actor)
+
 partytype.df <- propfull.df %>% select(actor) %>% mutate(partytype = 1)
 partytype.df$partytype[partytype.df$actor == "PRI" | partytype.df$actor == "PAN" | partytype.df$actor == "PRD"] <- "major"
 partytype.df$partytype[partytype.df$actor == "PT" | partytype.df$actor == "PVEM" | partytype.df$actor == "ES" | partytype.df$actor == "MORENA" | partytype.df$actor == "MC" | partytype.df$actor == "PNA"] <- "minor"
-partytype.df$partytype[partytype.df$actor == "CLV" | partytype.df$actor == "Algorithm" | partytype.df$actor == "Junta" | partytype.df$actor == "INE"] <- "admin"
-partytype.df$partytype[partytype.df$actor == "PRD51"] <- "other"
+partytype.df$partytype[partytype.df$actor == "CLV" | partytype.df$actor == "Algorithm" | partytype.df$actor == "Junta" | partytype.df$actor == "INE" | partytype.df$actor == "ife" | partytype.df$actor == "escenario3_derfe"] <- "admin"
+partytype.df$partytype[partytype.df$actor == "PRD51" | partytype.df$actor == "inegi"] <- "other"
 
 one.df <- partytype.df %>% filter(partytype.df$partytype == 1)
+
 
 table(partytype.df$partytype)
 ```
