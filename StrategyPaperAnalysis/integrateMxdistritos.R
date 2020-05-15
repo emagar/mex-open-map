@@ -52,7 +52,7 @@ extractPlans<-function(.data){
                                                "pt_cnv1", "pt_cnv2", "pvem_clv1", "pvem_clv2", "pvem_cnv1", 
                                                "pvem_cnv2"), actor = c("Algorithm", "INE", "INE", "MC", "MC", 
                                                                        "MC", "MC", "MORENA", "MORENA", "MORENA", "MORENA", "PAN", "PAN", 
-                                                                       "PAN", "PAN", "PANAL", "PANAL", "PANAL", "PANAL", "ES", "ES", 
+                                                                       "PAN", "PAN", "PNA", "PNA", "PNA", "PNA", "ES", "ES", 
                                                                        "ES", "ES", "PNA", "PNA", "PNA", "PNA", "PRD", "PRD", "PRD", 
                                                                        "PRD", "PRI", "PRI", "PRI", "PRI", "PT", "PT", "PT", "PT", "PVEM", 
                                                                        "PVEM", "PVEM", "PVEM"), govlevel = c("CNV", "CNV", "CNV", "CLV", 
