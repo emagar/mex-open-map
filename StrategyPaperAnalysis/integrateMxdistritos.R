@@ -76,7 +76,7 @@ extractPlans<-function(.data){
 
   # standardize names that use . instead of _ 
   names(x.df) %<>% sub("\\.","_",.)
-  actornames<-setdiff(names(x.df),c("edon","seccion","munn"))
+  actornames<-setdiff(names(x.df),c("edon","seccion","munn","inegi","ife"))
   cat(paste(actornames,sep=","))
   
   #  reashape to rows as proposals, with the proposed plan as a a variable
