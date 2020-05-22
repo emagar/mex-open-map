@@ -33,19 +33,10 @@ require(purrr)
 require(forcats)
 require(gt)
 require(rlang)
-<<<<<<< HEAD
-<<<<<<< HEAD
 require(tidylog)
-=======
-require(forecast)
+require(car)
 require(lmtest)
 require(car)
-require(MASS)
->>>>>>> e019b23c88b35d54eb688b3dfe97a12d4a6497c7
-=======
-require(lmtest)
-require(car)
->>>>>>> 8c91567e41dde435934cc5a957b8a9e613ad0d42
 ```
 Bring in proposal event database: propfull.df
 ```{r message=FALSE}
