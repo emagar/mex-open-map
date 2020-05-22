@@ -33,6 +33,7 @@ require(purrr)
 require(forcats)
 require(gt)
 require(rlang)
+require(tidylog)
 ```
 Bring in proposal event database: propfull.df
 ```{r message=FALSE}
