@@ -18,7 +18,7 @@ and vary according the ruling party (H1), party strenght/vote returns (H2), and 
 // Setup //
 
 Libraries
-```{r}
+```{r message=FALSE}
 require(magrittr)
 require(ggplot2)
 require(dplyr)
@@ -33,7 +33,14 @@ require(purrr)
 require(forcats)
 require(gt)
 require(rlang)
+<<<<<<< HEAD
 require(tidylog)
+=======
+require(forecast)
+require(lmtest)
+require(car)
+require(MASS)
+>>>>>>> e019b23c88b35d54eb688b3dfe97a12d4a6497c7
 ```
 Bring in proposal event database: propfull.df
 ```{r message=FALSE}
@@ -157,22 +164,24 @@ Hypotheses (Entry --> Based on Ruling Party in Single Party Rule States):
 Categorizing types of parties
 Major - PRD, PAN, PRI
 Minor - PT, PVEM, ES, MORENA, MC, PNA
-Admin - CLV, Algorithm, Junta, INE
-Other - PRD51
+Admin - CLV, Algorithm, Junta, INE, ife, escenario3_derfe
+Other - PRD51, inegi
 ```{r}
 #Categorize types of parties
 #break out into a separate data frame and save for future use
 
-propfull.df$actor <- gsub("PANAL", "PNA", propfull.df$actor)
+propfull.df$actor <- gsub("PANAL", "PNA", propfull.df$actor) #Comes from ENA merge, "Eric's code," need to fix that at the source. In the mapping file too - update mapping file (micah). 
 
 partytype.df <- propfull.df %>% select(actor) %>% mutate(partytype = 1)
 partytype.df$partytype[partytype.df$actor == "PRI" | partytype.df$actor == "PAN" | partytype.df$actor == "PRD"] <- "major"
+
 partytype.df$partytype[partytype.df$actor == "PT" | partytype.df$actor == "PVEM" | partytype.df$actor == "ES" | partytype.df$actor == "MORENA" | partytype.df$actor == "MC" | partytype.df$actor == "PNA"] <- "minor"
+
 partytype.df$partytype[partytype.df$actor == "CLV" | partytype.df$actor == "Algorithm" | partytype.df$actor == "Junta" | partytype.df$actor == "INE" | partytype.df$actor == "ife" | partytype.df$actor == "escenario3_derfe"] <- "admin"
+
 partytype.df$partytype[partytype.df$actor == "PRD51" | partytype.df$actor == "inegi"] <- "other"
 
-one.df <- partytype.df %>% filter(partytype.df$partytype == 1)
-
+one.df <- propfull.df %>% filter(propfull.df$actor == "Junta")
 
 table(partytype.df$partytype)
 ```
@@ -270,66 +279,35 @@ prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & !(prop.H1.
 prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & (!(prop.H1.df$secondary==prop.H1.df$actor) & !(prop.H1.df$tertiary==prop.H1.df$actor))] <- 5
 prop.H1.df$StratPos[!prop.H1.df$CONTROL & prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & !(prop.H1.df$secondary==prop.H1.df$actor) & !(prop.H1.df$tertiary==prop.H1.df$actor)] <- 6
 
+table(prop.H1.df$StratPos)
+check.df <- prop.H1.df %>% filter(StratPos == 6)
+table(check.df$edon)
 #Check the categories
-tab.3 <- prop.H1.df %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4+StratPos.5 + StratPos.6, data=.)
-print(tab.3)
-ftable(tab.3)
 #Exhaustive and mutually exclusive, like we want.
 ```
-
+Some visualizations
 ```{r}
-#Test run of the model we broke down on the call.
-H1.model <- ys.proposed %>% glm(didPropose ~ StratPos.2 + StratPos.3 + StratPos.4 + year_2017, data = ., family = binomial)
-summary(H1.model)
-print(accuracy(H1.model))
-
-#Now an ordinal discrete model. Hold up. To estimate this model we need the ordinal variable to be the 
-#response. 
-library(MASS)
-H1.ord.model <- ys.proposed %>% polr(as.factor(Strat.Pos) ~ didPropose + year_2017, data=., Hess = TRUE)
-
-#Make an ordered vector -- packages will treat it as such in the regression. Orthogonal polynomials"
-#Contigency tables
-#Visualizations
+prop.H1.df %>% ggplot(aes(StratPos)) + geom_histogram() +facet_wrap(~year)
+prop.H1.df %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~govlevel)
+prop.H1.df %>% ggplot(aes(actor)) + geom_bar() + facet_wrap(~govlevel)
 ```
 
-
+Models
 ```{r}
-### Managing the dataset ###
-#Year into factors
-library(fastDummies)
-ys.proposed <- fastDummies::dummy_cols(ys.proposed, select_columns = "year")
+#1. Logistic
+Mod.1 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos), data=., family = binomial)
+Mod.2 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos) + as.factor(year), data=., family = binomial)
+Mod.3 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos) + as.factor(year) + as.factor(govlevel), data=., family = binomial)
 
-#Making the alternation data frame and joining it with ys.proposed
-alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
-alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
-ys.proposed %<>% left_join(alternation.df)
+lrtest(Mod.2, Mod.1)
+lrtest(Mod.3, Mod.1)
+lrtest(Mod.3, Mod.2)
 
-ys.proposed <- ys.proposed %>% mutate(numparty = summarise(partytab))
+vif(Mod.3)
 
-#Count number of parties
-
-#Building the rankings for evaluation of likelihood to propose based on alternation of power + number of 
-#parties operating in a state + if in control of that state in year of redistricting: Strategic Position
-ys.proposed <- ys.proposed %>% mutate(StratPos.1 = ifelse(didControl & singlecontrol, 1, 0)) %>%   mutate(StratPos.2 = ifelse(didControl & !singlecontrol, 1, 0)) %>% mutate(StratPos.3 = ifelse(!didControl & percentsingle>=0.5,1, 0)) %>% mutate(StratPos.4 = ifelse(!didControl & percentsingle < 0.5, 1, 0))
-
-tabfit.1 <- ys.proposed %>% xtabs(~StratPos.1+StratPos.2+StratPos.3+StratPos.4, data=.)
-print(tabfit.1)
-ftable(tabfit.1)
-#Cool the categories are mutaully exlcusive. Still need to filter them more.
+summary(Mod.3)
 ```
-```{r}
-#Test run of the model we broke down on the call.
-H1.model <- ys.proposed %>% glm(didPropose ~ StratPos.2 + StratPos.3 + StratPos.4 + year_2017, data = ., family = binomial)
-summary(H1.model)
-print(accuracy(H1.model))
 
-#Now an ordinal discrete model. Hold up. To estimate this model we need the ordinal variable to be the 
-#response. 
-library(MASS)
-H1.ord.model <- ys.proposed %>% polr(as.factor(Strat.Pos) ~ didPropose + year_2017, data=., Hess = TRUE)
-
-```
 
 ```{r}
 #Data exploration
