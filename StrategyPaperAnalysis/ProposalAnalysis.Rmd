@@ -33,10 +33,8 @@ require(purrr)
 require(forcats)
 require(gt)
 require(rlang)
-require(forecast)
 require(lmtest)
 require(car)
-require(MASS)
 ```
 Bring in proposal event database: propfull.df
 ```{r message=FALSE}
@@ -285,7 +283,7 @@ Some visualizations
 ```{r}
 prop.H1.df %>% ggplot(aes(StratPos)) + geom_histogram() +facet_wrap(~year)
 prop.H1.df %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~govlevel)
-prop.H1.df %>% ggplot(aes(actor)) + geom_bar() + facet_wrap(~govlevel)
+prop.H1.df %>% ggplot(aes(actor)) + geom_bar() + facet_wrap(~year)
 ```
 
 Models
@@ -301,6 +299,8 @@ lrtest(Mod.3, Mod.2)
 
 vif(Mod.3)
 
+summary(Mod.1)
+summary(Mod.2)
 summary(Mod.3)
 ```
 
