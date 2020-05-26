@@ -7,7 +7,8 @@ output: html_notebook
 Description: This notebook file was created by A. Trelles on 12/28/19 as part of the Strategy Paper. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-General Description: This analyisis is used as a reference to write the code for the analysis of partisan counterporposals for the 2013 and 2017 redistricting process in relation with partisan ruling status, its strenght (vote returns), and state level coalition dynamics.  
+#General Description:
+This analysis is used as a reference to write the code for the analysis of partisan counterporposals for the 2013 and 2017 redistricting process in relation with partisan ruling status, its strenght (vote returns), and state level coalition dynamics.  
 
 The first part of the ProposalAnalysis.Rmd IS NOT CODE. It describes the general objectives of the analysis based on the hypotheses derived from the paper and the available data we have to test them. In all cases, the DV is related to a party´s decision to formulate a counterporposal. 
 
@@ -17,7 +18,7 @@ and vary according the ruling party (H1), party strenght/vote returns (H2), and 
 
 // Setup //
 
-Libraries
+#Libraries
 ```{r message=FALSE}
 require(magrittr)
 require(ggplot2)
@@ -38,23 +39,44 @@ require(car)
 require(lmtest)
 require(car)
 ```
-Bring in proposal event database: propfull.df
+# Build Database
+## Build proposal event database: propfull.df
 ```{r message=FALSE}
 # reads in Pre-Normalized IFE tables and produces proposals.df data
 source("Normalize.R")
 # integrates in plans from MxDistritos
 ## capture output because it is noisy and slows down interactive notebook
 out<-capture.output(source("integrateMxdistritos.R"))
+rm(proposals.df)
 ```
-Bring in ruling party db, 
+## Build Party Type Table
+Major - PRD, PAN, PRI
+Minor - PT, PVEM, ES, MORENA, MC, PNA
+Admin - CLV, Algorithm, Junta, INE, derfe
+Other - PRD51
+```{r}
+#Categorize types of parties
+#break out into a separate data frame and save for future use
+
+parties.df <- structure(list(actor = structure(c(2L, 7L, 9L, 10L, 11L, 13L, 
+14L, 15L, 1L, 6L, 12L, 5L, 4L, 8L, 3L), .Label = c("Algorithm", 
+"CLV", "derfe", "ES", "INE", "Junta", "MC", "MORENA", "PAN", 
+"PNA", "PRD", "PRD51", "PRI", "PT", "PVEM"), class = "factor"), 
+    partytype = structure(c(1L, 3L, 2L, 3L, 2L, 2L, 3L, 3L, 1L, 
+    1L, 4L, 1L, 3L, 3L, 1L), .Label = c("admin", "major", "minor", 
+    "other"), class = "factor")), class = "data.frame", row.names = c(NA, 
+-15L))
+
+propfull.df %<>% left_join(parties.df)
+table(parties.df$partytype)
+```
+
+## Bring in ruling party db, 
 ```{r}
 source("RulingParty_micah.R")
 ```
 #Transparency Analysis
 ##Invalidations
-cat ("Invalidations")
-xtabs(PROPOSED~INVALID+year, propfull.df)
-ftable(xtabs(PROPOSED~INVALID+actor+year+stage, propfull.df))
 ```{r}
 xtabs(PROPOSED~INVALID+year, propfull.df)
 ftable(xtabs(PROPOSED~INVALID+edon+year, propfull.df))
@@ -157,30 +179,7 @@ Hypotheses (Entry --> Based on Ruling Party in Single Party Rule States):
 
 #H.1.3 Parties ruling a state under single party dominance are more likely to participate in redistricting (formulate a counterproposal) than all other opposition parties.
 
-Categorizing types of parties
-Major - PRD, PAN, PRI
-Minor - PT, PVEM, ES, MORENA, MC, PNA
-Admin - CLV, Algorithm, Junta, INE, ife, escenario3_derfe
-Other - PRD51, inegi
-```{r}
-#Categorize types of parties
-#break out into a separate data frame and save for future use
 
-propfull.df$actor <- gsub("PANAL", "PNA", propfull.df$actor) #Comes from ENA merge, "Eric's code," need to fix that at the source. In the mapping file too - update mapping file (micah). 
-
-partytype.df <- propfull.df %>% select(actor) %>% mutate(partytype = 1)
-partytype.df$partytype[partytype.df$actor == "PRI" | partytype.df$actor == "PAN" | partytype.df$actor == "PRD"] <- "major"
-
-partytype.df$partytype[partytype.df$actor == "PT" | partytype.df$actor == "PVEM" | partytype.df$actor == "ES" | partytype.df$actor == "MORENA" | partytype.df$actor == "MC" | partytype.df$actor == "PNA"] <- "minor"
-
-partytype.df$partytype[partytype.df$actor == "CLV" | partytype.df$actor == "Algorithm" | partytype.df$actor == "Junta" | partytype.df$actor == "INE" | partytype.df$actor == "ife" | partytype.df$actor == "escenario3_derfe"] <- "admin"
-
-partytype.df$partytype[partytype.df$actor == "PRD51" | partytype.df$actor == "inegi"] <- "other"
-
-one.df <- propfull.df %>% filter(propfull.df$actor == "Junta")
-
-table(partytype.df$partytype)
-```
 
 Visualization/Summary Statistics by Party Type
 ```{r}
