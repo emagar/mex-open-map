@@ -273,16 +273,24 @@ prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & !(prop.H1.
 prop.H1.df$StratPos[!prop.H1.df$CONTROL & !prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & (!(prop.H1.df$secondary==prop.H1.df$actor) & !(prop.H1.df$tertiary==prop.H1.df$actor))] <- 5
 prop.H1.df$StratPos[!prop.H1.df$CONTROL & prop.H1.df$singlecontrol & !(prop.H1.df$primary==prop.H1.df$actor) & !(prop.H1.df$secondary==prop.H1.df$actor) & !(prop.H1.df$tertiary==prop.H1.df$actor)] <- 6
 
-table(prop.H1.df$StratPos)
-check.df <- prop.H1.df %>% filter(StratPos == 6)
+table(prop.H1.df$govlevel)
+check.df <- prop.H1.df %>% filter(govlevel == is.na(govlevel))
 table(check.df$edon)
 #Check the categories
 #Exhaustive and mutually exclusive, like we want.
 ```
+Cleaning up the data
+Removing obs w/ NA's in Proposed
+Figuring out why there are NA's in govlevel
+```{r}
+prop.H1.df <- prop.H1.df %>% drop_na(PROPOSED)
+```
+
 Some visualizations
 ```{r}
 prop.H1.df %>% ggplot(aes(StratPos)) + geom_histogram() +facet_wrap(~year)
 prop.H1.df %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~govlevel)
+#Now break it down by year
 prop.H1.df %>% ggplot(aes(actor)) + geom_bar() + facet_wrap(~year)
 ```
 
@@ -290,8 +298,8 @@ Models
 ```{r}
 #1. Logistic
 Mod.1 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos), data=., family = binomial)
-Mod.2 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos) + as.factor(year), data=., family = binomial)
-Mod.3 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos) + as.factor(year) + as.factor(govlevel), data=., family = binomial)
+Mod.2 <- prop.H1.df %>% glm(PROPOSED ~  as.factor(StratPos)*as.factor(year), data=., family = binomial)
+Mod.3 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos) +  as.factor(govlevel)*as.factor(year), data=., family = binomial)
 
 lrtest(Mod.2, Mod.1)
 lrtest(Mod.3, Mod.1)
@@ -302,6 +310,13 @@ vif(Mod.3)
 summary(Mod.1)
 summary(Mod.2)
 summary(Mod.3)
+
+length(Mod.1$fitted.values)
+length(prop.H1.df$PROPOSED)
+table(prop.H1.df$PROPOSED)
+
+t <- table(Mod.1, prop.H1.df$PROPOSED)
+t
 ```
 
 
