@@ -297,8 +297,15 @@ prop.H1.df %>% ggplot(aes(actor)) + geom_bar() + facet_wrap(~year)
 
 Models
 ```{r}
+#Build a train/test sets
+prop.H1.df <- prop.H1.df %>% mutate(id = row_number())
+train <- prop.H1.df %>% sample_frac(.70)
+test <- anti_join(prop.H1.df, train, by="id")
+test <- as.data.frame(test)
+
 #1. Logistic
-Mod.1 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos), data=., family = binomial)
+Mod.1 <- train %>% glm(PROPOSED ~ as.factor(StratPos), data=., family = binomial)
+Mod.1.pred <- predict(Mod.1, test)
 Mod.2 <- prop.H1.df %>% glm(PROPOSED ~  as.factor(StratPos)*as.factor(year), data=., family = binomial)
 Mod.3 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos) +  as.factor(govlevel)*as.factor(year), data=., family = binomial)
 
@@ -316,7 +323,7 @@ length(Mod.1$fitted.values)
 length(prop.H1.df$PROPOSED)
 table(prop.H1.df$PROPOSED)
 
-t <- table(Mod.1, prop.H1.df$PROPOSED)
+t <- table(Mod.1.pred, test$PROPOSED)
 t
 ```
 
