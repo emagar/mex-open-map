@@ -38,6 +38,7 @@ require(tidylog)
 require(car)
 require(lmtest)
 require(car)
+require(ordinal)
 ```
 # Build Database
 ## Build proposal event database: propfull.df
@@ -83,121 +84,96 @@ ftable(xtabs(PROPOSED~INVALID+edon+year, propfull.df))
 ftable(xtabs(PROPOSED~INVALID+actor+year+stage, propfull.df))
 
 ```
+Generate data frame for testing entry decisions.
+
+Data frame: ys.proposed
+
+Main unit of analysis: (party BY state AND year) -- summarize the actions each party took for each state in year -- NOT individual proposals
+
+Measures (aggregated by STATE and YEAR )
+
+- numproposals - number of proposals made by  party
+- didPropose -  logical - whether party made any propoals -dummy variable derived from number of proposals > 0
+- didControl - logical - whether party was in sole control of the state for the entire relevant period , derived from (control)
+- didRule - logical whether party was in power at the end of the period, while redistricting takes place
+- didWinever - party was in control at least once  during the period
 
 
+State-level measures inherited from controlByWindow()
+- partylist, partyseq, partytab, singlecontrol, percentsingle, primary, secondary, tertiary
+State-level measures added:
+- singlecontrol - dummy, where singlecontrol != NONE
+NOTE: these  are measures of the STATE at that time, not specific to party
+- partylist - names of parties in control of state over the relevant prior period, names may repeat if party control cycles back and forth
+- year_2017 - indicator if year is 2017, based on (year)
+- ruleparty - name of party that was in control at last year of period
 
-lowvalid <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=min)
-names(lowvalid)[3]<-"Lowestv.Score"
-
-unanimous <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==4& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=function(x)length(unique(x))==1)
-names(unanimous)[3]<-"UnanimousLast"
-
-
-
-tmpBest<- within(merge(lowvalid,winscores, by= c("year","Entidad")), LowestWon<-(Lowestv.Score==Winning.Score))
-tmpBest<-as_tibble(tmpBest)
-xtabs(~LowestWon+year,tmpBest)
-
-tmpBest<-merge(tmpBest,unanimous)
-tmpBest<-within(tmpBest,RulesViolation <- !LowestWon & !UnanimousLast) 
-round1p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==1),FUN=c)
- names(round1p)[3]<-"round1.scores"
-
- round2p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==2& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
- names(round2p)[3]<-"round2.scores"
- round3p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==3& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
-  names(round3p)[3]<-"round3.scores"
-
- round4p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==4& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
-   names(round4p)[3]<-"round4.scores"
-
-round5p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==5& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
-  names(round5p)[3]<-"round5.scores"
-    tmpBest<-merge(tmpBest,round1p,all.x=TRUE)  
-
-  tmpBest<-merge(tmpBest,round2p,all.x=TRUE)  
-  tmpBest<-merge(tmpBest,round3p,all.x=TRUE)
-    tmpBest<-merge(tmpBest,round4p,all.x=TRUE)
-      tmpBest<-merge(tmpBest,round5p,all.x=TRUE)
-
-tmpBest$IneNewRound3<-apply(tmpBest,1,function(x)length(intersect(unlist(x$round3.scores),union(unlist(x["round1.scores"]),unlist(x["round2.scores"]))))==0)
-
-tmpBest$IneNewRound5<-apply(tmpBest,1,function(x)length(intersect(unlist(x$round5.scores),union(unlist(x["round3.scores"]),unlist(x["round4.scores"]))))==0)
-
-tmpBest %<>% mutate(IneNew=IneNewRound3 | IneNewRound5)
-
-
-
-cat("lowest valid proposal winning")
-xtabs(~LowestWon+year,tmpBest)
-cat("party unanimity in the last round")
-xtabs(~UnanimousLast+year,tmpBest)
-cat("Rules violation (not lowest & not unanimous)")
-xtabs(~RulesViolation+year,tmpBest)
-cat("INE new proposals")
-xtabs(~IneNew+year,tmpBest)
-
-//////////////////////////////////////////////////////////////////////////////////////////
-H1: Ruling Party (Single Party Dominance/Alternation)
-//////////////////////////////////////////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////////////////////////////////////
-H1.1: Decision of Entry (Party deciides if it plays the game based on Ruling Party at the state level) --> Decision of political parties to participate in redistricting based on degree of alternatioin at the state level.  
-//////////////////////////////////////////////////////////////////////////////////////////
-Hypotheses (Entry --> Based on Ruling Party in Single Party Rule States):
-
-#H.1.1 The ruling party is more likely to participate in redistricting (formulate a counterproposal) than all other opposition parties. 
-
-#H.1.2 Parties competing for power in that state (secondary or terciary forces) will be more likely to engage than smaller parties. 
-
-#H.1.3 Parties ruling a state under single party dominance are more likely to participate in redistricting (formulate a counterproposal) than all other opposition parties. 
-
-  Variables: 
-#DV: Dummy variable capturing if party formulated a proposal (proposals.df: PROPOSED: True or False, by sate, stage, level, and year) Alternative (ys.proposed: proposed:0-4, by state and year).
-
-#IV(1): Variable captruing if a single party ruled that state before redisrticting took place. We use two different time periods (2000-2013 and 2000-2017) based on the data grule.df (ys.proposed: CONTROL:singlecontrol,primary,"NONE"). 
-
-#IV(2) Variable capturing which party was ruling the state the year redistricting took place (grule.df: party ruling by state in 2013 and 2017)
-
-#IV(3) Variable capturing the relative presence/dominance of parties at the state level, based on the number of times they have ruled in the 2000-2013 and the 2000-2017 period (Priamry, Secondary, or Terciary Force). In case of tie, rank first the latest party to rule that state. 
-
-#IV(4): Variable captruing the degree of alternation in power (six categories from a non-competitive  to multiparty comptetion and alternation has taken place 3+ times, for the 00-13 and 00-17 periods): 1) states dominated by a single party; 2) Alternation took place once (only two parties); 3) Alternation has taken place twice (with only two parties); 4) Alternation has taken place twice (with more than 3 parties); 5) Altrernation has taken place three times (involving 2 parties) 6) Altrernation has taken place three times (involving 3+ parties).--> **Need to create this variable --> Proposed Name: ALTERNATION**
-
-  Objective:
-# Evaluate the incentives parties to formulate counterproposals (decision to enter the process/to play the game) based on the Ruling Party hypotheis. --> We suspect that 1) parties ruling a state are more likely to engage in the process, 2) that parties competing for power in that state (secondary or terciary forces) will be more likely to engage than smaller parties, 3) that parties ruling a state under single party dominannce are more likely to formulate a counterproposal than those that are experience a higher degree of ALTERNATION/MULTIPARTY COMPETITION.  
-
-  Descriptive Anslysis
-  
-#Visualization-->  1) Tables/graphs summarizing the total number of proposals made by each party during the 2013 and 2017 processes, by stage (firs vs second round), and at the local and national level. 2) Tables/graphs summarizing the total number of proposals made by each party at the state level; at the stage and year level--> Parties(actor) for 2013: "PAN PRI PRD PT PVEM MC PNA" Parties for 2017: "PAN PRI PRD PT PVEM MC PNA MORENA ES"
-
-  
-  Propositions/Questions realted to H1 to be Evaluated (Code developed by RA)
-
-#H.1.1 The ruling party is more likely to participate in redistricting (formulate a counterproposal) than all other opposition parties. 
-
-#H.1.2  Parties competing for power in that state (secondary or terciary forces) will be more likely to engage than smaller parties. 
-
-#H.1.3 Parties ruling a state under single party dominance are more likely to participate in redistricting (formulate a counterproposal) than all other opposition parties.
-
-
-
-Visualization/Summary Statistics by Party Type
-```{r}
-```
-
-
-Generate Variables of Interest and Comprehensive Data Frames
 ```{r}
 #Code generating needed variables
 ys.proposed <- propfull.df %>% group_by(actor,edon,year) %>% summarise(numproposals=sum(PROPOSED,na.rm=TRUE))
 #output <- propstrue(proposals.df)
-ys.control<- grule.df %>%  controlByWindow(2000,2013)%>%  mutate (edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
+ys.control <- grule.df %>%  controlByWindow(2000,2013)%>%  mutate (edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
 ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% mutate(edon=edon, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
 ys.proposed %<>% left_join(ys.control)
 rm(ys.control)
+ys.proposed %<>% rowwise() %>% mutate(didPropose=(numproposals>0),didControl=(actor==control))
+ys.proposed %<>% rowwise() %>% mutate(year_2017 = ifelse(year == 2017, 1, 0))
+ys.proposed %<>% rowwise() %>% mutate(ruleparty = tail(partylist,1)) 
+ys.proposed %<>% rowwise() %>% mutate(didRule=(actor==ruleparty))
+ys.proposed %<>% rowwise() %>% mutate(didWinever=(actor %in% partylist))
+
 ys.proposed %>% ggplot(aes(control,numproposals))+geom_boxplot()+facet_grid(rows=vars(year))
 ```
+Strategic Position Categorization
 
+A party in a "strong" position political position in the state, then they are more likely to propose than a party with a less "strong" position.
+
+The decision is a function of several variables such as: party controls the state during the redistricting year, if the party has been the sole ruler over from 1990-2013/17, and if they have ruled a majority of that timer period, if they have ruled at least once during that time period. 
+
+The variables used in the decision tree embody levels of competition in each state. A state controlled by a single party during the period has low levels of political competition, for example. A state with a party which has not won a majority of elections but has won at least once has some degree of power in a competitive state (there are at least two parties competing), as another example. The former has a better "strategic position" than the latter. 
+
+The "Strategic Positions" are defined as follows:
+1. Party a) Controls during redistricting year b) has controlled state in all previous observed periods
+
+2. Party a) Controls during redistricting year b) has NOT controlled state in all previously observed periods
+
+3. Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won a MAJORITY of previous elections in observed time period
+
+4. Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won a MINORITY of previous elections in observed time period
+
+5.  Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won NONE of the previous elections during the time period
+
+6. Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won NONE of the previous elections during the time period d) another party has won ALL previous elections
+```{r}
+
+ys.proposed %<>% rowwise() %>% mutate(
+    StratPos = case_when(
+      didControl == TRUE     ~ 1, # in sole control entire period
+      didRule == TRUE        ~ 2, # NOT in sole control, but won last election
+      actor == primary       ~ 3, # NOT win last election, but won most elections
+      didWinever == TRUE     ~ 4, # NOT won most, but won at least one
+      singlecontrol == FALSE ~ 5, # NOT won ever,  but single party does not control
+      TRUE ~ 6 # Out party in noncompetitive state  - different party always in control
+    )
+  )
+
+
+
+
+table(ys.proposed$StratPos)
+check.df <- ys.proposed %>% filter(StratPos == 6)
+table(check.df$edon)
+#Check the categories
+#Exhaustive and mutually exclusive, like we want.
+
+#check pattern of proposal entry
+ ys.proposed %>% xtabs(~StratPos+didPropose,.)
+ 
+ #example of ordinal model only, seems to have numerical problems
+  ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
+
+
+```
   #H.1.1.1.a 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in that same state --> Requires  a dummy capturing if the state had single party dominance (single_pty_dom_00_17:True) --> In those states where the condition is met --> the ruling party is more likely to formulate a counterporposal than each opposition party in that same state. 
 
@@ -208,7 +184,7 @@ ys.proposed %>% ggplot(aes(control,numproposals))+geom_boxplot()+facet_grid(rows
 #ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% transmute(edon=edon, year=2017,                              singlecontrolparty=if_else(singlecontrol,primary,"NONE")))
 #ys.proposed %<>% left_join(ys.control)
 #rm(ys.control)
-ys.proposed %<>% rowwise() %>% mutate(didPropose=(numproposals>0),didControl=(actor==control))
+
 require(broom)
 require(GGally)
 tabfit <- ys.proposed %>% xtabs(~didPropose+didControl+year,data=.)
@@ -226,7 +202,7 @@ Variables relate to the "competitiveness" of the state (i.e. more alternation = 
 ```{r}
 ### Managing the dataset ###
 #Year into factors
-ys.proposed <- ys.proposed %>% mutate(year_2017 = ifelse(year == 2017, 1, 0))
+#ys.proposed <- ys.proposed %>% mutate(year_2017 = ifelse(year == 2017, 1, 0))
 
 #Making the alternation data frame and joining it with ys.proposed
 #alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
