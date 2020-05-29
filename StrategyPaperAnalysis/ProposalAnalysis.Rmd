@@ -170,7 +170,7 @@ table(check.df$edon)
  ys.proposed %>% xtabs(~StratPos+didPropose,.)
  
  #example of ordinal model only, seems to have numerical problems
-  ys.proposed %>% clmm(as.factor(didPropose)~as.factor(StratPos)+(1|actor),.)
+  ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
 
 
 ```
