@@ -37,7 +37,6 @@ require(rlang)
 require(tidylog)
 require(car)
 require(lmtest)
-require(car)
 require(ordinal)
 ```
 # Build Database
@@ -203,46 +202,35 @@ Variables relate to the "competitiveness" of the state (i.e. more alternation = 
 
 # NEEDS TO BE REWORKED for ys.proposed as df
 
-```
+
 
 Some visualizations
 ```{r}
-prop.H1.df %>% ggplot(aes(StratPos)) + geom_histogram() +facet_wrap(~year)
-prop.H1.df %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~govlevel)
-#Now break it down by year
-prop.H1.df %>% ggplot(aes(actor)) + geom_bar() + facet_wrap(~year)
+ys.proposed %>% ggplot(aes(StratPos)) + geom_histogram() +facet_wrap(~year)
+ys.proposed %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~actor)
+ys.proposed %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~partytype)
 ```
 
 Models
+Decision Tree
 ```{r}
 #Build a train/test sets
-prop.H1.df <- prop.H1.df %>% mutate(id = row_number())
-train <- prop.H1.df %>% sample_frac(.70)
-test <- anti_join(prop.H1.df, train, by="id")
-test <- as.data.frame(test)
+train_index <- sample(1:nrow(ys.proposed), 0.7*nrow(ys.proposed))
+test_index <- setdiff(1:nrow(ys.proposed), train_index)
 
+train <- 
+```
+
+Logistic Models
+```{r}
 #1. Logistic
-Mod.1 <- train %>% glm(PROPOSED ~ as.factor(StratPos), data=., family = binomial)
-Mod.1.pred <- predict(Mod.1, test)
-Mod.2 <- prop.H1.df %>% glm(PROPOSED ~  as.factor(StratPos)*as.factor(year), data=., family = binomial)
-Mod.3 <- prop.H1.df %>% glm(PROPOSED ~ as.factor(StratPos) +  as.factor(govlevel)*as.factor(year), data=., family = binomial)
+Mod.1 <- ys.proposed %>% glm(didPropose ~ as.factor(StratPos), data=., family = binomial)
+Mod.2 <- ys.proposed %>% glm(didPropose ~  as.ordered(partytype), data=., family = binomial)
 
 lrtest(Mod.2, Mod.1)
-lrtest(Mod.3, Mod.1)
-lrtest(Mod.3, Mod.2)
-
-vif(Mod.3)
 
 summary(Mod.1)
 summary(Mod.2)
-summary(Mod.3)
-
-length(Mod.1$fitted.values)
-length(prop.H1.df$PROPOSED)
-table(prop.H1.df$PROPOSED)
-
-t <- table(Mod.1.pred, test$PROPOSED)
-t
 ```
 
 
