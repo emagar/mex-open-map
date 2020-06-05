@@ -169,7 +169,7 @@ table(check.df$edon)
 #Exhaustive and mutually exclusive, like we want.
 
 #check pattern of proposal entry
-xtab.result <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% xtabs(~partytype+StratPos+didPropose,.,drop.unused.levels = TRUE)
+xtab.result <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% xtabs(~partytype+year+didPropose+StratPos,.,drop.unused.levels = TRUE)
 ftable(xtab.result)
                    
 #but we really want 
@@ -207,8 +207,15 @@ Variables relate to the "competitiveness" of the state (i.e. more alternation = 
 Some visualizations
 ```{r}
 ys.proposed %>% ggplot(aes(StratPos)) + geom_histogram() +facet_wrap(~year)
-ys.proposed %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~actor)
-ys.proposed %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~partytype)
+
+ys.proposed %>% filter(partytype == "major" | partytype == "minor" & year == 2013) %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~actor)
+ys.proposed %>% filter(partytype == "major" | partytype == "minor" & year == 2017) %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~actor)
+
+ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos)) + geom_histogram() + facet_wrap(~partytype)
+
+ys.proposed %>% ggplot(aes(didPropose)) + geom_bar()
+ys.proposed %>% ggplot(aes(didPropose)) + geom_bar() + facet_wrap(~partytype)
+ys.proposed %>% ggplot(aes(didPropose)) + geom_bar() + facet_wrap(~StratPos)
 ```
 
 Models
@@ -225,7 +232,7 @@ Logistic Models
 ```{r}
 #1. Logistic
 Mod.1 <- ys.proposed %>% glm(didPropose ~ as.factor(StratPos), data=., family = binomial)
-Mod.2 <- ys.proposed %>% glm(didPropose ~  as.ordered(partytype), data=., family = binomial)
+Mod.2 <- ys.proposed %>% glm(didPropose ~  as.factor(partytype), data=., family = binomial)
 
 lrtest(Mod.2, Mod.1)
 
@@ -233,32 +240,9 @@ summary(Mod.1)
 summary(Mod.2)
 ```
 
-
+Rare Events Model
 ```{r}
-#Data exploration
-tabfit <- ys.proposed %>% xtabs(~didPropose+didControl,data=.)
-print(tabfit)
-ftable(tabfit)
 
-#Logistic Model: Controlling for year
-
-glm.mod <- glm(didPropose~didControl+year_2017, data=ys.proposed, family = binomial())
-summary(glm.mod)
-
-#Test the difference between coefficients.
-library(car)
-exp(coef(glm.mod))
-
-#Explaination
-
-#Logistic Model: Interaction, year and didControl
-
-glm.mod.inter <- ys.proposed %>% glm(didPropose~didControl+year_2017+didControl*year_2017, data = ., family = binomial())
-summary(glm.mod.inter)
-
-#The interaction term is not significant by any means. A logistic model may not be the best regression model to descibe the data. This can also be seen by looking at the cross-tabs -- the data is unbalanced. 
-
-summary(ys.proposed)
 
 library(Zelig)
 re.mod.1 <- ys.proposed %>% zelig(didPropose~didControl+year_2017, data = .,model = "relogit", tau = 29/649, case.control = "prior", bias.correct = FALSE)
@@ -294,61 +278,6 @@ summary(glm.mod.b.2.b)
 
 ```
 
-```{r}
-#Data exploration
-tabfit <- ys.proposed %>% xtabs(~didPropose+didControl,data=.)
-print(tabfit)
-ftable(tabfit)
-
-#Logistic Model: Controlling for year
-
-glm.mod <- glm(didPropose~didControl+year_2017, data=ys.proposed, family = binomial())
-summary(glm.mod)
-
-#Explaination
-
-#Logistic Model: Interaction, year and didControl
-
-glm.mod.inter <- ys.proposed %>% glm(didPropose~didControl+year_2017+didControl*year_2017, data = ., family = binomial())
-summary(glm.mod.inter)
-
-#The interaction term is not significant by any means. A logistic model may not be the best regression model to descibe the data. This can also be seen by looking at the cross-tabs -- the data is unbalanced. 
-
-summary(ys.proposed)
-
-library(Zelig)
-re.mod.1 <- ys.proposed %>% zelig(didPropose~didControl+year_2017, data = .,model = "relogit", tau = 29/649, case.control = "prior", bias.correct = FALSE)
-summary(re.mod.1)
-
-#The RE model does not provide any further insight into the causal effects of being the party in control on proposing redistricting plans. The data is unbalanced -- this should have taken care of that issue. The data is also "small" which compounds that issue, but makes it harder to solve (tau, in the model, is still large for a RE model).
-
-#################################################################
-
-#Exploring the data
-tabfit.1 <- ys.proposed %>% xtabs(~numproposals+year,data=.)
-print(tabfit.1)
-ftable(tabfit.1)
-
-#Logistic Model : Proposal in first round (2013)
-glm.mod.b.1 <- glm(numproposals_1~didControl+year_2013, data=ys.proposed, family = binomial())
-summary(glm.mod.b.1)
-
-#Logistic Model:Proposal in second round (2013)
-glm.mod.b.2.a <- glm(numproposals_2~didControl+year_2013, data = ys.proposed, family = binomial())
-summary(glm.mod.b.2.a)
-
-glm.mod.b.2.b <- glm(numproposals_2~didControl+numproposals_1+year_2013, data = ys.proposed, family = binomial())
-summary(glm.mod.b.2.b)
-
-#
-
-#Logistic Model: Proposal in first round (2017)
-
-#Logistic Model: Proposal in second round (2017)
-
-######################################################################
-
-```
   #H.1.1.1.b 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in states that have expereinced alternation in power. --> Requires a categorical variable capturing if degree of ALTERNATION or simply if single_pty_dom_00_17:False. This hypothesis is evaluating if the ruling party is more likely to formulate a counterporposal in states where there is single party rule, than in states where alternation takes place. 
 #Method: Difference of means test: H1: mean of ENTRY for the Ruling Party in states with single party dominance > mean of ENTRY for the Ruling Party in states that have experienced alternation; H0: mean of ENTRY for the Ruling Party in states with single party dominance <= mean of ENTRY for the Ruling Party in states that have experienced alternation. 
