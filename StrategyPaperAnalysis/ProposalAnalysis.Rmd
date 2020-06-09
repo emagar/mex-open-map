@@ -38,6 +38,7 @@ require(tidylog)
 require(car)
 require(lmtest)
 require(ordinal)
+require(readxl)
 ```
 # Build Database
 ## Build proposal event database: propfull.df
@@ -74,6 +75,7 @@ table(parties.df$partytype)
 ## Bring in ruling party db, 
 ```{r}
 source("RulingParty_micah.R")
+
 ```
 #Transparency Analysis
 ##Invalidations
@@ -151,7 +153,7 @@ The "Strategic Positions" are defined as follows:
 ```{r}
 
 ys.proposed %<>% rowwise() %>% mutate(
-    StratPos = case_when(
+    PartyStratPos = case_when(
       didControl == TRUE     ~ 1, # in sole control entire period
       didRule == TRUE        ~ 2, # NOT in sole control, but won last election
       actor == primary       ~ 3, # NOT win last election, but won most elections
@@ -161,9 +163,29 @@ ys.proposed %<>% rowwise() %>% mutate(
     )
   )
 
-table(ys.proposed$StratPos)
-check.df <- ys.proposed %>% filter(StratPos == 6)
+
+table(ys.proposed$PartyStratPos)
+check.df <- ys.proposed %>% filter(PartyStratPos == 6)
 table(check.df$edon)
+
+
+# now compute for coalitions
+coalitions.df <- read_excel("Coaltion Data State Level 2010-2016 (Coalitions and Parties).xlsx")
+coalitions.df  %<>% rowwise()   %>% filter(grepl('-',actor)) %>% mutate(coalition=actor)  %>% separate_rows(actor,sep='-')
+
+
+
+coalitions.df %<>% left_join(select(ys.proposed,c("actor","edon","year","PartyStratPos"))) %>% group_by(edon,year,coalition) %>% mutate(CoalitionStratPos=min(PartyStratPos)) %>% select(-PartyStratPos)
+
+ys.proposed %<>% left_join(coalitions.df,by=c("actor","edon","year"))
+
+ys.proposed %<>% mutate(StratPos=if_else(is.na(CoalitionStratPos),PartyStratPos,CoalitionStratPos))
+
+
+
+
+
+
 
 #Check the categories
 #Exhaustive and mutually exclusive, like we want.
@@ -171,6 +193,7 @@ table(check.df$edon)
 #check pattern of proposal entry
 xtab.result <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% xtabs(~partytype+year+didPropose+StratPos,.,drop.unused.levels = TRUE)
 ftable(xtab.result)
+
                    
 #but we really want 
  
