@@ -222,10 +222,32 @@ Models
 Decision Tree
 ```{r}
 #Build a train/test sets
-train_index <- sample(1:nrow(ys.proposed), 0.7*nrow(ys.proposed))
-test_index <- setdiff(1:nrow(ys.proposed), train_index)
+index <- sample(1:nrow(ys.proposed))
+ys.proposed <- ys.proposed[index,]
 
-train <- 
+create_train_test <- function(data, size=0.7, train=TRUE){
+  nrow = nrow(data)
+  total_row = size*nrow
+  train_samp <- 1:total_row
+  if(train==TRUE){
+    return(data[train_samp,])
+  }else{
+    return(data[-train_samp,])
+  }
+}
+
+train <- create_train_test(ys.proposed, 0.7, train = TRUE)
+test <- create_train_test(ys.proposed, 0.7, train = FALSE)
+dim(train)
+dim(test)
+prop.table(table(train$didPropose))
+prop.table(table(test$didPropose))
+
+library(rpart)
+library(rpart.plot)
+
+DT.1 <- rpart(didPropose ~ actor, data = train, method = "class")
+rpart.plot(DT.1, extra=106)
 ```
 
 Logistic Models
