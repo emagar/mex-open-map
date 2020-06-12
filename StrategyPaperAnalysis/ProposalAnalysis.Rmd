@@ -1,6 +1,10 @@
 ---
 title: "Proposal Analysis"
-output: html_notebook
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -276,7 +280,7 @@ rpart.plot(DT.1, extra=106)
 Logistic Models
 ```{r}
 #1. Logistic
-Mod.1 <- ys.proposed %>% glm(didPropose ~ as.factor(StratPos), data=., family = binomial)
+Mod.1 <- ys.proposed %>% filter(partytype == "major") %>% glm(didPropose ~ as.factor(StratPos), data=., family = binomial)
 Mod.2 <- ys.proposed %>% glm(didPropose ~  as.factor(partytype), data=., family = binomial)
 
 lrtest(Mod.2, Mod.1)
@@ -287,39 +291,19 @@ summary(Mod.2)
 
 Rare Events Model
 ```{r}
-
+xtabs(~ys.proposed$didPropose)
 
 library(Zelig)
-re.mod.1 <- ys.proposed %>% zelig(didPropose~didControl+year_2017, data = .,model = "relogit", tau = 29/649, case.control = "prior", bias.correct = FALSE)
+re.mod.1 <- ys.proposed %>% zelig(didPropose ~ as.ordered(StratPos), data = .,model = "relogit", tau = 650/748, case.control = "weighting", bias.correct = TRUE)
 summary(re.mod.1)
 
+ys.proposed.1 <- ys.proposed %>% filter(partytype == "major")
+xtabs(~ys.proposed.1$didPropose)
+
+re.mod.2 <- ys.proposed.1 %>% zelig(didPropose ~ as.ordered(StratPos), data = .,model = "relogit", tau = 6/197, case.control = "weighting", bias.correct = TRUE)
+summary(re.mod.2)
+
 #The RE model does not provide any further insight into the causal effects of being the party in control on proposing redistricting plans. The data is unbalanced -- this should have taken care of that issue. The data is also "small" which compounds that issue, but makes it harder to solve (tau, in the model, is still large for a RE model).
-
-#################################################################
-
-#Exploring the data
-tabfit.1 <- ys.proposed %>% xtabs(~numproposals+year,data=.)
-print(tabfit.1)
-ftable(tabfit.1)
-
-#Logistic Model : Proposal in first round (2013)
-glm.mod.b.1 <- glm(numproposals_1~didControl+year_2013, data=ys.proposed, family = binomial())
-summary(glm.mod.b.1)
-
-#Logistic Model:Proposal in second round (2013)
-glm.mod.b.2.a <- glm(numproposals_2~didControl+year_2013, data = ys.proposed, family = binomial())
-summary(glm.mod.b.2.a)
-
-glm.mod.b.2.b <- glm(numproposals_2~didControl+numproposals_1+year_2013, data = ys.proposed, family = binomial())
-summary(glm.mod.b.2.b)
-
-#
-
-#Logistic Model: Proposal in first round (2017)
-
-#Logistic Model: Proposal in second round (2017)
-
-######################################################################
 
 ```
 
@@ -374,31 +358,98 @@ summary(alt.lm.1)
 
 #1.1.1.4 Ruling parties in states with the highest level of alternation in power, are more likely to participte in redistricting (formulate a counterproposal), than all other opposition parties.
 
-
 //////////////////////////////////////////////////////////////////////////////////////////
-H1.2: Strategic Decision (Party deciides how to play the game based on the Ruling Party at the state level) --> Decision of a political party to participate in redistricting based on degree of alternatioin at the state level.  
+H1.2: Strategic Decision (Party deciides how to play the game based on the Ruling Party at the state level) --> Decision of a political party to participate in redistricting based on degree of alternatioin at the state level.
 //////////////////////////////////////////////////////////////////////////////////////////
 
 Hypotheses (stage --> First vs Second Round):
  
-#H.1.2.1.1 Parties are more likely to participate in redistricting (formulate a counterproposal) during the first round. 
+#H.1.2.1 Parties are more likely to participate in redistricting (formulate a counterproposal) during the first round. --> 
 
-#H.1.2.1.2 Parties ruling a state under single party dominance, are more likely to participate in redistricting (formulate a counterproposal) during the first round, than all other opposition parties. 
+#THEORY:The theory behind this hypothesis is that, ceteris paribus, is that parties are more likely to play the game (propose) during the first stage becasue of the first mover advantage (if your counter proposal is selected in the first round it becomes the departing point for the second round) --> We assume that the margin of change from the first to the second scenario is larger than the margin of change between the second and third scenario (this assumption can be tested with Cox and Katz's difference similarity index). 
 
+#DIAGNOSTICS: a) Breakdown of proposals made in the first vs second stage in 2013 and 2014; b) Breakdown of proposals made in the first vs second stage by party in 2013 and 2014; and c) Breakdown of proposals made in the first vs second stage by state in 2013 and 2014; b) Breakdown of proposals made in the first vs second stage by party and state in 2013 and 2014. 
 
-#H.1.2.1.3 Parties that are secondary or terciary forces at the state level, are more likely to participate in redistricting (formulate a counterproposal) during the first round, than all other opposition parties.
+#H.1.2.2 Parties ruling a state under single party dominance, are more likely to participate in redistricting (formulate a counterproposal) during the first round, than all other opposition parties. 
 
-#1.2.1.4 As alternation in power/competition increases at the state level, the number of counterporposals in the second stage will be higher compared to states dominated by a single party.
+#THEORY:The theory behind this hypothesis is that, ceteris paribus, dominant parties have more vested interests and will be more likely to engage in the first state than smaller and non-competitive parties. 
 
-Hypotheses (level --> CLV vs Federal):
+#DIAGNOSTICS: a) Breakdown of proposals made in the first vs second stage in 2013 and 2014 controling for strategic position and major vs minor parties;
 
-#H.1.2.2.1 As alternation in power/competition increases at the state level, parties are more likely to formulate a counterproposal at the local level (CLV)
+#H.1.2.3 Parties that are secondary or terciary forces at the state level, are more likely to participate in redistricting (formulate a counterproposal) during the first round, than smaller opposition parties.
+
+#THEORY: The theory behind this hypothesis is that, ceteris paribus, parties that are competing for power are more likely to engage in the first state than smaller and non-competitive parties. 
+
+#DIAGNOSTICS: a) Breakdown of proposals made in the first vs second stage in 2013 and 2014 controling for strategic position and major vs minor parties;
+
+#1.2.4 As alternation in power/competition increases at the state level, the number of counterporposals in the second stage will be higher compared to states dominated by a single party.
+
+#THEORY:The theory behind this hypothesis is that, ceteris paribus, as competition increases, parties that are competing for power are more likely to engage in the process in the second stage. 
+
+#DIAGNOSTICS: a) Breakdown of proposals made in the first vs second stage in 2013 and 2014 controling for strategic position and major vs minor parties;
+
+Hypotheses (level --> CLV (Local) vs CNV(National):
+
+#H.1.2.5 (centralization/coordination hypothesis) We would expect the CNV to have the upper hand and formulate more proposals in both processes. 
+
+#THEORY:Despite parties can engage both at the local and national level, the redistricting process and the TC session in the main headquarters, which is where the CNV is based. Furthermore, the CNV has a more direct connection with the parties' headquarters in Mexico City (CEN). 
+
+#DIAGNOSTICS: a) Breakdown of proposals mad in the CNV and CLV. 
+
+#H.1.2.6 (Novelty/Learning to play the game) We expect more proposals by the CNV in 2013 than in 2017. 
+
+#THEORY: We expect that given that online interaction was new in 2013, the CNV would be more proactive that year. 
+#DIAGNOSTICS: a) Breakdown of proposals mad in the CNV and CLV in 2013 and 2017. 
+
+#H.1.2.7 As alternation in power/competition increases at the state level, parties are more likely to formulate a counterproposal at the local level (CLV)
+
+#THEORY:The theory behind this hypothesis is that  the national headquarters of a party (CNV) are going to be more interested in engaging in those state where the party has a stronghold or is competitive. As competition increases across states, we expect to see smaller parties engaging more at the local level (CLV)
+
+#DIAGNOSTICS: a) Breakdown of proposals made in the CNV vs CLV in 2013 and 2014 controling for strategic position and major vs minor parties;
 
 Hypotheses (Process --> 2013 vs 2017):
 
-#H.1.2.3.1 Parties are more likely to formulate a counterproposal at the local level (CLV) in 2017 than in 2013. 
+#H.1.2.8 We expect to observe more proposals in 2013 than in 2017
 
+#THEORY: Parties are more likely to formulate a counterproposal in because the two levels were more proactive 2013, less precise, and the algorithm was less efficent (allowed greater margin of change). 
 
+#DIAGNOSTICS: a) Breakdown of proposals made in 2013 and 2014
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H3: Coalitions
+//////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////
+H3.1: Coaltions (Stong and Succesful Coaltion)--> Comparing interaction based on the desission to build state level coalitions.  
+//////////////////////////////////////////////////////////////////////////////////////////
+Hypothesis
+#3.1.1 Smaller Parties (not PRI, PAN or PRD) are more likely to engage if they are running in a coalition than if they are competing alone.  
+
+#THEORY: Smaller parties have more at stake when they are running with a larger party. 
+
+#DIAGNOSTICS: a) Breakdown of proposals mad by smaller parties in coalition and smaller parties racing alone. 
+
+#3.1.2 Larger Parties (PRI, PAN or PRD) not ruling the state are more likely to engage in the process via a coaliton.  
+
+#THEORY: Larger parties will try to engage the process by making a coalition with smaller parties.  
+
+#DIAGNOSTICS: a) Breakdown of proposals made by non-rulling larger parties in coalition vs non-rulling larger parties racing alone in 2013 and 2017.
+
+Variables
+#DV: Dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
+#IV(1): Dummy variable captruing if a party competed under a coalition before redisrticting took place. 
+
+#3.1.3 (Extension and competitiveness) #Smaller parties (not PRI, PAN or PRD) that have a strong and successful coalition with a larger party, are more likely  to formulate a similar counter proposal to its larger coalition mate than smaller parties that competed separately.  
+
+#THEORY: As the coalitions extension and stength increases, parties in the coalition are more likely to engage. 
+
+#DIAGNOSTICS: a) Breakdown of proposals made by parties proposing in coalition based on the level of high extension and competitivness(DUMMY WHERE E>.5 AND C>.5 = 1, Otherwise 0). 
+
+#3.1.3 (Check Matching Proposals): If parties are run in coalition, we expect that they will have matching scores in proposals. 
+
+#THEORY Parties competing together in a coalition should formulate the same plan. 
+
+#DIAGNOSTICS: a) Breakdown of proposals matching scores when parties ran in coalition (create a dummy)
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
