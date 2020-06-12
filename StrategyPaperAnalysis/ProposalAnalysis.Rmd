@@ -276,7 +276,7 @@ rpart.plot(DT.1, extra=106)
 Logistic Models
 ```{r}
 #1. Logistic
-Mod.1 <- ys.proposed %>% glm(didPropose ~ as.factor(StratPos), data=., family = binomial)
+Mod.1 <- ys.proposed %>% filter(partytype == "major") %>% glm(didPropose ~ as.factor(StratPos), data=., family = binomial)
 Mod.2 <- ys.proposed %>% glm(didPropose ~  as.factor(partytype), data=., family = binomial)
 
 lrtest(Mod.2, Mod.1)
@@ -287,39 +287,19 @@ summary(Mod.2)
 
 Rare Events Model
 ```{r}
-
+xtabs(~ys.proposed$didPropose)
 
 library(Zelig)
-re.mod.1 <- ys.proposed %>% zelig(didPropose~didControl+year_2017, data = .,model = "relogit", tau = 29/649, case.control = "prior", bias.correct = FALSE)
+re.mod.1 <- ys.proposed %>% zelig(didPropose ~ as.ordered(StratPos), data = .,model = "relogit", tau = 650/748, case.control = "weighting", bias.correct = TRUE)
 summary(re.mod.1)
 
+ys.proposed.1 <- ys.proposed %>% filter(partytype == "major")
+xtabs(~ys.proposed.1$didPropose)
+
+re.mod.2 <- ys.proposed.1 %>% zelig(didPropose ~ as.ordered(StratPos), data = .,model = "relogit", tau = 6/197, case.control = "weighting", bias.correct = TRUE)
+summary(re.mod.2)
+
 #The RE model does not provide any further insight into the causal effects of being the party in control on proposing redistricting plans. The data is unbalanced -- this should have taken care of that issue. The data is also "small" which compounds that issue, but makes it harder to solve (tau, in the model, is still large for a RE model).
-
-#################################################################
-
-#Exploring the data
-tabfit.1 <- ys.proposed %>% xtabs(~numproposals+year,data=.)
-print(tabfit.1)
-ftable(tabfit.1)
-
-#Logistic Model : Proposal in first round (2013)
-glm.mod.b.1 <- glm(numproposals_1~didControl+year_2013, data=ys.proposed, family = binomial())
-summary(glm.mod.b.1)
-
-#Logistic Model:Proposal in second round (2013)
-glm.mod.b.2.a <- glm(numproposals_2~didControl+year_2013, data = ys.proposed, family = binomial())
-summary(glm.mod.b.2.a)
-
-glm.mod.b.2.b <- glm(numproposals_2~didControl+numproposals_1+year_2013, data = ys.proposed, family = binomial())
-summary(glm.mod.b.2.b)
-
-#
-
-#Logistic Model: Proposal in first round (2017)
-
-#Logistic Model: Proposal in second round (2017)
-
-######################################################################
 
 ```
 
