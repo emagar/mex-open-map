@@ -39,6 +39,7 @@ require(car)
 require(lmtest)
 require(ordinal)
 require(readxl)
+require(ggcharts)
 ```
 # Build Database
 ## Build proposal event database: propfull.df
