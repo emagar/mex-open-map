@@ -1,10 +1,10 @@
 ---
 title: "Proposal Analysis"
 output:
-  html_notebook: default
+  pdf_document: default
   html_document:
     df_print: paged
-  pdf_document: default
+  html_notebook: default
 ---
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,6 +205,9 @@ ftable(xtab.result)
 model.results <- ys.proposed %>% filter(partytype=="major") %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
 summary(model.results)
 
+
+
+
 ```
   #H.1.1.1.a 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in that same state --> Requires  a dummy capturing if the state had single party dominance (single_pty_dom_00_17:True) --> In those states where the condition is met --> the ruling party is more likely to formulate a counterporposal than each opposition party in that same state. 
@@ -283,8 +286,6 @@ Logistic Models
 Mod.1 <- ys.proposed %>% filter(partytype == "major") %>% glm(didPropose ~ as.factor(StratPos), data=., family = binomial)
 Mod.2 <- ys.proposed %>% glm(didPropose ~  as.factor(partytype), data=., family = binomial)
 
-lrtest(Mod.2, Mod.1)
-
 summary(Mod.1)
 summary(Mod.2)
 ```
@@ -310,51 +311,13 @@ summary(re.mod.2)
   #H.1.1.1.b 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in states that have expereinced alternation in power. --> Requires a categorical variable capturing if degree of ALTERNATION or simply if single_pty_dom_00_17:False. This hypothesis is evaluating if the ruling party is more likely to formulate a counterporposal in states where there is single party rule, than in states where alternation takes place. 
 #Method: Difference of means test: H1: mean of ENTRY for the Ruling Party in states with single party dominance > mean of ENTRY for the Ruling Party in states that have experienced alternation; H0: mean of ENTRY for the Ruling Party in states with single party dominance <= mean of ENTRY for the Ruling Party in states that have experienced alternation. 
-<<<<<<< HEAD
-=======
-
-
-
-#With year splits
-glm.mod.h.1.1.b.13 <- ys.proposed.13 %>% glm(didPropose~singlecontrolparty, data=., family=binomial())
-summary(glm.mod.h.1.1.b.13)
-
-glm.mod.h.1.1.b.17 <- ys.proposed.13 %>% glm(didPropose~singlecontrolparty, data=., family=binomial())
-summary(glm.mod.h.1.1.b.17)
-
-#The intercept in there models captures the effect of "NONE" or, the effect of having no single party control in that year based on at least a single alternation from the record of prior years.
-
-#Build models with degree of alternation. 
-
 
 #H.1.1.2 Parties that are secondary or terciary forces at the state level, are more likely to participte in redistricting (formulate a counterproposal), than all other opposition parties. 
-
-```{r} 
-#Variables that captures the degree of alternation
-alternation.df <- grule.df %>% controlByWindow(1990,2013) %>% mutate(year=2013)
-alternation.df %<>% bind_rows(grule.df %>% controlByWindow(1990,2017)%>%mutate(year=2017))
-ys.proposed %<>% left_join(alternation.df)
-```
 
 #H.1.1.3 As alternation in power/ competition increases at the state level, we expect to observe a higher number of counterporposals.
   #H.1.1.3.a number of proposals by single party control.
   
-```{r}
-lm.mod.h.1.1.3.a <- ys.proposed %>% lm(numproposals~singlecontrolparty+year, data=.)
-summary(lm.mod.h.1.1.3.a)
-
-#Single party control is not significant in any of the meansures for parties that maintain a level of consistent control. Need to build out a variable that explains the degree to alternation in a state.
-```
   #H.1.1.3.b number of proposals by degree of alternation
-```{r}
-#Using the degree of alternation to predict likelihood of proposal (didPropose).
-alt.glm.1 <- ys.proposed %>% glm(didPropose~naltpower+percentsingle, data=., family=binomial())
-summary(alt.glm.1)
-
-#Using degree of alternation to predict the number of proposals
-alt.lm.1 <- ys.proposed %>% lm(numproposals~naltpower+percentsingle, data = .,)
-summary(alt.lm.1)
-```
 
 #1.1.1.4 Ruling parties in states with the highest level of alternation in power, are more likely to participte in redistricting (formulate a counterproposal), than all other opposition parties.
 
