@@ -186,11 +186,6 @@ ys.proposed %<>% left_join(coalitions.df,by=c("actor","edon","year"))
 ys.proposed %<>% mutate(StratPos=if_else(is.na(CoalitionStratPos),PartyStratPos,CoalitionStratPos))
 
 
-
-
-
-
-
 #Check the categories
 #Exhaustive and mutually exclusive, like we want.
 
@@ -201,13 +196,15 @@ ftable(xtab.result)
                    
 #but we really want 
  
+#CLM model first
+clm.mod <- ys.proposed %>% filter(partytype=="major") %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
+summary(clm.mod)
+
 #example of ordinal model only, seems to have numerical problems
 model.results <- ys.proposed %>% filter(partytype=="major") %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
 summary(model.results)
 
-
-
-
+#Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
 ```
   #H.1.1.1.a 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in that same state --> Requires  a dummy capturing if the state had single party dominance (single_pty_dom_00_17:True) --> In those states where the condition is met --> the ruling party is more likely to formulate a counterporposal than each opposition party in that same state. 
@@ -278,6 +275,7 @@ library(rpart.plot)
 
 DT.1 <- rpart(didPropose ~ actor, data = train, method = "class")
 rpart.plot(DT.1, extra=106)
+#Its clear that since the data is unbalanced, strategic categorization is unable to beat a theoretic random draw. Rare events and/or ordinal logistic models may better reflect the actual process which we are trying to explain.
 ```
 
 Logistic Models
