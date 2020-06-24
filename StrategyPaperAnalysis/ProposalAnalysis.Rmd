@@ -331,17 +331,23 @@ Hypotheses (stage --> First vs Second Round):
 
 #DIAGNOSTICS: a) Breakdown of proposals made in the first vs second stage in 2013 and 2014; b) Breakdown of proposals made in the first vs second stage by party in 2013 and 2014; and c) Breakdown of proposals made in the first vs second stage by state in 2013 and 2014; b) Breakdown of proposals made in the first vs second stage by party and state in 2013 and 2014. 
 
+=====
+
 #H.1.2.2 Parties ruling a state under single party dominance, are more likely to participate in redistricting (formulate a counterproposal) during the first round, than all other opposition parties. 
 
 #THEORY:The theory behind this hypothesis is that, ceteris paribus, dominant parties have more vested interests and will be more likely to engage in the first state than smaller and non-competitive parties. 
 
 #DIAGNOSTICS: a) Breakdown of proposals made in the first vs second stage in 2013 and 2014 controling for strategic position and major vs minor parties;
 
+====
+
 #H.1.2.3 Parties that are secondary or terciary forces at the state level, are more likely to participate in redistricting (formulate a counterproposal) during the first round, than smaller opposition parties.
 
 #THEORY: The theory behind this hypothesis is that, ceteris paribus, parties that are competing for power are more likely to engage in the first state than smaller and non-competitive parties. 
 
 #DIAGNOSTICS: a) Breakdown of proposals made in the first vs second stage in 2013 and 2014 controling for strategic position and major vs minor parties;
+
+===
 
 #1.2.4 As alternation in power/competition increases at the state level, the number of counterporposals in the second stage will be higher compared to states dominated by a single party.
 
@@ -388,13 +394,13 @@ Hypothesis
 
 #THEORY: Smaller parties have more at stake when they are running with a larger party. 
 
-#DIAGNOSTICS: a) Breakdown of proposals mad by smaller parties in coalition and smaller parties racing alone. 
+#DIAGNOSTICS: a) Breakdown of proposals made by smaller parties in coalition and smaller parties racing alone. 
 
 #3.1.2 Larger Parties (PRI, PAN or PRD) not ruling the state are more likely to engage in the process via a coaliton.  
 
 #THEORY: Larger parties will try to engage the process by making a coalition with smaller parties.  
 
-#DIAGNOSTICS: a) Breakdown of proposals made by non-rulling larger parties in coalition vs non-rulling larger parties racing alone in 2013 and 2017.
+#DIAGNOSTICS: a) Breakdown of proposals made by non-ruling larger parties in coalition vs non-rulling larger parties racing alone in 2013 and 2017.
 
 Variables
 #DV: Dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
