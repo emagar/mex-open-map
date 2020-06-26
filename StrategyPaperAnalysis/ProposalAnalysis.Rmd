@@ -197,7 +197,7 @@ ftable(xtab.result)
 #but we really want 
  
 #CLM model first
-clm.mod <- ys.proposed %>% filter(partytype=="major") %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
+clm.mod <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
 summary(clm.mod)
 
 #example of ordinal model only, seems to have numerical problems
