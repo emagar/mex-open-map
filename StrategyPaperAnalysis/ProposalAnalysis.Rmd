@@ -43,6 +43,7 @@ require(car)
 require(lmtest)
 require(ordinal)
 require(readxl)
+require(tinytex)
 ```
 # Build Database
 ## Build proposal event database: propfull.df
@@ -305,6 +306,7 @@ summary(re.mod.2)
 #The RE model does not provide any further insight into the causal effects of being the party in control on proposing redistricting plans. The data is unbalanced -- this should have taken care of that issue. The data is also "small" which compounds that issue, but makes it harder to solve (tau, in the model, is still large for a RE model).
 
 ```
+
 
   #H.1.1.1.b 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in states that have expereinced alternation in power. --> Requires a categorical variable capturing if degree of ALTERNATION or simply if single_pty_dom_00_17:False. This hypothesis is evaluating if the ruling party is more likely to formulate a counterporposal in states where there is single party rule, than in states where alternation takes place. 
