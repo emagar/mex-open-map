@@ -399,7 +399,7 @@ Hypothesis
 Data Exploration
 ```{r}
 SP.df <- ys.proposed %>% filter(partytype == "minor") %>% mutate(incoalition = ifelse(extension > 0, 1, 0))
-SP.df %>% ggplot(aes(didPropose)) + geom_bar() +facet_wrap(~incoalition)
+SP.df %>% ggplot(aes(didPropose)) + geom_bar() +facet_grid(rows = vars(incoalition), cols = vars(year))
 SP.df %>% ggplot(aes(StratPos)) + geom_bar() +facet_wrap(~incoalition)
 SP.df %>% filter(incoalition == 1) %>% ggplot(aes(coalition)) + geom_bar() + theme(axis.text.x = element_text(angle = 90))
 ```
