@@ -197,11 +197,11 @@ ftable(xtab.result)
 #but we really want 
  
 #CLM model first
-clm.mod <- ys.proposed %>% filter(partytype=="major") %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
+clm.mod <- ys.proposed %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
 summary(clm.mod)
 
 #example of ordinal model only, seems to have numerical problems
-model.results <- ys.proposed %>% filter(partytype=="major") %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
+model.results <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
 summary(model.results)
 
 #Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
@@ -397,6 +397,7 @@ Hypothesis
 #DIAGNOSTICS: a) Breakdown of proposals made by smaller parties in coalition and smaller parties racing alone. 
 
 Data Exploration
+MINOR PARTIES
 ```{r}
 SP.df <- ys.proposed %>% filter(partytype == "minor") %>% mutate(incoalition = ifelse(extension > 0, 1, 0))
 SP.df %>% ggplot(aes(didPropose)) + geom_bar() +facet_grid(rows = vars(incoalition), cols = vars(year))
@@ -411,6 +412,7 @@ SP.df %>% filter(incoalition == 1) %>% ggplot(aes(coalition)) + geom_bar() + the
 
 #DIAGNOSTICS: a) Breakdown of proposals made by non-ruling larger parties in coalition vs non-rulling larger parties racing alone in 2013 and 2017.
 
+MAJOR PARTIES
 ```{r}
 LP.df <- ys.proposed %>% filter(partytype == "major" & singlecontrol == didControl) %>% mutate(incoalition = ifelse(extension > 0, 1, 0))
 LP.df %>% ggplot(aes(didPropose)) + geom_bar() +facet_grid(rows = vars(incoalition), cols = vars(year))
