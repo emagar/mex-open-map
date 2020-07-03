@@ -192,7 +192,7 @@ ys.proposed %<>% mutate(StratPos=if_else(is.na(CoalitionStratPos),PartyStratPos,
 xtab.result <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% xtabs(~partytype+year+didPropose+StratPos,.,drop.unused.levels = TRUE)
 ftable(xtab.result)
 
-#gt(ftable(xtab.result))
+gt(ftable(xtab.result))
 
  
 #CLM model first
