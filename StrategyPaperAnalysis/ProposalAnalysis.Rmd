@@ -186,22 +186,25 @@ ys.proposed %<>% left_join(coalitions.df,by=c("actor","edon","year"))
 ys.proposed %<>% mutate(StratPos=if_else(is.na(CoalitionStratPos),PartyStratPos,CoalitionStratPos))
 
 
-#Check the categories
-#Exhaustive and mutually exclusive, like we want.
+
 
 #check pattern of proposal entry
 xtab.result <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% xtabs(~partytype+year+didPropose+StratPos,.,drop.unused.levels = TRUE)
 ftable(xtab.result)
 
-                   
-#but we really want 
+gt(ftable(xtab.result))
+
  
 #CLM model first
+<<<<<<< HEAD
 clm.mod <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
+=======
+clm.mod <- ys.proposed %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
+>>>>>>> a1d9793ac355fba93ce6c6d1d5061a977bd648b6
 summary(clm.mod)
 
 #example of ordinal model only, seems to have numerical problems
-model.results <- ys.proposed %>% filter(partytype=="major") %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
+model.results <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
 summary(model.results)
 
 #Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
@@ -397,6 +400,7 @@ Hypothesis
 #DIAGNOSTICS: a) Breakdown of proposals made by smaller parties in coalition and smaller parties racing alone. 
 
 Data Exploration
+MINOR PARTIES
 ```{r}
 SP.df <- ys.proposed %>% filter(partytype == "minor") %>% mutate(incoalition = ifelse(extension > 0, 1, 0))
 SP.df %>% ggplot(aes(didPropose)) + geom_bar() +facet_grid(rows = vars(incoalition), cols = vars(year))
@@ -411,6 +415,7 @@ SP.df %>% filter(incoalition == 1) %>% ggplot(aes(coalition)) + geom_bar() + the
 
 #DIAGNOSTICS: a) Breakdown of proposals made by non-ruling larger parties in coalition vs non-rulling larger parties racing alone in 2013 and 2017.
 
+MAJOR PARTIES
 ```{r}
 LP.df <- ys.proposed %>% filter(partytype == "major" & singlecontrol == didControl) %>% mutate(incoalition = ifelse(extension > 0, 1, 0))
 LP.df %>% ggplot(aes(didPropose)) + geom_bar() +facet_grid(rows = vars(incoalition), cols = vars(year))
@@ -430,7 +435,13 @@ Variables
 #3.1.3 (Check Matching Proposals): If parties are run in coalition, we expect that they will have matching scores in proposals. 
 
 #THEORY Parties competing together in a coalition should formulate the same plan. 
-
+Matching Process (Practice)
+```{r}
+matching.df.1 <- propfull.df %>% filter(year == 2013 & govlevel == "CNV" & Entidad == "Baja California" & SCORE > 0) %>% mutate(compSCORE = case_when(actor == "Algorithm" ~ SCORE))
+matching.df.1 %<>% fill(compSCORE)
+matching.df.1$samePlan <- 0
+matching.df.1[matching.df.1$SCORE == matching.df.1$compSCORE,]$samePlan <- 1
+```
 #DIAGNOSTICS: a) Breakdown of proposals matching scores when parties ran in coalition (create a dummy)
 
 
@@ -492,7 +503,7 @@ Hypothesis:
 or 
 
 #As alternation and multipartycompetition incease, more proposals will be formulated.
-
+ 
 Variables: 
 #DV: Total number of counterproposals formulated. Based on the dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
 
