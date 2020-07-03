@@ -186,15 +186,14 @@ ys.proposed %<>% left_join(coalitions.df,by=c("actor","edon","year"))
 ys.proposed %<>% mutate(StratPos=if_else(is.na(CoalitionStratPos),PartyStratPos,CoalitionStratPos))
 
 
-#Check the categories
-#Exhaustive and mutually exclusive, like we want.
+
 
 #check pattern of proposal entry
 xtab.result <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% xtabs(~partytype+year+didPropose+StratPos,.,drop.unused.levels = TRUE)
 ftable(xtab.result)
 
-                   
-#but we really want 
+gt(ftable(xtab.result))
+
  
 #CLM model first
 clm.mod <- ys.proposed %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
@@ -432,7 +431,13 @@ Variables
 #3.1.3 (Check Matching Proposals): If parties are run in coalition, we expect that they will have matching scores in proposals. 
 
 #THEORY Parties competing together in a coalition should formulate the same plan. 
-
+Matching Process (Practice)
+```{r}
+matching.df.1 <- propfull.df %>% filter(year == 2013 & govlevel == "CNV" & Entidad == "Baja California" & SCORE > 0) %>% mutate(compSCORE = case_when(actor == "Algorithm" ~ SCORE))
+matching.df.1 %<>% fill(compSCORE)
+matching.df.1$samePlan <- 0
+matching.df.1[matching.df.1$SCORE == matching.df.1$compSCORE,]$samePlan <- 1
+```
 #DIAGNOSTICS: a) Breakdown of proposals matching scores when parties ran in coalition (create a dummy)
 
 
