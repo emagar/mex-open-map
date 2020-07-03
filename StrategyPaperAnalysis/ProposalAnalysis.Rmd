@@ -494,7 +494,7 @@ Hypothesis:
 or 
 
 #As alternation and multipartycompetition incease, more proposals will be formulated.
-
+ 
 Variables: 
 #DV: Total number of counterproposals formulated. Based on the dummy variable capturing if party formulated a proposal (PROPOSED: True or False, by Sate, by round, by year).
 
