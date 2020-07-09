@@ -203,6 +203,9 @@ summary(clm.mod)
 model.results <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
 summary(model.results)
 
+#clmm2
+clmm2.mod <- clmm2(location = as.factor(didPropose)~ as.ordered(StratPos) + as.factor(year), random = as.factor(actor), data = ys.proposed, Hess = TRUE)
+summary(clmm2.mod)
 #Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
 ```
   #H.1.1.1.a 
@@ -227,8 +230,6 @@ Build Alternation Data Frame
 Variables relate to the "competitiveness" of the state (i.e. more alternation = higher levels of competition)
 
 # NEEDS TO BE REWORKED for ys.proposed as df
-
-
 
 Some visualizations
 ```{r}
@@ -289,20 +290,19 @@ summary(Mod.2)
 
 Rare Events Model
 ```{r}
-xtabs(~ys.proposed$didPropose)
+#xtabs(~ys.proposed$didPropose)
 
-library(Zelig)
-re.mod.1 <- ys.proposed %>% zelig(didPropose ~ as.ordered(StratPos), data = .,model = "relogit", tau = 650/748, case.control = "weighting", bias.correct = TRUE)
-summary(re.mod.1)
+#library(Zelig)
+#re.mod.1 <- ys.proposed %>% zelig(didPropose ~ as.ordered(StratPos), data = .,model = "relogit", tau = 650/748, case.control = "weighting", bias.correct = TRUE)
+#summary(re.mod.1)
 
-ys.proposed.1 <- ys.proposed %>% filter(partytype == "major")
-xtabs(~ys.proposed.1$didPropose)
+#ys.proposed.1 <- ys.proposed %>% filter(partytype == "major")
+#xtabs(~ys.proposed.1$didPropose)
 
-re.mod.2 <- ys.proposed.1 %>% zelig(didPropose ~ as.ordered(StratPos), data = .,model = "relogit", tau = 6/197, case.control = "weighting", bias.correct = TRUE)
-summary(re.mod.2)
+#re.mod.2 <- ys.proposed.1 %>% zelig(didPropose ~ as.ordered(StratPos), data = .,model = "relogit", tau = 6/197, case.control = "weighting", bias.correct = TRUE)
+#summary(re.mod.2)
 
 #The RE model does not provide any further insight into the causal effects of being the party in control on proposing redistricting plans. The data is unbalanced -- this should have taken care of that issue. The data is also "small" which compounds that issue, but makes it harder to solve (tau, in the model, is still large for a RE model).
-
 ```
 
   #H.1.1.1.b 
@@ -433,11 +433,18 @@ Variables
 #THEORY Parties competing together in a coalition should formulate the same plan. 
 Matching Process (Practice)
 ```{r}
-matching.df.1 <- propfull.df %>% filter(year == 2013 & govlevel == "CNV" & Entidad == "Baja California" & SCORE > 0) %>% mutate(compSCORE = case_when(actor == "Algorithm" ~ SCORE))
+matching.df <- propfull.df %>% left_join(coalitions.df, by=c("edon", "year", "actor"))
+
+matching.df.1 <- matching.df %>% filter(year == 2013 & govlevel == "CNV" & Entidad == "Baja California" & SCORE > 0) %>% mutate(compSCORE = case_when(coalition == "PAN-PRD-PNA" ~ SCORE))
 matching.df.1 %<>% fill(compSCORE)
 matching.df.1$samePlan <- 0
 matching.df.1[matching.df.1$SCORE == matching.df.1$compSCORE,]$samePlan <- 1
+
+#separate_rows() tidy function, creats row copies
+#group by state, year, coalition
+#Scores are all equal if propsoal score is equal for all members w/ same 
 ```
+
 #DIAGNOSTICS: a) Breakdown of proposals matching scores when parties ran in coalition (create a dummy)
 
 
