@@ -200,11 +200,18 @@ clm.mod <- ys.proposed %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data
 summary(clm.mod)
 
 #example of ordinal model only, seems to have numerical problems
-model.results <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),.)
+model.results <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+as.factor(year)+(1|actor),.)
 summary(model.results)
 
+#Odds Ratios
+exp(coef(model.results)[2])
+exp(coef(model.results)[3])
+exp(coef(model.results)[4])
+exp(coef(model.results)[5])
+exp(coef(model.results)[6])
+
 #clmm2
-clmm2.mod <- clmm2(location = as.factor(didPropose)~ as.ordered(StratPos) + as.factor(year), random = as.factor(actor), data = ys.proposed, Hess = TRUE)
+clmm2.mod <- clmm2(location = as.ordered(didPropose)~ as.ordered(StratPos) + as.factor(year), random = as.factor(actor), data = ys.proposed, Hess = TRUE)
 summary(clmm2.mod)
 #Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
 ```
