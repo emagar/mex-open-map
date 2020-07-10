@@ -205,7 +205,7 @@ summary(model.results)
 
 #Odds Ratios
 exp(coef(model.results)[2])
-exp(coef(model.results)[3])
+exp(coef(model.results)[3]) 
 exp(coef(model.results)[4])
 exp(coef(model.results)[5])
 exp(coef(model.results)[6])
