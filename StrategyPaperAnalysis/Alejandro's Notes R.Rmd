@@ -428,4 +428,34 @@ library(foreign)
 
 //////////////////////////////////
 
+ORDINAL MODEL INTERPRETATION
+Ordinal Regression Interpretation
+The hypothesis being considered is such that: A political party, or coalition of parties, with a higher “strategic position” will be more likely to propose a redistricting plan in a state regardless of the redistricting process stage or the level of government from which the party is proposing. The “strategic position” of a singular party is broadly defined as a measure of party political influence/power/”market share” [party competition][like a monopoly] in a state in a given year. We can define six unique “strategic positions” with the available data where being in “strategic position” one (1) corresponds with being in the best position to propose a redistricting plan whereas six (6) corresponds to the worst position from which to propose a redistricting plan.
+The "Strategic Positions" are defined as follows:
+1. Party a) Controls during redistricting year b) has controlled state in all previous observed periods
+2. Party a) Controls during redistricting year b) has NOT controlled state in all previously observed periods
+3. Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won a MAJORITY of previous elections in observed time period
+4. Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won a MINORITY of previous elections in observed time period
+5.  Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won NONE of the previous elections during the time period [EDIT for REDUNDANCY]
+6. Party a) DOES NOT control during the redistricting year b) has NOT controlled state in all previously observed periods c) has won NONE of the previous elections during the time period d) another party has won ALL previous elections
+The “strategic position” of a party coalition and its member parties is defined similarly to what was just described, but where the coalition and its member parties all assume the “strategic position” which is highest among the member parties in the coalition. For example; if PRI has a strategic position of one (1) and it forms a coalition with PVEM and MORENA, both of which have a “strategic position” of six (6), the coalition and all member parties are considered to have a “strategic position” equal to one (1) – the highest of all three member parties. 
+[DESCRIPTION OF STRATPOS DISTRIBUTION]
+MODEL
+[INCLUDE LINKS] – look into if hyperlinks can be done
+Given [our type of data] the most suited model is [blank].
+{Describe the functions]
+The author of the ordinal package in R has written extensive documentations on how to best use the model and how to interpret the results of statistical models built using the clm, clm2, clmm, and clmm2 functions in the package. For our purposes, the clmm and clmm2 functions are appropriate for modeling the hypothesis we are evaluating given the data at hand. Both functions, clmm and clmm2, allow for an ordinal independent variables (StratPos) as long as the dependent variable is also ordinal or a factor (didPropose). As has been demonstrated, “strategic position” is treated as ordinal in our methodology. Using both clmm and clmm2 functions, the statistical model is specified as such.
+CLMM
+ 
+CLMM2
+ 
+The output of the model is such.
+CLMM
+ 
+CLMM2
+ 
+The coefficients of the ordinal independent variables are treated the same as coefficients of a general logit model. We find that only one of the “strategic positions,” StratPos #4 is significant -- that it is associated with and explains some of the variation in the dependent variable -- that a party in a state proposes a redistricting plan. A party in a state that has a Strategic Position = 4 is less likely to propose a redistricting plan than parties in states with a higher value of “strategic position.”
+[CLARIFY: Stata]
+
+
 
