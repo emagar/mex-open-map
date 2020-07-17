@@ -213,6 +213,16 @@ exp(coef(model.results)[6])
 #clmm2
 clmm2.mod <- clmm2(location = as.ordered(didPropose)~ as.ordered(StratPos) + as.factor(year), random = as.factor(actor), data = ys.proposed, Hess = TRUE)
 summary(clmm2.mod)
+exp(coef(clmm2.mod)[2])
+exp(coef(clmm2.mod)[3]) 
+exp(coef(clmm2.mod)[4])
+exp(coef(clmm2.mod)[5])
+exp(coef(clmm2.mod)[6])
+
+#Confidence Intervals
+CI <- profile(clmm2.mod)
+print(CI)
+plot(CI)
 #Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
 ```
   #H.1.1.1.a 
