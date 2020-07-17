@@ -430,7 +430,7 @@ library(foreign)
 
 ORDINAL MODEL INTERPRETATION
 Ordinal Regression Interpretation
-The hypothesis being considered is such that: A political party, or coalition of parties, with a higher “strategic position” will be more likely to propose a redistricting plan in a state regardless of the redistricting process stage or the level of government from which the party is proposing. The “strategic position” of a singular party is broadly defined as a measure of party political influence/power/”market share” [party competition][like a monopoly] in a state in a given year. We can define six unique “strategic positions” with the available data where being in “strategic position” one (1) corresponds with being in the best position to propose a redistricting plan whereas six (6) corresponds to the worst position from which to propose a redistricting plan.
+The hypothesis being considered is such that: A political party, or coalition of parties, with a higher “strategic position” will be more likely to propose a redistricting plan in a state regardless of the redistricting process stage or the level of government from which the party is proposing. The “strategic position” of a singular party is broadly defined as a measure of party's combination of their political interest and advantage [potential advantage] in a state in a given year. We can define six unique “strategic positions” with the available data where being in “strategic position” one (1) corresponds with being in the best position to propose a redistricting plan whereas six (6) corresponds to the worst position from which to propose a redistricting plan.
 
 The "Strategic Positions" are defined as follows:
 1. Party a) Controls during redistricting year b) has controlled state in all previous observed periods
@@ -463,7 +463,7 @@ CLMM2
  
 The coefficients of the ordinal independent variables are treated the same as coefficients of a general logit model. We find that only one of the “strategic positions,” StratPos #4 is significant -- that it is associated with and explains some of the variation in the dependent variable -- that a party in a state proposes a redistricting plan. A party in a state that has a Strategic Position = 4 is less likely to propose a redistricting plan than parties in states with a higher value of “strategic position.”
 [INCLUDE THE ODDS RATIOS]
-[CLARIFY: Stata]
+
 
 
 

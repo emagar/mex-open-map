@@ -192,7 +192,7 @@ ys.proposed %<>% mutate(StratPos=if_else(is.na(CoalitionStratPos),PartyStratPos,
 xtab.result <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% xtabs(~partytype+year+didPropose+StratPos,.,drop.unused.levels = TRUE)
 ftable(xtab.result)
 
-gt(ftable(xtab.result))
+#gt(ftable(xtab.result))
 
  
 #CLM model first
@@ -220,9 +220,13 @@ exp(coef(clmm2.mod)[5])
 exp(coef(clmm2.mod)[6])
 
 #Confidence Intervals
+confint(clmm2.mod, level=0.95, type=c("profile","Wald"))
+
 CI <- profile(clmm2.mod)
 print(CI)
+confint(CI)
 plot(CI)
+#Bottom horizontal line represents 95% and the top 99% interval.
 #Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
 ```
   #H.1.1.1.a 
