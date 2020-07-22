@@ -205,6 +205,7 @@ confint(clm.mod)
 model.results2 <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+as.factor(year)+(1|actor),., Hess = TRUE)
 summary(model.results2)
 confint(model.results2)
+qqplot(model.results2)
 
 anova(model.results2, clm.mod)
 
