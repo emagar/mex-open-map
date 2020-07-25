@@ -194,19 +194,26 @@ ftable(xtab.result)
 
 #gt(ftable(xtab.result))
 
+
+glm.mod <- ys.proposed %>% glm(didPropose ~ as.ordered(StratPos), family = binomial(link = "logit"), data=.)
+summary(glm.mod)
  
 #CLM model first
 clm.mod <- ys.proposed %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
 summary(clm.mod)
 confint(clm.mod)
 
+
 #example of ordinal model only, seems to have numerical problems
 
-model.results2 <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+as.factor(year)+(1|actor),., Hess = TRUE)
-summary(model.results2)
-confint(model.results2)
+model.results <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+as.factor(year)+(1|actor),., Hess = TRUE)
+summary(model.results)
+confint(model.results)
 
-anova(model.results2, clm.mod)
+plot(model.results$fitted.values, ys.proposed$StratPos)
+
+anova(model.results, clm.mod)
+
 
 #Odds Ratios
 exp(coef(model.results)[2])
@@ -215,23 +222,6 @@ exp(coef(model.results)[4])
 exp(coef(model.results)[5])
 exp(coef(model.results)[6])
 
-#clmm2
-clmm2.mod <- clmm2(location = as.ordered(didPropose)~ as.ordered(StratPos) + as.factor(year) + (1|actor), data = ys.proposed, Hess = TRUE)
-summary(clmm2.mod)
-exp(coef(clmm2.mod)[2])
-exp(coef(clmm2.mod)[3]) 
-exp(coef(clmm2.mod)[4])
-exp(coef(clmm2.mod)[5])
-exp(coef(clmm2.mod)[6])
-
-clmm2.mod
-#Confidence Intervals
-confint(clmm2.mod, level=0.95, type=c("profile","Wald"))
-
-CI <- profile(clmm2.mod)
-print(CI)
-confint(CI)
-plot(CI)
 #Bottom horizontal line represents 95% and the top 99% interval.
 #Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
 ```
