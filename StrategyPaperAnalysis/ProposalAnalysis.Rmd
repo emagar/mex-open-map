@@ -43,6 +43,7 @@ require(car)
 require(lmtest)
 require(ordinal)
 require(readxl)
+require(rcompanion)
 ```
 # Build Database
 ## Build proposal event database: propfull.df
