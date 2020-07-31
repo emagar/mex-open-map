@@ -194,19 +194,25 @@ ftable(xtab.result)
 
 #gt(ftable(xtab.result))
 
+```
 
-glm.mod <- ys.proposed %>% glm(didPropose ~ as.ordered(StratPos), family = binomial(link = "logit"), data=.)
-summary(glm.mod)
- 
+```{r}
 #CLM model first
-clm.mod <- ys.proposed %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=.)
+clm.mod <- ys.proposed %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=., HESS=TRUE)
 summary(clm.mod)
 confint(clm.mod)
+exp(coef(clm.mod)[2])
+exp(coef(clm.mod)[3]) 
+exp(coef(clm.mod)[4])
+exp(coef(clm.mod)[5])
+exp(coef(clm.mod)[6])
+```
 
-
+```{r}
 #example of ordinal model only, seems to have numerical problems
+#strategic position matters. Also independent
 
-model.results <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+as.factor(year)+(1|actor),., Hess = TRUE)
+model.results <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos)+(1|actor),., Hess = TRUE)
 summary(model.results)
 confint(model.results)
 
@@ -214,7 +220,8 @@ plot(model.results$fitted.values, ys.proposed$StratPos)
 
 anova(model.results, clm.mod)
 
-
+library(rcompanion)
+nagelkerke(fit = model.results, null = clm.mod)
 #Odds Ratios
 exp(coef(model.results)[2])
 exp(coef(model.results)[3]) 
@@ -225,6 +232,7 @@ exp(coef(model.results)[6])
 #Bottom horizontal line represents 95% and the top 99% interval.
 #Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
 ```
+
   #H.1.1.1.a 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in that same state --> Requires  a dummy capturing if the state had single party dominance (single_pty_dom_00_17:True) --> In those states where the condition is met --> the ruling party is more likely to formulate a counterporposal than each opposition party in that same state. 
 
