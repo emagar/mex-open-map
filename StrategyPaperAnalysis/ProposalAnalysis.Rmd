@@ -43,6 +43,7 @@ require(car)
 require(lmtest)
 require(ordinal)
 require(readxl)
+require(rcompanion)
 ```
 # Build Database
 ## Build proposal event database: propfull.df
@@ -220,7 +221,6 @@ plot(model.results$fitted.values, ys.proposed$StratPos)
 
 anova(model.results, clm.mod)
 
-library(rcompanion)
 nagelkerke(fit = model.results, null = clm.mod)
 #Odds Ratios
 exp(coef(model.results)[2])
