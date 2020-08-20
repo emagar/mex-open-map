@@ -211,6 +211,9 @@ exp(coef(clm.mod)[6])
 clm.pred <- predict(clm.mod)
 summary(clm.pred)
 
+x <- ys.proposed$didPropose - clm.mod$fitted.values
+plot(x)
+
 plot(clm.pred$fit)
 
 ```
@@ -223,8 +226,6 @@ model.results <- ys.proposed %>% clmm(as.ordered(didPropose)~as.ordered(StratPos
 summary(model.results)
 confint(model.results)
 
-
-
 plot(model.results$fitted.values, ys.proposed$StratPos)
 
 anova(model.results, clm.mod)
@@ -236,7 +237,10 @@ exp(coef(model.results)[3])
 exp(coef(model.results)[4])
 exp(coef(model.results)[5])
 exp(coef(model.results)[6])
-clmm.pred <- predict(model.results)
+
+y <- ys.proposed$didPropose - model.results$fitted.values
+
+plot(y)
 #Bottom horizontal line represents 95% and the top 99% interval.
 #Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
 ```
