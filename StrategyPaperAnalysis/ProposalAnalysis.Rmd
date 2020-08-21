@@ -185,6 +185,7 @@ coalitions.df %<>% left_join(select(ys.proposed,c("actor","edon","year","PartySt
 ys.proposed %<>% left_join(coalitions.df,by=c("actor","edon","year"))
 
 ys.proposed %<>% mutate(StratPos=if_else(is.na(CoalitionStratPos),PartyStratPos,CoalitionStratPos))
+ys.proposed %<>% mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0))
 
 
 
@@ -212,9 +213,24 @@ clm.pred <- predict(clm.mod)
 summary(clm.pred)
 
 x <- ys.proposed$didPropose - clm.mod$fitted.values
-plot(x)
+ys.proposed %<>% cbind(x)
+ys.proposed <- ys.proposed %>% rename(clm.residuals = x)
+ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter()
+ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~year)
+ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clm.residuals, color=actor)) + geom_jitter() + facet_wrap(~partytype)
+ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~actor)
+ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~inCoalition)
 
-plot(clm.pred$fit)
+#maybe parties in color in the graphs?
+#minor party in a coalition or not?
+
+plot(ys.proposed$clm.residuals)
+plot(ys.proposed$didPropose - clm.pred$fit)
+
+#Generating confusing matrix for CLM model
+#1. Bind the predicted fitted values to ys.proposed
+#2. >50% 1 <50% 0
+#3.. 
 
 ```
 
@@ -239,10 +255,14 @@ exp(coef(model.results)[5])
 exp(coef(model.results)[6])
 
 y <- ys.proposed$didPropose - model.results$fitted.values
+ys.proposed %<>% cbind(y)
+ys.proposed <- ys.proposed %>% rename(clmm.residuals = y)
+ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter()
+ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~year)
+ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clmm.residuals, color = actor)) + geom_jitter() + facet_wrap(~partytype)
+ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~actor)
+ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~inCoalition)
 
-plot(y)
-#Bottom horizontal line represents 95% and the top 99% interval.
-#Pretty much exact same output from slightly different variations of the cumulative model. I do not think using "polr()" or a monotonic model would be appropriate for our data. Neither accounts for ordinal independent variables and the "ordinal" package can handle ordincal dependent variables if we want to try to predict partytype or StratPos using the data on hand.
 ```
 
   #H.1.1.1.a 
