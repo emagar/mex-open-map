@@ -232,6 +232,7 @@ plot(ys.proposed$didPropose - clm.pred$fit)
 #2. >50% 1 <50% 0
 #3.. 
 
+
 ```
 
 ```{r}
