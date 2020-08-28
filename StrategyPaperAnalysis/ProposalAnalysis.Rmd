@@ -186,6 +186,7 @@ ys.proposed %<>% left_join(coalitions.df,by=c("actor","edon","year"))
 
 ys.proposed %<>% mutate(StratPos=if_else(is.na(CoalitionStratPos),PartyStratPos,CoalitionStratPos))
 ys.proposed %<>% mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0))
+ys.proposed %<>% mutate(didPropose.num = as.numeric(didPropose))
 
 
 
@@ -227,12 +228,13 @@ ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wra
 plot(ys.proposed$clm.residuals)
 plot(ys.proposed$didPropose - clm.pred$fit)
 
-#Generating confusing matrix for CLM model
-#1. Bind the predicted fitted values to ys.proposed
-#2. >50% 1 <50% 0
-#3.. 
+#Generating confusion matrix for CLM model
+ys.proposed %<>% mutate(clm50 = ifelse(clm.residuals >= 0.5, 1, 0))
+ys.proposed %<>% mutate(clm90 = ifelse(clm.residuals >= 0.9, 1, 0))
 
-
+require(caret)
+confusionMatrix(as.factor(ys.proposed$clm50), as.factor(ys.proposed$didPropose.num))
+confusionMatrix(as.factor(ys.proposed$clm90), as.factor(ys.proposed$didPropose.num))
 ```
 
 ```{r}
@@ -258,12 +260,24 @@ exp(coef(model.results)[6])
 y <- ys.proposed$didPropose - model.results$fitted.values
 ys.proposed %<>% cbind(y)
 ys.proposed <- ys.proposed %>% rename(clmm.residuals = y)
-ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter()
+ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter()
 ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~year)
 ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clmm.residuals, color = actor)) + geom_jitter() + facet_wrap(~partytype)
 ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~actor)
+ys.proposed %>% filter(clmm.residuals > 0.5) %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~actor)
 ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~inCoalition)
+#Presence of PRD51 and CLV skewed the scale of the general plot towards 0.5. 
 
+#Building confusion matrix for clmm.
+ys.proposed %<>% mutate(clmm50 = ifelse(clmm.residuals >= 0.5, 1, 0))
+ys.proposed %<>% mutate(clmm90 = ifelse(clmm.residuals >= 0.9, 1, 0))
+
+#Residual charts for cutoff categorizations.
+
+ys.proposed %<>% mutate(clmm50.resid = didPropose.num-clmm50)
+ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clmm50.resid)) + geom_jitter()
+confusionMatrix(as.factor(ys.proposed$clmm50), as.factor(ys.proposed$didPropose.num))
+confusionMatrix(as.factor(ys.proposed$clmm90), as.factor(ys.proposed$didPropose.num))
 ```
 
   #H.1.1.1.a 
