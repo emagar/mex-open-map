@@ -208,6 +208,7 @@ exp(coef(clm.mod)[3])
 exp(coef(clm.mod)[4])
 exp(coef(clm.mod)[5])
 exp(coef(clm.mod)[6])
+ys.proposed %>% ggplot(aes(didPropose)) + geom_bar() +facet_wrap(~StratPos)
 
 clm.pred <- predict(clm.mod)
 summary(clm.pred)
@@ -234,6 +235,7 @@ ys.proposed %<>% mutate(clm90 = ifelse(clm.pred$fit >= 0.9, 1, 0))
 confusionMatrix(as.factor(ys.proposed$clm50), as.factor(ys.proposed$didPropose.num))
 confusionMatrix(as.factor(ys.proposed$clm90), as.factor(ys.proposed$didPropose.num))
 ```
+
 
 ```{r}
 #example of ordinal model only, seems to have numerical problems
@@ -277,6 +279,7 @@ plot(ys.proposed$clmm50)
 confusionMatrix(as.factor(ys.proposed$clmm50), as.factor(ys.proposed$didPropose.num))
 confusionMatrix(as.factor(ys.proposed$clmm90), as.factor(ys.proposed$didPropose.num))
 ```
+
 
   #H.1.1.1.a 
 #Comparing the decision of the ruling party to formulate a counterproposal to other parties in that same state --> Requires  a dummy capturing if the state had single party dominance (single_pty_dom_00_17:True) --> In those states where the condition is met --> the ruling party is more likely to formulate a counterporposal than each opposition party in that same state. 
@@ -503,12 +506,18 @@ Variables
 #THEORY Parties competing together in a coalition should formulate the same plan. 
 Matching Process (Practice)
 ```{r}
+#TEST -- getting the code to work before beginning to implement it across 
 matching.df <- propfull.df %>% left_join(coalitions.df, by=c("edon", "year", "actor"))
 
-matching.df.1 <- matching.df %>% filter(year == 2013 & govlevel == "CNV" & Entidad == "Baja California" & SCORE > 0) %>% mutate(compSCORE = case_when(coalition == "PAN-PRD-PNA" ~ SCORE))
+matching.df.1 <- matching.df %>% filter(year == 2013 & govlevel == "CNV" & Entidad == "Baja California" & SCORE > 0) %>% mutate(compSCORE = case_when(actor == "Algorithm" ~ SCORE))
 matching.df.1 %<>% fill(compSCORE)
-matching.df.1$samePlan <- 0
-matching.df.1[matching.df.1$SCORE == matching.df.1$compSCORE,]$samePlan <- 1
+#Comparing Scores to the Algorithm's score (or any other party/coalition/winning score)
+matching.df.1$betterPlan <- 0
+matching.df.1[matching.df.1$SCORE <= matching.df.1$compSCORE,]$betterPlan <- 1
+
+#Determine the minimum score, create a dummy that denotes this
+matching.df.1$minScore <- 0
+matching.df.1[matching.df.1$SCORE == min(matching.df.1$SCORE),]$minScore <- 1
 
 #separate_rows() tidy function, creats row copies
 #group by state, year, coalition
