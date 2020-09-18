@@ -506,18 +506,50 @@ Variables
 #THEORY Parties competing together in a coalition should formulate the same plan. 
 Matching Process (Practice)
 ```{r}
+#0.1 Coalition hypothesis: If a coalition was formed, Did the plan of minor party(ies) match the score of the major party? --> This is just for verifying our assumption (robustness check). 
+
+#0.2 The EMB/Algorithm should be treated as an "actor" in the game (and in the analysis of #1 and #2 below), where the scroe associated to the FIRST SCENARIO should be treated as its own plan. If this plans prevails across the two stages --> EMB/Algorithm wins
+
+#1.Efficiency hypothesis (Part 1: lowest score): RQ: Which party/parties were more effective in formulating plans with the lowest cost? --> We theorize that 1) major parties will be more efficient than smaller ones, 2) that PAN, at least in 2013 and at the national level, was the most efficent party because of its level of professionalization, and 3) that because of algorithm efficeny and learning experience, 3.1) PAN became less efficient between 2013 and 2017, and 3.2) other parties performed better between years and levels. 
+
+  #1.1 Code to identify which party formulated the plan with the lowest cost in every stage, state, level, and     year.
+
+  #1.2  Code to create a proportion of lowest score plans formulated by each party by year, level, stage, and      state (Proportion lowest scores = Plans with lowest score formulated by each party / Total amout of proposals   formulated by each party) 
+
+      #1.2.1--> Descriptive results by party (lowest score): Create code: Descriptive graphs and tables. 
+
+      #1.2.2 --> Evaluation Questions (Bias/Transparency): a) Was there a party that sistematically proposed           lower cost scenarios?
+
+#2. Efficiency hypothesis (Part 2: winning proposals) RQ: Which party/parties were more effective in formulating plans that were accepted by the TC/EMB? --> Again (same as #1, but evaluated with a different measure), we theorize that 1) major parties will be more efficient than smaller ones, 2) that PAN, at least in 2013 and at the national level, was the most efficent party because of its level of professionalization, and 3) that because of algorithm efficeny and learning experience, 3.1) PAN became less efficient between 2013 and 2017, and 3.2) other parties performed better between years and levels.
+
+  #2.1 Code to create a proportion of sucess rate based on the proportion of plans adopted (Proportion winning     plans = Partisan plans that were adopted / Total amout of proposals formulated by each party)-->                 This requires for the FIRST STAGE: 1) compareing the FIRST SCENARIO with PARTISAN PLANS, possible                outcomes in terms of the cost function: a) First scenario > partisan plan, verify if partisan plan was accepted   (PARTISAN PLAN should match the score of the SECOND SCENARIO) --> Party Success!; b) First scenario < cost than   partisan plans, verify if Fisrt scenario became the second scenario (FIRST SCENARIO should match the score of    the SECOND SCENARIO) --> EMB/Algorithm success!; c) First scenario > partisan plan, the outcome registered for   the second scenario is different from partisan proposal --> Inconsistency type 1, subsequent options: i)         observed score in second scenario = First Scenario, ii) observed score in second scenario is higher than         the partisan plan with the lowest score, but lower than the first scenario, iii) observed score in second        scenario is higher than the partisan plan with the lowest score, and higher than the first scenario; iv)         observed score in second scenario is lower than the partisan plan with the lowest score, and higher than the     first scenario, and v) observed score in second scenario is lower than the partisan plan with the lowest score,   and lower than the first scenario; or d) First scenario < cost than partisan plans, the outcome registered for   the second scenario is different from the First scenario --> Inconsistency type 2, subsequent options: i)        observed score in second scenario is lower than the First Scenario, ii) observed score in second scenario is     higher the first scenario, but lower than the lowerst partisan counterproposal iii) observed score in second     scenario is higher the first scenario and equal to the lowest partisan score, and iv) observed score in second   scenario is higher the first scenario and higher to the lowest partisan score.
+
+      #2.1.1 --> Descriptive results by party (winning propsal): Create code: Descriptive graphs and tables. 
+
+      #2.1.2--> Evaluation Questions (Bias/Transparency):a) Were some parties a parties more effective than            others? Did inconsistencies affected sistematically a specific party?
+
+#3 Algorithm Efficency
+
+#3.1 When comparing efficiency (lowest and winning proposals), is there evdidence showing that the propotion of lower scores in 2013 > than in 2017? 
+
+#3.2 Were EMB/Algorithm proposals more effective in 2017 than in 2013?
+
+
+
 #TEST -- getting the code to work before beginning to implement it across 
 matching.df <- propfull.df %>% left_join(coalitions.df, by=c("edon", "year", "actor"))
 
 matching.df.1 <- matching.df %>% filter(year == 2013 & govlevel == "CNV" & Entidad == "Baja California" & SCORE > 0) %>% mutate(compSCORE = case_when(actor == "Algorithm" ~ SCORE))
 matching.df.1 %<>% fill(compSCORE)
-#Comparing Scores to the Algorithm's score (or any other party/coalition/winning score)
+
+#Comparing Scores to the Algorithm's score (or any other party/winning score)
 matching.df.1$betterPlan <- 0
 matching.df.1[matching.df.1$SCORE <= matching.df.1$compSCORE,]$betterPlan <- 1
 
 #Determine the minimum score, create a dummy that denotes this
 matching.df.1$minScore <- 0
 matching.df.1[matching.df.1$SCORE == min(matching.df.1$SCORE),]$minScore <- 1
+
 
 #separate_rows() tidy function, creats row copies
 #group by state, year, coalition
