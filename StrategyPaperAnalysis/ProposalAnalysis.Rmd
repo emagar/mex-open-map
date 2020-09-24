@@ -512,9 +512,14 @@ Matching Process (Practice)
 matching.df.coal <- propfull.df %>% left_join(coalitions.df, by=c("edon", "year", "actor"))
 
 ## Filters out 1st and 2nd stage proposals and parties that PROPOSED.
+##Parties in the coalitions may not propose even when the coalition proposes -- still want to capture minor parties who do not propose on their own
+#Two majors w/ diff scores, two minors w different scores
 matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRUE) %>% group_by(edon, stage, year, govlevel) %>% mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0)) %>% filter(inCoalition > 0) #may need to also filter out parties not in coalitions for simplicity, will check the dataframe
 
-
+####STAGES
+#Stage 2 = Stage 1
+#Stage 4 = Stage 2
+#the other stages capture other score related data
 
 #0.2 The EMB/Algorithm should be treated as an "actor" in the game (and in the analysis of #1 and #2 below), where the scroe associated to the FIRST SCENARIO should be treated as its own plan. If this plans prevails across the two stages --> EMB/Algorithm wins
 
@@ -524,15 +529,25 @@ matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRU
 matching.df.1 <- propfull.df %>% mutate(minSCORE = 0)
 matching.df.1 %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRUE) %>% group_by(edon, stage, year, govlevel) %>% mutate(minSCORE = ifelse(SCORE == min(SCORE), 1, 0)) %>% mutate(minSCOREnum = min(SCORE))
 
+##BY ACTOR
 matching.df.1 %>% ggplot(aes(minSCORE)) + geom_bar() +facet_wrap(~actor)
 
 matching.df.1 %>% ggplot(aes(year, minSCOREnum)) + geom_jitter() +facet_wrap(~actor)
+
+#all scores, color code the min scores
 matching.df.1 %>% ggplot(aes(stage, minSCOREnum)) + geom_jitter() +facet_wrap(~actor)
+
+#color code by year
 matching.df.1 %>% ggplot(aes(govlevel, minSCOREnum)) + geom_jitter() +facet_wrap(~actor)
 
+
+##BY STATE
 matching.df.1 %>% ggplot(aes(year, minSCOREnum)) + geom_jitter() +facet_wrap(~Entidad)
 matching.df.1 %>% ggplot(aes(stage, minSCOREnum)) + geom_jitter() +facet_wrap(~Entidad)
+
+#Color year
 matching.df.1 %>% ggplot(aes(govlevel, minSCOREnum)) + geom_jitter() +facet_wrap(~Entidad)
+
   #1.2  Code to create a proportion of lowest score plans formulated by each party by year, level, stage, and      state (Proportion lowest scores = Plans with lowest score formulated by each party / Total amout of proposals   formulated by each party) 
 
       #1.2.1--> Descriptive results by party (lowest score): Create code: Descriptive graphs and tables. 
