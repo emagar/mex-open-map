@@ -535,10 +535,10 @@ matching.df.1 %>% ggplot(aes(minSCORE)) + geom_bar() +facet_wrap(~actor)
 matching.df.1 %>% ggplot(aes(year, minSCOREnum)) + geom_jitter() +facet_wrap(~actor)
 
 #all scores, color code the min scores
-matching.df.1 %>% ggplot(aes(stage, minSCOREnum)) + geom_jitter() +facet_wrap(~actor)
+matching.df.1 %>% ggplot(aes(stage, SCORE, color = minSCORE)) + geom_jitter() +facet_wrap(~actor)
 
 #color code by year
-matching.df.1 %>% ggplot(aes(govlevel, minSCOREnum)) + geom_jitter() +facet_wrap(~actor)
+matching.df.1 %>% ggplot(aes(govlevel, minSCOREnum, color = year)) + geom_jitter() +facet_wrap(~actor)
 
 
 ##BY STATE
@@ -553,10 +553,21 @@ matching.df.1 %>% ggplot(aes(govlevel, minSCOREnum)) + geom_jitter() +facet_wrap
       #1.2.1--> Descriptive results by party (lowest score): Create code: Descriptive graphs and tables. 
 
       #1.2.2 --> Evaluation Questions (Bias/Transparency): a) Was there a party that sistematically proposed           lower cost scenarios?
+```
 
-#2. Efficiency hypothesis (Part 2: winning proposals) RQ: Which party/parties were more effective in formulating plans that were accepted by the TC/EMB? --> Again (same as #1, but evaluated with a different measure), we theorize that 1) major parties will be more efficient than smaller ones, 2) that PAN, at least in 2013 and at the national level, was the most efficent party because of its level of professionalization, and 3) that because of algorithm efficeny and learning experience, 3.1) PAN became less efficient between 2013 and 2017, and 3.2) other parties performed better between years and levels.
+```{r}
+#2. Efficiency hypothesis (Part 2: winning proposals) RQ: Which party/parties were more effective in formulating plans that were accepted by the TC/EMB? --> Again (same as #1, but evaluated with a different measure), we theorize that [[1. DID THE PARTY "WIN" & 2. DID THEY WIN WITH MINSCORE?]]
 
-  #2.1 Code to create a proportion of sucess rate based on the proportion of plans adopted (Proportion winning     plans = Partisan plans that were adopted / Total amout of proposals formulated by each party)-->                 This requires for the FIRST STAGE: 1) compareing the FIRST SCENARIO with PARTISAN PLANS, possible                outcomes in terms of the cost function: a) First scenario > partisan plan, verify if partisan plan was accepted   (PARTISAN PLAN should match the score of the SECOND SCENARIO) --> Party Success!; b) First scenario < cost than   partisan plans, verify if Fisrt scenario became the second scenario (FIRST SCENARIO should match the score of    the SECOND SCENARIO) --> EMB/Algorithm success!; c) First scenario > partisan plan, the outcome registered for   the second scenario is different from partisan proposal --> Inconsistency type 1, subsequent options: i)         observed score in second scenario = First Scenario, ii) observed score in second scenario is higher than         the partisan plan with the lowest score, but lower than the first scenario, iii) observed score in second        scenario is higher than the partisan plan with the lowest score, and higher than the first scenario; iv)         observed score in second scenario is lower than the partisan plan with the lowest score, and higher than the     first scenario, and v) observed score in second scenario is lower than the partisan plan with the lowest score,   and lower than the first scenario; or d) First scenario < cost than partisan plans, the outcome registered for   the second scenario is different from the First scenario --> Inconsistency type 2, subsequent options: i)        observed score in second scenario is lower than the First Scenario, ii) observed score in second scenario is     higher the first scenario, but lower than the lowerst partisan counterproposal iii) observed score in second     scenario is higher the first scenario and equal to the lowest partisan score, and iv) observed score in second   scenario is higher the first scenario and higher to the lowest partisan score.
+#1) major parties will be more efficient than smaller ones,
+#2) that PAN, at least in 2013 and at the national level, was the most efficent party because of its level of professionalization, 
+#3) that because of algorithm efficeny and learning experience, 
+    #3.1) PAN became less efficient between 2013 and 2017, 
+    #3.2) other parties performed better between years and levels.
+
+#2.1 Code to create a proportion of success rate based on the proportion of plans adopted (Proportion winning   plans = Partisan plans that were adopted / Total amout of proposals formulated by each party)-->               This requires for the FIRST STAGE: 1) compareing the FIRST SCENARIO with PARTISAN PLANS, possible              outcomes in terms of the cost function: 
+#a) First scenario > partisan plan, verify if partisan plan was accepted   (PARTISAN PLAN should match the score of the SECOND SCENARIO) --> Party Success!; 
+#b) First scenario < cost than   partisan plans, verify if Fisrt scenario became the second scenario (FIRST SCENARIO should match the score of    the SECOND SCENARIO) --> EMB/Algorithm success!; 
+#c) First scenario > partisan plan, the outcome registered for   the second scenario is different from partisan proposal --> Inconsistency type 1, subsequent options: i)         observed score in second scenario = First Scenario, ii) observed score in second scenario is higher than         the partisan plan with the lowest score, but lower than the first scenario, iii) observed score in second        scenario is higher than the partisan plan with the lowest score, and higher than the first scenario; iv)         observed score in second scenario is lower than the partisan plan with the lowest score, and higher than the     first scenario, and v) observed score in second scenario is lower than the partisan plan with the lowest score,   and lower than the first scenario; or d) First scenario < cost than partisan plans, the outcome registered for   the second scenario is different from the First scenario --> Inconsistency type 2, subsequent options: i)        observed score in second scenario is lower than the First Scenario, ii) observed score in second scenario is     higher the first scenario, but lower than the lowerst partisan counterproposal iii) observed score in second     scenario is higher the first scenario and equal to the lowest partisan score, and iv) observed score in second   scenario is higher the first scenario and higher to the lowest partisan score.
 
       #2.1.1 --> Descriptive results by party (winning propsal): Create code: Descriptive graphs and tables. 
 
@@ -568,6 +579,7 @@ matching.df.1 %>% ggplot(aes(govlevel, minSCOREnum)) + geom_jitter() +facet_wrap
 
 #3.2 Were EMB/Algorithm proposals more effective in 2017 than in 2013?
 ```
+
 
 ```{r}
 #TEST -- getting the code to work before beginning to implement it across 
