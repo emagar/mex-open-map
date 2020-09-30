@@ -444,6 +444,15 @@ matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRU
 
 #0.2 The EMB/Algorithm should be treated as an "actor" in the game (and in the analysis of #1 and #2 below), where the scroe associated to the FIRST SCENARIO should be treated as its own plan. If this plans prevails across the two stages --> EMB/Algorithm wins
 
+#0.3 Level of Engagement.This measure captures the degree of intensity of partisan engagment in the process by year. In general, we think of engagment as an ordinal variable, where the minimum level of partisan engagment in a given year is 0 (a party does not formulate a counterproposal in a state at any stage or level) and the maximum degree of engagment is 4 (a party fomulates a counterproposal in two stages and at the two levels at a given state/year). 
+
+  #0.3.1 Count Measure of engagment --> Code that aggregates the level of engagment by parties for every           state/year. Possible categories: i. Parties at the minimum do not engage at all in the process for a given       state/year (0), ii. Parties formulated only one proposal (regardles of the stage and level), iii. Parties        formulates two proposals (regardles of the stage and level), iv.Parties formulated three proposals (regardles    of the stage and level), and v. Parties formulated four proposals (regardles of the stage and level). 
+
+  #0.3.2 Descriptive level of engagment by party  --> Code for generating tables and visualizations that           aggregate proposals by party at the year, stage, and level. 
+
+  #0.3.3 Descriptive level of engagment by party and state  --> Code for generating tables and visualizations      that aggregate proposals by party at the year, stage, and level.
+
+
 #1.Efficiency hypothesis (Part 1: lowest score): RQ: Which party/parties were more effective in formulating plans with the lowest cost? --> We theorize that 1) major parties will be more efficient than smaller ones, 2) that PAN, at least in 2013 and at the national level, was the most efficent party because of its level of professionalization, and 3) that because of algorithm efficeny and learning experience, 3.1) PAN became less efficient between 2013 and 2017, and 3.2) other parties performed better between years and levels. 
 
   #1.1 Code to identify which party formulated the plan with the lowest cost in every stage, state, level, and     year.
