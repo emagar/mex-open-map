@@ -494,10 +494,33 @@ matching.df.1 %>% ggplot(aes(govlevel, minSCOREnum)) + geom_jitter() +facet_wrap
     #3.1) PAN became less efficient between 2013 and 2017, 
     #3.2) other parties performed better between years and levels.
 
+## Subset out winning scores
+first.scenario.df <- propfull.df %>% filter(stage == 1) %>% select(Entidad, year, SCORE) %>% rename(FS_SCORE = SCORE)
+second.scenario.df <- propfull.df %>% filter(stage == 3) %>% select(Entidad, year, SCORE) %>% rename(SS_SCORE = SCORE)
+winningscores.df <- propfull.df %>% filter(stage == 5) %>% select(Entidad, year, SCORE) %>% rename(Win_SCORE = SCORE)
+
+##Rejoin winning scores to the matching dataframe
+win_match.df <- matching.df.1 %>% inner_join(first.scenario.df, by=c("Entidad", "year"))
+win_match.df %<>% inner_join(second.scenario.df, by=c("Entidad", "year"))
+win_match.df %<>% inner_join(winningscores.df, by=c("Entidad", "year"))
+
+##Create dummy matching minimum scores to the winning score
+win_match.df %<>% group_by(edon, stage, year, govlevel) %>% mutate(WIN = ifelse(SCORE == Win_SCORE, 1, 0))
+
 #2.1 Code to create a proportion of success rate based on the proportion of plans adopted (Proportion winning   plans = Partisan plans that were adopted / Total amout of proposals formulated by each party)-->               This requires for the FIRST STAGE: 1) compareing the FIRST SCENARIO with PARTISAN PLANS, possible              outcomes in terms of the cost function: 
 #a) First scenario > partisan plan, verify if partisan plan was accepted   (PARTISAN PLAN should match the score of the SECOND SCENARIO) --> Party Success!; 
 #b) First scenario < cost than   partisan plans, verify if Fisrt scenario became the second scenario (FIRST SCENARIO should match the score of    the SECOND SCENARIO) --> EMB/Algorithm success!; 
-#c) First scenario > partisan plan, the outcome registered for   the second scenario is different from partisan proposal --> Inconsistency type 1, subsequent options: i)         observed score in second scenario = First Scenario, ii) observed score in second scenario is higher than         the partisan plan with the lowest score, but lower than the first scenario, iii) observed score in second        scenario is higher than the partisan plan with the lowest score, and higher than the first scenario; iv)         observed score in second scenario is lower than the partisan plan with the lowest score, and higher than the     first scenario, and v) observed score in second scenario is lower than the partisan plan with the lowest score,   and lower than the first scenario; or d) First scenario < cost than partisan plans, the outcome registered for   the second scenario is different from the First scenario --> Inconsistency type 2, subsequent options: i)        observed score in second scenario is lower than the First Scenario, ii) observed score in second scenario is     higher the first scenario, but lower than the lowerst partisan counterproposal iii) observed score in second     scenario is higher the first scenario and equal to the lowest partisan score, and iv) observed score in second   scenario is higher the first scenario and higher to the lowest partisan score.
+#c) First scenario > partisan plan, the outcome registered for the second scenario is different from partisan proposal --> Inconsistency type 1, subsequent options: 
+    #i) observed score in second scenario = First Scenario
+    #ii) observed score in second scenario is higher than the partisan plan with the lowest score, but lower             than the first scenario 
+    #iii) observed score in second scenario is higher than the partisan plan with the lowest score, and higher           than the first scenario
+    #iv)observed score in second scenario is lower than the partisan plan with the lowest score, and higher              than the first scenario
+    #v) observed score in second scenario is lower than the partisan plan with the lowest score,   and lower             than the first scenario
+#d) First scenario < cost than partisan plans, the outcome registered for the second scenario is different from the First scenario --> Inconsistency type 2, subsequent options: 
+    #i) observed score in second scenario is lower than the First Scenario
+    #ii) observed score in second scenario is higher the first scenario, but lower than the lowerst partisan             counterproposal
+    #iii) observed score in second scenario is higher the first scenario and equal to the lowest partisan score
+    #iv) observed score in second   scenario is higher the first scenario and higher to the lowest partisan              score.
 
       #2.1.1 --> Descriptive results by party (winning propsal): Create code: Descriptive graphs and tables. 
 
