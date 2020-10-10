@@ -138,11 +138,11 @@ ys.proposed %<>% left_join(coalitions.df,by=c("actor","edon","year"))
 ys.proposed %<>% mutate(StratPos=if_else(is.na(CoalitionStratPos),PartyStratPos,CoalitionStratPos))
 ys.proposed %<>% mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0))
 ys.proposed %<>% mutate(didPropose.num = as.numeric(didPropose))
-ys.proposed %<>% filter(partytype == "minor" || partytype == "major")
+ys.proposed %<>% filter(actortype == "minor" || actortype == "major")
 table(as.factor(ys.proposed$actor))
 
 #check pattern of proposal entry
-xtab.result <- ys.proposed %>% filter(partytype=="minor" || partytype=="major") %>% xtabs(~partytype+year+didPropose+StratPos,.,drop.unused.levels = TRUE)
+xtab.result <- ys.proposed %>% filter(actortype=="minor" || actortype=="major") %>% xtabs(~actortype+year+didPropose+StratPos,.,drop.unused.levels = TRUE)
 ftable(xtab.result)
 
 #gt(ftable(xtab.result))
@@ -170,8 +170,8 @@ ys.proposed %<>% cbind(x)
 ys.proposed <- ys.proposed %>% rename(clm.residuals = x)
 ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter()
 ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~year)
-ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clm.residuals, color=actor)) + geom_jitter() + facet_wrap(~partytype)
-ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~actor)
+ys.proposed %>% filter(actortype == "major" | actortype == "minor") %>% ggplot(aes(StratPos, clm.residuals, color=actor)) + geom_jitter() + facet_wrap(~actortype)
+ys.proposed %>% filter(actortype == "major" | actortype == "minor") %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~actor)
 ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~inCoalition)
 
 #maybe parties in color in the graphs?
@@ -214,8 +214,8 @@ ys.proposed %<>% cbind(y)
 ys.proposed <- ys.proposed %>% rename(clmm.residuals = y)
 ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter()
 ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~year)
-ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clmm.residuals, color = actor)) + geom_jitter() + facet_wrap(~partytype)
-ys.proposed %>% filter(partytype == "major" | partytype == "minor") %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~actor)
+ys.proposed %>% filter(actortype == "major" | actortype == "minor") %>% ggplot(aes(StratPos, clmm.residuals, color = actor)) + geom_jitter() + facet_wrap(~actortype)
+ys.proposed %>% filter(actortype == "major" | actortype == "minor") %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~actor)
 ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~actor)
 ys.proposed %>% ggplot(aes(StratPos, clmm.residuals)) + geom_jitter() + facet_wrap(~inCoalition)
 #Presence of PRD51 and CLV skewed the scale of the general plot towards 0.5. 
@@ -344,7 +344,7 @@ Hypothesis
 Data Exploration
 MINOR PARTIES
 ```{r}
-SP.df <- ys.proposed %>% filter(partytype == "minor") %>% mutate(incoalition = ifelse(extension > 0, 1, 0))
+SP.df <- ys.proposed %>% filter(actortype == "minor") %>% mutate(incoalition = ifelse(extension > 0, 1, 0))
 SP.df %>% ggplot(aes(didPropose)) + geom_bar() +facet_grid(rows = vars(incoalition), cols = vars(year))
 SP.df %>% ggplot(aes(StratPos)) + geom_bar() +facet_wrap(~incoalition)
 SP.df %>% filter(incoalition == 1) %>% ggplot(aes(coalition)) + geom_bar() + theme(axis.text.x = element_text(angle = 90))
@@ -359,7 +359,7 @@ SP.df %>% filter(incoalition == 1) %>% ggplot(aes(coalition)) + geom_bar() + the
 
 MAJOR PARTIES
 ```{r}
-LP.df <- ys.proposed %>% filter(partytype == "major" & singlecontrol == didControl) %>% mutate(incoalition = ifelse(extension > 0, 1, 0))
+LP.df <- ys.proposed %>% filter(actortype == "major" & singlecontrol == didControl) %>% mutate(incoalition = ifelse(extension > 0, 1, 0))
 LP.df %>% ggplot(aes(didPropose)) + geom_bar() +facet_grid(rows = vars(incoalition), cols = vars(year))
 LP.df %>% ggplot(aes(StratPos)) + geom_bar() +facet_wrap(~incoalition)
 ```

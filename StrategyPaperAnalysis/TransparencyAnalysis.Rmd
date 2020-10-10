@@ -3,18 +3,40 @@ title: "Transparency Analysis"
 output: html_notebook
 ---
 
-Transparency analysis for sectin 3.1
-
+# Transparency Analysis (Sec. 4 tables)
 ```{r}
-library(tidyr)
-library(readr)
-proposals.df <- read_csv("proposals.csv")
+## Libraries
+require(tidyverse)
+require(tidylog)
 ```
-
 ```{r}
-results<-xtabs(formula=PROPOSED~actor+govlevel+stage,data=proposals.df)
+## Bring in proposal event database
+source("PrepData.R")
 ```
+## Preliminary Diagnostics
+```{r}
+# diagnostic frequency table -- not in publication
+results<-propfull.df%>% xtabs(PROPOSED~actor+govlevel+year+stage,data=.)
+ftable(results)
+```
+## Invalidations (Tables 4.1 R1, 4.2 C1:2)
+```{r}
+# Table 4.1 for Row 1
+propfull.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE),invalid=sum(INVALID,na.rm=TRUE),rejectionrate=invalid/proposed)
+# Table 4.2 Col 1:2
+propfull.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE),invalid=sum(INVALID,na.rm=TRUE),rejectionrate=invalid/proposed)
+```
+#Ambiguous Actors
+*  All are in 2013
+*  Three unknown actors - Junta, CLV, PRD51
+*  Plans are scored, but not included
+```{r}
+ghostprop.df <-propfull.df %>% filter(actortype!="minor" & actortype!="major") %>% filter(stage==2 | stage==4) %>% filter(PROPOSED==TRUE)
 
+# Table 4.1 R2
+ghostprop.df %>% group_by(year,actor) %>% summarise(ghostproposals=sum(PROPOSED,na.rm=TRUE))
+
+```
 
 ```{r}
 #Winning scores
@@ -31,7 +53,6 @@ twin<-proposals.df %>% inner_join(winscores)
 # by(twin,c(twin["Entidad"], twin["year"]),function(x)x["actor"],simplify=FALSE)
 
 ```
-
 
 ```{r}
 # Analyze transparency compliance
