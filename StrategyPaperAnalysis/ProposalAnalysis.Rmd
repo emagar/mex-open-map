@@ -24,73 +24,25 @@ and vary according the ruling party (H1), party strenght/vote returns (H2), and 
 
 #Libraries
 ```{r message=FALSE}
+require(tidyverse)
 require(magrittr)
-require(ggplot2)
-require(dplyr)
-require(tidyr)
-require(readr)
-require(haven)
+require(tidylog)
 require(fastDummies)
 require(tidymodels)
-require(tibble)
-require(stringr)
-require(purrr)
-require(forcats)
 require(gt)
-require(rlang)
-require(tidylog)
 require(car)
 require(lmtest)
 require(ordinal)
-require(readxl)
 require(rcompanion)
 require(caret)
 ```
-# Build Database
-## Build proposal event database: propfull.df
-```{r message=FALSE}
-# reads in Pre-Normalized IFE tables and produces proposals.df data
-source("Normalize.R")
-# integrates in plans from MxDistritos
-## capture output because it is noisy and slows down interactive notebook
-out<-capture.output(source("integrateMxdistritos.R"))
-rm(proposals.df)
-```
-## Build Party Type Table
-Major - PRD, PAN, PRI
-Minor - PT, PVEM, ES, MORENA, MC, PNA
-Admin - CLV, Algorithm, Junta, INE, derfe
-Other - PRD51
+#bring in Data
 ```{r}
-#Categorize types of parties
-#break out into a separate data frame and save for future use
-
-parties.df <- structure(list(actor = structure(c(2L, 7L, 9L, 10L, 11L, 13L, 
-14L, 15L, 1L, 6L, 12L, 5L, 4L, 8L, 3L), .Label = c("Algorithm", 
-"CLV", "derfe", "ES", "INE", "Junta", "MC", "MORENA", "PAN", 
-"PNA", "PRD", "PRD51", "PRI", "PT", "PVEM"), class = "factor"), 
-    partytype = structure(c(1L, 3L, 2L, 3L, 2L, 2L, 3L, 3L, 1L, 
-    1L, 4L, 1L, 3L, 3L, 1L), .Label = c("admin", "major", "minor", 
-    "other"), class = "factor")), class = "data.frame", row.names = c(NA, 
--15L))
-
-propfull.df %<>% left_join(parties.df)
-table(parties.df$partytype)
+source("PrepData.R")
 ```
 
-## Bring in ruling party db, 
-```{r}
-source("RulingParty_micah.R")
 
-```
-#Transparency Analysis
-##Invalidations
-```{r}
-xtabs(PROPOSED~INVALID+year, propfull.df)
-ftable(xtabs(PROPOSED~INVALID+edon+year, propfull.df))
-ftable(xtabs(PROPOSED~INVALID+actor+year+stage, propfull.df))
 
-```
 Generate data frame for testing entry decisions.
 
 Data frame: ys.proposed
