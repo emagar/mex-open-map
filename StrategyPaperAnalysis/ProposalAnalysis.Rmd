@@ -531,6 +531,8 @@ win_match.df %<>% group_by(edon, stage, year, govlevel) %>% mutate(WIN = ifelse(
 #3.1 When comparing efficiency (lowest and winning proposals), is there evdidence showing that the propotion of lower scores in 2013 > than in 2017? 
 
 #3.2 Were EMB/Algorithm proposals more effective in 2017 than in 2013?
+
+#testing 
 ```
 
 
