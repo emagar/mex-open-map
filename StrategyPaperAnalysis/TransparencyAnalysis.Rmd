@@ -8,36 +8,91 @@ output: html_notebook
 ## Libraries
 require(tidyverse)
 require(tidylog)
+options("tidylog.display" = list())  # turn off
+```
+```{r, include=FALSE}
+## Bring in proposal event database
+source("PrepData.R",verbose=FALSE)
+
 ```
 ```{r}
-## Bring in proposal event database
-source("PrepData.R")
+## Transparency data table
+proptrans.df <- propfull.df
+proptrans.df %<>% rowwise() %>% mutate(hasplan=!is.null(plan)) # indicator for presence of plan spec in data
+proptrans.df %<>% select(-plan) # drop full plan sopec for computation efficiency since its big, and we don't use it further
+proptrans.df %<>% rowwise() %>% mutate(VALIDPLAN=(is.na(INVALID)|!INVALID))
+proptrans.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5)))
 ```
+
 ## Preliminary Diagnostics
 ```{r}
 # diagnostic frequency table -- not in publication
-results<-propfull.df%>% xtabs(PROPOSED~actor+govlevel+year+stage,data=.)
+results<-proptrans.df%>% xtabs(PROPOSED~actor+govlevel+year+stage,data=.)
 ftable(results)
 ```
-## Invalidations (Tables 4.1 R1, 4.2 C1:2)
+## Invalidations 
 ```{r}
 # Table 4.1 for Row 1
-propfull.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE),invalid=sum(INVALID,na.rm=TRUE),rejectionrate=invalid/proposed)
+proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE),invalid=sum(!VALIDPLAN),rejectionrate=invalid/proposed)
+
 # Table 4.2 Col 1:2
-propfull.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE),invalid=sum(INVALID,na.rm=TRUE),rejectionrate=invalid/proposed)
+proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE),invalid=sum(!VALIDPLAN),rejectionrate=invalid/proposed)
+
 ```
-#Ambiguous Actors
-*  All are in 2013
+## Third Party Actors
+*  All scored entries are in 2013
 *  Three unknown actors - Junta, CLV, PRD51
 *  Plans are scored, but not included
+*  Also 2017 Jalisco plan by derfe submitted but not officially scored
 ```{r}
-ghostprop.df <-propfull.df %>% filter(actortype!="minor" & actortype!="major") %>% filter(stage==2 | stage==4) %>% filter(PROPOSED==TRUE)
+thirdpartyprop.df <-propfull.df %>% filter(actortype!="minor" & actortype!="major") %>% filter(stage==2 | stage==4) %>% filter(PROPOSED==TRUE)
 
 # Table 4.1 R2
-ghostprop.df %>% group_by(year,actor) %>% summarise(ghostproposals=sum(PROPOSED,na.rm=TRUE))
+thirdpartyprop.df %>% group_by(year,actor) %>% summarise(ghostproposals=sum(PROPOSED,na.rm=TRUE))
 
 ```
+## INE Interventions
+```{r}
+## aggregate proposal lists  by  year, edon
+contestSum.df <-proptrans.df %>% filter(VALIDPLAN==TRUE & (stage %in% c(2))) %>% group_by(year,edon) %>% summarize(phase2_plans=list(na.omit(rscore)))
+contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & (stage %in% c(4))) %>% group_by(year,edon) %>% summarize(phase4_plans=list(na.omit(rscore))))
+contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==3 & actor=="INE") %>% group_by(year,edon) %>% transmute(phase3_win=rscore))
+contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==1 & actor=="Algorithm") %>% group_by(year,edon) %>% transmute(phase1_start=rscore))
+contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==5 & actor=="INE") %>% group_by(year,edon) %>% transmute(final_win=rscore))
+```
+```{r}
+## INE interventions
+contestSum.df %<>% rowwise() %>% mutate(INEchanged_phase3 = !phase3_win %in% c(phase2_plans,phase1_start))
+contestSum.df %<>% rowwise() %>% mutate(INEchanged_final = !final_win %in% c(phase4_plans,phase3_win))
+contestSum.df %>% group_by(year) %>% summarize(intervene_start=sum(INEchanged_phase3),intervene_final=sum(INEchanged_final))
+```
 
+
+## Winning Plan Not Lowest Scoring Valid Plan
+## Section 8 
+
+```{r}
+contestSum.df %<>% rowwise() %>% mutate(lowestscore = min(phase1_start,phase2_plans,phase3_win,phase4_plans),best_lost=final_win!=lowestscore)
+contestSum.df %<>% rowwise() %>% mutate(final_unanimous=length(unique(phase4_plans))==1,section_eight=(final_unanimous&best_lost))
+contestSum.df %>% group_by(year) %>% summarize(best_lost=sum(best_lost),section_eight=sum(section_eight))
+```
+## Rules Violations
+```{r}
+
+
+```
+## Algorithmic Efficency 
+```{r}
+contestSum.df %<>% rowwise() %>% mutate(efficiency=(1-(phase1_start-lowestscore)/lowestscore)*100)
+contestSum.df %>% group_by(year) %>% summarize(min_efficiency=min(efficiency),median_efficiency=median(efficiency), mean_efficiency=mean(efficiency))
+contestSum.df %>% ggplot(aes(efficiency))+geom_histogram(bins=30)+facet_grid(rows=vars(year))
+contestSum.df %>% ggplot(aes(x=edon,y=efficiency,fill=as.factor(year)))+geom_col(position="dodge", width=.5)
+```
+## Party Plan Breakdown
+```{r}
+
+```
+## OLDER CODE
 ```{r}
 #Winning scores
 
