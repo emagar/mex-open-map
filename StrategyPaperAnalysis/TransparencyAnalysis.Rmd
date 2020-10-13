@@ -8,6 +8,7 @@ output: html_notebook
 ## Libraries
 require(tidyverse)
 require(tidylog)
+require(gt)
 options("tidylog.display" = list())  # turn off
 ```
 ```{r, include=FALSE}
@@ -33,10 +34,12 @@ ftable(results)
 ## Invalidations 
 ```{r}
 # Table 4.1 for Row 1
-proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE),invalid=sum(!VALIDPLAN),rejectionrate=invalid/proposed)
+res_events_grp.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),type="plan invalidations",category="compliance") 
+res_events_grp.df %>% pivot_wider(names_from=year,values_from=c(events,denominator))  %>% group_by(category) %>% gt()  %>% tab_header(title = "Compliance Events Summary" ) 
 
 # Table 4.2 Col 1:2
-proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(proposed=sum(PROPOSED,na.rm=TRUE),invalid=sum(!VALIDPLAN),rejectionrate=invalid/proposed)
+res_events_actors.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),category="compliance")
+res_events_actors.df %>% gt()
 
 ```
 ## Third Party Actors
