@@ -22,7 +22,9 @@ proptrans.df <- propfull.df
 proptrans.df %<>% rowwise() %>% mutate(hasplan=!is.null(plan)) # indicator for presence of plan spec in data
 proptrans.df %<>% select(-plan) # drop full plan sopec for computation efficiency since its big, and we don't use it further
 proptrans.df %<>% rowwise() %>% mutate(VALIDPLAN=(is.na(INVALID)|!INVALID))
-proptrans.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5)))
+proptrans.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5))) # prevent plans not matching across stages because of rounding error
+ proptrans.df %<>% rowwise() %>% mutate(planid=ifelse(is.na(rscore),NA,paste(rscore,edon,year,sep="-"))) # for network analysis
+
 ```
 
 ## Preliminary Diagnostics
@@ -75,7 +77,7 @@ contestSum.df %>% group_by(year) %>% summarize(intervene_start=sum(INEchanged_ph
 ## Section 8 
 
 ```{r}
-contestSum.df %<>% rowwise() %>% mutate(lowestscore = min(phase1_start,phase2_plans,phase3_win,phase4_plans),best_lost=final_win!=lowestscore)
+contestSum.df %<>% rowwise() %>% mutate(lowestvalid = min(phase1_start,phase2_plans,phase3_win,phase4_plans),phase2_lowest = min(phase1_start,phase2_plans),best_lost=final_win!=lowestvalid)
 contestSum.df %<>% rowwise() %>% mutate(final_unanimous=length(unique(phase4_plans))==1,section_eight=(final_unanimous&best_lost))
 contestSum.df %>% group_by(year) %>% summarize(best_lost=sum(best_lost),section_eight=sum(section_eight))
 ```
@@ -86,89 +88,24 @@ contestSum.df %>% group_by(year) %>% summarize(best_lost=sum(best_lost),section_
 ```
 ## Algorithmic Efficency 
 ```{r}
-contestSum.df %<>% rowwise() %>% mutate(efficiency=(1-(phase1_start-lowestscore)/lowestscore)*100)
+contestSum.df %<>% rowwise() %>% mutate(efficiency=(1-(phase1_start-lowestvalid)/lowestvalid)*100)
 contestSum.df %>% group_by(year) %>% summarize(min_efficiency=min(efficiency),median_efficiency=median(efficiency), mean_efficiency=mean(efficiency))
 contestSum.df %>% ggplot(aes(efficiency))+geom_histogram(bins=30)+facet_grid(rows=vars(year))
 contestSum.df %>% ggplot(aes(x=edon,y=efficiency,fill=as.factor(year)))+geom_col(position="dodge", width=.5)
 ```
 ## Party Plan Breakdown
 ```{r}
+## Create Plan Data Structure
+ planProp.df <- proptrans.df %>% filter(!is.na(planid)) %>% group_by(planid) %>% summarize(stages=list(sort(unique(stage))),rscore=unique(rscore),edon=unique(edon),year=unique(year),VALIDPLAN=unique(VALIDPLAN))
+planProp.df %<>% left_join(contestSum.df %>% select(year,edon,lowestvalid,phase2_lowest))
+planProp.df %<>% rowwise() %<>% mutate(win_final=(5 %in% stages))
+planProp.df %<>% left_join(contestSum.df %>% select(year,edon,lowestvalid,phase2_lowest))
+planProp.df %<>% rowwise() %>% mutate(first_appeared=stages[[1]])
 
-```
-## OLDER CODE
-```{r}
-#Winning scores
-
-winscores <- subset(proposals.df,stage==5, select=c(SCORE,year,Entidad))
-names(winscores)[1]<-"Winning.Score"
-print (winscores)
-```
-
-```{r}
-twin<-proposals.df %>% inner_join(winscores)
-
-#cat("Which actors won ...")
-# by(twin,c(twin["Entidad"], twin["year"]),function(x)x["actor"],simplify=FALSE)
+# finding creators is a nested op, breaking this up for readability
+tmpCreators <- left_join(proptrans.df %>% filter(!is.na(planid)), planProp.df %>% select(planid,first_appeared)) %>% filter(stage==first_appeared) %>% group_by(planid) %>% summarize(creators=list(unique(actor)))  
+planProp.df %<>% left_join(tmpCreators)
+rm(tmpCreators)
 
 ```
 
-```{r}
-# Analyze transparency compliance
-
-cat ("Invalidations")
-xtabs(PROPOSED~INVALID+year, proposals.df)
-ftable(xtabs(PROPOSED~INVALID+actor+year+stage, proposals.df))
-
-lowvalid <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=min)
-names(lowvalid)[3]<-"Lowestv.Score"
-
-unanimous <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==4& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=function(x)length(unique(x))==1)
-names(unanimous)[3]<-"UnanimousLast"
-
-
-
-tmpBest<- within(merge(lowvalid,winscores, by= c("year","Entidad")), LowestWon<-(Lowestv.Score==Winning.Score))
-tmpBest<-as_tibble(tmpBest)
-xtabs(~LowestWon+year,tmpBest)
-
-tmpBest<-merge(tmpBest,unanimous)
-tmpBest<-within(tmpBest,RulesViolation <- !LowestWon & !UnanimousLast) 
-round1p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==1),FUN=c)
- names(round1p)[3]<-"round1.scores"
-
- round2p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==2& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
- names(round2p)[3]<-"round2.scores"
- round3p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==3& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
-  names(round3p)[3]<-"round3.scores"
-
- round4p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==4& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
-   names(round4p)[3]<-"round4.scores"
-
-round5p <- aggregate(formula=SCORE~year+Entidad,data=subset(proposals.df,stage==5& PROPOSED==TRUE & (is.na(INVALID) | INVALID==FALSE)),FUN=c)
-  names(round5p)[3]<-"round5.scores"
-    tmpBest<-merge(tmpBest,round1p,all.x=TRUE)  
-
-  tmpBest<-merge(tmpBest,round2p,all.x=TRUE)  
-  tmpBest<-merge(tmpBest,round3p,all.x=TRUE)
-    tmpBest<-merge(tmpBest,round4p,all.x=TRUE)
-      tmpBest<-merge(tmpBest,round5p,all.x=TRUE)
-
-tmpBest$IneNewRound3<-apply(tmpBest,1,function(x)length(intersect(unlist(x$round3.scores),union(unlist(x["round1.scores"]),unlist(x["round2.scores"]))))==0)
-
-tmpBest$IneNewRound5<-apply(tmpBest,1,function(x)length(intersect(unlist(x$round5.scores),union(unlist(x["round3.scores"]),unlist(x["round4.scores"]))))==0)
-
-tmpBest %<>% mutate(IneNew=IneNewRound3 | IneNewRound5)
-
-
-
-cat("lowest valid proposal winning")
-xtabs(~LowestWon+year,tmpBest)
-cat("party unanimity in the last round")
-xtabs(~UnanimousLast+year,tmpBest)
-cat("Rules violation (not lowest & not unanimous)")
-xtabs(~RulesViolation+year,tmpBest)
-cat("INE new proposals")
-xtabs(~IneNew+year,tmpBest)
-
-
-```
