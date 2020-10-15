@@ -134,10 +134,8 @@ pl1<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2
 pl2<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017) %>% 
    ggplot(aes(x=stages,y=rscore,color=creator_label))+geom_point()+geom_line()+
   facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")
-
-plot(pl1)
-plot(pl2)
-rm(pl1,pl2)
+ggarrange(pl1,pl2,ncol=2)
+rm(pl1,pl2) 
 
 ```
 
