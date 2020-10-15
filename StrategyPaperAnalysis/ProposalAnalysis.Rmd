@@ -461,6 +461,14 @@ win_match.df %<>% group_by(edon, stage, year, govlevel) %>% mutate(WIN = ifelse(
 
 #2.1 Code to create a proportion of success rate based on the proportion of plans adopted (Proportion winning   plans = Partisan plans that were adopted / Total amout of proposals formulated by each party)-->               This requires for the FIRST STAGE: 1) compareing the FIRST SCENARIO with PARTISAN PLANS, possible              outcomes in terms of the cost function: 
 #a) First scenario > partisan plan, verify if partisan plan was accepted   (PARTISAN PLAN should match the score of the SECOND SCENARIO) --> Party Success!; 
+
+##########################################################################################
+#######SCORE Stage == 2 equivalent to SCORE Stage ==4
+#group by party and all the other things = create neww var that generates the score for each stage
+#compare stage 2 and 4 generate neww var that is a binary for matching
+#now e can also do greater than or less than
+##############################################################################################
+
 #b) First scenario < cost than   partisan plans, verify if Fisrt scenario became the second scenario (FIRST SCENARIO should match the score of    the SECOND SCENARIO) --> EMB/Algorithm success!; 
 #c) First scenario > partisan plan, the outcome registered for the second scenario is different from partisan proposal --> Inconsistency type 1, subsequent options: 
     #i) observed score in second scenario = First Scenario
