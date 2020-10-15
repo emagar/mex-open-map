@@ -142,7 +142,7 @@ rm(pl1,pl2)
 ```
 # Creator Outcome Analysis
 ```{r}
-#TODO - examine gtsummary() for tables
+#TODO - examine gtsummary() for tables to replace tabyl ... see https://cran.r-project.org/web/packages/gtsummary/vignettes/gallery.html
 planProp.df %>% filter(win_final) %>% 
   tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col") %>% adorn_pct_formatting() %>% adorn_ns() %>%  # tabyl-based approach
   gt() %>% tab_header(title="Winning Plans by Creator")
