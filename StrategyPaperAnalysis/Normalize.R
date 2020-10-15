@@ -3,10 +3,8 @@
 # Output: proposals.df
 
 
-require(dplyr)
-require(tidyr)
+require(tidyverse)
 require(magrittr)
-require(readr)
 
 
 INE2013s1.df <- read.delim(file="Pre-Normalized APSA2014PaperTables - Obs 1st Scenario.tsv",stringsAsFactors =FALSE,na.strings="-")
