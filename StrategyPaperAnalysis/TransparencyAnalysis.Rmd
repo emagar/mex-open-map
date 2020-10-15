@@ -9,6 +9,9 @@ output: html_notebook
 require(tidyverse)
 require(tidylog)
 require(gt)
+require(grid)
+require(egg)
+require(gtable)
 options("tidylog.display" = list())  # turn off
 ```
 ```{r, include=FALSE}
@@ -123,13 +126,18 @@ planProp.df %<>% rowwise() %>% mutate( creator_label = case_when(
     TRUE ~ "Coalition")
 )
 ```
-```{r}
+```{r fig.width=5, fig.height=30}
 #plots
-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% #ggplot(aes(x=stages,y=rscore,color=creator_label))+geom_point()+geom_line()+
-#  facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")
-ggplot(aes(x=stages,y=rscore,color=creator_label))+geom_point()+geom_line()+
-  facet_wrap(facets=~year+edon, scales="free_y")
+pl1<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2013) %>% 
+  ggplot(aes(x=stages,y=rscore,color=creator_label))+geom_point()+geom_line()+
+  facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")+theme(legend.position = "none")
+pl2<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017) %>% 
+   ggplot(aes(x=stages,y=rscore,color=creator_label))+geom_point()+geom_line()+
+  facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")
 
+plot(pl1)
+plot(pl2)
+rm(pl1,pl2)
 
 ```
 
