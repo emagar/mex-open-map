@@ -17,7 +17,6 @@ options("tidylog.display" = list())  # turn off
 ```{r, include=FALSE}
 ## Bring in proposal event database
 source("PrepData.R",verbose=FALSE)
-
 ```
 ```{r}
 ## Transparency data table
@@ -27,9 +26,7 @@ proptrans.df %<>% select(-plan) # drop full plan sopec for computation efficienc
 proptrans.df %<>% rowwise() %>% mutate(VALIDPLAN=(is.na(INVALID)|!INVALID))
 proptrans.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5))) # prevent plans not matching across stages because of rounding error
  proptrans.df %<>% rowwise() %>% mutate(planid=ifelse(is.na(rscore),NA,paste(rscore,edon,year,sep="-"))) # for network analysis
-
 ```
-
 ## Preliminary Diagnostics
 ```{r}
 # diagnostic frequency table -- not in publication
@@ -45,7 +42,6 @@ res_events_grp.df %>% pivot_wider(names_from=year,values_from=c(events,denominat
 # Table 4.2 Col 1:2
 res_events_actors.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),category="compliance")
 res_events_actors.df %>% gt()
-
 ```
 ## Third Party Actors
 *  All scored entries are in 2013
@@ -54,10 +50,7 @@ res_events_actors.df %>% gt()
 *  Also 2017 Jalisco plan by derfe submitted but not officially scored
 ```{r}
 thirdpartyprop.df <-propfull.df %>% filter(actortype!="minor" & actortype!="major") %>% filter(stage==2 | stage==4) %>% filter(PROPOSED==TRUE)
-
-# Table 4.1 R2
 thirdpartyprop.df %>% group_by(year,actor) %>% summarise(ghostproposals=sum(PROPOSED,na.rm=TRUE))
-
 ```
 ## INE Interventions
 ```{r}
@@ -126,17 +119,16 @@ planProp.df %<>% rowwise() %>% mutate( creator_label = case_when(
     TRUE ~ "Coalition")
 )
 ```
-```{r fig.width=5, fig.height=30}
+```{r fig.width=10, fig.height=30}
 #plots
 pl1<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2013) %>% 
-  ggplot(aes(x=stages,y=rscore,color=creator_label))+geom_point()+geom_line()+
+  ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid)) +geom_point()+geom_line()+
   facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")+theme(legend.position = "none")
 pl2<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017) %>% 
-   ggplot(aes(x=stages,y=rscore,color=creator_label))+geom_point()+geom_line()+
+   ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid))+geom_point()+geom_line()+
   facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")
 ggarrange(pl1,pl2,ncol=2)
 rm(pl1,pl2) 
-
 ```
 
 
