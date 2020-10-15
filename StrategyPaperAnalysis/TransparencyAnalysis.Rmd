@@ -77,8 +77,8 @@ contestSum.df %>% group_by(year) %>% summarize(intervene_start=sum(INEchanged_ph
 ## Section 8 
 
 ```{r}
-contestSum.df %<>% rowwise() %>% mutate(lowestvalid = min(phase1_start,phase2_plans,phase3_win,phase4_plans),phase2_lowest = min(phase1_start,phase2_plans),best_lost=final_win!=lowestvalid)
-contestSum.df %<>% rowwise() %>% mutate(final_unanimous=length(unique(phase4_plans))==1,section_eight=(final_unanimous&best_lost))
+contestSum.df %<>% rowwise() %>% mutate(lowestvalid = min(phase1_start,phase2_plans,phase3_win,phase4_plans),phase2_lowest = min(phase1_start,phase2_plans),final_lowest=min(phase1_start,phase2_plans,phase3_win),best_lost=final_win!=lowestvalid)
+contestSum.df %<>% rowwise() %>% mutate(phase2_unanimous=(length(unique(phase2_plans))==1), final_unanimous=length(unique(phase4_plans))==1,section_eight=(final_unanimous&best_lost))
 contestSum.df %>% group_by(year) %>% summarize(best_lost=sum(best_lost),section_eight=sum(section_eight))
 ```
 ## Rules Violations
@@ -97,9 +97,7 @@ contestSum.df %>% ggplot(aes(x=edon,y=efficiency,fill=as.factor(year)))+geom_col
 ```{r}
 ## Create Plan Data Structure
  planProp.df <- proptrans.df %>% filter(!is.na(planid)) %>% group_by(planid) %>% summarize(stages=list(sort(unique(stage))),rscore=unique(rscore),edon=unique(edon),year=unique(year),VALIDPLAN=unique(VALIDPLAN))
-planProp.df %<>% left_join(contestSum.df %>% select(year,edon,lowestvalid,phase2_lowest))
 planProp.df %<>% rowwise() %<>% mutate(win_final=(5 %in% stages))
-planProp.df %<>% left_join(contestSum.df %>% select(year,edon,lowestvalid,phase2_lowest))
 planProp.df %<>% rowwise() %>% mutate(first_appeared=stages[[1]])
 
 # finding creators is a nested op, breaking this up for readability
@@ -107,5 +105,33 @@ tmpCreators <- left_join(proptrans.df %>% filter(!is.na(planid)), planProp.df %>
 planProp.df %<>% left_join(tmpCreators)
 rm(tmpCreators)
 
+# fill in outcome characteristics
+planProp.df %<>% left_join( contestSum.df %>% select( year, edon, lowestvalid, phase2_lowest, final_lowest, phase2_unanimous, final_unanimous ))
+planProp.df %<>% mutate(unanimous_creator=(first_appeared==2 & phase2_unanimous) | (first_appeared==4 & final_unanimous) )
+planProp.df %<>% mutate( best_plan = ( rscore==lowestvalid ))
+planProp.df %<>% select( -lowestvalid, -phase2_lowest, -final_lowest, -phase2_unanimous, -final_unanimous )
+
+# label by creator
+planProp.df %<>% rowwise() %>% mutate( creator_label=ifelse((length(creators)>1 & unanimous_creator), "unanimous", paste(creators,sep="-",collapse="-")))
+
+planProp.df %<>% rowwise() %>% mutate( creator_label = case_when(
+    first_appeared ==1 ~ "ALGORITHM",
+    first_appeared ==3 ~ "INE",
+    first_appeared ==5 ~ "INE",
+    length(creators)==1 ~ "SINGLE",# creators[[1]],
+    (length(creators)>1 & unanimous_creator) ~ "UNANIMOUS",
+    TRUE ~ "Coalition")
+)
 ```
+```{r}
+#plots
+planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% #ggplot(aes(x=stages,y=rscore,color=creator_label))+geom_point()+geom_line()+
+#  facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")
+ggplot(aes(x=stages,y=rscore,color=creator_label))+geom_point()+geom_line()+
+  facet_wrap(facets=~year+edon, scales="free_y")
+
+
+```
+
+
 
