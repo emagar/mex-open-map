@@ -12,6 +12,7 @@ require(gt)
 require(grid)
 require(egg)
 require(gtable)
+require(janitor)
 options("tidylog.display" = list())  # turn off
 ```
 ```{r, include=FALSE}
@@ -51,6 +52,8 @@ res_events_actors.df %>% gt()
 ```{r}
 thirdpartyprop.df <-propfull.df %>% filter(actortype!="minor" & actortype!="major") %>% filter(stage==2 | stage==4) %>% filter(PROPOSED==TRUE)
 thirdpartyprop.df %>% group_by(year,actor) %>% summarise(ghostproposals=sum(PROPOSED,na.rm=TRUE))
+
+# TODO --> recode {INE, Junata, CLV} -> Admin; PRD51 to PRD
 ```
 ## INE Interventions
 ```{r}
@@ -108,13 +111,20 @@ planProp.df %<>% mutate( best_plan = ( rscore==lowestvalid ))
 planProp.df %<>% select( -lowestvalid, -phase2_lowest, -final_lowest, -phase2_unanimous, -final_unanimous )
 
 # label by creator
-planProp.df %<>% rowwise() %>% mutate( creator_label=ifelse((length(creators)>1 & unanimous_creator), "unanimous", paste(creators,sep="-",collapse="-")))
-
+# TODO: treat ADMIN types  CLV and Junta in other phases as admin
 planProp.df %<>% rowwise() %>% mutate( creator_label = case_when(
     first_appeared ==1 ~ "ALGORITHM",
     first_appeared ==3 ~ "INE",
     first_appeared ==5 ~ "INE",
     length(creators)==1 ~ "SINGLE",# creators[[1]],
+    (length(creators)>1 & unanimous_creator) ~ "UNANIMOUS",
+    TRUE ~ "Coalition")
+)
+planProp.df %<>% rowwise() %>% mutate( creator_coded = case_when(
+    first_appeared ==1 ~ "ALGORITHM",
+    first_appeared ==3 ~ "INE",
+    first_appeared ==5 ~ "INE",
+    length(creators)==1 ~ creators[[1]],
     (length(creators)>1 & unanimous_creator) ~ "UNANIMOUS",
     TRUE ~ "Coalition")
 )
@@ -129,6 +139,16 @@ pl2<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2
   facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")
 ggarrange(pl1,pl2,ncol=2)
 rm(pl1,pl2) 
+```
+# Creator Outcome Analysis
+```{r}
+#TODO - examine gtsummary() for tables
+planProp.df %>% filter(win_final) %>% 
+  tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col") %>% adorn_pct_formatting() %>% adorn_ns() %>%  # tabyl-based approach
+  gt() %>% tab_header(title="Winning Plans by Creator")
+planProp.df %>% filter(best_plan) %>% 
+  tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col") %>% adorn_pct_formatting() %>% adorn_ns() %>%  # tabyl-based approach
+  gt()  %>% tab_header(title="Best Scoring Plans by Creator") 
 ```
 
 
