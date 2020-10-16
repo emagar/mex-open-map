@@ -37,7 +37,7 @@ require(rcompanion)
 require(caret)
 ```
 #bring in Data
-```{r}
+```{r message=FALSE}
 source("PrepData.R")
 ```
 
@@ -71,8 +71,8 @@ NOTE: these  are measures of the STATE at that time, not specific to party
 #Code generating needed variables
 ys.proposed <- propfull.df %>% group_by(actor,edon,year) %>% summarise(numproposals=sum(PROPOSED,na.rm=TRUE))
 #output <- propstrue(proposals.df)
-ys.control <- grule.df %>%  controlByWindow(2000,2013)%>%  mutate (edon=edon, year=2013,                                 control=if_else(singlecontrol,primary,"NONE"))
-ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% mutate(edon=edon, year=2017,                              control=if_else(singlecontrol,primary,"NONE")))
+ys.control <- grule.df %>%  controlByWindow(2000,2013)%>%  mutate (edon=edon, year=2013,control=if_else(singlecontrol,primary,"NONE"))
+ys.control %<>% bind_rows (grule.df %>%  controlByWindow(2000,2017) %>% mutate(edon=edon, year=2017,control=if_else(singlecontrol,primary,"NONE")))
 ys.proposed %<>% left_join(ys.control)
 rm(ys.control)
 ys.proposed %<>% rowwise() %>% mutate(didPropose=(numproposals>0),didControl=(actor==control))
@@ -403,8 +403,9 @@ matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRU
   #0.3.2 Descriptive level of engagment by party  --> Code for generating tables and visualizations that           aggregate proposals by party at the year, stage, and level. 
 
   #0.3.3 Descriptive level of engagment by party and state  --> Code for generating tables and visualizations      that aggregate proposals by party at the year, stage, and level.
+```
 
-
+```{r}
 #1.Efficiency hypothesis (Part 1: lowest score): RQ: Which party/parties were more effective in formulating plans with the lowest cost? --> We theorize that 1) major parties will be more efficient than smaller ones, 2) that PAN, at least in 2013 and at the national level, was the most efficent party because of its level of professionalization, and 3) that because of algorithm efficeny and learning experience, 3.1) PAN became less efficient between 2013 and 2017, and 3.2) other parties performed better between years and levels. 
 
   #1.1 Code to identify which party formulated the plan with the lowest cost in every stage, state, level, and     year.
@@ -460,31 +461,45 @@ win_match.df %<>% inner_join(winningscores.df, by=c("Entidad", "year"))
 win_match.df %<>% group_by(edon, stage, year, govlevel) %>% mutate(WIN = ifelse(SCORE == Win_SCORE, 1, 0))
 
 #2.1 Code to create a proportion of success rate based on the proportion of plans adopted (Proportion winning   plans = Partisan plans that were adopted / Total amout of proposals formulated by each party)-->               This requires for the FIRST STAGE: 1) compareing the FIRST SCENARIO with PARTISAN PLANS, possible              outcomes in terms of the cost function: 
-#a) First scenario > partisan plan, verify if partisan plan was accepted   (PARTISAN PLAN should match the score of the SECOND SCENARIO) --> Party Success!; 
+
 
 ##########################################################################################
+partisan_FS_SCORE.df <- matching.df.1 %>% filter(stage == 2) %>% select(Entidad, year, SCORE, actor) %>% rename(partisan_FS_SCORE = SCORE)
+partisan_SS_SCORE.df <- matching.df.1 %>% filter(stage == 4) %>% select(Entidad, year, SCORE, actor) %>% rename(partisan_SS_SCORE = SCORE)
+
+win_match.df %<>% inner_join(partisan_FS_SCORE.df, by=c("Entidad", "year", "actor"))
+win_match.df %<>% inner_join(partisan_SS_SCORE.df, by=c("Entidad", "year", "actor"))
+#do the subsetting thing from line 450 for parties -- state year party score -- filter by stage again -- i can compare to FS_SCORE and SS_SCORE and to the indv party scores (PARTISAN_FS_SCORE and PARTISAN_SS_SCORE)
 #######SCORE Stage == 2 equivalent to SCORE Stage ==4
 #group by party and all the other things = create neww var that generates the score for each stage
 #compare stage 2 and 4 generate neww var that is a binary for matching
 #now e can also do greater than or less than
 ##############################################################################################
+##FIRST SCEN == algorithm
+##SECOND SCEN == winner from first round
 
+
+#a) First scenario > partisan plan, verify if partisan plan was accepted   (PARTISAN PLAN should match the score of the SECOND SCENARIO) --> Party Success!;
+win_match.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Scen.2.1.A = ifelse(FS_SCORE > partisan_FS_SCORE & partisan_FS_SCORE == SS_SCORE, 1, 0))
 #b) First scenario < cost than   partisan plans, verify if Fisrt scenario became the second scenario (FIRST SCENARIO should match the score of    the SECOND SCENARIO) --> EMB/Algorithm success!; 
-#c) First scenario > partisan plan, the outcome registered for the second scenario is different from partisan proposal --> Inconsistency type 1, subsequent options: 
+win_match.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Scen.2.1.B = ifelse(FS_SCORE < partisan_FS_SCORE & FS_SCORE == SS_SCORE, 1, 0))
+#c) First scenario > partisan plan, the outcome registered for the second scenario is different from partisan proposal --> ==Inconsistency type 1==, subsequent options: 
+win_match.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Inconsistency1 = ifelse(FS_SCORE > partisan_FS_SCORE & partisan_FS_SCORE != SS_SCORE, 1, 0))
     #i) observed score in second scenario = First Scenario
-    #ii) observed score in second scenario is higher than the partisan plan with the lowest score, but lower             than the first scenario 
-    #iii) observed score in second scenario is higher than the partisan plan with the lowest score, and higher           than the first scenario
-    #iv)observed score in second scenario is lower than the partisan plan with the lowest score, and higher              than the first scenario
-    #v) observed score in second scenario is lower than the partisan plan with the lowest score,   and lower             than the first scenario
-#d) First scenario < cost than partisan plans, the outcome registered for the second scenario is different from the First scenario --> Inconsistency type 2, subsequent options: 
+    #ii) observed score in second scenario is higher than the partisan plan with the lowest score, but lower than the first scenario 
+    #iii) observed score in second scenario is higher than the partisan plan with the lowest score, and higher than the first scenario
+    #iv)observed score in second scenario is lower than the partisan plan with the lowest score, and higher than the first scenario
+    #v) observed score in second scenario is lower than the partisan plan with the lowest score,   and lower than the first scenario
+#d) First scenario < cost than partisan plans, the outcome registered for the second scenario is different from the First scenario --> ==Inconsistency type 2==, subsequent options:
+win_match.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Inconsistency2 = ifelse(FS_SCORE < partisan_FS_SCORE & FS_SCORE != SS_SCORE, 1, 0))
     #i) observed score in second scenario is lower than the First Scenario
-    #ii) observed score in second scenario is higher the first scenario, but lower than the lowerst partisan             counterproposal
+    #ii) observed score in second scenario is higher the first scenario, but lower than the lowerst partisan counterproposal
     #iii) observed score in second scenario is higher the first scenario and equal to the lowest partisan score
-    #iv) observed score in second   scenario is higher the first scenario and higher to the lowest partisan              score.
+    #iv) observed score in second   scenario is higher the first scenario and higher to the lowest partisan score.
 
       #2.1.1 --> Descriptive results by party (winning propsal): Create code: Descriptive graphs and tables. 
 
-      #2.1.2--> Evaluation Questions (Bias/Transparency):a) Were some parties a parties more effective than            others? Did inconsistencies affected sistematically a specific party?
+      #2.1.2--> Evaluation Questions (Bias/Transparency):a) Were some parties a parties more effective than others? Did inconsistencies affected sistematically a specific party?
 
 #3 Algorithm Efficency
 
