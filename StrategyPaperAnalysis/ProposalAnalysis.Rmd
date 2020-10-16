@@ -35,6 +35,7 @@ require(lmtest)
 require(ordinal)
 require(rcompanion)
 require(caret)
+require(readxl)
 ```
 #bring in Data
 ```{r}
@@ -85,7 +86,7 @@ ys.proposed %>% ggplot(aes(control,numproposals))+geom_boxplot()+facet_grid(rows
 
 
 # join with parties
-ys.proposed %<>% left_join(parties.df)
+ys.proposed %<>% left_join(actors.df)
 
 ```
 Strategic Position Categorization
