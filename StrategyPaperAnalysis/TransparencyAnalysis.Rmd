@@ -2,8 +2,7 @@
 title: "Transparency Analysis"
 output: html_notebook
 ---
-
-# Transparency Analysis (Sec. 4 tables)
+# Setup
 ```{r}
 ## Libraries
 require(tidyverse)
@@ -13,6 +12,7 @@ require(grid)
 require(egg)
 require(gtable)
 require(janitor)
+require(gtsummary)
 options("tidylog.display" = list())  # turn off
 ```
 ```{r, include=FALSE}
@@ -22,11 +22,23 @@ source("PrepData.R",verbose=FALSE)
 ```{r}
 ## Transparency data table
 proptrans.df <- propfull.df
+# TODO: Experiment with expss for labelling 
+#proptrans.df %<>% set_value_labels(edon=setNames(statecodes.df$edon,as.list(statecodes.df$tla)))
+
 proptrans.df %<>% rowwise() %>% mutate(hasplan=!is.null(plan)) # indicator for presence of plan spec in data
-proptrans.df %<>% select(-plan) # drop full plan sopec for computation efficiency since its big, and we don't use it further
+proptrans.df %<>% select(-plan) # drop full plan tibble for computation efficiency since its big, and we don't use it further
+proptrans.df %<>% mutate(year=as.integer(year))
 proptrans.df %<>% rowwise() %>% mutate(VALIDPLAN=(is.na(INVALID)|!INVALID))
 proptrans.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5))) # prevent plans not matching across stages because of rounding error
  proptrans.df %<>% rowwise() %>% mutate(planid=ifelse(is.na(rscore),NA,paste(rscore,edon,year,sep="-"))) # for network analysis
+```
+```{r}
+## For the purpose of simplifying presentation of analysis recode {INE, Junta, CLV} -> Admin; PRD51 to PRD
+## Note that PRD51 represents corrected proposals by PRD (after submitting invalid proposals)
+## Junta, CLV, derfe are parts of INE
+proptrans.df %<>% rowwise() %<>% mutate(actor2=case_when(actor=="PRD51"~"PRD", TRUE ~ actor))
+proptrans.df %<>% rowwise() %>% mutate(actortype2=as.character(actortype), actortype2=if_else(actor2=="PRD","major",actortype2))
+proptrans.df %<>% rowwise() %<>% mutate(actor2=ifelse(actor2 %in% c("Junta","CLV","derfe"),"INE",actor2))
 ```
 ## Preliminary Diagnostics
 ```{r}
@@ -34,68 +46,30 @@ proptrans.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5))) # prevent
 results<-proptrans.df%>% xtabs(PROPOSED~actor+govlevel+year+stage,data=.)
 ftable(results)
 ```
-## Invalidations 
 ```{r}
-# Table 4.1 for Row 1
-res_events_grp.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),type="plan invalidations",category="compliance") 
-res_events_grp.df %>% pivot_wider(names_from=year,values_from=c(events,denominator))  %>% group_by(category) %>% gt()  %>% tab_header(title = "Compliance Events Summary" ) 
-
-# Table 4.2 Col 1:2
-res_events_actors.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),category="compliance")
-res_events_actors.df %>% gt()
-```
-## Third Party Actors
-*  All scored entries are in 2013
-*  Three unknown actors - Junta, CLV, PRD51
-*  Plans are scored, but not included
-*  Also 2017 Jalisco plan by derfe submitted but not officially scored
-```{r}
-thirdpartyprop.df <-propfull.df %>% filter(actortype!="minor" & actortype!="major") %>% filter(stage==2 | stage==4) %>% filter(PROPOSED==TRUE)
-thirdpartyprop.df %>% group_by(year,actor) %>% summarise(ghostproposals=sum(PROPOSED,na.rm=TRUE))
-
-# TODO --> recode {INE, Junata, CLV} -> Admin; PRD51 to PRD
-```
-## INE Interventions
-```{r}
-## aggregate proposal lists  by  year, edon
+## create summary df of contest events (by  year, edon)
 contestSum.df <-proptrans.df %>% filter(VALIDPLAN==TRUE & (stage %in% c(2))) %>% group_by(year,edon) %>% summarize(phase2_plans=list(na.omit(rscore)))
 contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & (stage %in% c(4))) %>% group_by(year,edon) %>% summarize(phase4_plans=list(na.omit(rscore))))
-contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==3 & actor=="INE") %>% group_by(year,edon) %>% transmute(phase3_win=rscore))
-contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==1 & actor=="Algorithm") %>% group_by(year,edon) %>% transmute(phase1_start=rscore))
-contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==5 & actor=="INE") %>% group_by(year,edon) %>% transmute(final_win=rscore))
-```
-```{r}
-## INE interventions
+contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==3 ) %>% group_by(year,edon) %>% transmute(phase3_win=rscore))
+contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==1 ) %>% group_by(year,edon) %>% transmute(phase1_start=rscore))
+contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==5 ) %>% group_by(year,edon) %>% transmute(final_win=rscore))
+
+# code off-cycle interventions
 contestSum.df %<>% rowwise() %>% mutate(INEchanged_phase3 = !phase3_win %in% c(phase2_plans,phase1_start))
 contestSum.df %<>% rowwise() %>% mutate(INEchanged_final = !final_win %in% c(phase4_plans,phase3_win))
-contestSum.df %>% group_by(year) %>% summarize(intervene_start=sum(INEchanged_phase3),intervene_final=sum(INEchanged_final))
+
+# code for best scores
+contestSum.df %<>% rowwise() %>% mutate(lowestvalid = min(phase1_start,phase2_plans,phase3_win,phase4_plans),phase2_lowest = min(phase1_start,phase2_plans),final_lowest=min(phase3_win,phase4_plans),best_lost=final_win!=lowestvalid)
+
+# code for sec8 & rules violations
+contestSum.df %<>% rowwise() %>% mutate(phase2_unanimous=(length(unique(phase2_plans))==1), final_unanimous=length(unique(phase4_plans))==1)
+contestSum.df %<>% rowwise() %>% mutate( phase2_notlow = (phase3_win>min(phase2_lowest,phase1_start)), final_notlow = (final_win>min(final_lowest,phase3_win)))
+contestSum.df %<>% rowwise() %>% mutate( phase2_section8 = ( phase2_notlow & phase2_unanimous ), final_section8 = ( final_notlow & final_unanimous )) 
+contestSum.df %<>% rowwise() %>% mutate( phase2_violation = ( phase2_notlow & !phase2_unanimous ), final_violation = ( final_notlow & !final_unanimous )) 
 ```
-
-
-## Winning Plan Not Lowest Scoring Valid Plan
-## Section 8 
-
-```{r}
-contestSum.df %<>% rowwise() %>% mutate(lowestvalid = min(phase1_start,phase2_plans,phase3_win,phase4_plans),phase2_lowest = min(phase1_start,phase2_plans),final_lowest=min(phase1_start,phase2_plans,phase3_win),best_lost=final_win!=lowestvalid)
-contestSum.df %<>% rowwise() %>% mutate(phase2_unanimous=(length(unique(phase2_plans))==1), final_unanimous=length(unique(phase4_plans))==1,section_eight=(final_unanimous&best_lost))
-contestSum.df %>% group_by(year) %>% summarize(best_lost=sum(best_lost),section_eight=sum(section_eight))
-```
-## Rules Violations
-```{r}
-
-
-```
-## Algorithmic Efficency 
-```{r}
-contestSum.df %<>% rowwise() %>% mutate(efficiency=(1-(phase1_start-lowestvalid)/lowestvalid)*100)
-contestSum.df %>% group_by(year) %>% summarize(min_efficiency=min(efficiency),median_efficiency=median(efficiency), mean_efficiency=mean(efficiency))
-contestSum.df %>% ggplot(aes(efficiency))+geom_histogram(bins=30)+facet_grid(rows=vars(year))
-contestSum.df %>% ggplot(aes(x=edon,y=efficiency,fill=as.factor(year)))+geom_col(position="dodge", width=.5)
-```
-## Party Plan Breakdown
 ```{r}
 ## Create Plan Data Structure
- planProp.df <- proptrans.df %>% filter(!is.na(planid)) %>% group_by(planid) %>% summarize(stages=list(sort(unique(stage))),rscore=unique(rscore),edon=unique(edon),year=unique(year),VALIDPLAN=unique(VALIDPLAN))
+ planProp.df <- proptrans.df %>% filter(!is.na(planid)) %>% group_by(planid) %>% summarize(stages=list(sort(unique(stage))),rscore=unique(rscore),edon=unique(edon),year=unique(year),VALIDPLAN=unique(VALIDPLAN),tla=unique(tla))
 planProp.df %<>% rowwise() %<>% mutate(win_final=(5 %in% stages))
 planProp.df %<>% rowwise() %>% mutate(first_appeared=stages[[1]])
 
@@ -129,17 +103,141 @@ planProp.df %<>% rowwise() %>% mutate( creator_coded = case_when(
     TRUE ~ "Coalition")
 )
 ```
-```{r fig.width=10, fig.height=30}
-#plots
-pl1<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2013) %>% 
-  ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid)) +geom_point()+geom_line()+
-  facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")+theme(legend.position = "none")
-pl2<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017) %>% 
-   ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid))+geom_point()+geom_line()+
-  facet_grid(rows=vars(edon), cols=vars(year), scales="free_y")
-ggarrange(pl1,pl2,ncol=2)
-rm(pl1,pl2) 
+#Transparency Analysis
+```{r}
+# set themes for look and feel of tables
+reset_gtsummary_theme()
+theme_gtsummary_journal(journal = "jama")
+theme_gtsummary_compact()
+
+# from Mock (2020, Sept. 28). The Mockup Blog: Functions and Themes for gt tables. Retrieved from https://themockup.blog/posts/2020-09-26-functions-and-themes-for-gt-tables/
+
+gt_theme_538 <- function(data,...) {
+  data %>%
+  opt_all_caps()  %>%
+  opt_table_font(
+    font = list(
+      google_font("Chivo"),
+      default_fonts()
+    )
+  ) %>%
+    tab_style(
+      style = cell_borders(
+        sides = "bottom", color = "transparent", weight = px(2)
+      ),
+      locations = cells_body(
+        columns = TRUE,
+        # This is a relatively sneaky way of changing the bottom border
+        # Regardless of data size
+        rows = nrow(data$`_data`)
+      )
+    )  %>% 
+  tab_options(
+    column_labels.background.color = "white",
+    table.border.top.width = px(3),
+    table.border.top.color = "transparent",
+    table.border.bottom.color = "transparent",
+    table.border.bottom.width = px(3),
+    column_labels.border.top.width = px(3),
+    column_labels.border.top.color = "transparent",
+    column_labels.border.bottom.width = px(3),
+    column_labels.border.bottom.color = "black",
+    data_row.padding = px(3),
+    source_notes.font.size = 12,
+    table.font.size = 16,
+    heading.align = "left",
+    ...
+  ) 
+}
 ```
+## Third Party Actors
+*  All scored entries are in 2013
+* Unspecificed actors - Junta, CLV, PRD51
+* Plans are scored, but not included for ghostprop
+* Also 2017 Jalisco plan by derfe/INE submitted but not officially scored
+```{r}
+thirdparty.tab <- proptrans.df %>% group_by(year,actor2) %>% summarise (
+  outside=sum(PROPOSED & actortype2 %in% c("admin","other") & stage %in% c(2,4),na.rm=TRUE),
+  missing=sum(!is.na(PROPOSED) & PROPOSED & !hasplan),
+  unscored=sum(is.na(PROPOSED)& hasplan)
+) 
+thirdparty.tab
+thirdparty.tab %>% gt()  %>% 
+  cols_label( "actor2" = "Actor","outside"="Admin Proposals","missing"="Missing Plans","unscored"="Proposals Not Scored" ) %>%
+  tab_header(title="Undocumented Proposals") %>%
+  tab_source_note(
+    source_note = "Note: Admin proposals do not include interventions during decision phase to change plans." ) %>%
+  data_color( 
+      columns = vars(outside,missing,unscored), 
+      colors = scales::col_numeric( 
+      palette = c( "white","orange"), 
+        domain = c(0,7) 
+      )
+  ) %>% 
+  gt_theme_538() 
+```
+## Party Plan Breakdown
+```{r fig.width=10, fig.height=10}
+#plots
+#TODO
+# name edons rather than number
+# highlight interaction rounds subtly
+# break up figure -- too long
+# possibly annotate illegal actions/section 8
+pl1<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2013, edon<16) %>% 
+  ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid)) +geom_point()+geom_line()+
+  facet_grid(rows=vars(tla), cols=vars(year), scales="free_y")+theme(legend.position = "none") 
+pl2<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017, edon<16) %>% 
+   ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid))+geom_point()+geom_line()+
+  facet_grid(rows=vars(tla), cols=vars(year), scales="free_y") +theme(legend.position = "none", axis.title.y=element_blank())
+pl3<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2013, edon>=16) %>% 
+  ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid)) +geom_point()+geom_line()+
+  facet_grid(rows=vars(tla), cols=vars(year), scales="free_y")+theme(legend.position = "none",axis.title.y=element_blank())
+pl4<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017, edon>=16) %>% 
+   ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid))+geom_point()+geom_line()+
+  facet_grid(rows=vars(tla), cols=vars(year), scales="free_y")+theme(axis.title.y=element_blank())
+ggarrange(pl1,pl2,pl3,pl4,ncol=4)
+rm(pl1,pl2,pl3,pl4) 
+```
+## Exceptional Events 
+```{r}
+# Table 4.1 for Row 1
+res_events_grp.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),type="plan invalidations",category="compliance") 
+res_events_grp.df %>% pivot_wider(names_from=year,values_from=c(events,denominator))  %>% group_by(category) %>% gt()  %>% tab_header(title = "Compliance Events Summary" ) 
+
+# Table 4.2 Col 1:2
+res_events_actors.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),category="compliance")
+res_events_actors.df %>% gt()
+```
+
+## INE Interventions
+
+```{r}
+## INE interventions
+contestSum.df %>% group_by(year) %>% summarize(intervene_start=sum(INEchanged_phase3),intervene_final=sum(INEchanged_final))
+```
+
+
+## Winning Plan Not Lowest Scoring Valid Plan
+## Section 8 
+
+```{r}
+contestSum.df %>% group_by(year) %>% summarize(best_lost=sum(best_lost),section_eight=sum(section_eight))
+```
+## Rules Violations
+```{r}
+
+
+```
+## Algorithmic Efficency 
+```{r}
+efficiency.df <- contestSum.df %>% rowwise() %>% mutate(efficiency=(1-(phase1_start-lowestvalid)/lowestvalid)*100) %>% select(year,edon,efficiency)
+efficiency.df %>% group_by(year) %>% summarize(min_efficiency=min(efficiency),median_efficiency=median(efficiency), mean_efficiency=mean(efficiency))
+efficiency.df %>% ggplot(aes(efficiency))+geom_histogram(bins=30)+facet_grid(rows=vars(year))
+efficiency.df %>% ggplot(aes(x=edon,y=efficiency,fill=as.factor(year)))+geom_col(position="dodge", width=.5)
+rm(efficiency.df)
+```
+
 # Creator Outcome Analysis
 ```{r}
 #TODO - examine gtsummary() for tables to replace tabyl ... see https://cran.r-project.org/web/packages/gtsummary/vignettes/gallery.html
