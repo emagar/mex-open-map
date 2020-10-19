@@ -28,7 +28,7 @@ proptrans.df <- propfull.df
 proptrans.df %<>% rowwise() %>% mutate(hasplan=!is.null(plan)) # indicator for presence of plan spec in data
 proptrans.df %<>% select(-plan) # drop full plan tibble for computation efficiency since its big, and we don't use it further
 proptrans.df %<>% mutate(year=as.integer(year))
-proptrans.df %<>% rowwise() %>% mutate(VALIDPLAN=(is.na(INVALID)|!INVALID))
+proptrans.df %<>% rowwise() %>% mutate(VALIDPLAN=(is.na(INVALID)|!INVALID)&!is.na(PROPOSED)) 
 proptrans.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5))) # prevent plans not matching across stages because of rounding error
  proptrans.df %<>% rowwise() %>% mutate(planid=ifelse(is.na(rscore),NA,paste(rscore,edon,year,sep="-"))) # for network analysis
 ```
@@ -74,7 +74,7 @@ planProp.df %<>% rowwise() %<>% mutate(win_final=(5 %in% stages))
 planProp.df %<>% rowwise() %>% mutate(first_appeared=stages[[1]])
 
 # finding creators is a nested op, breaking this up for readability
-tmpCreators <- left_join(proptrans.df %>% filter(!is.na(planid)), planProp.df %>% select(planid,first_appeared)) %>% filter(stage==first_appeared) %>% group_by(planid) %>% summarize(creators=list(unique(actor)))  
+tmpCreators <- left_join(proptrans.df %>% filter(!is.na(planid)), planProp.df %>% select(planid,first_appeared)) %>% filter(stage==first_appeared) %>% group_by(planid) %>% summarize(creators=list(unique(actor2)))  
 planProp.df %<>% left_join(tmpCreators)
 rm(tmpCreators)
 
@@ -208,33 +208,36 @@ res_events_grp.df %>% pivot_wider(names_from=year,values_from=c(events,denominat
 # Table 4.2 Col 1:2
 res_events_actors.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),category="compliance")
 res_events_actors.df %>% gt()
-```
-
-## INE Interventions
-
-```{r}
 ## INE interventions
 contestSum.df %>% group_by(year) %>% summarize(intervene_start=sum(INEchanged_phase3),intervene_final=sum(INEchanged_final))
-```
+## Section 8
+#TODO
+## Higher Non-Unanimous Acepted
+# TODO
+
 
 
 ## Winning Plan Not Lowest Scoring Valid Plan
 ## Section 8 
-
-```{r}
-contestSum.df %>% group_by(year) %>% summarize(best_lost=sum(best_lost),section_eight=sum(section_eight))
+## Invalid, WInning, Sec 8 by party
 ```
-## Rules Violations
+## Outcome Characteristics
+- Best score won
+- Algorithm won
+- Lower score won without unanimity
+- Section 8 won
 ```{r}
-
+contestSum.df %>% group_by(year) %>%     
+  summarize(best_lost=sum(edon))
 
 ```
+
 ## Algorithmic Efficency 
 ```{r}
-efficiency.df <- contestSum.df %>% rowwise() %>% mutate(efficiency=(1-(phase1_start-lowestvalid)/lowestvalid)*100) %>% select(year,edon,efficiency)
+efficiency.df <- contestSum.df %>% rowwise() %>% mutate(efficiency=(1-(phase1_start-lowestvalid)/lowestvalid)*100) %>% select(year,edon,efficiency) %>% mutate(year=as.factor(year))
 efficiency.df %>% group_by(year) %>% summarize(min_efficiency=min(efficiency),median_efficiency=median(efficiency), mean_efficiency=mean(efficiency))
 efficiency.df %>% ggplot(aes(efficiency))+geom_histogram(bins=30)+facet_grid(rows=vars(year))
-efficiency.df %>% ggplot(aes(x=edon,y=efficiency,fill=as.factor(year)))+geom_col(position="dodge", width=.5)
+efficiency.df %>% ggplot(aes(x=edon,y=efficiency,fill=year))+geom_col(position="dodge", width=.5)
 rm(efficiency.df)
 ```
 
@@ -243,10 +246,32 @@ rm(efficiency.df)
 #TODO - examine gtsummary() for tables to replace tabyl ... see https://cran.r-project.org/web/packages/gtsummary/vignettes/gallery.html
 planProp.df %>% filter(win_final) %>% 
   tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col") %>% adorn_pct_formatting() %>% adorn_ns() %>%  # tabyl-based approach
-  gt() %>% tab_header(title="Winning Plans by Creator")
+  gt() %>% tab_header(title="Winning Plans by Creator") %>%
+   cols_label( "creator_coded" = "Actor" ) %>%
+  tab_source_note(
+    source_note = "Note: Creators refers to initial plan creators, others may have joined in later rounds." ) %>%
+  #data_color( 
+  #    columns = vars('2013','2017'), 
+  #    colors = scales::col_numeric( 
+  #   palette = c( "white","orange"), 
+  #      domain = c(0,7) 
+  #    )
+  #) %>% 
+  gt_theme_538() 
 planProp.df %>% filter(best_plan) %>% 
   tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col") %>% adorn_pct_formatting() %>% adorn_ns() %>%  # tabyl-based approach
-  gt()  %>% tab_header(title="Best Scoring Plans by Creator") 
+  gt()  %>% tab_header(title="Best Scoring Plans by Creator") %>%
+  cols_label( "creator_coded" = "Actor" ) %>%
+  tab_source_note(
+    source_note = "Note: Creators refers to initial plan creators, others may have joined in later rounds." ) %>%
+  #data_color( 
+  #    columns = vars('2013','2017'), 
+  #    colors = scales::col_numeric( 
+  #   palette = c( "white","orange"), 
+  #      domain = c(0,7) 
+  #    )
+  #) %>% 
+  gt_theme_538() 
 ```
 
 
