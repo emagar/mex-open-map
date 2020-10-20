@@ -1,6 +1,10 @@
 ---
 title: "Transparency Analysis"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
 ---
 # Setup
 ```{r}
@@ -49,7 +53,11 @@ ftable(results)
 ```{r}
 ## create summary df of contest events (by  year, edon)
 contestSum.df <-proptrans.df %>% filter(VALIDPLAN==TRUE & (stage %in% c(2))) %>% group_by(year,edon) %>% summarize(phase2_plans=list(na.omit(rscore)))
+contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & (stage %in% c(2)),actortype %in% c("major","minor")) %>% group_by(year,edon) %>% summarize(phase2_plans_party=list(na.omit(rscore))))
 contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & (stage %in% c(4))) %>% group_by(year,edon) %>% summarize(phase4_plans=list(na.omit(rscore))))
+contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & (stage %in% c(4)),actortype %in% c("major","minor")) %>% group_by(year,edon) %>% summarize(phase4_plans_party=list(na.omit(rscore))))
+
+
 contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==3 ) %>% group_by(year,edon) %>% transmute(phase3_win=rscore))
 contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==1 ) %>% group_by(year,edon) %>% transmute(phase1_start=rscore))
 contestSum.df %<>% left_join(proptrans.df %>% filter(VALIDPLAN==TRUE & stage==5 ) %>% group_by(year,edon) %>% transmute(final_win=rscore))
@@ -62,7 +70,7 @@ contestSum.df %<>% rowwise() %>% mutate(INEchanged_final = !final_win %in% c(pha
 contestSum.df %<>% rowwise() %>% mutate(lowestvalid = min(phase1_start,phase2_plans,phase3_win,phase4_plans),phase2_lowest = min(phase1_start,phase2_plans),final_lowest=min(phase3_win,phase4_plans),best_lost=final_win!=lowestvalid)
 
 # code for sec8 & rules violations
-contestSum.df %<>% rowwise() %>% mutate(phase2_unanimous=(length(unique(phase2_plans))==1), final_unanimous=length(unique(phase4_plans))==1)
+contestSum.df %<>% rowwise() %>% mutate(phase2_unanimous=(length(unique(phase2_plans_party))==1), final_unanimous=length(unique(phase4_plans_party))==1)
 contestSum.df %<>% rowwise() %>% mutate( phase2_notlow = (phase3_win>min(phase2_lowest,phase1_start)), final_notlow = (final_win>min(final_lowest,phase3_win)))
 contestSum.df %<>% rowwise() %>% mutate( phase2_section8 = ( phase2_notlow & phase2_unanimous ), final_section8 = ( final_notlow & final_unanimous )) 
 contestSum.df %<>% rowwise() %>% mutate( phase2_violation = ( phase2_notlow & !phase2_unanimous ), final_violation = ( final_notlow & !final_unanimous )) 
@@ -81,7 +89,7 @@ rm(tmpCreators)
 # fill in outcome characteristics
 planProp.df %<>% left_join( contestSum.df %>% select( year, edon, lowestvalid, phase2_lowest, final_lowest, phase2_unanimous, final_unanimous ))
 planProp.df %<>% mutate(unanimous_creator=(first_appeared==2 & phase2_unanimous) | (first_appeared==4 & final_unanimous) )
-planProp.df %<>% mutate( best_plan = ( rscore==lowestvalid ))
+planProp.df %<>% mutate( best_plan = ( rscore==lowestvalid & VALIDPLAN ))
 planProp.df %<>% select( -lowestvalid, -phase2_lowest, -final_lowest, -phase2_unanimous, -final_unanimous )
 
 # label by creator
@@ -176,103 +184,188 @@ thirdparty.tab %>% gt()  %>%
   ) %>% 
   gt_theme_538() 
 ```
-## Party Plan Breakdown
+## Process Overview
 ```{r fig.width=10, fig.height=10}
 #plots
-#TODO
-# name edons rather than number
-# highlight interaction rounds subtly
-# break up figure -- too long
-# possibly annotate illegal actions/section 8
-pl1<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2013, edon<16) %>% 
-  ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid)) +geom_point()+geom_line()+
+pl1<-planProp.df %>% filter(VALIDPLAN) %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2013, edon<16) %>% 
+  ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid)) +geom_point()+geom_line()+geom_vline(xintercept=c(2,4),alpha=.2,color="blue")+
   facet_grid(rows=vars(tla), cols=vars(year), scales="free_y")+theme(legend.position = "none") 
-pl2<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017, edon<16) %>% 
-   ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid))+geom_point()+geom_line()+
+pl2<-planProp.df %>% filter(VALIDPLAN)  %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017, edon<16) %>% 
+   ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid))+geom_point()+geom_line()+ geom_vline(xintercept=c(2,4),alpha=.2,color="blue")+
   facet_grid(rows=vars(tla), cols=vars(year), scales="free_y") +theme(legend.position = "none", axis.title.y=element_blank())
-pl3<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2013, edon>=16) %>% 
-  ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid)) +geom_point()+geom_line()+
+pl3<-planProp.df %>% filter(VALIDPLAN) %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2013, edon>=16) %>% 
+  ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid)) +geom_point()+geom_line()+ geom_vline(xintercept=c(2,4),alpha=.2,color="blue")+
   facet_grid(rows=vars(tla), cols=vars(year), scales="free_y")+theme(legend.position = "none",axis.title.y=element_blank())
-pl4<-planProp.df %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017, edon>=16) %>% 
-   ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid))+geom_point()+geom_line()+
+pl4<-planProp.df %>% filter(VALIDPLAN) %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017, edon>=16) %>% 
+   ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid))+geom_point()+geom_line()+ geom_vline(xintercept=c(2,4),alpha=.2,color="blue")+
   facet_grid(rows=vars(tla), cols=vars(year), scales="free_y")+theme(axis.title.y=element_blank())
 ggarrange(pl1,pl2,pl3,pl4,ncol=4)
 rm(pl1,pl2,pl3,pl4) 
 ```
-## Exceptional Events 
-```{r}
-# Table 4.1 for Row 1
-res_events_grp.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),type="plan invalidations",category="compliance") 
-res_events_grp.df %>% pivot_wider(names_from=year,values_from=c(events,denominator))  %>% group_by(category) %>% gt()  %>% tab_header(title = "Compliance Events Summary" ) 
-
-# Table 4.2 Col 1:2
-res_events_actors.df <- proptrans.df %>% filter(actortype=="minor" | actortype=="major") %>% group_by(year,actor) %>% summarise(events=sum(!VALIDPLAN),denominator=sum(PROPOSED,na.rm=TRUE),category="compliance")
-res_events_actors.df %>% gt()
-## INE interventions
-contestSum.df %>% group_by(year) %>% summarize(intervene_start=sum(INEchanged_phase3),intervene_final=sum(INEchanged_final))
-## Section 8
-#TODO
-## Higher Non-Unanimous Acepted
-# TODO
-
-
-
-## Winning Plan Not Lowest Scoring Valid Plan
-## Section 8 
-## Invalid, WInning, Sec 8 by party
-```
-## Outcome Characteristics
-- Best score won
-- Algorithm won
-- Lower score won without unanimity
-- Section 8 won
-```{r}
-contestSum.df %>% group_by(year) %>%     
-  summarize(best_lost=sum(edon))
-
-```
-
-## Algorithmic Efficency 
+## Algorithmic Score Efficency 
 ```{r}
 efficiency.df <- contestSum.df %>% rowwise() %>% mutate(efficiency=(1-(phase1_start-lowestvalid)/lowestvalid)*100) %>% select(year,edon,efficiency) %>% mutate(year=as.factor(year))
 efficiency.df %>% group_by(year) %>% summarize(min_efficiency=min(efficiency),median_efficiency=median(efficiency), mean_efficiency=mean(efficiency))
 efficiency.df %>% ggplot(aes(efficiency))+geom_histogram(bins=30)+facet_grid(rows=vars(year))
 efficiency.df %>% ggplot(aes(x=edon,y=efficiency,fill=year))+geom_col(position="dodge", width=.5)
 rm(efficiency.df)
+planProp.df %>% filter(best_plan) %>% 
+  tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col")  %>% adorn_ns() %>%  # tabyl-based approach
+  gt()  %>% tab_header(title="Best Scoring Plans by Creator") %>%
+  cols_label( "creator_coded" = "Actor" ) %>%
+  tab_source_note(
+    source_note = "Note: Creators refers to initial plan creators, others may have joined in later rounds." ) %>%
+  gt_theme_538() 
+```
+## Exceptional Events 
+```{r}
+res_events_grp.df <-
+  planProp.df %>% group_by(year) %>% summarise(
+      events = sum( !VALIDPLAN ) , 
+      denominator = n(), type = "INE Invalidated Proposed Plan" , category="compliance"
+  )
+
+res_events_grp.df %<>% bind_rows(
+   contestSum.df %>% group_by(year) %>% summarise(
+      events = sum(final_section8) + sum(phase2_section8) , 
+      denominator = n()*2, type = "Unanimous Higher Score Proposal Accepted" , category="compliance"
+  )
+)
+
+res_events_grp.df %<>% bind_rows(
+  contestSum.df %>% group_by(year) %>% summarise(
+      events = sum(INEchanged_phase3) + sum(INEchanged_final) , 
+      denominator = n()*2, type = "INE Modified proposals" , category="compliance"
+  )
+)
+
+res_events_grp.df %<>% bind_rows(
+  contestSum.df %>% group_by(year) %>% summarise(
+      events = sum(phase2_violation) + sum(final_violation) , 
+      denominator = n()*2, type = "Higher Score Plan Without Unanimity" , category="compliance"
+  )
+)
+
+#TODO side by side groups?
+res_events_grp.df %>% group_by(year) %>% summarize(
+  type=type, 
+  count=events,
+  percent=count/denominator,
+  ) %>%
+  gt() %>% 
+    cols_label( percent="%" ) %>%
+    fmt_percent(columns="percent") %>%
+    tab_header(title="Process Exceptions") %>%
+    tab_source_note( source_note = "Note: Exceptions are suspect, but not necessarily illegal." ) %>%
+    data_color (
+      columns = vars(percent), 
+      colors = scales::col_numeric( 
+      palette = c( "white","orange"), 
+        domain = c(0,.25) ) 
+    ) %>% 
+    gt_theme_538() 
 ```
 
-# Creator Outcome Analysis
+## Outcome vs Expectations
+- Best score won
+- Algorithm won
+- Lower score won without unanimity
+- Section 8 won
 ```{r}
-#TODO - examine gtsummary() for tables to replace tabyl ... see https://cran.r-project.org/web/packages/gtsummary/vignettes/gallery.html
+contestSum.df %>% group_by(year) %>%     
+  summarize( 
+    best_lost = sum(best_lost)/n(),
+    algorithm_lost = sum(final_win!=phase1_start)/n(),
+    section8_won = sum(final_section8)/n(),
+    rules_violation = sum(final_violation)/n(),
+  ) %>% group_by(year) %>%
+ gt() %>%
+    cols_label( algorithm_lost= "Algorithm  Lost", best_lost="Best Score Lost", 
+                section8_won="Unanimous - Not Best", rules_violation="No Agreement & Not Best") %>%
+    fmt_percent(2:5) %>%
+    tab_header(title="Unexpected Winners") %>%
+    tab_source_note( source_note = "Note:N=32 per year." ) %>%
+    data_color (
+      columns=2:5, 
+      colors = scales::col_numeric( 
+      palette = c( "white","red"), 
+        domain = c(0,1) ) 
+    ) %>% 
+    gt_theme_538() 
+
+#TODO Consider replacing tably with summarise operations
 planProp.df %>% filter(win_final) %>% 
   tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col") %>% adorn_pct_formatting() %>% adorn_ns() %>%  # tabyl-based approach
   gt() %>% tab_header(title="Winning Plans by Creator") %>%
    cols_label( "creator_coded" = "Actor" ) %>%
   tab_source_note(
     source_note = "Note: Creators refers to initial plan creators, others may have joined in later rounds." ) %>%
-  #data_color( 
-  #    columns = vars('2013','2017'), 
-  #    colors = scales::col_numeric( 
-  #   palette = c( "white","orange"), 
-  #      domain = c(0,7) 
-  #    )
-  #) %>% 
-  gt_theme_538() 
-planProp.df %>% filter(best_plan) %>% 
+   gt_theme_538()
+
+```
+
+## Invalidation, Rules Violation, Sec 8 by party
+```{r}
+## Creator vs. Outcome Analysis
+```{r}
+#TODO Consider replacing tably with summarise operations
+planProp.df %>% filter(win_final) %>% 
   tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col") %>% adorn_pct_formatting() %>% adorn_ns() %>%  # tabyl-based approach
-  gt()  %>% tab_header(title="Best Scoring Plans by Creator") %>%
-  cols_label( "creator_coded" = "Actor" ) %>%
+  gt() %>% tab_header(title="Winning Plans by Creator") %>%
+   cols_label( "creator_coded" = "Actor" ) %>%
   tab_source_note(
     source_note = "Note: Creators refers to initial plan creators, others may have joined in later rounds." ) %>%
-  #data_color( 
-  #    columns = vars('2013','2017'), 
-  #    colors = scales::col_numeric( 
-  #   palette = c( "white","orange"), 
-  #      domain = c(0,7) 
-  #    )
-  #) %>% 
-  gt_theme_538() 
+   gt_theme_538()
+
 ```
+res_events_grp.df <-
+  planProp.df %>% group_by(year,creator_coded) %>% summarise(
+      events = sum( !VALIDPLAN ) , 
+      denominator = n(), type = "INE Invalidated Proposed Plan" , category="compliance"
+  )
+
+res_events_grp.df %<>% bind_rows(
+   planProp.df %>% group_by(year,creator_coded) %>% summarise(
+      events = sum(final_section8) + sum(phase2_section8) , 
+      denominator = n()*2, type = "Unanimous Higher Score Proposal Accepted" , category="compliance"
+  )
+)
+
+res_events_grp.df %<>% bind_rows(
+  contestSum.df %>% group_by(year,creator_coded) %>% summarise(
+      events = sum(INEchanged_phase3) + sum(INEchanged_final) , 
+      denominator = n()*2, type = "INE Modified proposals" , category="compliance"
+  )
+)
+
+res_events_grp.df %<>% bind_rows(
+  contestSum.df %>% group_by(year,creator_coded) %>% summarise(
+      events = sum(phase2_violation) + sum(final_violation) , 
+      denominator = n()*2, type = "Higher Score Plan Without Unanimity" , category="compliance"
+  )
+)
+res_events_grp.df %>% group_by(year) %>% summarize(
+  type=type, 
+  count=events,
+  percent=count/denominator,
+  ) %>%
+  gt() %>% 
+    cols_label( percent="%" ) %>%
+    fmt_percent(columns="percent") %>%
+    tab_header(title="Process Exceptions") %>%
+    tab_source_note( source_note = "Note: Exceptions are suspect, but not necessarily illegal." ) %>%
+    data_color (
+      columns = vars(percent), 
+      colors = scales::col_numeric( 
+      palette = c( "white","orange"), 
+        domain = c(0,.25) ) 
+    ) %>% 
+    gt_theme_538() 
+
+```
+
+
+
 
 
 
