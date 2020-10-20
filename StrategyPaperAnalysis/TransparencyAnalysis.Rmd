@@ -87,10 +87,12 @@ planProp.df %<>% left_join(tmpCreators)
 rm(tmpCreators)
 
 # fill in outcome characteristics
-planProp.df %<>% left_join( contestSum.df %>% select( year, edon, lowestvalid, phase2_lowest, final_lowest, phase2_unanimous, final_unanimous ))
+planProp.df %<>% left_join( contestSum.df %>% select( year, edon, lowestvalid, phase2_lowest, final_lowest, phase2_unanimous, final_unanimous, final_section8, final_violation ))
 planProp.df %<>% mutate(unanimous_creator=(first_appeared==2 & phase2_unanimous) | (first_appeared==4 & final_unanimous) )
 planProp.df %<>% mutate( best_plan = ( rscore==lowestvalid & VALIDPLAN ))
-planProp.df %<>% select( -lowestvalid, -phase2_lowest, -final_lowest, -phase2_unanimous, -final_unanimous )
+planProp.df %<>% mutate( win_section8 = win_final & final_section8)
+planProp.df %<>% mutate( win_violation = win_final & final_violation)
+planProp.df %<>% select( -lowestvalid, -phase2_lowest, -final_lowest, -phase2_unanimous, -final_unanimous, -final_section8, -final_violation )
 
 # label by creator
 # TODO: treat ADMIN types  CLV and Junta in other phases as admin
@@ -304,47 +306,32 @@ planProp.df %>% filter(win_final) %>%
 
 ```
 
-## Invalidation, Rules Violation, Sec 8 by party
+## Exceptions by party
 ```{r}
-## Creator vs. Outcome Analysis
-```{r}
-#TODO Consider replacing tably with summarise operations
-planProp.df %>% filter(win_final) %>% 
-  tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col") %>% adorn_pct_formatting() %>% adorn_ns() %>%  # tabyl-based approach
-  gt() %>% tab_header(title="Winning Plans by Creator") %>%
-   cols_label( "creator_coded" = "Actor" ) %>%
-  tab_source_note(
-    source_note = "Note: Creators refers to initial plan creators, others may have joined in later rounds." ) %>%
-   gt_theme_538()
 
-```
-res_events_grp.df <-
+res_outcomes_party.df <-
   planProp.df %>% group_by(year,creator_coded) %>% summarise(
       events = sum( !VALIDPLAN ) , 
-      denominator = n(), type = "INE Invalidated Proposed Plan" , category="compliance"
+      denominator = n(), type = "Invalidated" , category="compliance"
   )
 
-res_events_grp.df %<>% bind_rows(
-   planProp.df %>% group_by(year,creator_coded) %>% summarise(
-      events = sum(final_section8) + sum(phase2_section8) , 
-      denominator = n()*2, type = "Unanimous Higher Score Proposal Accepted" , category="compliance"
+
+# note denominator is number of contests in each year
+res_outcomes_party.df %<>% bind_rows(
+    planProp.df %>% group_by(year,creator_coded) %>% summarise(
+      events = sum( win_section8 ) , 
+      denominator = 32, type = "Won w Sec8" , category="compliance"
   )
 )
 
-res_events_grp.df %<>% bind_rows(
-  contestSum.df %>% group_by(year,creator_coded) %>% summarise(
-      events = sum(INEchanged_phase3) + sum(INEchanged_final) , 
-      denominator = n()*2, type = "INE Modified proposals" , category="compliance"
+res_outcomes_party.df %<>% bind_rows(
+    planProp.df %>% group_by(year,creator_coded) %>% summarise(
+      events = sum( win_violation ) , 
+      denominator = 32, type = "Won in Violation of Rules" , category="compliance"
   )
 )
 
-res_events_grp.df %<>% bind_rows(
-  contestSum.df %>% group_by(year,creator_coded) %>% summarise(
-      events = sum(phase2_violation) + sum(final_violation) , 
-      denominator = n()*2, type = "Higher Score Plan Without Unanimity" , category="compliance"
-  )
-)
-res_events_grp.df %>% group_by(year) %>% summarize(
+res_outcomes_party.df %>% group_by(year,creator_coded) %>% summarize(
   type=type, 
   count=events,
   percent=count/denominator,
@@ -352,13 +339,13 @@ res_events_grp.df %>% group_by(year) %>% summarize(
   gt() %>% 
     cols_label( percent="%" ) %>%
     fmt_percent(columns="percent") %>%
-    tab_header(title="Process Exceptions") %>%
-    tab_source_note( source_note = "Note: Exceptions are suspect, but not necessarily illegal." ) %>%
+    tab_header(title="Exceptions by Creator") %>%
+    tab_source_note( source_note = "Note: Denominator for wins is 32 states/year. Denominator for invalidations is total proposals by that party." ) %>%
     data_color (
       columns = vars(percent), 
       colors = scales::col_numeric( 
-      palette = c( "white","orange"), 
-        domain = c(0,.25) ) 
+      palette = c( "white","red"), 
+        domain = c(0,.2) ) 
     ) %>% 
     gt_theme_538() 
 
