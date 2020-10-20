@@ -35,7 +35,6 @@ require(lmtest)
 require(ordinal)
 require(rcompanion)
 require(caret)
-require(readxl)
 ```
 #bring in Data
 ```{r message=FALSE}
@@ -86,7 +85,7 @@ ys.proposed %>% ggplot(aes(control,numproposals))+geom_boxplot()+facet_grid(rows
 
 
 # join with parties
-ys.proposed %<>% left_join(actors.df)
+ys.proposed %<>% left_join(parties.df)
 
 ```
 Strategic Position Categorization
@@ -130,7 +129,7 @@ table(check.df$edon)
 
 # now compute for coalitions
 coalitions.df <- read_excel("Coaltion Data State Level 2010-2016 (Coalitions and Parties).xlsx")
-coalitions.df  %<>% rowwise()   %>% filter(grepl('-',actor)) %>% mutate(coalition=actor)  %>% separate_rows(actor,sep='-')
+coalitions.df %<>% rowwise() %>% filter(grepl('-',actor)) %>% mutate(coalition=actor) %>% separate_rows(actor,sep='-')
 
 coalitions.df %<>% left_join(select(ys.proposed,c("actor","edon","year","PartyStratPos"))) %>% group_by(edon,year,coalition) %>% mutate(CoalitionStratPos=min(PartyStratPos)) %>% select(-PartyStratPos)
 
@@ -455,8 +454,8 @@ winningscores.df <- propfull.df %>% filter(stage == 5) %>% select(Entidad, year,
 
 ##Rejoin winning scores to the matching dataframe
 win_match.df <- matching.df.1 %>% inner_join(first.scenario.df, by=c("Entidad", "year"))
-win_match.df %<>% inner_join(second.scenario.df, by=c("Entidad", "year"))
-win_match.df %<>% inner_join(winningscores.df, by=c("Entidad", "year"))
+win_match.df %<>% inner_join(second.scenario.df, by=c("edon", "year"))
+win_match.df %<>% inner_join(winningscores.df, by=c("edon", "year"))
 
 ##Create dummy matching minimum scores to the winning score
 win_match.df %<>% group_by(edon, stage, year, govlevel) %>% mutate(WIN = ifelse(SCORE == Win_SCORE, 1, 0))
@@ -468,8 +467,8 @@ win_match.df %<>% group_by(edon, stage, year, govlevel) %>% mutate(WIN = ifelse(
 partisan_FS_SCORE.df <- matching.df.1 %>% filter(stage == 2) %>% select(Entidad, year, SCORE, actor) %>% rename(partisan_FS_SCORE = SCORE)
 partisan_SS_SCORE.df <- matching.df.1 %>% filter(stage == 4) %>% select(Entidad, year, SCORE, actor) %>% rename(partisan_SS_SCORE = SCORE)
 
-win_match.df %<>% inner_join(partisan_FS_SCORE.df, by=c("Entidad", "year", "actor"))
-win_match.df %<>% inner_join(partisan_SS_SCORE.df, by=c("Entidad", "year", "actor"))
+win_match.df %<>% inner_join(partisan_FS_SCORE.df, by=c("edon", "year", "actor"))
+win_match.df %<>% inner_join(partisan_SS_SCORE.df, by=c("edon", "year", "actor"))
 #do the subsetting thing from line 450 for parties -- state year party score -- filter by stage again -- i can compare to FS_SCORE and SS_SCORE and to the indv party scores (PARTISAN_FS_SCORE and PARTISAN_SS_SCORE)
 #######SCORE Stage == 2 equivalent to SCORE Stage ==4
 #group by party and all the other things = create neww var that generates the score for each stage
@@ -478,6 +477,9 @@ win_match.df %<>% inner_join(partisan_SS_SCORE.df, by=c("Entidad", "year", "acto
 ##############################################################################################
 ##FIRST SCEN == algorithm
 ##SECOND SCEN == winner from first round
+
+##Notes:
+#transpa
 
 
 #a) First scenario > partisan plan, verify if partisan plan was accepted   (PARTISAN PLAN should match the score of the SECOND SCENARIO) --> Party Success!;
