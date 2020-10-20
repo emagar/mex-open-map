@@ -1,10 +1,11 @@
 ---
 title: "Transparency Analysis"
 output:
-  html_document:
-    df_print: paged
+  word_document: default
   html_notebook: default
   pdf_document: default
+  html_document:
+    df_print: paged
 ---
 # Setup
 ```{r}
@@ -43,12 +44,6 @@ proptrans.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5))) # prevent
 proptrans.df %<>% rowwise() %<>% mutate(actor2=case_when(actor=="PRD51"~"PRD", TRUE ~ actor))
 proptrans.df %<>% rowwise() %>% mutate(actortype2=as.character(actortype), actortype2=if_else(actor2=="PRD","major",actortype2))
 proptrans.df %<>% rowwise() %<>% mutate(actor2=ifelse(actor2 %in% c("Junta","CLV","derfe"),"INE",actor2))
-```
-## Preliminary Diagnostics
-```{r}
-# diagnostic frequency table -- not in publication
-results<-proptrans.df%>% xtabs(PROPOSED~actor+govlevel+year+stage,data=.)
-ftable(results)
 ```
 ```{r}
 ## create summary df of contest events (by  year, edon)
@@ -171,7 +166,6 @@ thirdparty.tab <- proptrans.df %>% group_by(year,actor2) %>% summarise (
   missing=sum(!is.na(PROPOSED) & PROPOSED & !hasplan),
   unscored=sum(is.na(PROPOSED)& hasplan)
 ) 
-thirdparty.tab
 thirdparty.tab %>% gt()  %>% 
   cols_label( "actor2" = "Actor","outside"="Admin Proposals","missing"="Missing Plans","unscored"="Proposals Not Scored" ) %>%
   tab_header(title="Undocumented Proposals") %>%
