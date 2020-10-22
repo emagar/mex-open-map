@@ -152,7 +152,7 @@ ftable(xtab.result)
 
 ```{r}
 #CLM model first
-clm.mod <- ys.proposed %>% clm(as.ordered(didPropose)~as.ordered(StratPos), data=., HESS=TRUE)
+clm.mod <- ys.proposed %>% clm(as.ordered(didPropose)~as.ordered(PartyStratPos), data=., HESS=TRUE)
 summary(clm.mod)
 confint(clm.mod)
 exp(coef(clm.mod)[2])
@@ -168,11 +168,11 @@ summary(clm.pred)
 x <- ys.proposed$didPropose - clm.mod$fitted.values
 ys.proposed %<>% cbind(x)
 ys.proposed <- ys.proposed %>% rename(clm.residuals = x)
-ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter()
-ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~year)
-ys.proposed %>% filter(actortype == "major" | actortype == "minor") %>% ggplot(aes(StratPos, clm.residuals, color=actor)) + geom_jitter() + facet_wrap(~actortype)
-ys.proposed %>% filter(actortype == "major" | actortype == "minor") %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~actor)
-ys.proposed %>% ggplot(aes(StratPos, clm.residuals)) + geom_jitter() + facet_wrap(~inCoalition)
+ys.proposed %>% ggplot(aes(PartyStratPos, clm.residuals)) + geom_jitter()
+ys.proposed %>% ggplot(aes(PartyStratPos, clm.residuals)) + geom_jitter() + facet_wrap(~year)
+ys.proposed %>% filter(actortype == "major" | actortype == "minor") %>% ggplot(aes(PartyStratPos, clm.residuals, color=actor)) + geom_jitter() + facet_wrap(~actortype)
+ys.proposed %>% filter(actortype == "major" | actortype == "minor") %>% ggplot(aes(PartyStratPos, clm.residuals)) + geom_jitter() + facet_wrap(~actor)
+ys.proposed %>% ggplot(aes(PartyStratPos, clm.residuals)) + geom_jitter() + facet_wrap(~inCoalition)
 
 #maybe parties in color in the graphs?
 #minor party in a coalition or not?
