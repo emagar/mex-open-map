@@ -85,7 +85,7 @@ ys.proposed %>% ggplot(aes(control,numproposals))+geom_boxplot()+facet_grid(rows
 
 
 # join with parties
-ys.proposed %<>% left_join(parties.df)
+ys.proposed %<>% left_join(actors.df)
 
 ```
 Strategic Position Categorization
@@ -410,7 +410,7 @@ matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRU
 
   #1.1 Code to identify which party formulated the plan with the lowest cost in every stage, state, level, and     year.
 matching.df.1 <- propfull.df %>% mutate(minSCORE = 0)
-matching.df.1 %<>% filter(stage == 2 | stage == 4) %>% filter(INVALID == FALSE) %>% group_by(edon, stage, year, govlevel) %>% mutate(minSCORE = ifelse(SCORE == min(SCORE), 1, 0)) %>% mutate(minSCOREnum = min(SCORE))
+matching.df.1 %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRUE) %>% group_by(edon, stage, year, govlevel) %>% mutate(minSCORE = ifelse(SCORE == min(SCORE), 1, 0)) %>% mutate(minSCOREnum = min(SCORE))
 
 ##BY ACTOR
 matching.df.1 %>% ggplot(aes(minSCORE)) + geom_bar() +facet_wrap(~actor)
@@ -464,8 +464,8 @@ win_match.df %<>% group_by(edon, stage, year, govlevel) %>% mutate(WIN = ifelse(
 
 
 ##########################################################################################
-partisan_FS_SCORE.df <- matching.df.1 %>% filter(stage == 2) %>% select(Entidad, year, SCORE, actor) %>% rename(partisan_FS_SCORE = SCORE)
-partisan_SS_SCORE.df <- matching.df.1 %>% filter(stage == 4) %>% select(Entidad, year, SCORE, actor) %>% rename(partisan_SS_SCORE = SCORE)
+partisan_FS_SCORE.df <- matching.df.1 %>% filter(stage == 2) %>% select(edon, year, SCORE, actor) %>% rename(partisan_FS_SCORE = SCORE)
+partisan_SS_SCORE.df <- matching.df.1 %>% filter(stage == 4) %>% select(edon, year, SCORE, actor) %>% rename(partisan_SS_SCORE = SCORE)
 
 win_match.df %<>% inner_join(partisan_FS_SCORE.df, by=c("edon", "year", "actor"))
 win_match.df %<>% inner_join(partisan_SS_SCORE.df, by=c("edon", "year", "actor"))
@@ -517,7 +517,18 @@ win_match.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Incons
 
 #3.2 Were EMB/Algorithm proposals more effective in 2017 than in 2013?
 
-#testing 
+
+############
+#Generating Table for Overall wins by party by year
+win_match.df %>% filter((actortype == "major" | actortype == "minor")) %>%
+  group_by(year, actor) %>% summarise(WIN = sum(WIN), denominator = n()) %>%
+  gt()
+
+#Generating table for First Stage Party Wins (Scenario 2.1.A)
+win_match.df %>% filter((actortype == "major" | actortype == "minor") & stage.x == 2) %>%
+  group_by(year, actor) %>% summarise(WIN = sum(Scen.2.1.A), denominator = n()) %>%
+  gt()
+
 ```
 
 
