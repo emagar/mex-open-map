@@ -35,6 +35,7 @@ require(lmtest)
 require(ordinal)
 require(rcompanion)
 require(caret)
+require(readxl)
 ```
 #bring in Data
 ```{r message=FALSE}
