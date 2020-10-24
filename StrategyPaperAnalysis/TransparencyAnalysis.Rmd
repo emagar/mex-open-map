@@ -361,12 +361,12 @@ res_outcomes_party.df <-
 
 
 # note denominator is number of contests in each year
-res_outcomes_party.df %<>% bind_rows(
-    planProp.df %>% group_by(year,creator_coded) %>% summarise(
-      events = sum( win_section8 ) , 
-      denominator = 32, type = "Won w Sec8" , category="compliance"
-  )
-)
+#res_outcomes_party.df %<>% bind_rows(
+#    planProp.df %>% group_by(year,creator_coded) %>% summarise(
+#      events = sum( win_section8 ) , 
+#      denominator = 32, type = "Won w Sec8" , category="compliance"
+# )
+#)
 
 res_outcomes_party.df %<>% bind_rows(
     planProp.df %>% group_by(year,creator_coded) %>% summarise(
