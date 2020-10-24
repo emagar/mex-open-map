@@ -276,6 +276,34 @@ res_events_grp.df %>% group_by(year) %>% summarize(
         domain = c(0,.25) ) 
     ) %>% 
     gt_theme_538() 
+
+res_events_grp.df %>% group_by(year) %>% summarize(
+  type=type, 
+  count=events,
+  percent=count/denominator,
+  ) %>%
+  pivot_wider(names_from=year,values_from=c(count,percent))%>%
+  relocate(type,count_2013,percent_2013,count_2017,percent_2017) %>%
+  gt() %>%
+    cols_label( percent_2013="" , percent_2017="", "type"="","count_2013"="","count_2017"="") %>%
+    fmt_percent(columns=c("percent_2013","percent_2017")) %>%
+    tab_header(title="Process Exceptions") %>%
+    tab_spanner(
+      label = "2013",
+      columns = vars(count_2013, percent_2013)
+    ) %>%
+    tab_spanner(
+      label = "2017",
+      columns = vars(count_2017, percent_2017)
+    ) %>%
+    tab_source_note( source_note = "Note: Exceptions are suspect, but not necessarily illegal." ) %>%
+    data_color (
+      columns = vars(percent_2013,percent_2017), 
+      colors = scales::col_numeric( 
+      palette = c( "white","orange"), 
+        domain = c(0,.25) ) 
+    ) %>% 
+    gt_theme_538() 
 ```
 
 ## Outcome vs Expectations
