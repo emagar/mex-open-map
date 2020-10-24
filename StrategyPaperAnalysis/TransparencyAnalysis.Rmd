@@ -108,10 +108,13 @@ planProp.df %<>% rowwise() %>% mutate( creator_coded = case_when(
 ```
 #Transparency Analysis
 ```{r}
-# set themes for look and feel of tables
-reset_gtsummary_theme()
-theme_gtsummary_journal(journal = "jama")
-theme_gtsummary_compact()
+##set themes for look and feel of tables
+
+#TODO: explore use of gtsummary
+#require(gtsummary)
+#reset_gtsummary_theme()
+#theme_gtsummary_journal(journal = "jama")
+#heme_gtsummary_compact()
 
 # from Mock (2020, Sept. 28). The Mockup Blog: Functions and Themes for gt tables. Retrieved from https://themockup.blog/posts/2020-09-26-functions-and-themes-for-gt-tables/
 
@@ -162,9 +165,13 @@ gt_theme_538 <- function(data,...) {
 thirdparty.tab <- proptrans.df %>% group_by(year,actor2) %>% summarise (
   outside=sum(PROPOSED & actortype2 %in% c("admin","other") & stage %in% c(2,4),na.rm=TRUE),
   missing=sum(!is.na(PROPOSED) & PROPOSED & !hasplan),
-  unscored=sum(is.na(PROPOSED)& hasplan)
+  unscored=sum(is.na(PROPOSED)& hasplan),
+  grandtotal=outside+missing+unscored,
 ) 
-thirdparty.tab %>% gt()  %>% 
+thirdparty.tab %>% 
+  filter(grandtotal>0) %>%
+  select(-grandtotal) %>%
+  gt()  %>%
   cols_label( "actor2" = "Actor","outside"="Admin Proposals","missing"="Missing Plans","unscored"="Proposals Not Scored" ) %>%
   tab_header(title="Undocumented Proposals") %>%
   tab_source_note(
@@ -203,13 +210,24 @@ efficiency.df %>% group_by(year) %>% summarize(min_efficiency=min(efficiency),me
 efficiency.df %>% ggplot(aes(efficiency))+geom_histogram(bins=30)+facet_grid(rows=vars(year))
 efficiency.df %>% ggplot(aes(x=edon,y=efficiency,fill=year))+geom_col(position="dodge", width=.5)
 rm(efficiency.df)
+
 planProp.df %>% filter(best_plan) %>% 
-  tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col")  %>% adorn_ns() %>%  # tabyl-based approach
-  gt()  %>% tab_header(title="Best Scoring Plans by Creator") %>%
-  cols_label( "creator_coded" = "Actor" ) %>%
+  group_by(creator_coded,year) %>% summarise(count=n(),percent=count/32) %>% 
+  gt() %>% 
+  tab_header(title="Best Scoring Plans by Creator") %>%
+  cols_label( "creator_coded" = "Actor","count"="","percent"="" ) %>%
+  fmt_percent(vars(percent)) %>%
+   data_color (
+      columns=vars(percent), 
+      colors = scales::col_numeric( 
+      palette = c( "white","red"), 
+      domain = c(0,1) ) 
+      ) %>%
   tab_source_note(
     source_note = "Note: Creators refers to initial plan creators, others may have joined in later rounds." ) %>%
   gt_theme_538() 
+
+
 ```
 ## Exceptional Events 
 ```{r}
@@ -247,7 +265,7 @@ res_events_grp.df %>% group_by(year) %>% summarize(
   percent=count/denominator,
   ) %>%
   gt() %>% 
-    cols_label( percent="%" ) %>%
+    cols_label( percent="" , "type"="","count"="") %>%
     fmt_percent(columns="percent") %>%
     tab_header(title="Process Exceptions") %>%
     tab_source_note( source_note = "Note: Exceptions are suspect, but not necessarily illegal." ) %>%
@@ -287,10 +305,6 @@ contestSum.df %>% group_by(year) %>%
     ) %>% 
     gt_theme_538() 
 
-#TODO Consider replacing tably with summarise operations
-#planProp.df %>% filter(win_final) %>% 
-#  tabyl(creator_coded,year) %>% adorn_totals() %>% adorn_percentages("col") %>% adorn_pct_formatting() %>% adorn_ns() %>%
-  
 planProp.df %>% filter(win_final) %>% 
   group_by(creator_coded,year) %>% summarize(wins=n(),percent=wins/32) %>%
   gt() %>% tab_header(title="Winning Plans by Creator") %>%
