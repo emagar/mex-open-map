@@ -359,7 +359,7 @@ res_outcomes_party.df <-
       denominator = n(), type = "Invalidated" , category="compliance"
   )
 
-
+# Not enough variation with coalitions... move this to a proportion/network analysis
 # note denominator is number of contests in each year
 #res_outcomes_party.df %<>% bind_rows(
 #    planProp.df %>% group_by(year,creator_coded) %>% summarise(
@@ -395,6 +395,119 @@ res_outcomes_party.df %>%
 
 ```
 
+## Disaggregated Analysis
+```{r}
+unrolled.df <-planProp.df  %>% unnest(creators)
+
+ncontests <- 32
+res_outcomes_unrolled.df <- 
+  unrolled.df %>% 
+  filter(win_final) %>% 
+  mutate(denominator=ncontests) %>% 
+  group_by(year,creators) %>% 
+  summarise(  events = n(), type = "Win", denominator=unique(denominator) )
+
+res_outcomes_unrolled.df %<>% bind_rows(
+  unrolled.df %>% 
+  mutate(denominator=ncontests) %>% 
+  filter(win_section8) %>% 
+  group_by(year,creators) %>% 
+  summarise(  events = n(), type = "Win by sec 8", denominator=unique(denominator) )
+)
+
+res_outcomes_unrolled.df %<>% bind_rows(
+  unrolled.df %>% 
+  mutate(denominator=ncontests) %>% 
+  filter(win_violation) %>% 
+  group_by(year,creators) %>% 
+  summarise(  events = n(), type = "Win inviolation of the rules", denominator=unique(denominator) )
+)
+
+res_outcomes_unrolled.df %<>% bind_rows(
+  unrolled.df %>% 
+  group_by(year) %>% mutate(denominator=length(unique(planid))) %>% 
+  filter(!VALIDPLAN) %>% 
+  group_by(year,creators) %>% 
+  summarise(  events = n(), type = "Invalidated", denominator=unique(denominator) )
+)
+
+res_outcomes_unrolled.df %<>% rowwise() %>% mutate(percent=events/denominator)
+
+res_outcomes_unrolled.df %>% 
+  rowwise() %>% filter(type=="Win") %>%
+  group_by(year,creators) %>% relocate(type) %>% select(-denominator) %>%
+    filter(sum(events)>0) %>%
+    gt() %>% 
+    cols_label( percent="%","events"="" ) %>%
+    fmt_percent(columns="percent") %>%
+    tab_header(title="Wins by Invidual Creator") %>%
+    tab_source_note( source_note = "Note: Percentages do not add up to 100% because plans have multiple creators. Denominator for win measures is 32/year. Denominator for invalidations is total proposals in that year." ) %>%
+    data_color (
+      columns = vars(percent), 
+      colors = scales::col_numeric( 
+      palette = c( "white","red"), 
+        domain = c(0,.8) ) 
+    ) %>% 
+    gt_theme_538() 
+
+res_outcomes_unrolled.df %>% 
+  rowwise() %>% filter(type!="Win") %>%
+  group_by(year,creators) %>% relocate(type) %>% select(-denominator) %>%
+    filter(sum(events)>0) %>%
+    gt() %>% 
+    cols_label( percent="%","events"="" ) %>%
+    fmt_percent(columns="percent") %>%
+    tab_header(title="Exceptions by Invidual Creator") %>%
+    tab_source_note( source_note = "Note: Percentages do not add up to 100% because plans have multiple creators. Denominator for win measures is 32/year. Denominator for invalidations is total proposals in that year." ) %>%
+    data_color (
+      columns = vars(percent), 
+      colors = scales::col_numeric( 
+      palette = c( "white","red"), 
+        domain = c(0,.8) ) 
+    ) %>% 
+    gt_theme_538() 
+
+
+
+
+
+```
+##  Exploratory Network Analysis
+```{r fig.width=10, fig.height=4}
+require(DiagrammeR)
+require(tidygraph)
+require(igraph)
+require(ggraph)
+
+
+actorsnodes.df <- actors.df  %>% filter(!actor %in% c("Junta","derfe","CLV","PRD51")) %>% mutate(id=1:n()) %>% mutate(label=actor) %>% relocate(id,label)
+actorsedges.df <-planProp.df %>% select(planid, creators, win_final, win_section8, win_violation, VALIDPLAN) %>% unnest(creators)
+actorsedges.df %<>% left_join(actorsnodes.df,by=c("creators"="actor")) %>% select(-label,-actortype) %>% rename("creator_id"="id")
+actorsedges.df %<>% left_join(actorsedges.df %>% select(planid,creator_id), by="planid") %>% 
+  rename("from"="creator_id.x","to"="creator_id.y") 
+actorsedges.df %<>%  
+  filter(to!=from) %>%  
+  mutate (id=1:n() , 
+          weight = ifelse(win_final,1,.5),
+          color = ifelse(win_final,"red","black"),
+          rel = ifelse(win_final,"win","lose") 
+          ) %>%
+  relocate(id,to,from,weight,color,rel)
+    
+
+plan.graph <-create_graph( nodes_df= actorsnodes.df, edges_df = actorsedges.df, graph_name="Actors Proposing Together")
+
+#plan.graph %>% render_graph(layout="circle")
+# can also use this an igraph or tidygraph object
+plan.igraph <- to_igraph(plan.graph)
+plan.tgraph <- as_tbl_graph(plan.igraph)
+plan.tgraph %>% ggraph() +
+    geom_edge_fan(aes(color=factor(rel)),alpha=.2) +
+    #geom_edge_density(fill="blue") +
+  geom_node_label(aes(label=actor,color=factor(actortype)))
+
+
+```
 
 
 
