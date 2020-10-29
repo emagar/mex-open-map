@@ -161,7 +161,7 @@ exp(coef(clm.mod)[3])
 exp(coef(clm.mod)[4])
 exp(coef(clm.mod)[5])
 exp(coef(clm.mod)[6])
-ys.proposed %>% ggplot(aes(didPropose)) + geom_bar() +facet_wrap(~StratPos)
+ys.proposed %>% ggplot(aes(didPropose)) + geom_bar() +facet_wrap(~PartyStratPos)
 
 clm.pred <- predict(clm.mod)
 summary(clm.pred)
@@ -388,7 +388,46 @@ matching.df.coal <- propfull.df %>% left_join(coalitions.df, by=c("edon", "year"
 ## Filters out 1st and 2nd stage proposals and parties that PROPOSED.
 ##Parties in the coalitions may not propose even when the coalition proposes -- still want to capture minor parties who do not propose on their own
 #Two majors w/ diff scores, two minors w different scores
-matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRUE) %>% group_by(edon, stage, year, govlevel) %>% mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0)) %>% filter(inCoalition > 0) #may need to also filter out parties not in coalitions for simplicity, will check the dataframe
+matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRUE) %>% group_by(edon, stage, year, govlevel) %>% mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0)) %>% filter(inCoalition > 0)#may need to also filter out parties not in coalitions for simplicity, will check the dataframe
+
+## Subset out winning scores
+first.scenario.df <- propfull.df %>% filter(stage == 1) %>% select(edon, year, SCORE) %>% rename(FS_SCORE = SCORE)
+second.scenario.df <- propfull.df %>% filter(stage == 3) %>% select(edon, year, SCORE) %>% rename(SS_SCORE = SCORE)
+winningscores.df <- propfull.df %>% filter(stage == 5) %>% select(edon, year, SCORE) %>% rename(Win_SCORE = SCORE)
+
+##Rejoin winning scores to the matching dataframe
+win_match.coal.df <- matching.df.coal %>% inner_join(first.scenario.df, by=c("edon", "year"))
+win_match.coal.df %<>% inner_join(second.scenario.df, by=c("edon", "year"))
+win_match.coal.df %<>% inner_join(winningscores.df, by=c("edon", "year"))
+
+##Create dummy matching minimum scores to the winning score
+win_match.coal.df %<>% group_by(edon, stage, year, govlevel) %>% mutate(WIN = ifelse(SCORE == Win_SCORE, 1, 0))
+
+#2.1 Code to create a proportion of success rate based on the proportion of plans adopted (Proportion winning   plans = Partisan plans that were adopted / Total amout of proposals formulated by each party)-->               This requires for the FIRST STAGE: 1) compareing the FIRST SCENARIO with PARTISAN PLANS, possible              outcomes in terms of the cost function: 
+
+
+##########################################################################################
+partisan_FS_SCORE.df <- matching.df.coal %>% filter(stage == 2) %>% select(edon, year, SCORE, actor) %>% rename(partisan_FS_SCORE = SCORE)
+partisan_SS_SCORE.df <- matching.df.coal %>% filter(stage == 4) %>% select(edon, year, SCORE, actor) %>% rename(partisan_SS_SCORE = SCORE)
+
+win_match.coal.df %<>% inner_join(partisan_FS_SCORE.df, by=c("edon", "year", "actor"))
+win_match.coal.df %<>% inner_join(partisan_SS_SCORE.df, by=c("edon", "year", "actor"))
+
+#a) First scenario > partisan plan, verify if partisan plan was accepted   (PARTISAN PLAN should match the score of the SECOND SCENARIO) --> Party Success!;
+win_match.coal.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Scen.2.1.A = ifelse(FS_SCORE > partisan_FS_SCORE & partisan_FS_SCORE == SS_SCORE, 1, 0))
+
+#a.1 Second Scenario Partisan Plan == Win Score
+win_match.coal.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Scen.2.1.A.1 = ifelse(SS_SCORE > partisan_SS_SCORE & partisan_SS_SCORE == Win_SCORE, 1, 0))
+
+#b) First scenario < cost than   partisan plans, verify if Fisrt scenario became the second scenario (FIRST SCENARIO should match the score of    the SECOND SCENARIO) --> EMB/Algorithm success!; 
+win_match.coal.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Scen.2.1.B = ifelse(FS_SCORE < partisan_FS_SCORE & FS_SCORE == SS_SCORE, 1, 0))
+
+#c) First scenario > partisan plan, the outcome registered for the second scenario is different from partisan proposal --> ==Inconsistency type 1==, subsequent options: 
+win_match.coal.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Inconsistency1 = ifelse(FS_SCORE > partisan_FS_SCORE & partisan_FS_SCORE != SS_SCORE, 1, 0))
+#d) First scenario < cost than partisan plans, the outcome registered for the second scenario is different from the First scenario --> ==Inconsistency type 2==, subsequent options:
+win_match.coal.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Inconsistency2 = ifelse(FS_SCORE < partisan_FS_SCORE & FS_SCORE != SS_SCORE, 1, 0))
+
+
 
 ####STAGES
 #Stage 2 = Stage 1
@@ -535,14 +574,14 @@ win_match.df %>% filter((actortype == "major" | actortype == "minor")) %>%
 win_match.df %>% filter((actortype == "major" | actortype == "minor") & stage.x == 2) %>%
   group_by(year, actor) %>% summarise(WIN = sum(Scen.2.1.A), denominator = sum(n()), percent = (WIN/denominator)*100) %>%
   gt() %>%
-    cols_label("actor" = "Party", "WIN" = "Accepted Proposals", "denominator" = "Total Proposals", "percent" = "% of Proposals Accepted") %>%
+    cols_label("actor" = "Party", "WIN" = "Accepted Proposals", "denominator" = "Total Proposals", "percent" = "% Accepted") %>%
     tab_header(title = "First Stage Redistricting Proposals")
 
 #Generating table for Second Stage Party Wins
 win_match.df %>% filter((actortype == "major" | actortype == "minor") & stage.x == 4) %>%
   group_by(year, actor) %>% summarise(WIN = sum(Scen.2.1.A.1), denominator = n(), percent = (WIN/denominator)*100) %>%
   gt() %>%
-    cols_label("actor" = "Party", "WIN" = "Accepted Proposals", "denominator" = "Total Proposals", "percent" = "% of Proposals Accepted") %>%
+    cols_label("actor" = "Party", "WIN" = "Accepted Proposals", "denominator" = "Total Proposals", "percent" = "% Accepted") %>%
     tab_header(title = "Second Stage Redistricting Proposals")
 
 ```
