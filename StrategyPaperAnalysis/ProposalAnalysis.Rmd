@@ -382,6 +382,16 @@ Matching Process (Practice)
 ```{r}
 #0.1 Coalition hypothesis: If a coalition was formed, Did the plan of minor party(ies) match the score of the major party? --> This is just for verifying our assumption (robustness check). 
 
+coalitions.df %>% xtabs(~coalition, data=.)
+
+coalitions.df %<>% rowwise() %>% mutate(
+    CoalitionType = case_when(
+      (coalition == "PAN-PNA" | coalition == "" | coalition == "") ~ "PAN", 
+      coalition == "PRI-PVEM-PT-PNA" | coalition == "PRI-PVEM-PT" | coalition == "PRI-PVEM-PNA-PT" | coalition == "PRI-PVEM-PNA-ES" | coalition == "PRI-PVEM-PNA" | coalition == "PRI-PVEM" | coalition == "PRI-PT" | coalition == "PRI-PRD" | coalition == "PRI-PNA" | coalition == "PRI-ES" ~ "PRI", 
+      coalition == "PRD-MC-PT" | coaltion == "PRD-PT" | coalition == "PRD-PT-MC" | coalition == "MORENA-PT-ES" | coaltion == "PRD-PNA" | coalition == "PRD-PT-ES" |      coaltion == "PRD-PT-PNA" ~ "Left"
+    )
+  )
+
 ## Joining coalition dataset to the full proposal dataset
 matching.df.coal <- propfull.df %>% left_join(coalitions.df, by=c("edon", "year", "actor"))
 
@@ -389,6 +399,7 @@ matching.df.coal <- propfull.df %>% left_join(coalitions.df, by=c("edon", "year"
 ##Parties in the coalitions may not propose even when the coalition proposes -- still want to capture minor parties who do not propose on their own
 #Two majors w/ diff scores, two minors w different scores
 matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRUE) %>% group_by(edon, stage, year, govlevel) %>% mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0)) #may need to also filter out parties not in coalitions for simplicity, will check the dataframe
+
 
 ## Subset out winning scores
 first.scenario.df <- propfull.df %>% filter(stage == 1) %>% select(edon, year, SCORE) %>% rename(FS_SCORE = SCORE)
