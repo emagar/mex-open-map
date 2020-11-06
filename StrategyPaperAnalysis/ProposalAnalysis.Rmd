@@ -386,9 +386,9 @@ coalitions.df %>% xtabs(~coalition, data=.)
 
 coalitions.df %<>% rowwise() %>% mutate(
     CoalitionType = case_when(
-      (coalition == "PAN-PNA" | coalition == "" | coalition == "") ~ "PAN", 
+      (coalition == "PAN-PNA" | coalition == "PAN-PRD" | coalition == "PAN-PRD-MC" | coalition == "PAN-PRD-PNA" | coalition == "PAN-PRD-PNA-MC" | coalition == "PAN-PRD-PT" | coalition == "PAN-PRD-PT-MC" | coalition == "PAN-PT" | coalition == "PAN-PVEM") ~ "PAN", 
       coalition == "PRI-PVEM-PT-PNA" | coalition == "PRI-PVEM-PT" | coalition == "PRI-PVEM-PNA-PT" | coalition == "PRI-PVEM-PNA-ES" | coalition == "PRI-PVEM-PNA" | coalition == "PRI-PVEM" | coalition == "PRI-PT" | coalition == "PRI-PRD" | coalition == "PRI-PNA" | coalition == "PRI-ES" ~ "PRI", 
-      coalition == "PRD-MC-PT" | coaltion == "PRD-PT" | coalition == "PRD-PT-MC" | coalition == "MORENA-PT-ES" | coaltion == "PRD-PNA" | coalition == "PRD-PT-ES" |      coaltion == "PRD-PT-PNA" ~ "Left"
+      coalition == "PRD-MC-PT" | coalition == "PRD-PT" | coalition == "PRD-PT-MC" | coalition == "MORENA-PT-ES" | coalition == "PRD-PNA" | coalition == "PRD-PT-ES" |      coalition == "PRD-PT-PNA" ~ "Left"
     )
   )
 
@@ -439,16 +439,16 @@ win_match.coal.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(I
 win_match.coal.df %<>% group_by(edon, stage, year, govlevel, actor) %>% mutate(Inconsistency2 = ifelse(FS_SCORE < partisan_FS_SCORE & FS_SCORE != SS_SCORE, 1, 0))
 
 win_match.coal.df %>% filter((actortype == "major" | actortype == "minor") & stage.x == 2) %>%
-  group_by(year, coalition) %>% summarise(WIN = sum(Scen.2.1.A), denominator = sum(n()), percent = (WIN/denominator)*100) %>%
+  group_by(year, CoalitionType) %>% summarise(WIN = sum(Scen.2.1.A), denominator = sum(n()), percent = (WIN/denominator)*100) %>%
   gt() %>%
-    cols_label("coalition" = "Party", "WIN" = "Accepted Proposals", "denominator" = "Total Proposals", "percent" = "% Accepted") %>%
+    cols_label("CoalitionType" = "Party", "WIN" = "Accepted Proposals", "denominator" = "Total Proposals", "percent" = "% Accepted") %>%
     tab_header(title = "First Stage Redistricting Proposals")
 
 #Generating table for Second Stage Party Wins
 win_match.coal.df %>% filter((actortype == "major" | actortype == "minor") & stage.x == 4) %>%
-  group_by(year, coalition) %>% summarise(WIN = sum(Scen.2.1.A.1), denominator = n(), percent = (WIN/denominator)*100) %>%
+  group_by(year, CoalitionType) %>% summarise(WIN = sum(Scen.2.1.A.1), denominator = n(), percent = (WIN/denominator)*100) %>%
   gt() %>%
-    cols_label("coalition" = "Party", "WIN" = "Accepted Proposals", "denominator" = "Total Proposals", "percent" = "% Accepted") %>%
+    cols_label("CoalitionType" = "Party", "WIN" = "Accepted Proposals", "denominator" = "Total Proposals", "percent" = "% Accepted") %>%
     tab_header(title = "Second Stage Redistricting Proposals")
 
 ####STAGES
@@ -608,28 +608,15 @@ win_match.df %>% filter((actortype == "major" | actortype == "minor") & stage.x 
 
 ```
 
-
 ```{r}
-#TEST -- getting the code to work before beginning to implement it across 
-matching.df <- propfull.df %>% left_join(coalitions.df, by=c("edon", "year", "actor"))
+#Bringing in the Vote Share data
+Vraw.2015 <- read.csv("dipfed-seccion-vraw-2015.csv")
 
-matching.df.1 <- matching.df %>% filter(year == 2013 & govlevel == "CNV" & Entidad == "Baja California" & SCORE > 0) %>% mutate(compSCORE = case_when(actor == "Algorithm" ~ SCORE))
-matching.df.1 %<>% fill(compSCORE)
+Vraw.2015 <- na.omit(Vraw.2015)
 
-#Comparing Scores to the Algorithm's score (or any other party/winning score)
-matching.df.1$betterPlan <- 0
-matching.df.1[matching.df.1$SCORE <= matching.df.1$compSCORE,]$betterPlan <- 1
-
-#Determine the minimum score, create a dummy that denotes this
-matching.df.1$minScore <- 0
-matching.df.1[matching.df.1$SCORE == min(matching.df.1$SCORE),]$minScore <- 1
-
-
-#separate_rows() tidy function, creats row copies
-#group by state, year, coalition
-#Scores are all equal if propsoal score is equal for all members w/ same 
+Vraw.2015 %<>% aggregate(., by = list(Vraw.2015$edon), FUN = sum) %>% select(-Group.1)
+Vraw.2015 <- tibble::rowid_to_column(Vraw.2015, "edon_r")
 ```
-
 #DIAGNOSTICS: a) Breakdown of proposals matching scores when parties ran in coalition (create a dummy)
 
 
