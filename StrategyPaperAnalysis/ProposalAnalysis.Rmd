@@ -612,10 +612,32 @@ win_match.df %>% filter((actortype == "major" | actortype == "minor") & stage.x 
 #Bringing in the Vote Share data
 Vraw.2015 <- read.csv("dipfed-seccion-vraw-2015.csv")
 
+#Omit missing data
 Vraw.2015 <- na.omit(Vraw.2015)
 
-Vraw.2015 %<>% aggregate(., by = list(Vraw.2015$edon), FUN = sum) %>% select(-Group.1)
+#Sum votes across seccion; aggregated at the state level
+Vraw.2015 %<>% aggregate(., by = list(Vraw.2015$edon), FUN = sum) %>%
+  select(-Group.1)%>%
+#Generate a year variable (anticipating multiple years of data)
+  mutate(year = 2015)%>%
+#Recalculate the dummies for coalitions
+  mutate(dpanc = ifelse(dpanc > 0, 1, 0)) %>%
+  mutate(dpric = ifelse(dpric > 0, 1, 0)) %>%
+  mutate(dprdc = ifelse(dprdc > 0, 1, 0))
+
+#Index the states
 Vraw.2015 <- tibble::rowid_to_column(Vraw.2015, "edon_r")
+
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+Vraw.2015 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "ph", "pes", "prdc", "pric"),
+                            names_to = "actor",
+                            values_to = "votes")
+
+#Generate values for vote share by actor
+Vraw.2015 %<>% mutate(VoteShare = (votes/efec)*100) 
+#Create those categories you had mentioned alejandro (safe, competitive, )
+
+#There will end up being a mismatch -- the party names are different than the ones in propfull & ys.proposed. 1) Alter the names, created aggregations HERE to compensate 2) go through integrateMxdistritos and planScoreFunctions to change how the actors are recorded at the source 3) could do major/minor party break down 4) PAN, PRI, PRD, Left grouping like Eric does in his data/analysis
 ```
 #DIAGNOSTICS: a) Breakdown of proposals matching scores when parties ran in coalition (create a dummy)
 
