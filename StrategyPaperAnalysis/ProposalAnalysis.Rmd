@@ -635,10 +635,33 @@ Vraw.2015 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc",
 
 #Generate values for vote share by actor
 Vraw.2015 %<>% mutate(VoteShare = (votes/efec)*100) 
-#Create those categories you had mentioned alejandro (safe, competitive, )
+```
+
+Vote Share Data loading
+```{r}
+#Load in package to read in Github urls directed towards necessary data
+install.packages("readr")
+require(readr)
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2012.csv"
+Vraw.2012 <- read.csv(url(url.file))
+
+#Create those categories you had mentioned alejandro (safe, competitive, ) STRATEGY PAPER p100; rentability of the DISTRICT; reference vhat predictions to develop indv actor strategy
 
 #There will end up being a mismatch -- the party names are different than the ones in propfull & ys.proposed. 1) Alter the names, created aggregations HERE to compensate 2) go through integrateMxdistritos and planScoreFunctions to change how the actors are recorded at the source 3) could do major/minor party break down 4) PAN, PRI, PRD, Left grouping like Eric does in his data/analysis
+
+#How many years are we brining in? Eric has seccion level data going back in three year intervals to the 90s + 2018 electoral returns (Can test the change after redistricting by comparing 2018 to 2015 (for 2017), and 2015 to 2012 (for 2013))
+# five last elections
 ```
+
+Vote Share data Aggregation
+```{r}
+```
+
+Merging Vhat values + Prediction function
+```{r}
+```
+
+
 #DIAGNOSTICS: a) Breakdown of proposals matching scores when parties ran in coalition (create a dummy)
 
 
