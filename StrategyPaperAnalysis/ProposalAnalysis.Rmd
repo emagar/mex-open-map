@@ -642,8 +642,40 @@ Vote Share Data loading
 #Load in package to read in Github urls directed towards necessary data
 install.packages("readr")
 require(readr)
+
+#Vhat Data
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vhat-2015.csv"
+Vhat.2015 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vhat-2012.csv"
+Vhat.2012 <- read.csv(url(url.file))
+
+#Vraw Data
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2018.csv"
+Vraw.2018 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2015.csv"
+Vraw.2015 <- read.csv(url(url.file))
 url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2012.csv"
 Vraw.2012 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2009.csv"
+Vraw.2009 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2006.csv"
+Vraw.2006 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2003.csv"
+Vraw.2003 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2000.csv"
+Vraw.2000 <- read.csv(url(url.file))
+
+#Rowbind into 1) 2013 Information 2) 2017 information
+
+#aggregate func. Take average of votes in each seccion for each party grouping. group_by(edon, seccion)
+
+#Calc the vote share
+
+#Join 1) Vhat2012 2) vhat 2015
+
+#Pass through function that calculates the expected votes by state by district by seccion by party based on VHAT estimators
+
+#Rentability groupings
 
 #Create those categories you had mentioned alejandro (safe, competitive, ) STRATEGY PAPER p100; rentability of the DISTRICT; reference vhat predictions to develop indv actor strategy
 
