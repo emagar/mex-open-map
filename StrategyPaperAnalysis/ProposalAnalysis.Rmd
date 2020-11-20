@@ -608,34 +608,7 @@ win_match.df %>% filter((actortype == "major" | actortype == "minor") & stage.x 
 
 ```
 
-```{r}
-#Bringing in the Vote Share data
-Vraw.2015 <- read.csv("dipfed-seccion-vraw-2015.csv")
 
-#Omit missing data
-Vraw.2015 <- na.omit(Vraw.2015)
-
-#Sum votes across seccion; aggregated at the state level
-Vraw.2015 %<>% aggregate(., by = list(Vraw.2015$edon), FUN = sum) %>%
-  select(-Group.1)%>%
-#Generate a year variable (anticipating multiple years of data)
-  mutate(year = 2015)%>%
-#Recalculate the dummies for coalitions
-  mutate(dpanc = ifelse(dpanc > 0, 1, 0)) %>%
-  mutate(dpric = ifelse(dpric > 0, 1, 0)) %>%
-  mutate(dprdc = ifelse(dprdc > 0, 1, 0))
-
-#Index the states
-Vraw.2015 <- tibble::rowid_to_column(Vraw.2015, "edon_r")
-
-#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
-Vraw.2015 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "ph", "pes", "prdc", "pric"),
-                            names_to = "actor",
-                            values_to = "votes")
-
-#Generate values for vote share by actor
-Vraw.2015 %<>% mutate(VoteShare = (votes/efec)*100) 
-```
 
 Vote Share Data loading
 ```{r}
@@ -665,13 +638,10 @@ Vraw.2003 <- read.csv(url(url.file))
 url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2000.csv"
 Vraw.2000 <- read.csv(url(url.file))
 
-#Rowbind into 1) 2013 Information 2) 2017 information
-
-#aggregate func. Take average of votes in each seccion for each party grouping. group_by(edon, seccion)
-
-#Calc the vote share
-
-#Join 1) Vhat2012 2) vhat 2015
+#Extremely rentable >90%
+#Rentabble >50%
+#Moderately Rentable >30%
+#Weakly Rentable <30%
 
 #Pass through function that calculates the expected votes by state by district by seccion by party based on VHAT estimators
 
@@ -685,6 +655,169 @@ Vraw.2000 <- read.csv(url(url.file))
 # five last elections
 ```
 
+```{r}
+
+#Sum votes across seccion; aggregated at the state level
+Vraw.2018 %<>% mutate(year = 2018)
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+Vraw.2018 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "pes", "panc", "pric", "morenac"),
+                            names_to = "actor",
+                            values_to = "votes.2018")
+
+#Generate values for vote share by actor
+Vraw.2018 %<>% mutate(VoteShare.2018 = (votes.2018/efec)*100) 
+
+Vraw.2018 %<>% rowwise() %>% mutate(
+    Rentability = case_when(
+      VoteShare.2018 > 90    ~ 1, # Extremely Rentable
+      VoteShare.2018 > 50    ~ 2, # Rentable
+      VoteShare.2018 > 30    ~ 3, # Moderately Rentable
+      VoteShare.2018 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+
+```
+
+```{r}
+
+#Sum votes across seccion; aggregated at the state level
+Vraw.2015 %<>% mutate(year = 2015)
+
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+Vraw.2015 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "ph", "pes", "prdc", "pric"),
+                            names_to = "actor",
+                            values_to = "votes.2015")
+
+#Generate values for vote share by actor
+Vraw.2015 %<>% mutate(VoteShare.2015 = (votes.2015/efec)*100)
+Vraw.2015 %<>% rowwise() %>% mutate(
+    Rentability = case_when(
+      VoteShare.2015 > 90    ~ 1, # Extremely Rentable
+      VoteShare.2015 > 50    ~ 2, # Rentable
+      VoteShare.2015 > 30    ~ 3, # Moderately Rentable
+      VoteShare.2015 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+
+Vraw.2015 %>% 
+  group_by(., actor, Rentability) %>% 
+  summarise(., sum(Rentability)) %>%
+  gt() %>%
+  cols_label("actor" = "Party", "Rentability" = "Seccion Scores")
+```
+```{r}
+
+#Sum votes across seccion; aggregated at the state level
+Vraw.2012 %<>% mutate(year = 2012)
+
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+Vraw.2012 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "prdc", "pric"),
+                            names_to = "actor",
+                            values_to = "votes.2012")
+
+#Generate values for vote share by actor
+Vraw.2012 %<>% mutate(VoteShare.2012 = (votes.2012/efec)*100) 
+
+Vraw.2012 %<>% rowwise() %>% mutate(
+    Rentability = case_when(
+      VoteShare.2012 > 90    ~ 1, # Extremely Rentable
+      VoteShare.2012 > 50    ~ 2, # Rentable
+      VoteShare.2012 > 30    ~ 3, # Moderately Rentable
+      VoteShare.2012 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+```
+
+```{r}
+
+#Sum votes across seccion; aggregated at the state level
+Vraw.2009 %<>% mutate(year = 2009)
+
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+Vraw.2009 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "conve", "pna", "psd", "pric", "ptc"),
+                            names_to = "actor",
+                            values_to = "votes.2009")
+
+#Generate values for vote share by actor
+Vraw.2009 %<>% mutate(VoteShare.2009 = (votes.2009/efec)*100) 
+
+Vraw.2009 %<>% rowwise() %>% mutate(
+    Rentability = case_when(
+      VoteShare.2009 > 90    ~ 1, # Extremely Rentable
+      VoteShare.2009 > 50    ~ 2, # Rentable
+      VoteShare.2009 > 30    ~ 3, # Moderately Rentable
+      VoteShare.2009 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+```
+
+```{r}
+
+#Sum votes across seccion; aggregated at the state level
+Vraw.2006 %<>% mutate(year = 2006)
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+Vraw.2006 %<>% pivot_longer(., cols = c("pan", "pric", "prdc", "pna", "asdc"),
+                            names_to = "actor",
+                            values_to = "votes.2006")
+
+#Generate values for vote share by actor
+Vraw.2006 %<>% mutate(VoteShare.2006 = (votes.2006/efec)*100) 
+
+Vraw.2006 %<>% rowwise() %>% mutate(
+    Rentability = case_when(
+      VoteShare.2006 > 90    ~ 1, # Extremely Rentable
+      VoteShare.2006 > 50    ~ 2, # Rentable
+      VoteShare.2006 > 30    ~ 3, # Moderately Rentable
+      VoteShare.2006 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+```
+
+```{r}
+
+#Sum votes across seccion; aggregated at the state level
+Vraw.2003 %<>% mutate(year = 2003)
+
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+Vraw.2003 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "conve", "psn", "pas", "mp", "plm", "fc", "pric"),
+                            names_to = "actor",
+                            values_to = "votes.2003")
+
+#Generate values for vote share by actor
+Vraw.2003 %<>% mutate(VoteShare.2003 = (votes.2003/efec)*100) 
+
+Vraw.2003 %<>% rowwise() %>% mutate(
+    Rentability = case_when(
+      VoteShare.2003 > 90    ~ 1, # Extremely Rentable
+      VoteShare.2003 > 50    ~ 2, # Rentable
+      VoteShare.2003 > 30    ~ 3, # Moderately Rentable
+      VoteShare.2003 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+```
+
+```{r}
+
+#Sum votes across seccion; aggregated at the state level
+Vraw.2000 %<>% mutate(year = 2000)
+
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+Vraw.2000 %<>% pivot_longer(., cols = c("panc", "pri", "prdc", "pcd", "parm", "dsppn"),
+                            names_to = "actor",
+                            values_to = "votes.2000")
+
+#Generate values for vote share by actor
+Vraw.2000 %<>% mutate(VoteShare.2000 = (votes.2000/efec)*100) 
+
+Vraw.2000 %<>% rowwise() %>% mutate(
+    Rentability = case_when(
+      VoteShare.2000 > 90    ~ 1, # Extremely Rentable
+      VoteShare.2000 > 50    ~ 2, # Rentable
+      VoteShare.2000 > 30    ~ 3, # Moderately Rentable
+      VoteShare.2000 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+```
 Vote Share data Aggregation
 ```{r}
 ```
