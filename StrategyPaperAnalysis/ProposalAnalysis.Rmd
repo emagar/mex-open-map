@@ -664,8 +664,18 @@ Vraw.2018 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc",
                             names_to = "actor",
                             values_to = "votes.2018")
 
+
 #Generate values for vote share by actor
-Vraw.2018 %<>% mutate(VoteShare.2018 = (votes.2018/efec)*100) 
+Vraw.2018 %<>% na.omit() %>%
+  group_by(edon, disn, actor) %>%
+  summarise(., votes.2018 = sum(votes.2018),
+            lisnom = sum(lisnom),
+            efec = sum(efec),
+            dpanc = sum(dpanc),
+            dpric = sum(dpric),
+            dmorenac = sum(dmorenac)) %>%
+    mutate(VoteShare.2018 = (votes.2018/efec)*100)
+
 
 Vraw.2018 %<>% rowwise() %>% mutate(
     Rentability = case_when(
@@ -675,6 +685,7 @@ Vraw.2018 %<>% rowwise() %>% mutate(
       VoteShare.2018 <= 30   ~ 4, # Weakly Rentable
     )
   )
+
 
 ```
 
@@ -690,6 +701,8 @@ Vraw.2015 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc",
 
 #Generate values for vote share by actor
 Vraw.2015 %<>% mutate(VoteShare.2015 = (votes.2015/efec)*100)
+
+
 Vraw.2015 %<>% rowwise() %>% mutate(
     Rentability = case_when(
       VoteShare.2015 > 90    ~ 1, # Extremely Rentable
