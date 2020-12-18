@@ -195,7 +195,7 @@ zoom1<-planProp.df %>% filter(VALIDPLAN) %>% group_by(planid) %>% unnest(cols=st
   facet_grid(rows=vars(tla), cols=vars(year), scales="free_y")+
     scale_color_hue("creator_label",drop=FALSE)+
   theme(axis.title.y=element_blank(),legend.title=element_blank(), legend.position="none")
-zoom2<-planProp.df %>% filter(VALIDPLAN) %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017, edon==20) %>% 
+zoom2<-planProp.df %>% filter(VALIDPLAN) %>% group_by(planid) %>% unnest(cols=stages) %>% filter(year==2017, edon==19) %>% 
    ggplot(aes(x=stages,y=rscore,color=creator_label,group=planid))+geom_point()+geom_line()+ geom_vline(xintercept=c(2,4),alpha=.2,color="blue")+
   facet_grid(rows=vars(tla), cols=vars(year), scales="free_y")+
     scale_color_hue("creator_label",drop=FALSE)+
