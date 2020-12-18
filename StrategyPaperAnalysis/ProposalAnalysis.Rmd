@@ -678,6 +678,146 @@ Merge.2015 %>%
   summarise(., n(), mean(VoteShare.2015), mean(vhat.pan)*100, mean(vhat.pri)*100, mean(vhat.left)*100) %>%
   gt() %>%
   cols_label("n()" = "# of District Scores")
+
+Merge.2015 %<>%
+  pivot_longer(., cols = c("vhat.pan", "vhat.pri", "vhat.left"),
+               names_to = "vhatgroup",
+               values_to = "vhat_VS")
+Merge.2015 %<>%
+  group_by(edon, disn) %>%
+  mutate(WIN = if_else(VoteShare.2015 == max(VoteShare.2015), 1, 0)) %>%
+  mutate(WIN.vhat = if_else(vhat_VS == max(vhat_VS), 1, 0))
+
+Merge.2015 %>%
+  group_by(., actor, WIN) %>%
+  summarise(., n()/900*100) %>%
+  gt()
+
+Merge.2015 %>%
+  group_by(., vhatgroup, WIN.vhat) %>%
+  summarise(., n()/3600*100) %>%
+  gt()
+
+
+Vraw.2015 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "ph", "pes", "prdc", "pric"),
+                            names_to = "actor",
+                            values_to = "votes.2015")
+Vraw.2012 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "prdc", "pric"),
+                            names_to = "actor",
+                            values_to = "votes.2012")
+merge_1 <- left_join(x = Vraw.2015, y = Vraw.2012, by = c("edon", "disn", "seccion", "actor"))
+merge_1 %<>% mutate(avg_vote = ((votes.2015 + votes.2012)/2)) %>%
+  mutate(avg_efec = ((efec.x + efec.y)/2)) %>%
+  mutate(avg_VS = (avg_vote/avg_efec)*100)
+
+merge_1 %<>% group_by(edon, disn, actor) %>%
+  summarise(.,
+            avg_VS = mean(avg_VS))
+
+merge_1 %<>% na.omit() %>%
+  mutate(WIN = if_else(avg_VS == max(avg_VS), 1, 0))
+
+merge_1 %>%
+  group_by(., actor, WIN) %>%
+  summarise(., n()/240*100) %>%
+  gt()
+
+
+#++++++++++++++++++++++++++++++++++++
+Vraw.2006 <- Vraw.2006 %>%
+  rename(., prd = prdc)
+
+Vraw.2009 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "conve", "pna", "psd", "pric", "ptc"),
+                            names_to = "actor",
+                            values_to = "votes.2009")
+Vraw.2006 %<>% pivot_longer(., cols = c("pan", "pric", "prd", "pna", "asdc"),
+                            names_to = "actor",
+                            values_to = "votes.2006")
+merge_2 <- left_join(x = Vraw.2012, y = Vraw.2009, by = c("edon", "disn", "seccion", "actor"))
+merge_2 <- left_join(x = merge_2, y = Vraw.2006, by = c("edon", "disn", "seccion", "actor"))
+merge_2 %<>% mutate(avg_vote = ((votes.2012 + votes.2009 + votes.2006)/3)) %>%
+  mutate(avg_efec = ((efec.x + efec.y + efec)/3)) %>%
+  mutate(avg_VS = (avg_vote/avg_efec)*100)
+
+merge_2 %<>% group_by(edon, disn, actor) %>%
+  summarise(.,
+            avg_VS = mean(avg_VS))
+merge_2 %<>% na.omit() %>%
+  mutate(WIN = if_else(avg_VS == max(avg_VS), 1, 0))
+
+merge_2 %>%
+  group_by(., actor, WIN) %>%
+  summarise(., n()/230*100) %>%
+  gt()
+#+++++++++++++++++++++++++++++++++++++++++
+merge_3 <- left_join(x = Vraw.2012, y = Vraw.2009, by = c("edon", "disn", "seccion", "actor"))
+merge_3 %<>% mutate(avg_vote = ((votes.2012 + votes.2009)/2)) %>%
+  mutate(avg_efec = ((efec.x + efec.y)/2)) %>%
+  mutate(avg_VS = (avg_vote/avg_efec)*100)
+
+merge_3 %<>% group_by(edon, disn, actor) %>%
+  summarise(.,
+            avg_VS = mean(avg_VS))
+merge_3 %<>% na.omit() %>%
+  mutate(WIN = if_else(avg_VS == max(avg_VS), 1, 0))
+
+merge_3 %>%
+  group_by(., actor, WIN) %>%
+  summarise(., n()/244*100) %>%
+  gt()
+
+#=================================
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2012.csv"
+Vraw.2012 <- read.csv(url(url.file))
+Merge.2012 <- left_join(x = Vraw.2012, y = Vhat.2012, by = c("edon", "seccion"))
+Merge.2012  %<>% pivot_longer(., cols = c("pan.x", "pri.x", "prd", "pvem", "pt", "mc", "pna", "prdc", "pric"),
+                            names_to = "actor",
+                            values_to = "votes.2012")
+
+Merge.2012 %<>% na.omit() %>%
+  group_by(edon, disn, actor) %>%
+  summarise(., votes.2012 = sum(votes.2012),
+            lisnom.2012 = sum(lisnom),
+            efec.2012 = sum(efec.x),
+            vhat.pan = mean(vhat.pan),
+            vhat.pri = mean(vhat.pri),
+            vhat.left = mean(vhat.left)) %>%
+    mutate(VoteShare.2012 = (votes.2012/efec.2012)*100)
+
+#Defines the "rentability" of each each district by party vote share in said district.
+#A measure of a party's electoral prospects in a district (Extremely Rentable == GOOD electoral prospects)
+Merge.2012 %<>% rowwise() %>% mutate(
+    Rentability = case_when(
+      VoteShare.2012 > 90    ~ 1, # Extremely Rentable
+      VoteShare.2012 > 50    ~ 2, # Rentable
+      VoteShare.2012 > 30    ~ 3, # Moderately Rentable
+      VoteShare.2012 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+Merge.2012 %>% 
+  group_by(., actor, Rentability) %>% 
+  summarise(., n(), mean(VoteShare.2012), mean(vhat.pan)*100, mean(vhat.pri)*100, mean(vhat.left)*100) %>%
+  gt() %>%
+  cols_label("n()" = "# of District Scores")
+
+Merge.2012 %<>%
+  pivot_longer(., cols = c("vhat.pan", "vhat.pri", "vhat.left"),
+               names_to = "vhatgroup",
+               values_to = "vhat_VS")
+Merge.2012 %<>%
+  group_by(edon, disn) %>%
+  mutate(WIN = if_else(VoteShare.2012 == max(VoteShare.2012), 1, 0)) %>%
+  mutate(WIN.vhat = if_else(vhat_VS == max(vhat_VS), 1, 0))
+
+Merge.2012 %>%
+  group_by(., actor, WIN) %>%
+  summarise(., n()/900*100) %>%
+  gt()
+
+Merge.2012 %>%
+  group_by(., vhatgroup, WIN.vhat) %>%
+  summarise(., n()/3600*100) %>%
+  gt()
 ```
 
 ```{r}
@@ -719,6 +859,9 @@ Vraw.2018 %>%
 ```
 
 ```{r}
+
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2015.csv"
+Vraw.2015 <- read.csv(url(url.file))
 #Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
 Vraw.2015 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "ph", "pes", "prdc", "pric"),
                             names_to = "actor",
@@ -939,6 +1082,32 @@ Country_Votes.df %>% ggplot(aes(x=id, y = efec)) + geom_line() + xlab("")
 
 Merging Vhat values + Prediction function
 ```{r}
+
+#Vhat Data
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vhat-2015.csv"
+Vhat.2015 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vhat-2012.csv"
+Vhat.2012 <- read.csv(url(url.file))
+
+#Vraw Data
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2018.csv"
+Vraw.2018 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2015.csv"
+Vraw.2015 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2012.csv"
+Vraw.2012 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2009.csv"
+Vraw.2009 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2006.csv"
+Vraw.2006 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2003.csv"
+Vraw.2003 <- read.csv(url(url.file))
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2000.csv"
+Vraw.2000 <- read.csv(url(url.file))
+
+masterfile_1 <- left_join(x = Vhat.2015, y = Vraw.2015, by = c("edon", "seccion"))
+
+
 ```
 
 
