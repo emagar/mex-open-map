@@ -452,15 +452,22 @@ win_match.coal.df %>% filter((actortype == "major" | actortype == "minor") & sta
     tab_header(title = "Second Stage Redistricting Proposals")
 
 
-matching.df.coal <- matching.df.coal %>%
-  na.omit()
+
 major.score <- matching.df.coal %>% filter(actortype == "major" & stage == 2) %>% select(edon, year, SCORE, actor) %>% rename(Maj_Party_Score = SCORE)
 matching.df.coal <- left_join(matching.df.coal, major.score, by=c("edon", "year"))
 matching.df.coal <- matching.df.coal %>%
   group_by(edon, year, coalition) %>%
   mutate(maj_min_match = if_else(SCORE == Maj_Party_Score, 1, 0))
+
 matching.df.coal %>% filter(actortype == "minor") %>%
-  group_by(edon, year, coalition, maj_min_match) %>%
+  group_by(edon, govlevel.x, year, coalition, maj_min_match) %>%
+  filter(year == 2013) %>%
+  summarise(., n()) %>%
+  gt()
+
+matching.df.coal %>% filter(actortype == "minor") %>%
+  group_by(edon, govlevel.x,  year, coalition, maj_min_match) %>%
+  filter(year == 2017) %>%
   summarise(., n()) %>%
   gt()
 ####STAGES
