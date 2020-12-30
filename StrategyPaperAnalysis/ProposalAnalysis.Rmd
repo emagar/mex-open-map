@@ -451,22 +451,24 @@ win_match.coal.df %>% filter((actortype == "major" | actortype == "minor") & sta
     cols_label("CoalitionType" = "Party", "WIN" = "Accepted Proposals", "denominator" = "Total Proposals", "percent" = "% Accepted") %>%
     tab_header(title = "Second Stage Redistricting Proposals")
 
+win_match.coal.df <- unique(win_match.coal.df)
 
-
-major.score <- matching.df.coal %>% filter(actortype == "major" & stage == 2) %>% select(edon, year, SCORE, actor) %>% rename(Maj_Party_Score = SCORE)
-matching.df.coal <- left_join(matching.df.coal, major.score, by=c("edon", "year"))
+major.score <- matching.df.coal %>% filter(actortype == "major" & stage == 2) %>% select(edon, year, govlevel, SCORE, actor) %>% rename(Maj_Party_Score = SCORE)
+matching.df.coal <- left_join(matching.df.coal, major.score, by=c("edon", "year", "govlevel"))
 matching.df.coal <- matching.df.coal %>%
-  group_by(edon, year, coalition) %>%
+  group_by(edon, year, govlevel, coalition) %>%
   mutate(maj_min_match = if_else(SCORE == Maj_Party_Score, 1, 0))
 
-matching.df.coal %>% filter(actortype == "minor") %>%
-  group_by(edon, govlevel.x, year, coalition, maj_min_match) %>%
+matching.df.coal <- unique(matching.df.coal)
+
+matching.df.coal %>% filter(actortype == "minor" & stage.x == 2) %>%
+  group_by(edon, govlevel, year, coalition, maj_min_match) %>%
   filter(year == 2013) %>%
   summarise(., n()) %>%
   gt()
 
-matching.df.coal %>% filter(actortype == "minor") %>%
-  group_by(edon, govlevel.x,  year, coalition, maj_min_match) %>%
+matching.df.coal %>% filter(actortype == "minor" & stage.x == 2) %>%
+  group_by(edon, govlevel,  year, coalition, maj_min_match) %>%
   filter(year == 2017) %>%
   summarise(., n()) %>%
   gt()
@@ -1100,7 +1102,7 @@ Country_Votes.df %<>% mutate(id = row_number())
 Country_Votes.df %>% ggplot(aes(x=id, y = efec)) + geom_line() + xlab("")
 ```
 
-Merging Vhat values + Prediction function
+2015/2018 changes
 ```{r}
 
 #Vhat Data
@@ -1120,16 +1122,92 @@ url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/di
 Vraw.2009 <- read.csv(url(url.file))
 url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2006.csv"
 Vraw.2006 <- read.csv(url(url.file))
-url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2003.csv"
-Vraw.2003 <- read.csv(url(url.file))
-url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2000.csv"
-Vraw.2000 <- read.csv(url(url.file))
-
-masterfile_1 <- left_join(x = Vhat.2015, y = Vraw.2015, by = c("edon", "seccion"))
-
-
 ```
 
+```{r}
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2018.csv"
+Vraw.2018 <- read.csv(url(url.file))
+
+Vraw.2018 <- Vraw.2018 %>%
+  mutate(pan = pan + panc) %>%
+  mutate(pri = pri + pric) %>%
+  mutate(morena = morena + morenac) %>%
+  select(., -panc, -pric, -morenac)
+
+Vraw.2018 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "pes"),
+                            names_to = "actor",
+                            values_to = "votes_2018")
+Vraw.2018 <- Vraw.2018 %>%
+  mutate(actor = toupper(actor))
+
+#Aggregate numbers by district and
+#Generate values for vote share by actor
+Vraw.2018 %<>% na.omit() %>%
+  group_by(edon, actor) %>%
+  summarise(., votes_2018 = sum(votes_2018),
+            lisnom_2018 = sum(lisnom),
+            efec_2018 = sum(efec),
+            dpanc_2018 = sum(dpanc),
+            dpric_2018 = sum(dpric),
+            dmorenac_2018 = sum(dmorenac)) %>%
+  mutate(VoteShare_2018 = (votes_2018/efec_2018)*100,
+         dpanc = if_else(dpanc_2018 > 0, 1, 0),
+         dpric = if_else(dpric_2018 > 0, 1, 0),
+         dmorena = if_else(dmorenac_2018 > 0, 1, 0)) %>%
+  select(., -dpanc_2018, - dpric_2018, -dmorenac_2018)
+
+#Defines the "rentability" of each each district by party vote share in said district.
+#A measure of a party's electoral prospects in a district (Extremely Rentable == GOOD electoral prospects)
+Vraw.2018 %<>% rowwise() %>% mutate(
+    Rentability_2018 = case_when(
+      VoteShare_2018 > 90    ~ 1, # Extremely Rentable
+      VoteShare_2018 > 50    ~ 2, # Rentable
+      VoteShare_2018 > 30    ~ 3, # Moderately Rentable
+      VoteShare_2018 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2015.csv"
+Vraw.2015 <- read.csv(url(url.file))
+
+Vraw.2015 <- Vraw.2015 %>%
+  mutate(prd = prd + prdc) %>%
+  mutate(pri = pri + pric) %>%
+  select(., -ph, -prdc, -pric)
+
+Vraw.2015 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "pes"),
+                            names_to = "actor",
+                            values_to = "votes_2015")
+Vraw.2015 <- Vraw.2015 %>%
+  mutate(actor = toupper(actor))
+
+Vraw.2015 %<>% na.omit() %>%
+  group_by(edon, actor) %>%
+  summarise(., votes_2015 = sum(votes_2015),
+            lisnom_2015 = sum(lisnom),
+            efec_2015 = sum(efec),
+            dprdc_2015 = sum(dprdc),
+            dpric_2015 = sum(dpric)) %>%
+  mutate(VoteShare_2015 = (votes_2015/efec_2015)*100,
+         dprdc = if_else(dprdc_2015 > 0, 1, 0),
+         dpric = if_else(dpric_2015 > 0, 1, 0)) %>%
+  select(., -dprdc_2015, - dpric_2015)
+
+#Defines the "rentability" of each each district by party vote share in said district.
+#A measure of a party's electoral prospects in a district (Extremely Rentable == GOOD electoral prospects)
+Vraw.2015 %<>% rowwise() %>% mutate(
+    Rentability_2015 = case_when(
+      VoteShare_2015 > 90    ~ 1, # Extremely Rentable
+      VoteShare_2015 > 50    ~ 2, # Rentable
+      VoteShare_2015 > 30    ~ 3, # Moderately Rentable
+      VoteShare_2015 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+
+Vraw_df <- left_join(Vraw.2015, Vraw.2018, by = c("edon", "actor"))
+```
 
 #DIAGNOSTICS: a) Breakdown of proposals matching scores when parties ran in coalition (create a dummy)
 
