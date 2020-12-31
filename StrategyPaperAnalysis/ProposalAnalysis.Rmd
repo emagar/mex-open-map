@@ -386,34 +386,71 @@ coalitions.df %>% xtabs(~coalition, data=.)
 
 coalitions.df %<>% rowwise() %>% mutate(
     CoalitionType = case_when(
-      (coalition == "PAN-PNA" | coalition == "PAN-PRD" | coalition == "PAN-PRD-MC" | coalition == "PAN-PRD-PNA" | coalition == "PAN-PRD-PNA-MC" | coalition == "PAN-PRD-PT" | coalition == "PAN-PRD-PT-MC" | coalition == "PAN-PT" | coalition == "PAN-PVEM") ~ "PAN", 
-      coalition == "PRI-PVEM-PT-PNA" | coalition == "PRI-PVEM-PT" | coalition == "PRI-PVEM-PNA-PT" | coalition == "PRI-PVEM-PNA-ES" | coalition == "PRI-PVEM-PNA" | coalition == "PRI-PVEM" | coalition == "PRI-PT" | coalition == "PRI-PRD" | coalition == "PRI-PNA" | coalition == "PRI-ES" ~ "PRI", 
+      (coalition == "PAN-PNA" | coalition == "PAN-PRD" | coalition == "PAN-PRD-MC" | coalition == "PAN-PRD-PNA" | coalition == "PAN-PRD-PNA-MC" | coalition ==   "PAN-PRD-PT" | coalition == "PAN-PRD-PT-MC" | coalition == "PAN-PT" | coalition == "PAN-PVEM") ~ "PAN", 
+       coalition == "PRI-PVEM-PT-PNA" | coalition == "PRI-PVEM-PT" | coalition == "PRI-PVEM-PNA-PT" | coalition == "PRI-PVEM-PNA-ES" | coalition == "PRI-PVEM-PNA" | coalition == "PRI-PVEM" | coalition == "PRI-PT" | coalition == "PRI-PRD" | coalition == "PRI-PNA" | coalition == "PRI-ES" ~ "PRI", 
       coalition == "PRD-MC-PT" | coalition == "PRD-PT" | coalition == "PRD-PT-MC" | coalition == "MORENA-PT-ES" | coalition == "PRD-PNA" | coalition == "PRD-PT-ES" |      coalition == "PRD-PT-PNA" ~ "Left"
     )
   )
 
 ## Joining coalition dataset to the full proposal dataset
-matching.df.coal <- propfull.df %>% left_join(coalitions.df, by=c("edon", "year", "actor"))
+matching.df.coal <- propfull.df %>%
+  left_join(coalitions.df, by=c("edon", "year", "actor"))
 
 ## Filters out 1st and 2nd stage proposals and parties that PROPOSED.
 ##Parties in the coalitions may not propose even when the coalition proposes -- still want to capture minor parties who do not propose on their own
 #Two majors w/ diff scores, two minors w different scores
-matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% filter(PROPOSED == TRUE) %>% group_by(edon, stage, year, govlevel) %>% mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0)) #may need to also filter out parties not in coalitions for simplicity, will check the dataframe
+matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% 
+  filter(PROPOSED == TRUE) %>% group_by(edon, stage, year, govlevel) %>% 
+  mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0),
+         minSCORE = ifelse(SCORE == min(SCORE), 1, 0),
+         minSCOREnum = min(SCORE)) %>%
+  as.tibble() #may need to also filter out parties not in coalitions for simplicity, will check the dataframe
 
 
-## Subset out winning scores
-first.scenario.df <- propfull.df %>% filter(stage == 1) %>% select(edon, year, SCORE) %>% rename(FS_SCORE = SCORE)
-second.scenario.df <- propfull.df %>% filter(stage == 3) %>% select(edon, year, SCORE) %>% rename(SS_SCORE = SCORE)
-winningscores.df <- propfull.df %>% filter(stage == 5) %>% select(edon, year, SCORE) %>% rename(Win_SCORE = SCORE)
+## Subset out scores winning scores for each stage (1, 2, and final) as well as pull out each partisan score (stage 1 and 2)
+first.scenario.df <- propfull.df %>% 
+  filter(stage == 1) %>% 
+  select(edon, year, SCORE) %>% 
+  rename(FS_SCORE = SCORE)
+
+second.scenario.df <- propfull.df %>% 
+  filter(stage == 3) %>% 
+  select(edon, year, SCORE) %>% 
+  rename(SS_SCORE = SCORE)
+
+winningscores.df <- propfull.df %>% 
+  filter(stage == 5) %>% 
+  select(edon, year, SCORE) %>% 
+  rename(Win_SCORE = SCORE) %>% 
+  na.omit
+
+partisan_FS_SCORE.df <- propfull.df %>%
+  filter(stage == 2) %>% 
+  select(edon, year, SCORE, actor, govlevel) %>%
+  rename(partisan_FS_SCORE = SCORE) %>%
+  na.omit
+
+partisan_SS_SCORE.df <- propfull.df %>%
+  filter(stage == 4) %>% 
+  select(edon, year, SCORE, actor, govlevel) %>% 
+  rename(partisan_SS_SCORE = SCORE) %>%
+  na.omit()
 
 ##Rejoin winning scores to the matching dataframe
-win_match.coal.df <- matching.df.coal %>% inner_join(first.scenario.df, by=c("edon", "year"))
-win_match.coal.df %<>% inner_join(second.scenario.df, by=c("edon", "year"))
-win_match.coal.df %<>% inner_join(winningscores.df, by=c("edon", "year"))
+win_match.coal.df.tmp1 <- left_join(matching.df.coal, partisan_FS_SCORE.df, by=c("edon", "year", "actor", "govlevel"))
+win_match.coal.df.tmp2 <- left_join(win_match.coal.df.tmp1, first.scenario.df, by=c("edon", "year"))
+win_match.coal.df.tmp3 <- left_join(win_match.coal.df.tmp2, partisan_SS_SCORE.df, by=c("edon", "year", "actor", "govlevel"))
+win_match.coal.df.tmp4 <- left_join(win_match.coal.df.tmp3, second.scenario.df, by=c("edon", "year"))
+win_match.coal.df.tmp5 <- left_join(win_match.coal.df.tmp4, winningscores.df, by=c("edon", "year"))
 
+WM_coal.df <- win_match.coal.df.tmp5
 ##Create dummy matching minimum scores to the winning score
-win_match.coal.df %<>% group_by(edon, stage, year, govlevel) %>% mutate(WIN = ifelse(SCORE == Win_SCORE, 1, 0))
+#WM_coal.df %<>% group_by(edon, stage, year, govlevel) %>% 
+  #mutate(ACTOR_WIN = if_else(SCORE == Win_SCORE, 1, 0)) %>%
+  #mutate(ALG_WIN = if_else(FS_SCORE == Win_SCORE, 1, 0))
+```
 
+```{r}
 #2.1 Code to create a proportion of success rate based on the proportion of plans adopted (Proportion winning   plans = Partisan plans that were adopted / Total amout of proposals formulated by each party)-->               This requires for the FIRST STAGE: 1) compareing the FIRST SCENARIO with PARTISAN PLANS, possible              outcomes in terms of the cost function: 
 
 
