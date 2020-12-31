@@ -445,9 +445,10 @@ win_match.coal.df.tmp5 <- left_join(win_match.coal.df.tmp4, winningscores.df, by
 
 WM_coal.df <- win_match.coal.df.tmp5
 ##Create dummy matching minimum scores to the winning score
-#WM_coal.df %<>% group_by(edon, stage, year, govlevel) %>% 
-  #mutate(ACTOR_WIN = if_else(SCORE == Win_SCORE, 1, 0)) %>%
-  #mutate(ALG_WIN = if_else(FS_SCORE == Win_SCORE, 1, 0))
+WM_coal.df %<>% group_by(edon, stage, year, govlevel) %>% 
+  mutate(ACTOR_WIN = if_else(SCORE == Win_SCORE, 1, 0),
+         ALG_WIN = if_else(FS_SCORE == Win_SCORE, 1, 0),
+         MIN_WIN = if_else(minSCOREnum == Win_SCORE, 1, 0))
 ```
 
 ```{r}
