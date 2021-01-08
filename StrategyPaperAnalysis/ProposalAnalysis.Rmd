@@ -38,7 +38,7 @@ require(caret)
 require(readxl)
 ```
 #bring in Data
-```{r message=FALSE}
+```{r include=FALSE}
 source("PrepData.R")
 ```
 
@@ -901,7 +901,7 @@ Vraw.2018 <- Vraw.2018 %>%
 #Aggregate numbers by district and
 #Generate values for vote share by actor
 Vraw.2018 %<>% na.omit() %>%
-  group_by(edon, actor) %>%
+  group_by(edon, disn, actor) %>%
   summarise(., votes_2018 = sum(votes_2018),
             lisnom_2018 = sum(lisnom),
             efec_2018 = sum(efec),
@@ -912,6 +912,27 @@ Vraw.2018 %<>% na.omit() %>%
          dpanc = if_else(dpanc_2018 > 0, 1, 0),
          dpric = if_else(dpric_2018 > 0, 1, 0),
          dmorena = if_else(dmorenac_2018 > 0, 1, 0)) %>%
+  select(., -dpanc_2018, - dpric_2018, -dmorenac_2018)
+
+Vraw.2018 %<>% as.tibble() %>%
+  group_by(edon, disn) %>%
+  mutate(Max_VS = max(VoteShare_2018),
+         Seat_Win = if_else(VoteShare_2018 == Max_VS, 1, 0)) %>%
+  select(., -Max_VS)
+
+Vraw.2018 %<>% na.omit() %>%
+  group_by(edon, actor) %>%
+  summarise(., votes_2018 = sum(votes_2018),
+            lisnom_2018 = sum(lisnom_2018),
+            efec_2018 = sum(efec_2018),
+            dpanc_2018 = sum(dpanc),
+            dpric_2018 = sum(dpric),
+            dmorenac_2018 = sum(dmorena),
+            Seat_Win_2018 = sum(Seat_Win)) %>%
+  mutate(VoteShare_2018 = (votes_2018/efec_2018)*100,
+         dpanc = if_else(dpanc_2018 > 0, 1, 0),
+         dpric = if_else(dpric_2018 > 0, 1, 0),
+         dmorena = if_else(dmorenac_2018 > 0, 1, 0))  %>%
   select(., -dpanc_2018, - dpric_2018, -dmorenac_2018)
 
 #Defines the "rentability" of each each district by party vote share in said district.
@@ -941,12 +962,31 @@ Vraw.2015 <- Vraw.2015 %>%
   mutate(actor = toupper(actor))
 
 Vraw.2015 %<>% na.omit() %>%
-  group_by(edon, actor) %>%
+  group_by(edon, disn, actor) %>%
   summarise(., votes_2015 = sum(votes_2015),
             lisnom_2015 = sum(lisnom),
             efec_2015 = sum(efec),
             dprdc_2015 = sum(dprdc),
             dpric_2015 = sum(dpric)) %>%
+  mutate(VoteShare_2015 = (votes_2015/efec_2015)*100,
+         dprdc = if_else(dprdc_2015 > 0, 1, 0),
+         dpric = if_else(dpric_2015 > 0, 1, 0)) %>%
+  select(., -dprdc_2015, - dpric_2015)
+
+Vraw.2015 %<>% as.tibble() %>%
+  group_by(edon, disn) %>%
+  mutate(Max_VS = max(VoteShare_2015),
+         Seat_Win = if_else(VoteShare_2015 == Max_VS, 1, 0)) %>%
+  select(., -Max_VS)
+
+Vraw.2015 %<>% na.omit() %>%
+  group_by(edon, actor) %>%
+  summarise(., votes_2015 = sum(votes_2015),
+            lisnom_2015 = sum(lisnom_2015),
+            efec_2015 = sum(efec_2015),
+            dprdc_2015 = sum(dprdc),
+            dpric_2015 = sum(dpric),
+             Seat_Win_2015 = sum(Seat_Win)) %>%
   mutate(VoteShare_2015 = (votes_2015/efec_2015)*100,
          dprdc = if_else(dprdc_2015 > 0, 1, 0),
          dpric = if_else(dpric_2015 > 0, 1, 0)) %>%
