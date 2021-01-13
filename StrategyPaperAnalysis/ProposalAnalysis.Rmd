@@ -1004,6 +1004,11 @@ Vraw.2015 %<>% rowwise() %>% mutate(
   )
 
 Vraw_df <- left_join(Vraw.2015, Vraw.2018, by = c("edon", "actor"))
+
+Vraw_df %>%
+  group_by(actor) %>%
+  summarise(., sum(Seat_Win_2015), mean(VoteShare_2015), sum(Seat_Win_2018), mean(VoteShare_2018)) %>%
+  gt()
 ```
 
 #DIAGNOSTICS: a) Breakdown of proposals matching scores when parties ran in coalition (create a dummy)
