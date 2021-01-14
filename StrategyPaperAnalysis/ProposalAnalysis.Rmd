@@ -393,62 +393,64 @@ coalitions.df %<>% rowwise() %>% mutate(
   )
 
 ## Joining coalition dataset to the full proposal dataset
-matching.df.coal <- propfull.df %>%
+ propfull.df %<>%
   left_join(coalitions.df, by=c("edon", "year", "actor"))
 
 ## Filters out 1st and 2nd stage proposals and parties that PROPOSED.
 ##Parties in the coalitions may not propose even when the coalition proposes -- still want to capture minor parties who do not propose on their own
 #Two majors w/ diff scores, two minors w different scores
-matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% 
-  filter(PROPOSED == TRUE) %>% group_by(edon, stage, year, govlevel) %>% 
-  mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0),
-         minSCORE = ifelse(SCORE == min(SCORE), 1, 0),
-         minSCOREnum = min(SCORE)) %>%
-  as.tibble() #may need to also filter out parties not in coalitions for simplicity, will check the dataframe
+ 
+#matching.df.coal %<>% filter(stage == 2 | stage == 4) %>% 
+  #filter(PROPOSED == TRUE) %>% group_by(edon, year) %>% 
+  #mutate(inCoalition=ifelse(CoalitionStratPos > 0, 1, 0),
+         #minSCORE = ifelse(SCORE == min(SCORE), 1, 0),
+        # minSCOREnum = min(SCORE)) %>%
+  #as.tibble() #may need to also filter out parties not in coalitions for simplicity, will check the dataframe
 
 
-## Subset out scores winning scores for each stage (1, 2, and final) as well as pull out each partisan score (stage 1 and 2)
-first.scenario.df <- propfull.df %>% 
+## Subset out scores winning scores for each stage (1, 3, and 5) as well as pull out each partisan score (stage 2 and 4)
+first.scenario.df <- propfull.df %>% #Algorithm score 
   filter(stage == 1) %>% 
   select(edon, year, SCORE) %>% 
   rename(FS_SCORE = SCORE)
 
-second.scenario.df <- propfull.df %>% 
+partisan_FS_SCORE.df <- propfull.df %>% #First round party scores
+  filter(stage == 2 & PROPOSED == TRUE) %>% 
+  select(., -stage) %>%
+  rename(partisan_FS_SCORE = SCORE)
+
+second.scenario.df <- propfull.df %>% #Who won the "first round"-> score that was selected to be the benchmark against which the second round scores are compared
   filter(stage == 3) %>% 
   select(edon, year, SCORE) %>% 
   rename(SS_SCORE = SCORE)
 
-winningscores.df <- propfull.df %>% 
+partisan_SS_SCORE.df <- propfull.df %>% #second round party scores
+  filter(stage == 4 & PROPOSED == TRUE) %>% 
+  select(., -stage) %>% 
+  rename(partisan_SS_SCORE = SCORE)
+
+winningscores.df <- propfull.df %>% #final score -- the "Winner"
   filter(stage == 5) %>% 
   select(edon, year, SCORE) %>% 
-  rename(Win_SCORE = SCORE) %>% 
-  na.omit
+  rename(Win_SCORE = SCORE)
 
-partisan_FS_SCORE.df <- propfull.df %>%
-  filter(stage == 2) %>% 
-  select(edon, year, SCORE, actor, govlevel) %>%
-  rename(partisan_FS_SCORE = SCORE) %>%
-  na.omit
-
-partisan_SS_SCORE.df <- propfull.df %>%
-  filter(stage == 4) %>% 
-  select(edon, year, SCORE, actor, govlevel) %>% 
-  rename(partisan_SS_SCORE = SCORE) %>%
-  na.omit()
-
-##Rejoin winning scores to the matching dataframe
-win_match.coal.df.tmp1 <- left_join(matching.df.coal, partisan_FS_SCORE.df, by=c("edon", "year", "actor", "govlevel"))
-win_match.coal.df.tmp2 <- left_join(win_match.coal.df.tmp1, first.scenario.df, by=c("edon", "year"))
-win_match.coal.df.tmp3 <- left_join(win_match.coal.df.tmp2, partisan_SS_SCORE.df, by=c("edon", "year", "actor", "govlevel"))
-win_match.coal.df.tmp4 <- left_join(win_match.coal.df.tmp3, second.scenario.df, by=c("edon", "year"))
-win_match.coal.df.tmp5 <- left_join(win_match.coal.df.tmp4, winningscores.df, by=c("edon", "year"))
+#Join the Stage 1, 3, 5 Scores together since they are independent of party
+temp1 <- Reduce(function(x, y) merge(x, y, by = c("edon", "year")),
+                list(first.scenario.df, second.scenario.df, winningscores.df))
+temp2 <- Reduce(function(x, y) merge(x, y, by = c("edon", "year", "actor", "govlevel"), all=TRUE, no.dups=FALSE),
+                list(partisan_FS_SCORE.df, partisan_SS_SCORE.df))
 
 WM_coal.df <- win_match.coal.df.tmp5
 ##Create dummy matching minimum scores to the winning score
-WM_coal.df %<>% group_by(edon, stage, year, govlevel) %>% 
+WM_coal.df %<>% group_by(edon, year, govlevel) %>% 
   mutate(ACTOR_WIN = if_else(SCORE == Win_SCORE, 1, 0),
          ALG_WIN = if_else(FS_SCORE == Win_SCORE, 1, 0),
          MIN_WIN = if_else(minSCOREnum == Win_SCORE, 1, 0))
+
+#test
+test <- WM_coal.df %>%
+  filter(edon == 1)
+
 ```
 
 ```{r}
