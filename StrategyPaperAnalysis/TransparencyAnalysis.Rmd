@@ -445,7 +445,7 @@ res_outcomes_unrolled.df %<>% bind_rows(
   mutate(denominator=ncontests) %>% 
   filter(win_violation) %>% 
   group_by(year,creators) %>% 
-  summarise(  events = n(), type = "Win inviolation of the rules", denominator=unique(denominator) )
+  summarise(  events = n(), type = "Win in violation of the rules", denominator=unique(denominator) )
 )
 
 res_outcomes_unrolled.df %<>% bind_rows(
@@ -490,7 +490,8 @@ res_outcomes_unrolled.df %>%
       palette = c( "white","red"), 
         domain = c(0,.8) ) 
     ) %>% 
-    gt_theme_538() 
+    gt_theme_538() %>%
+  gtsave(., "tab1.png", path="C:/Users/Brandon/Documents/mex-open-map/StrategyPaperAnalysis/")
 
 
 
@@ -531,6 +532,216 @@ plan.tgraph %>% ggraph() +
     #geom_edge_density(fill="blue") +
   geom_node_label(aes(label=actor,color=factor(actortype)))
 
+
+```
+
+Vote Share  + Rule 8 Violations
+```{r}
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2018.csv"
+Vraw.2018 <- read.csv(url(url.file))
+
+Vraw.2018 <- Vraw.2018 %>%
+  mutate(pan = pan + panc) %>%
+  mutate(pri = pri + pric) %>%
+  mutate(morena = morena + morenac) %>%
+  select(., -panc, -pric, -morenac)
+
+Vraw.2018 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "pes"),
+                            names_to = "actor",
+                            values_to = "votes_2018")
+Vraw.2018 <- Vraw.2018 %>%
+  mutate(actor = toupper(actor))
+
+#Aggregate numbers by district and
+#Generate values for vote share by actor
+Vraw.2018 %<>% na.omit() %>%
+  group_by(edon, disn, actor) %>%
+  summarise(., votes_2018 = sum(votes_2018),
+            lisnom_2018 = sum(lisnom),
+            efec_2018 = sum(efec),
+            dpanc_2018 = sum(dpanc),
+            dpric_2018 = sum(dpric),
+            dmorenac_2018 = sum(dmorenac)) %>%
+  mutate(VoteShare_2018 = (votes_2018/efec_2018)*100,
+         dpanc = if_else(dpanc_2018 > 0, 1, 0),
+         dpric = if_else(dpric_2018 > 0, 1, 0),
+         dmorena = if_else(dmorenac_2018 > 0, 1, 0)) %>%
+  select(., -dpanc_2018, - dpric_2018, -dmorenac_2018)
+
+Vraw.2018 %<>% as.tibble() %>%
+  group_by(edon, disn) %>%
+  mutate(Max_VS = max(VoteShare_2018),
+         Seat_Win = if_else(VoteShare_2018 == Max_VS, 1, 0)) %>%
+  select(., -Max_VS)
+
+Vraw.2018 %<>% na.omit() %>%
+  group_by(edon, actor) %>%
+  summarise(., votes_2018 = sum(votes_2018),
+            lisnom_2018 = sum(lisnom_2018),
+            efec_2018 = sum(efec_2018),
+            dpanc_2018 = sum(dpanc),
+            dpric_2018 = sum(dpric),
+            dmorenac_2018 = sum(dmorena),
+            Seat_Win_2018 = sum(Seat_Win)) %>%
+  mutate(VoteShare_2018 = (votes_2018/efec_2018)*100,
+         dpanc = if_else(dpanc_2018 > 0, 1, 0),
+         dpric = if_else(dpric_2018 > 0, 1, 0),
+         dmorena = if_else(dmorenac_2018 > 0, 1, 0))  %>%
+  select(., -dpanc_2018, - dpric_2018, -dmorenac_2018)
+
+#Defines the "rentability" of each each district by party vote share in said district.
+#A measure of a party's electoral prospects in a district (Extremely Rentable == GOOD electoral prospects)
+Vraw.2018 %<>% rowwise() %>% mutate(
+    Rentability_2018 = case_when(
+      VoteShare_2018 > 90    ~ 1, # Extremely Rentable
+      VoteShare_2018 > 50    ~ 2, # Rentable
+      VoteShare_2018 > 30    ~ 3, # Moderately Rentable
+      VoteShare_2018 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+
+#Create a column for actor (to more easily merge with other datasets), votes are values associated w/ each actor category
+url.file <- "https://raw.githubusercontent.com/emagar/mxDistritos/master/data/dipfed-seccion-vraw-2015.csv"
+Vraw.2015 <- read.csv(url(url.file))
+
+Vraw.2015 <- Vraw.2015 %>%
+  mutate(prd = prd + prdc) %>%
+  mutate(pri = pri + pric) %>%
+  select(., -ph, -prdc, -pric)
+
+Vraw.2015 %<>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "pes"),
+                            names_to = "actor",
+                            values_to = "votes_2015")
+Vraw.2015 <- Vraw.2015 %>%
+  mutate(actor = toupper(actor))
+
+Vraw.2015 %<>% na.omit() %>%
+  group_by(edon, disn, actor) %>%
+  summarise(., votes_2015 = sum(votes_2015),
+            lisnom_2015 = sum(lisnom),
+            efec_2015 = sum(efec),
+            dprdc_2015 = sum(dprdc),
+            dpric_2015 = sum(dpric)) %>%
+  mutate(VoteShare_2015 = (votes_2015/efec_2015)*100,
+         dprdc = if_else(dprdc_2015 > 0, 1, 0),
+         dpric = if_else(dpric_2015 > 0, 1, 0)) %>%
+  select(., -dprdc_2015, - dpric_2015)
+
+Vraw.2015 %<>% as.tibble() %>%
+  group_by(edon, disn) %>%
+  mutate(Max_VS = max(VoteShare_2015),
+         Seat_Win = if_else(VoteShare_2015 == Max_VS, 1, 0)) %>%
+  select(., -Max_VS)
+
+Vraw.2015 %<>% na.omit() %>%
+  group_by(edon, actor) %>%
+  summarise(., votes_2015 = sum(votes_2015),
+            lisnom_2015 = sum(lisnom_2015),
+            efec_2015 = sum(efec_2015),
+            dprdc_2015 = sum(dprdc),
+            dpric_2015 = sum(dpric),
+             Seat_Win_2015 = sum(Seat_Win)) %>%
+  mutate(VoteShare_2015 = (votes_2015/efec_2015)*100,
+         dprdc = if_else(dprdc_2015 > 0, 1, 0),
+         dpric = if_else(dpric_2015 > 0, 1, 0)) %>%
+  select(., -dprdc_2015, - dpric_2015)
+
+#Defines the "rentability" of each each district by party vote share in said district.
+#A measure of a party's electoral prospects in a district (Extremely Rentable == GOOD electoral prospects)
+Vraw.2015 %<>% rowwise() %>% mutate(
+    Rentability_2015 = case_when(
+      VoteShare_2015 > 90    ~ 1, # Extremely Rentable
+      VoteShare_2015 > 50    ~ 2, # Rentable
+      VoteShare_2015 > 30    ~ 3, # Moderately Rentable
+      VoteShare_2015 <= 30   ~ 4, # Weakly Rentable
+    )
+  )
+
+Vraw_df <- left_join(Vraw.2015, Vraw.2018, by = c("edon", "actor"))
+
+#Vraw_df %>%
+  #group_by(actor) %>%
+  #@summarise(., sum(Seat_Win_2015), mean(VoteShare_2015), sum(Seat_Win_2018), mean(VoteShare_2018)) %>%
+  #gt()
+
+#Merge with the planProp data frame
+
+VS_R8.df <- left_join(contestSum.df, Vraw_df, by = c("edon"))
+VS_R82.df <- left_join(planProp.df, Vraw_df, by = c("edon"))
+
+VS_R8_chart1 <- VS_R8.df %>%
+  group_by(edon, actor, year) %>%
+  summarise(events1 = sum(final_section8) + sum(phase2_section8),
+            demoninator = n()*2,
+            VS15 = mean(VoteShare_2015),
+            VS18 = mean(VoteShare_2018),
+            Seats15 = sum(Seat_Win_2015),
+            Seats18 = sum(Seat_Win_2018),
+            type = "Unanimous Higher Score Proposal Accepted",
+            category="compliance")
+VS_R8_chart1 <- VS_R8_chart1 %>% as_tibble()
+
+VS_R8_chart2 <- VS_R82.df %>%
+  group_by(edon, actor, year) %>%
+  summarise(events1 = sum( !VALIDPLAN ),
+            demoninator = n()*2,
+            VS15 = mean(VoteShare_2015),
+            VS18 = mean(VoteShare_2018),
+            Seats15 = sum(Seat_Win_2015),
+            Seats18 = sum(Seat_Win_2018),
+            type = "INE Invalidated Proposed Plan",
+            category="compliance")
+VS_R8_chart2 <- VS_R8_chart2 %>% as_tibble()
+
+VS_R8_chart3 <- VS_R8.df %>%
+  group_by(edon, actor, year) %>%
+  summarise(events1 = sum(INEchanged_phase3) + sum(INEchanged_final),
+            demoninator = n()*2,
+            VS15 = mean(VoteShare_2015),
+            VS18 = mean(VoteShare_2018),
+            Seats15 = sum(Seat_Win_2015),
+            Seats18 = sum(Seat_Win_2018),
+            type = "INE Modified proposals",
+            category="compliance")
+VS_R8_chart3 <- VS_R8_chart3 %>% as_tibble()
+
+VS_R8_chart4 <- VS_R8.df %>%
+  group_by(edon, actor, year) %>%
+  summarise(events1 = sum(phase2_violation) + sum(final_violation),
+            demoninator = n()*2,
+            VS15 = mean(VoteShare_2015),
+            VS18 = mean(VoteShare_2018),
+            Seats15 = sum(Seat_Win_2015),
+            Seats18 = sum(Seat_Win_2018),
+            type = "Higher Score Plan Without Unanimity",
+            category="compliance")
+VS_R8_chart4 <- VS_R8_chart4 %>% as_tibble()
+VS_R8_chart4 %>%
+  group_by(year) %>%
+  summarise(., sum(Seats15))
+
+#Filter out obv w/o violations
+VS_R8_master.df <- rbind(VS_R8_chart1, VS_R8_chart2, VS_R8_chart3, VS_R8_chart4)
+VS_R8_master.df %<>% mutate(violation = if_else(events1 > 0, TRUE, FALSE))
+
+VS_R8_master.df %>%
+  group_by(year, actor) %>%
+  summarise(., mean(VS15), mean(VS18), sum(events1), denominator = n()*2) %>%
+  gt()
+
+VS_R8_master.df %>%
+  group_by(year, actor, violation) %>%
+  summarise(., mean(VS15), mean(VS18)) %>%
+  gt()
+
+#2013-2015
+#No-violation (% share for each party overall) vs. violation -- groups
+#BY party
+
+#2017-2018
+#no-violation vs. violation -- groups
+#BY party
 
 ```
 
