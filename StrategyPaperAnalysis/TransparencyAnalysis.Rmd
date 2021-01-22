@@ -693,7 +693,9 @@ VS_R8_chart2 <- VS_R82.df %>%
             type = "INE Invalidated Proposed Plan",
             category="compliance")
 VS_R8_chart2 <- VS_R8_chart2 %>% as_tibble()
-
+VS_R8_chart2 %>%
+  group_by(year) %>%
+  summarise(., sum(Seats15))
 VS_R8_chart3 <- VS_R8.df %>%
   group_by(edon, actor, year) %>%
   summarise(events1 = sum(INEchanged_phase3) + sum(INEchanged_final),
@@ -705,7 +707,9 @@ VS_R8_chart3 <- VS_R8.df %>%
             type = "INE Modified proposals",
             category="compliance")
 VS_R8_chart3 <- VS_R8_chart3 %>% as_tibble()
-
+VS_R8_chart3 %>%
+  group_by(year) %>%
+  summarise(., sum(Seats15))
 VS_R8_chart4 <- VS_R8.df %>%
   group_by(edon, actor, year) %>%
   summarise(events1 = sum(phase2_violation) + sum(final_violation),
@@ -722,7 +726,7 @@ VS_R8_chart4 %>%
   summarise(., sum(Seats15))
 
 #Filter out obv w/o violations
-VS_R8_master.df <- rbind(VS_R8_chart1, VS_R8_chart2, VS_R8_chart3, VS_R8_chart4)
+VS_R8_master.df <- rbind(VS_R8_chart1, VS_R8_chart3, VS_R8_chart4)
 VS_R8_master.df %<>% mutate(violation = if_else(events1 > 0, TRUE, FALSE))
 
 VS_R8_master.df %>%
@@ -731,17 +735,28 @@ VS_R8_master.df %>%
   gt()
 
 VS_R8_master.df %>%
-  group_by(year, actor, violation) %>%
-  summarise(., mean(VS15), mean(VS18)) %>%
+  filter(year == 2013) %>%
+  group_by(actor, violation) %>%
+  summarise(., round(sum(Seats15)/3), digits = 1) %>%
+  gt()
+
+VS_R8_master.df %>%
+  filter(year == 2017) %>%
+  group_by(actor, violation) %>%
+  summarise(., round(sum(Seats18)/3), digits = 1) %>%
   gt()
 
 #2013-2015
 #No-violation (% share for each party overall) vs. violation -- groups
 #BY party
+#SEATS
 
 #2017-2018
 #no-violation vs. violation -- groups
 #BY party
+#SEATS
+
+# actor, seat distribution
 
 ```
 
