@@ -111,13 +111,6 @@ planProp.df %<>% rowwise() %>% mutate( creator_coded = case_when(
 ```{r}
 ##set themes for look and feel of tables
 
-#TODO: explore use of gtsummary
-#require(gtsummary)
-#reset_gtsummary_theme()
-#theme_gtsummary_journal(journal = "jama")
-#heme_gtsummary_compact()
-
-# from Mock (2020, Sept. 28). The Mockup Blog: Functions and Themes for gt tables. Retrieved from https://themockup.blog/posts/2020-09-26-functions-and-themes-for-gt-tables/
 
 gt_theme_538 <- function(data,...) {
   data %>%
