@@ -23,7 +23,7 @@ actors.df <- structure(list(actor = structure(c(2L, 7L, 9L, 10L, 11L, 13L,
 ## Proposal events database: proposal.df
 source("Normalize.R") # reads in Pre-Normalized IFE tables 
 ## Ruling party by year and state: grule.df , controlByWindow() helper function
-source("RulingParty_micah.R") # Bring in ruling party db
+source("RulingParty.R") # Bring in ruling party db
 ## Integrate proposed plans: profull.df
 source("integrateMxdistritos.R")
 rm(proposals.df)
