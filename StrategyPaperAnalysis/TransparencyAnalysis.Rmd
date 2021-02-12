@@ -33,8 +33,7 @@ proptrans.df %<>% rowwise() %>% mutate(hasplan=!is.null(plan)) # indicator for p
 #proptrans.df %<>% select(-plan) # drop full plan tibble for computation efficiency since its big, and we don't use it further
 proptrans.df %<>% mutate(year=as.integer(year))
 proptrans.df %<>% rowwise() %>% mutate(VALIDPLAN=(is.na(INVALID)|!INVALID)&!is.na(PROPOSED)) 
-proptrans.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5))) # prevent plans not matching across stages because of rounding error
- proptrans.df %<>% rowwise() %>% mutate(planid=ifelse(is.na(rscore),NA,paste(rscore,edon,year,sep="-"))) # for network analysis
+
 ```
 ```{r}
 ## For the purpose of simplifying presentation of analysis recode {INE, Junta, CLV} -> Admin; PRD51 to PRD

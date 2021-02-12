@@ -28,6 +28,8 @@ source("RulingParty_micah.R") # Bring in ruling party db
 source("integrateMxdistritos.R")
 rm(proposals.df)
 propfull.df %<>% left_join(actors.df)
+propfull.df %<>% rowwise() %>% mutate(rscore=(round(SCORE,digits=5))) # prevent plans not matching across stages because of rounding error
+propfull.df %<>% rowwise() %>% mutate(planid=ifelse(is.na(rscore),NA,paste(rscore,edon,year,sep="-"))) # for network analysis
 
 
 
