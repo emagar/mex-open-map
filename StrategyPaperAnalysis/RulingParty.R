@@ -4,7 +4,7 @@ library(readr)
 library(dplyr)
 library(magrittr)
 
-RulingParty <- read_dta("RulingPartyLongID.dta")
+RulingParty <- read_dta("parties-data/RulingPartyLongID.dta")
 grule.df <- as_tibble(RulingParty) 
 grule.df %<>% rename(Entidad=state)
 rm(RulingParty)

@@ -129,7 +129,7 @@ table(check.df$edon)
 
 
 # now compute for coalitions
-coalitions.df <- read_excel("Coaltion Data State Level 2010-2016 (Coalitions and Parties).xlsx")
+coalitions.df <- read_excel("coalition-data/Coaltion Data State Level 2010-2016 (Coalitions and Parties).xlsx")
 coalitions.df %<>% rowwise() %>% filter(grepl('-',actor)) %>% mutate(coalition=actor) %>% separate_rows(actor,sep='-')
 
 coalitions.df %<>% left_join(select(ys.proposed,c("actor","edon","year","PartyStratPos"))) %>% group_by(edon,year,coalition) %>% mutate(CoalitionStratPos=min(PartyStratPos)) %>% select(-PartyStratPos)
