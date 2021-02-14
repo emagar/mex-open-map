@@ -1,6 +1,7 @@
-
+## FOR TESTING ONLY -- if called outside of PrepData.R
 setwd("StrategyPaperAnalysis")
 source("PrepData.R")
+###
 
 #
 # PrepSeatScores
@@ -10,14 +11,15 @@ source("PrepData.R")
 # Depends on: PrepData.R  -- This must be run first
 # Returns: planscores.df
 
-planscores.df <- NULL
 
-# local({ # use a local block to keep environment neat, only the objects defined outside will remain after run
+# use a local blocks to keep environment neat, only the objects defined outside will remain after run
+## BEGIN LOCAL BLOCK
+planProcessing.df <- local({ 
+## 
+## Data cleaning functions 
+##
+## Supports cleaning, merging w/ raw-seccion-* files
 
-# generate table of planids and plans, to 
-planscores.df <- propfull.df %>% group_by(planid) %>% summarize(plan=head(plan,1), edon=head(edon,1))
-
-### cleans and processes vraw files
 clean_vraw<-function(x){
   #Adds votes received by coalition groups to the major party with which the coalition is associated.
   x %<>%
@@ -33,11 +35,6 @@ clean_vraw<-function(x){
   select(edon,seccion,actor,votes,efec,lisnom)
 }
 
-votes.2015.df <- read_csv("mxDistritos-data/raw-seccion-2015.csv")
-votes.2018.df <- read_csv("mxDistritos-data/raw-seccion-2018.csv")
-votes.2018.df %<>%  mutate(prdc=0,morenac=0) %>% clean_vraw()
-votes.2015.df %<>%  mutate(panc=0,morenac=0) %>% clean_vraw()
-
 # function to check and merge plans
 standardizePlan <- function(plan,edon,votedf) {
   if(is.null(plan)) { return (NULL)}
@@ -48,31 +45,172 @@ standardizePlan <- function(plan,edon,votedf) {
   return (plan)
 }
 
-out<-capture.output({ # all of those joins are noisy -- so capture the output
-  planscores.df %<>% rowwise() %>% 
-    mutate( plan2015 = list(standardizePlan(plan,edon,votes.2015.df)),
-            plan2018 = list(standardizePlan(plan,edon,votes.2018.df))
-    ) %>% ungroup()
-},type="message")
+###
+### Create a tibble of plans with integrated , data which can then be used for various evaluations
+###
 
-#
-# Score functions -- used to generate scores based on standardized plans
-#
+# generate table of planids and plans -- planids are repeated across actors, so select one
+planProcessing.df <- propfull.df %>% group_by(planid) %>% summarize(plan=head(plan,1), edon=head(edon,1))
 
-calcPopDev <- function(plan) {
-   if(is.null(plan)) { return (NULL)}
+# read  plan, and merge into a new plan column
+votes.2015.df <- read_csv("mxDistritos-data/raw-seccion-2015.csv")
+votes.2018.df <- read_csv("mxDistritos-data/raw-seccion-2018.csv")
+votes.2018.df %<>%  mutate(prdc=0,morenac=0) %>% clean_vraw()
+votes.2015.df %<>%  mutate(panc=0,morenac=0) %>% clean_vraw()
+
+planProcessing.df %>% rowwise() %>% ## RETURN VALUE FROM LOCAL BLOCK
+    mutate( plan_2015 = list(standardizePlan(plan,edon,votes.2015.df)),
+            plan_2018 = list(standardizePlan(plan,edon,votes.2018.df))
+    ) %>% ungroup() 
+}) 
+
+## BEGIN LOCAL BLOCK
+planProcessing.df<- local({ 
   
-   # calculate the maximum population 
-    plan %>% 
-      group_by(seccion) %>% slice_head(n=1) %>% # rows are duplicated across actors, we only need one
-      group_by(district) %>%
-      summarise(efec_sum = sum(efec,na.rm=TRUE))%>% 
-      ungroup() %>%
-      summarize(score = (max(efec_sum)-mean(efec_sum))/mean(efec_sum)) %>% 
-      pull(score) View
+## Calculate functions -- used to generate district summary tables based on standardized plans
+## these summary tables are then used to calculate any scores for plans
+##
+## USAGE NOTE: in mutate, use rowwise first
+##             and  if the result is a data frame, wrap it in list()
+##
+##  mydata %>% rowwise() %>% mutate( answer = list(calcXXXX(plan_2015))  
+
+
+# calcDistrictTotals 
+#      INPUT: splan - plan produced by standardizedPlan
+#      VALUE: tibble of district-level totals
+calcDistrictTotals <- function (splan) {
+  if(is.null(splan)) { return (NULL)}
+  
+  votes_total <- splan %>%   group_by(district) %>% summarize(votes_total=sum(votes,na.rm=TRUE))
+
+ splan %<>% 
+    group_by(seccion) %>% slice_head(n=1) %>% # lisnom,efec are duplicated across rows per actor
+    group_by(district) %>%
+    summarise(across(c(efec,lisnom), list(total = ~sum(.x,na.rm=TRUE))))
+    splan %>% left_join(votes_total)
 }
 
-planscores.df %<>% rowwise() %>% mutate(popdev2015=calcPopDev(plan2015))
+# calcDistrictTotals 
+#      INPUT: splan - plan produced by standardizedPlan
+#      VALUE: tibble of district-level totals
+calcActorDistrictTotals<- function (splan) {
+  if(is.null(splan)) { return (NULL)}
+  
+  splan %<>%   group_by(district,actor) %>% summarize(votes_total=sum(votes,na.rm=TRUE))
+  splan %<>% group_by(district) %>% mutate(votes_share=votes_total/sum(votes_total,na.rm=TRUE))
+  ungroup(splan)
+}
+
+# use the calc functions to extend planProcessing.df
+planProcessing.df %>% # RETURN Value for local block
+  rowwise() %>%
+  mutate( across(
+    c(plan_2015,plan_2018) , 
+    list( districts = ~list(calcDistrictTotals(.x)),
+          actors = ~list(calcActorDistrictTotals(.x)))
+  ))
+}) ## END LOCAL BLOCK
+
+
+###
+### Add plan scores
+###
+## BEGIN LOCAL BLOCK
+planProcessing.df<- local({ 
+  
+## scoring functions -- used to generate district plan scores based on district and/ districtActor summary tables
+
+# scoreMaxPop 
+#      INPUT: district level totals
+#      VALUE: score representing maximum relative deviation from population equality
+scoreMaxPopDev <- function(district) {
+  if(is.null(district)) { return (NA)}
+  district %>% 
+    ungroup() %>%
+    summarise(ideal = mean(lisnom_total),
+              score = max(abs(lisnom_total-ideal)/ideal)
+    ) %>% 
+    pull(score) 
+}
+
+#scoreSeats 
+#      INPUT: actor-district level totals
+#      VALUE: tibble of scoring statistics
+
+scoreSeats <- function(actordist) {
+  if(is.null(actordist)) { return (NULL)}
+  
+  actordist %>% 
+    group_by(district) %>% 
+    slice_max(votes_share,n=2) %>% 
+    summarize(votes_share=list(votes_share),actor=list(actor)) %>%
+    rowwise() %>% 
+    mutate(win_actor=actor[1], win_margin=votes_share[1]-votes_share[2] )
+}
+
+scoreComp <- function(x,threshold=.02){
+  if(is.null(x)) { return (NA)}
+  
+  x %>% ungroup() %>%
+    summarize(score=sum(win_margin<threshold)) %>%
+    pull(score)
+}
+
+scoreWins <- function(x){
+  if(is.null(x)) { return (NULL)}
+  
+  x %>% ungroup() %>%
+    count(win_actor) 
+}
+
+planProcessing.df  %<>% rowwise() %>% mutate( across( 
+  c(plan_2015_districts, plan_2018_districts), 
+  list(
+            maxPopDev = ~scoreMaxPopDev(.x)
+      ))) 
+
+planProcessing.df  %<>% rowwise() %>% mutate( across( 
+  c(plan_2015_actors, plan_2018_actors), 
+  list(
+    winMargins = ~list(scoreSeats(.x))
+  ))) 
+
+planProcessing.df  %<>% rowwise() %>% mutate( across( 
+  c(plan_2015_actors_winMargins, plan_2018_actors_winMargins), 
+  list(
+    compCount = ~scoreComp(.x),
+    actorWins = ~list(scoreWins(.x))
+  ))) 
+
+ planProcessing.df
+}) ## END LOCAL BLOCK
+
+
+
+
+planProcessing.df[1,"plan_2015_actors_winMargins"][[1]][[1]] %>% scoreWins()
+
+
+### TESTING
+#tstPlan <- planscores.df[[1,"plan_2015"]][[1]]
+#tstPlan %>% calcDistrictTotals 
+#tstPlan %>% calcActorDistrictTotals
+tstscores.df <- planProcessing.df %>% 
+  ungroup() %>% 
+  slice_head(n=10) 
+
+{
+  tic()
+  out<- capture.output(type="message",{
+    # do stuff
+    tst<- planProcessing.df %>% select(plan_2015_districts, plan_2018_districts) %>% rowwise() %>% mutate( 
+      across( c(plan_2015_districts, plan_2018_districts), list(maxPopDev = ~scoreMaxPopDev(.x)) )
+    ) 
+  })
+  toc()
+}
+
 
 
 
