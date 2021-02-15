@@ -524,5 +524,98 @@ plan.tgraph %>% ggraph() +
   geom_node_label(aes(label=actor,color=factor(actortype)))
 
 ```
+#Outcome Analysis
+```{r}
+source("PrepSeatScores.R",verbose=FALSE)
+```
 
+```{r}
+planFull.df <- left_join(planProp.df,planProcessing.df)
+```
+Competitive plan analysis
+```{r}
+comp.tbl <- NULL
+comp.tbl %<>% bind_rows(
+  planFull.df %>% filter(win_final) %>% 
+  group_by(year) %>% 
+  summarize(
+    scenario="winner",
+    comp_2015=sum(plan_2015_actors_winMargins_compCount,na.rm=TRUE), 
+    comp_2018=sum(plan_2018_actors_winMargins_compCount,na.rm=TRUE), 
+  )
+)
+comp.tbl %<>% bind_rows(
+  planFull.df %>% filter(best_plan) %>% 
+  group_by(year) %>% 
+  summarize(
+    scenario="best",
+    comp_2015=sum(plan_2015_actors_winMargins_compCount,na.rm=TRUE), 
+    comp_2018=sum(plan_2018_actors_winMargins_compCount,na.rm=TRUE), 
+  )
+)
 
+comp.tbl %<>% bind_rows(
+  planFull.df %>% filter(first_appeared==1) %>% 
+  group_by(year) %>% 
+  summarize(
+    scenario="algorithm",
+    comp_2015=sum(plan_2015_actors_winMargins_compCount,na.rm=TRUE), 
+    comp_2018=sum(plan_2018_actors_winMargins_compCount,na.rm=TRUE)
+  )
+)
+
+comp.tbl %>% group_by(year) %>% gt()
+
+```
+
+Party seat analysis
+```{r}
+seats.tbl <- NULL
+seats.tbl %<>% bind_rows(
+  planFull.df %>% filter(win_final) %>% group_by(year) %>%
+    summarize(results=list(bind_rows(plan_2015_actors_winMargins))) %>%
+    unnest(c(results,year)) %>% group_by(year) %>% count(win_actor) %>%
+    rename(actor=win_actor,seats=n) %>% mutate(year_elec=2015, scenario="winner")
+)
+seats.tbl %<>% bind_rows(
+  planFull.df %>% filter(win_final) %>% group_by(year) %>%
+    summarize(results=list(bind_rows(plan_2018_actors_winMargins))) %>%
+    unnest(c(results,year)) %>% group_by(year) %>% count(win_actor) %>%
+    rename(actor=win_actor,seats=n) %>% mutate(year_elec=2018, scenario="winner")
+)
+seats.tbl %<>% bind_rows(
+  planFull.df %>% filter(best_plan) %>% group_by(year) %>%
+    summarize(results=list(bind_rows(plan_2015_actors_winMargins))) %>%
+    unnest(c(results,year)) %>% group_by(year) %>% count(win_actor) %>%
+    rename(actor=win_actor,seats=n) %>% mutate(year_elec=2015, scenario="best")
+)
+seats.tbl %<>% bind_rows(
+  planFull.df %>% filter(best_plan) %>% group_by(year) %>%
+    summarize(results=list(bind_rows(plan_2018_actors_winMargins))) %>%
+    unnest(c(results,year)) %>% group_by(year) %>% count(win_actor) %>%
+    rename(actor=win_actor,seats=n) %>% mutate(year_elec=2018, scenario="best")
+)
+seats.tbl %<>% bind_rows(
+  planFull.df %>% filter(first_appeared==1) %>% group_by(year) %>%
+    summarize(results=list(bind_rows(plan_2015_actors_winMargins))) %>%
+    unnest(c(results,year)) %>% group_by(year) %>% count(win_actor) %>%
+    rename(actor=win_actor,seats=n) %>% mutate(year_elec=2015, scenario="algorithm")
+)
+seats.tbl %<>% bind_rows(
+  planFull.df %>% filter(first_appeared==1) %>% group_by(year) %>%
+    summarize(results=list(bind_rows(plan_2018_actors_winMargins))) %>%
+    unnest(c(results,year)) %>% group_by(year) %>% count(win_actor) %>%
+    rename(actor=win_actor,seats=n) %>% mutate(year_elec=2018, scenario="algorithm")
+)
+
+seats.tbl %>% pivot_wider(names_from=scenario,values_from=seats,values_fill=0 ) %>% group_by(year,year_elec) %>% gt()
+```
+
+#Diagnostics
+```{r}
+seats.tbl %>% group_by(year,year_elec,scenario) %>% summarize(total=sum(seats))
+nullids <- planFull.df %>% filter((win_final | best_plan | first_appeared==1) & is.null(plan)) %>% select(planid)
+nullplans<- left_join(nullids,propfull.df)
+nullplans %>% gt()
+
+```
