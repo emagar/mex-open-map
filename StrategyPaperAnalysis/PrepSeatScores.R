@@ -21,18 +21,27 @@ planProcessing.df <- local({
 ## Supports cleaning, merging w/ raw-seccion-* files
 
 clean_vraw<-function(x){
+
+  # create missing coalition columns ,
+  for (cmiss in setdiff(c("morenac","pric","panc","prdc"), x %>% names())) {
+    x %<>% mutate({{ cmiss }} := 0)
+  }
+
   #Adds votes received by coalition groups to the major party with which the coalition is associated.
   x %<>%
-  mutate(pan = pan + panc) %>%
-  mutate(prd = prd + prdc) %>%
-  mutate(pri = pri + pric) %>%
-  mutate(morena = morena + morenac) %>%
-  #select(., -panc, -pric, -prdc, -morenac) %>% #drop the unneeded rows
-  rename(es=pes) %>% pivot_longer(., cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "es"),
-                            names_to = "actor",
-                            values_to = "votes") %>% #Data is in wide format, converts the data to long format
-  mutate(actor = toupper(actor)) %>%  #Converts the actor names to uppercase to match with actor names in subsequent dataframes
-  select(edon,seccion,actor,votes,efec,lisnom)
+    mutate(pan = pan + panc) %>%
+    mutate(prd = prd + prdc) %>%
+    mutate(pri = pri + pric) %>%
+    mutate(morena = morena + morenac) %>%
+    #select(., -panc, -pric, -prdc, -morenac) %>% #drop the unneeded rows
+    rename(es = pes) %>% pivot_longer(
+      .,
+      cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "es"),
+      names_to = "actor",
+      values_to = "votes"
+    ) %>% #Data is in wide format, converts the data to long format
+    mutate(actor = toupper(actor)) %>%  #Converts the actor names to uppercase to match with actor names in subsequent dataframes
+    select(edon, seccion, actor, votes, efec, lisnom)
 }
 
 # function to check and merge plans
@@ -57,8 +66,8 @@ planProcessing.df <- propfull.df %>% filter(!is.null(plan)) %>% group_by(planid)
 # read  plan, and merge into a new plan column
 votes.2015.df <- read_csv("mxDistritos-data/raw-seccion-2015.csv")
 votes.2018.df <- read_csv("mxDistritos-data/raw-seccion-2018.csv")
-votes.2018.df %<>%  mutate(prdc=0,morenac=0) %>% clean_vraw()
-votes.2015.df %<>%  mutate(panc=0,morenac=0) %>% clean_vraw()
+votes.2018.df %<>%  clean_vraw()
+votes.2015.df %<>%  clean_vraw()
 
 planProcessing.df %>% rowwise() %>% ## RETURN VALUE FROM LOCAL BLOCK
     mutate( plan_2015 = list(standardizePlan(plan,edon,votes.2015.df)),
