@@ -74,6 +74,8 @@ planProcessing.df %>% rowwise() %>% ## RETURN VALUE FROM LOCAL BLOCK
     ) %>% ungroup() 
 }) 
 
+vars.srclist = c("plan_2015","plan_2018")
+
 ## BEGIN LOCAL BLOCK
 planProcessing.df<- local({ 
   
@@ -116,7 +118,7 @@ calcActorDistrictTotals<- function (splan) {
 planProcessing.df %>% # RETURN Value for local block
   rowwise() %>%
   mutate( across(
-    c(plan_2015,plan_2018) , 
+    c({{ vars.srclist}}) , 
     list( districts = ~list(calcDistrictTotals(.x)),
           actors = ~list(calcActorDistrictTotals(.x)))
   ))
@@ -174,20 +176,25 @@ scoreWins <- function(x){
     count(win_actor) 
 }
 
+vars.districts <- vars.srclist %>% paste("_districts",sep="")
+vars.actors <- vars.srclist %>% paste("_actors",sep="")
+
 planProcessing.df  %<>% rowwise() %>% mutate( across( 
-  c(plan_2015_districts, plan_2018_districts), 
+  c({{ vars.districts }}), 
   list(
             maxPopDev = ~scoreMaxPopDev(.x)
       ))) 
 
 planProcessing.df  %<>% rowwise() %>% mutate( across( 
-  c(plan_2015_actors, plan_2018_actors), 
+  c({{ vars.actors }}), 
   list(
     winMargins = ~list(scoreSeats(.x))
   ))) 
 
+vars.winmargins <- vars.srclist %>% paste("_actors_winMargins",sep="")
+
 planProcessing.df  %<>% rowwise() %>% mutate( across( 
-  c(plan_2015_actors_winMargins, plan_2018_actors_winMargins), 
+  c({{ vars.winmargins }}), 
   list(
     compCount = ~scoreComp(.x),
     actorWins = ~list(scoreWins(.x))
