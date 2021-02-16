@@ -33,7 +33,6 @@ clean_vraw<-function(x){
     mutate(prd = prd + prdc) %>%
     mutate(pri = pri + pric) %>%
     mutate(morena = morena + morenac) %>%
-    #select(., -panc, -pric, -prdc, -morenac) %>% #drop the unneeded rows
     rename(es = pes) %>% pivot_longer(
       .,
       cols = c("pan", "pri", "prd", "pvem", "pt", "mc", "pna", "morena", "es"),
