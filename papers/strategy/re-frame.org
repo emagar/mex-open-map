@@ -1,0 +1,172 @@
+#+TITLE: A frame to re-write the strategy paper
+#+AUTHOR: Eric
+#+DATE: 25-feb-2025
+#+OPTIONS: toc:nil
+
+#+latex_class_options: [12pt]
+#+latex_header: \usepackage{setspace}
+#+latex_header: \singlespacing
+#+latex_header: \usepackage[pdftex]{graphicx} % enhanced support for graphics
+#+latex_header: \usepackage{tikz}             % Easier syntax to draw pgf files (invokes pgf automatically)
+#+latex_header: \usepackage{multicol}
+\noindent The paper needs serious surgery. Not just to meet reviewers' concerns, but in itself too. I propose a central line of argument (more or less implicit in Alejandro's manuscript) to re-write it. This should help simplify the paper considerably, offering clearer picture. For this, we need to make one point. I also propose some re-organization, showing where selected parts of Alejandro's manuscript will fit, and what needs to be expanded/modified/added. 
+
+I suggest discussing whether this central line of argument works, and how to improve it/adapt it for the purpose of clerifying our argument first, apart from journal reviewers. Once we have agreement among ourselves, we should then move to find overlap with reviewers' critiques and recommendations. If there is enough overlap, we can resubmit a revised manuscript. Otherwise, we should try a fresh submission in a different journal. 
+* Intro: A simple frame for a reconceptualization
+A possible central line of argument puts two competing claims side by side:
+- Claim 1 :: Redistricting by politicians/parties, unchecked, is problematic for democratic competition. This claim is common, often taken for granted in American politics. So much so, that much reform effort aims at totally expunging politicians from redistricting.
+- Claim 2 ::  But redistricting by experts, in full disconnect from politicians/parties, is problematic in its own ways too. This argument is less common and requires elaboration, but it is equally valid. (Eg. why not let AI redistrict?)
+
+\noindent Democratic redistricting should fall somewhere between claims 1 and 2. Not a black and white story, but a shades of gray one. As with shades-of-gray arguments, finding optimal proportions of black and white is tricky/impossible.
+
+Our new intro should argue about the fundamental role that politicians and their parties play in redistricting and in organizing elections. Provided, of course, their involvement is somehow constrained. Which leads to the classic tensions that underlie limited government: how to check dominant actors, and how to guard the guardians. (We could also present this as a Madisonian dilemma).
+
+Some examples:
+- Jacobson on how, soon after the reapportionment revolution, the zero malapportionment requirement led to systematically splitting counties and other natural political communities, severing the ties between incumbents and their parties. And, perhaps, a key source of incumbency advantage. 
+- Estevez et al. on how designing Mexico's IFE as a collective agent of the parties made electoral regulation credible to everyone. Evidence suggests that portraying themselves as operating above the partisan fray (like judges do everywhere) is part of the job description, even if their actions reveal them as party watchdogs. 
+- California's redistricting commission is formally forbidden from taking prior voting, incumbent address, and so forth into consideration in map making. Elaborate on the potential problems such prohibitions create. 
+- Need more lines of argument, in order to choose which help us land the shades-of-gray argument more clearly.
+Our revised paper seeks to inform the experts/parties tension with a systematic study of a process where mapmakers operate an automated redistricting process with systematic input by the parties. 
+
+We do not aim to `resolve' the issue of what the ideal mixture is. We instead seek to determine whether or not, how, and how much parties attempt to modify expert proposals, and how succesful each is in a competitive process. 
+* Electoral regulation in Mexico
+In this section we should take a step back to present not just redistricting, but electoral regulation in general as subject to the experts/parties tension. The section could take the same general approach as Estevez et al. in describing the delegation dilemmas that Mexican parties have faced when setting up a powerful election referee. The discussion will set forth some (mild) expectations from the analysys.
+** INE as a collective agent of the three major parties
+IFE/INE was designed by/for the three major parties in 1990s. How agency costs were mitigated through screening, monitoring, checks and balances. System has never been perfect. But, other than in 2006, it seemed to work---losers conceded.  
+** Party system collapse
+That ceased to be so when a new entrant, Morena, upended the party system in 2015. The new party rose to win the 2018 presidential election, yet remained excluded from the regulatory arrangement between 2015 to 2022. The three-party system fragmented further with a new, single dominant player. Sudden change was a major problem for credible electoral regulation in general, and possibly redistricting in particular. Sudden change also sets up tension to study the strategic, competitive party interactions. Did the forerly major parties attempt to stack the deck against Morena? How did Morena play the redistricting game before it managed to gain control of the electoral regulator? How did experts react to the change in expectations. 
+* Mexico's redistricting process. 
+Expand on Alejandro's section 2 (h i j). More expectations from the analysys will be discussed here.
+** Redistricting history
+New maps were drawn in 1997, 2006, 2018, and 2024. And a 2015 plan was finalized, but abandoned (which we analyze too). Mentioning that redistricting has always involved a considerable lag with the census count it relies upon, introducing a fair degree of malapportionment, may help add . 
+** The process in 2018 and 2024
+Explain the process with more detail. Doing so will elaborate the criteria for optimization, which in themselves are quantities of interest in our analysis.
+# Compact notation:
+
+# $plan_1 = plan_1(d,lag,c,a)$, plan 1 inputs determined by law and proposals by the technical committee with approval by the Council General
+
+# $plan_2 = plan_2(plan_1, bids_1)$
+
+# $map   = map(plan_2, bids_2, approval)$
+
+# $seats = seats(map, votes)$
+
+# where:
+# - $d$ = Demographic data and voting history     
+# - $lag$ = years since last census               
+# - $c$ = Optimization criteria                   
+# - $a$ = Optimization algorithm               
+# - $plan_{.}$ = preliminary maps (scenarios)
+# - $bids_.$ = set of party counter-proposals
+# - $approval$ = take-it-or-leave-it vote in INE's Council General
+# - $map$ = final map
+# - $seats$ = distribution of SMD seats
+** INE's optimizing criteria
+- seats reserved for indigenous communities (removed from optimization)
+- malapportionment ($\pm 10$ to 15%)
+- preserving political borders
+- practicable districts 
+- compactness
+** `Criterion 8' for stopping the machine by unanimity (and other known exceptions)
+We should compare this subset of districts against those generated through the standard process.
+* Other quantities of interest
+Some are already analyzed in Alejandro's manuscript. More could be added:
+- preserving the recent past (risk aversion)
+- preserving cabeceras distritales (bureaucratic inertia, INE's real estate)
+- vote margins against the winner (party bias)
+- wasted votes (packing/cracking)
+- seats from votes (responsiveness)
+- seat swings relative to vote swings (responsiveness take 2).
+We will also have some (mild) expectations regarding these quantities.
+* Reorganize Alejandro's empirical exploration
+Much of the above is already in Alejandro's manuscript. But much isn't. Empirical explorations should provide answers to our general expectations. Adding new quantities to our analysis will enrich our attempt to gauge party influence over the process and outcomes. 
+- Eg. (bureaucratic inertia) If the algorithm were left on its own, some cabeceras distritales should change. How many actually did?
+- Eg. (risk aversion) If parties were risk averse, counter offers should tend to reconfigure some parts of the old map. Did they? (Cox and Katz's District similarity index could help here.)
+- Eg. (protecting bastions) If parties seek security, counter offers should boost margins at the expense of responsiveness. Did they?
+- Eg. (unpacking/uncracking) If parties reduce vote wasting, counter offers should bring more margins closer to plurality. Did they?
+If we come up with a list of such questions, it will make reorganizing the empirical explorations simpler, and produce a set of findings that contribute to our general point. 
+* A discussion of interest beyond Mexican studies
+The paper should close by wrapping up the findings and discussing them in light of redistricting in other latitudes. Te case of the US will inevitably be an important part of this final discussion, but we can attempt to expand th scope.
+# ----------------------
+# Manuscript contents
+
+# 1. INTRO
+
+# a. Representative may choose their voters rather than the reverse.
+
+# b. Do scholarly lessons in gerrymandering extend to 3d-wave dems?
+
+# c. Mexico: INE challenged (?)
+
+# d. Mexico's MMES (?)
+
+# e. Need to understand Mx's redistricting because anteceded AMLO and done behind closed door (semi-?)
+
+# f. Novel data to answer 3 qs: 1) effect on seats? 2) any party advantage? 3) did process matter? (?)
+
+# g. Analysis sheds light on inner workings and party/expert interactions
+
+# 2. CONTEXT
+
+# h. Technical redistricting in Mx, automated, perceived as apolitical
+
+# i. The process, step-by-step
+
+# j. Our focus: ex-ante criteria (2013 v 2018), ex-post partisan counter-offers
+
+# 3. EXPECTATIONS
+
+# k. Large-party seat bonus
+
+# l. Morena seat bonus
+
+# m. Payoffs of strategic interaction
+
+# n. Pro-PAN -PRI bias
+
+# o. Unclear, reapportionment
+
+# p. Fewer counter-offers 2018
+
+# q. Municipal borders preservation
+
+# 4. DATA
+
+# r. Description of the dataset
+
+# 5. POLITICAL IMPLICATIONS
+
+# s. votes -> seats
+
+# t. sq vs sc1 vs sc2 vs sc3 seat changes
+
+# u. uniform vote swing -> seat swing
+
+# v. perfect foresight (party's best) -> seat swing
+
+# w. process 2013 vs 2018 number of secciones moved around
+
+# x. municipal integrity
+
+# 6. PUZZLES
+
+# y. Yucatán case study
+
+# z. unusual election
+
+# aa. wider margins
+
+# ab. side payments
+
+# ac. limited party foresight
+
+# ad. fairness
+
+# 7. DISCUSSION
+
+# ae. minimal effects
+
+# ----------------------
+
+# Intro OK until it presents the case of Mexico, where it justifies based on AMLO's attacks. Better to present our point first, then see how recent developments create tension. 
+
